@@ -11,6 +11,11 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+[Dd]ebug.win32/
+[Dd]ebugPublic.win32/
+[Rr]elease.win32/
+[Rr]eleases.win32/
+
 x64/
 x86/
 build/
