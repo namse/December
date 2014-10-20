@@ -23,8 +23,10 @@
 #define MOVABLE_RAIDUS 10.f
 #define MOVE_DURATION 0.3f
 #define DIE_DURATION 0.3f
+#define JUMP_DURATION 0.3f
 #define MAX_ANIMATION_COUNT 100
 //#define HEXA_INDEX_SHOW
+
 @interface HelloWorldScene : CCScene
 {
     CGPoint verts[MAP_WIDTH][MAP_HEIGHT][6];
@@ -43,6 +45,7 @@
     
     enum PlayerType whoTurn;
     enum AnimationType{
+        HORSEJUMP,
         MOVETO,
         DIE,
     };
@@ -50,6 +53,7 @@
         __unsafe_unretained CCNode* node;
         enum AnimationType type;
         CGPoint moveTo;
+        ccBezierConfig jumpConfig;
     }animationQueue[MAX_ANIMATION_COUNT];
     int animationCount;
     
@@ -85,5 +89,7 @@
 -(void)finishAnimation;
 
 -(void)removeAnimationUnit;
+
+-(void)horeseJump:(Unit*)horse ToHexa:(CGPoint)hexa;
 // -----------------------------------------------------------------------
 @end

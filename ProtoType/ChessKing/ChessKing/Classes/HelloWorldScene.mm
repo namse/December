@@ -14,6 +14,36 @@ CGFloat dX[6] = {-1, 0, 1, 1, 0, -1,};
 CGFloat dY[6] = {-1, -1, 0, 1, 1, 0,};
 
 
+CGPoint operator+(const CGPoint &p1, const CGPoint &p2)
+{
+    CGPoint sum = { p1.x + p2.x, p1.y + p2.y };
+    return sum;
+}
+
+CGPoint operator*(const CGPoint &p1, const float &f)
+{
+    CGPoint sum = { p1.x * f, p1.y * f };
+    return sum;
+}
+
+CGPoint operator/(const CGPoint &p1, const float &f)
+{
+    CGPoint sum = { p1.x / f, p1.y / f };
+    return sum;
+}
+
+CGPoint operator-(const CGPoint &p1, const CGPoint &p2)
+{
+    CGPoint sum = { p1.x - p2.x, p1.y - p2.y };
+    return sum;
+}
+CGPoint turnCGPointByRadian(const CGPoint&p1, const float radian)
+{
+    return ccp(p1.x * cosf(radian) - p1.y * sinf(radian), p1.x * sinf(radian) + p1.y * cosf(radian));
+}
+
+
+
 bool isInsidePolygon(CGPoint *polygon,int N,CGPoint p)
 {
     int counter = 0;
@@ -269,10 +299,16 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
             ;
         else
         {
-            [self onMoveWithVectorType:[self getVectorTypeByFrom:pickedUnit.hexaPosition To:getHexaPointByScreenPoint(nowMovePoint)]
-                                Length:[self getVectorSizeFrom:pickedUnit.hexaPosition To:getHexaPointByScreenPoint(nowMovePoint)]
-                                Target:pickedUnit isFirstMove:YES];
-            
+            if (pickedUnit.unitType == HORSE) {
+                [self horeseJump:pickedUnit ToHexa:getHexaPointByScreenPoint(nowMovePoint)];
+            }
+            else
+            {
+                [self onMoveWithVectorType:[self getVectorTypeByFrom:pickedUnit.hexaPosition To:getHexaPointByScreenPoint(nowMovePoint)]
+                                    Length:[self getVectorSizeFrom:pickedUnit.hexaPosition To:getHexaPointByScreenPoint(nowMovePoint)]
+                                    Target:pickedUnit isFirstMove:YES];
+                
+            }
             if(whoTurn == PLAYER_1)
                 whoTurn = PLAYER_2;
             else whoTurn = PLAYER_1;
@@ -297,16 +333,22 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
             CGPoint point = ccp( startHexaPoint.x + dX[i] * v,
                                 startHexaPoint.y + dY[i] * v);
             
+            if([self isEnablePosition:point] == NO)
+            {
+                break;
+            }
             Unit* unit = [self getUnitInHexaPoint:point];
             if(unit != nil)
             {
                 if(unit.owner == pickedUnit.owner)
                 {
-                    //if(pickedUnit.unitType == HORSE)
-                    //{
-                    //    continue;
-                    //}
-                    //else
+                    if(pickedUnit.unitType == HORSE)
+                    {
+                        [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:ccc4(30, 128, 30, 196)]];
+                        [moveableAreaList addObject:[NSValue valueWithCGPoint:point]];
+                        continue;
+                    }
+                    else
                     {
                         [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:ccc4(30, 128, 30, 196)]];
                         [moveableAreaList addObject:[NSValue valueWithCGPoint:point]];
@@ -694,11 +736,48 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
                 //[self removeChild:node.node cleanup:YES];
                 //[unitList removeObject:node.node];
             }break;
+            case HORSEJUMP:
+            {
+                CCActionBezierTo* jump = [CCActionBezierTo actionWithDuration:JUMP_DURATION bezier:node.jumpConfig];
+                CCActionCallFunc* callfn = [CCActionCallFunc actionWithTarget:self selector:@selector(nextAnimation)];
+                CCActionSequence* seq = [CCActionSequence actions:jump, callfn, nil];
+                [node.node runAction:seq];
+            }
         }
         
     }
     else
         [self finishAnimation];
+}
+
+
+-(void)horeseJump:(Unit*)horse ToHexa:(CGPoint)hexa
+{
+    auto unitOnThere =[self getUnitInHexaPoint:hexa];
+    if( unitOnThere != nil)
+    {
+        [self pushByPusher:horse Target:unitOnThere lastLength:-1  isFirstPush:YES];
+    }
+
+    CGPoint vec = getCenterPositionWithHexaPoint(hexa) - getCenterPositionWithHexaPoint(horse.hexaPosition);
+
+    CGPoint middlePoint = getCenterPositionWithHexaPoint(horse.hexaPosition) + vec / 2.f
+    + turnCGPointByRadian(vec/2.f, M_PI_2);
+    
+    
+    ccBezierConfig bezier;
+    bezier.endPosition = getCenterPositionWithHexaPoint(hexa);
+    bezier.controlPoint_1 = bezier.controlPoint_2 = middlePoint;
+    
+    
+    AnimationNode aniNode;
+    aniNode.node = horse;
+    aniNode.jumpConfig = bezier;
+    aniNode.type = HORSEJUMP;
+    animationQueue[animationCount] = aniNode;
+    animationCount++;
+    
+    horse.hexaPosition = hexa;
 }
 -(void)removeAnimationUnit
 {
