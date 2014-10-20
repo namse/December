@@ -778,6 +778,11 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     animationCount++;
     
     horse.hexaPosition = hexa;
+    
+    if( unitOnThere == nil)
+    {
+        [self finishMove];
+    }
 }
 -(void)removeAnimationUnit
 {
