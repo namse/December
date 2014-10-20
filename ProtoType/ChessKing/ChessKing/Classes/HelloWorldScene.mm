@@ -335,6 +335,9 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
             
             if([self isEnablePosition:point] == NO)
             {
+                //last point for self-die
+                [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:ccc4(30, 128, 30, 196)]];
+                [moveableAreaList addObject:[NSValue valueWithCGPoint:point]];
                 break;
             }
             Unit* unit = [self getUnitInHexaPoint:point];
@@ -608,7 +611,6 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     if(firstGuy != nil)
     {
         target.hexaPosition = ccpAdd(target.hexaPosition, ccp(dX[vectorType] * (costLength - 1), dY[vectorType] * (costLength - 1)));
-        
         // 애니메이션 여기서 추가해야해.
         AnimationNode aniNode;
         aniNode.node = target;
@@ -616,7 +618,11 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
         aniNode.type = MOVETO;
         animationQueue[animationCount] = aniNode;
         animationCount++;
-        //target.position = getCenterPositionWithHexaPoint(target.hexaPosition);
+        
+        if([self isEnablePosition:target.hexaPosition] == NO)
+        {
+            [self thisGuyKiiled:target];
+        }
         
         if(firstGuy.owner != target.owner)
         {
@@ -627,7 +633,6 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     else
     {
         target.hexaPosition = ccpAdd(target.hexaPosition, ccp(dX[vectorType] * length, dY[vectorType] * length));
-        
         // 애니메이션 여기서 추가해야해.
         AnimationNode aniNode;
         aniNode.node = target;
@@ -636,8 +641,10 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
         animationQueue[animationCount] = aniNode;
         animationCount++;
         
-        
-        //target.position = getCenterPositionWithHexaPoint(target.hexaPosition);
+        if([self isEnablePosition:target.hexaPosition] == NO)
+        {
+            [self thisGuyKiiled:target];
+        }
         
         [self finishMove];
     }
@@ -758,9 +765,11 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     {
         [self pushByPusher:horse Target:unitOnThere lastLength:-1  isFirstPush:YES];
     }
-
+    
+    
+    
     CGPoint vec = getCenterPositionWithHexaPoint(hexa) - getCenterPositionWithHexaPoint(horse.hexaPosition);
-
+    
     CGPoint middlePoint = getCenterPositionWithHexaPoint(horse.hexaPosition) + vec / 2.f
     + turnCGPointByRadian(vec/2.f, M_PI_2);
     
@@ -778,6 +787,10 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     animationCount++;
     
     horse.hexaPosition = hexa;
+    if([self isEnablePosition:horse.hexaPosition] == NO)
+    {
+        [self thisGuyKiiled:horse];
+    }
     
     if( unitOnThere == nil)
     {
