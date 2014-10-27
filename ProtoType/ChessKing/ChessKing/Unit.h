@@ -37,6 +37,7 @@ enum UnitType
     int hp;
     int weight;
     enum UnitType unitType;
+    bool isAlive;
 }
 +(id)UnitWithName:(NSString*)_name unitType:(enum UnitType)_unitType HP:(int)_hp Damage:(int)_damage Velocity:(int)_velocity weight:(int)_weight owner:(enum PlayerType)_owner HexaPosition:(CGPoint)_hexaPosition;
 -(id)initWithName:(NSString*)_name unitType:(enum UnitType)_unitType HP:(int)_hp Damage:(int)_damage Velocity:(int)_velocity weight:(int)_weight owner:(enum PlayerType)_owner HexaPosition:(CGPoint)_hexaPosition;
@@ -48,5 +49,6 @@ enum UnitType
 @property (nonatomic, readwrite) int hp;
 @property (nonatomic, readwrite) int damage;
 @property (nonatomic, readwrite) int weight;
+@property (nonatomic, readwrite) bool isAlive;
 
 @end

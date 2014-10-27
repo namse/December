@@ -41,6 +41,10 @@ CGPoint turnCGPointByRadian(const CGPoint&p1, const float radian)
 {
     return ccp(p1.x * cosf(radian) - p1.y * sinf(radian), p1.x * sinf(radian) + p1.y * cosf(radian));
 }
+float CGPointSize(const CGPoint&p1, const CGPoint&p2)
+{
+    return sqrtf(powf(p1.x - p2.x, 2) + powf(p1.y - p2.y, 2));
+}
 
 
 
@@ -122,6 +126,44 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     }
     return false;
 }
+int getVectorSize(CGPoint fromHexaPoint, CGPoint toHexaPoint)
+{
+    CGPoint vec = ccp(toHexaPoint.x - fromHexaPoint.x, toHexaPoint.y - fromHexaPoint.y);
+    if(abs(vec.x) > 0) return abs(vec.x);
+    else return abs(vec.y);
+}
+int getVectorTypeWithHexaPoints(CGPoint fromHexaPoint, CGPoint toHexaPoint)
+{
+    CGPoint vec = ccp(toHexaPoint.x - fromHexaPoint.x, toHexaPoint.y - fromHexaPoint.y);
+    int vectorSize = getVectorSize(fromHexaPoint, toHexaPoint);
+    CGPoint normalizedVec = ccp(vec.x / vectorSize, vec.y / vectorSize);
+    
+    for( int i = 0 ; i < 6; i ++)
+    {
+        if(dX[i] == normalizedVec.x
+           && dY[i] == normalizedVec.y)
+            return i;
+    }
+    return -1;
+}
+int getVectorTypeWithScreenPoints(CGPoint fromPoint, CGPoint toPoint)
+{
+    CGPoint vec = toPoint - fromPoint;
+    int ret = -1;
+    float maxCeta = -INFINITY;
+    for( int i = 0 ; i < 6; i++)
+    {
+        float dotProd = vec.x * dX[i] + vec.y * dY[i];
+        float cosCeta = dotProd /
+        (sqrtf(powf(vec.x, 2) + powf(vec.y, 2)) * sqrtf(powf(dX[i], 2) + powf(dY[i], 2)));
+        if(maxCeta < cosCeta)
+        {
+            ret = i;
+            maxCeta = cosCeta;
+        }
+    }
+    return ret;
+}
 // -----------------------------------------------------------------------
 #pragma mark - HelloWorldScene
 // -----------------------------------------------------------------------
@@ -152,6 +194,7 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     mapNodeList = [NSMutableArray array];
     moveableAreaList = [NSMutableArray array];
     animationCount = 0;
+    freedomMoveQueue = [NSMutableArray array];
     
     // Enable touch handling on scene node
     self.userInteractionEnabled = YES;
@@ -194,6 +237,10 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     nowMoveNode = [[CCDrawNode alloc]init];
     [self addChild:nowMoveNode];
     
+    if(( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON ))
+    {
+        [self setScale:0.45f];
+    }
     // done
 	return self;
 }
@@ -240,8 +287,6 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     CGPoint touchedHexaPoint = getHexaPointByScreenPoint(touchLoc);
     // Log touch location
     
-    CCLOG(@"%@ / %@",NSStringFromCGPoint(touchLoc),NSStringFromCGPoint(touchedHexaPoint));
-    
     
     if(isPicked == true && pickedUnit != nil)
     {
@@ -261,15 +306,22 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     
     if(isPicked == true && pickedUnit != nil)
     {
-        pickedUnit.position = ccp( (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).x * 9.f + touchLoc.x) / 10.f,
-                                  (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).y * 9.f + touchLoc.y) / 10.f);
-        [self showMovableArea:touchedHexaPoint velocity:pickedUnit.velocity];
+        if(pickedUnit.unitType == BISHOP)
+        {
+            //pickedUnit.position = getCenterPositionWithHexaPoint(getHexaPointByScreenPoint(touchLoc));
+            [freedomMoveQueue removeAllObjects];
+            [freedomMoveQueue addObject:[NSValue valueWithCGPoint:getHexaPointByScreenPoint(touchLoc)]];
+            [self showMovableAreaWithFreeMove:pickedUnit MoveQueue:freedomMoveQueue];
+        }
+        else
+        {
+            pickedUnit.position = ccp( (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).x * 9.f + touchLoc.x) / 10.f,
+                                      (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).y * 9.f + touchLoc.y) / 10.f);
+            
+            [self showMovableArea:touchedHexaPoint velocity:pickedUnit.velocity];
+        }
     }
-    /*
-     // Move our sprite to touch location
-     CCActionMoveTo *actionMove = [CCActionMoveTo actionWithDuration:1.0f position:touchLoc];
-     [_sprite runAction:actionMove];
-     */
+
 }
 
 -(void)touchMoved:(UITouch *)touch withEvent:(UIEvent *)event
@@ -278,14 +330,77 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     
     if(isPicked == true && pickedUnit != nil)
     {
-        pickedUnit.position = ccp( (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).x * 9.f + touchLoc.x) / 10.f,
-                                  (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).y * 9.f + touchLoc.y) / 10.f);
-        nowMovePoint = ccp( getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).x * 2.5 - touchLoc.x * 1.5 ,
-                           getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).y * 2.5 - touchLoc.y * 1.5);
-        if(CGPointEqualToPoint(getHexaPointByScreenPoint(touchLoc), pickedUnit.hexaPosition) )
-            ;
-        else
+        
+        if(pickedUnit.unitType == BISHOP)
+        {
+            bool didGoThere = false;
+            bool ableGoThere = false;
+            for(NSValue* value in freedomMoveQueue)
+            {
+                CGPoint point = [value CGPointValue];
+                if(CGPointEqualToPoint(point, getHexaPointByScreenPoint(touchLoc)))
+                {
+                    didGoThere = true;
+                    break;
+                }
+            }
+            
+            for(NSValue* value in moveableAreaList)
+            {
+                CGPoint point = [value CGPointValue];
+                if(CGPointEqualToPoint(point, getHexaPointByScreenPoint(touchLoc)))
+                {
+                    for( int i = 0 ; i < 6 ; i ++)
+                    {
+                        CGPoint dPoint = getHexaPointByScreenPoint(touchLoc) + ccp(dX[i], dY[i]);
+                        if(CGPointEqualToPoint(dPoint, [[freedomMoveQueue lastObject]CGPointValue]))
+                        {
+                            ableGoThere = true;
+                            break;
+                        }
+                    }
+                    if(ableGoThere == true)
+                        break;
+                }
+            }
+            if(ableGoThere == true && didGoThere == NO && [freedomMoveQueue count] <= pickedUnit.velocity)
+            {
+                [freedomMoveQueue addObject:[NSValue valueWithCGPoint:getHexaPointByScreenPoint(touchLoc)]];
+            }
+            else if(didGoThere == true)
+            {
+                if([freedomMoveQueue count] > 1)
+                {
+                    CGPoint point = [[freedomMoveQueue objectAtIndex:[freedomMoveQueue indexOfObject:[freedomMoveQueue lastObject]]-1]CGPointValue];
+                    if(CGPointEqualToPoint(point, getHexaPointByScreenPoint(touchLoc)))
+                    {
+                        [freedomMoveQueue removeLastObject];
+                    }
+                }
+            }
+            
+            //pickedUnit.position = getCenterPositionWithHexaPoint([[freedomMoveQueue lastObject]CGPointValue]);
+            
+            [self showMovableAreaWithFreeMove:pickedUnit MoveQueue:freedomMoveQueue];
             [self showNowMoveNode];
+            
+        }
+        else
+        {
+            pickedUnit.position = ccp( (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).x * 9.f + touchLoc.x) / 10.f,
+                                      (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).y * 9.f + touchLoc.y) / 10.f);
+            nowMovePoint = ccp( getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).x * 2.5 - touchLoc.x * 1.5 ,
+                               getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).y * 2.5 - touchLoc.y * 1.5);
+        
+            // 아래 이거 쓸모있는건가?
+            if(CGPointEqualToPoint(getHexaPointByScreenPoint(touchLoc), pickedUnit.hexaPosition) )
+                ;
+            else
+                [self showNowMoveNode];
+        }
+        
+        
+        
     }
 }
 
@@ -299,13 +414,17 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
             ;
         else
         {
-            if (pickedUnit.unitType == HORSE) {
+            if(pickedUnit.unitType == BISHOP)
+            {
+                [self freeMove:pickedUnit MoveQueue:freedomMoveQueue];
+            }
+            else if (pickedUnit.unitType == HORSE) {
                 [self horeseJump:pickedUnit ToHexa:getHexaPointByScreenPoint(nowMovePoint)];
             }
             else
             {
-                [self onMoveWithVectorType:[self getVectorTypeByFrom:pickedUnit.hexaPosition To:getHexaPointByScreenPoint(nowMovePoint)]
-                                    Length:[self getVectorSizeFrom:pickedUnit.hexaPosition To:getHexaPointByScreenPoint(nowMovePoint)]
+                [self onMoveWithVectorType:getVectorTypeWithHexaPoints(pickedUnit.hexaPosition,getHexaPointByScreenPoint(nowMovePoint))
+                                    Length:getVectorSize(pickedUnit.hexaPosition, getHexaPointByScreenPoint(nowMovePoint))
                                     Target:pickedUnit isFirstMove:YES];
                 
             }
@@ -320,55 +439,150 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
 
 
 
+- (void)showMovableAreaWithFreeMove:(Unit*)target MoveQueue:(NSMutableArray*)moveQueue
+{
+    [self clearMovablePosition];
+    
+    //Check now is last
+    {
+        CGPoint point = [[moveQueue lastObject]CGPointValue];
+        auto unitOnThere = [self getUnitInHexaPoint:point];
+        if(unitOnThere != nil && unitOnThere != target)
+        {
+            return;
+        }
+    }
+    
+    CGFloat dX[6] = {-1, 0, 1, 1, 0, -1,};
+    CGFloat dY[6] = {-1, -1, 0, 1, 1, 0,};
+    //BFS
+    CGPoint buf[1024];
+    ccColor4B color[1024];
+    BOOL isLast[1024];
+    memset(isLast, NO, sizeof(isLast));
+    int head, tail, newTail;
+    head = tail = newTail = 0;
+    buf[0] = [[moveQueue lastObject]CGPointValue];
+    tail = newTail = 1;
+    for(int v = 1; v <= target.velocity - [moveQueue count] + 1; v++)
+    {
+        for(int i = head ; i < tail; i++)
+        {
+            if(isLast[i])
+                continue;
+            for( int a = 0 ; a < 6; a++) // index for Angle
+            {
+                CGPoint point = buf[i] + ccp(dX[a], dY[a]);
+                bool isEqual = false;
+                for (NSValue *value in moveQueue) {
+                    auto gonePoint = [value CGPointValue];
+                    if(CGPointEqualToPoint(gonePoint, point))
+                    {
+                        isEqual = true;
+                    }
+                }
+                if(isEqual)
+                    continue;
+                if([self isInside:point] == NO)
+                {
+                    buf[newTail] = point;
+                    color[newTail] = MOVABLE_AREA_COLOR_OUTSIDE;
+                    isLast[newTail] = YES;
+                    newTail ++;
+                }
+                Unit* unit = [self getUnitInHexaPoint:point];
+                if(unit != nil)
+                {
+                    if(unit.owner == pickedUnit.owner)
+                    {
+                        // ALIY
+                        buf[newTail] = point;
+                        color[newTail] = MOVABLE_AREA_COLOR_ALIY;
+                        isLast[newTail] = YES;
+                        newTail ++;
+                    }
+                    else
+                    {
+                        //ENEMY
+                        buf[newTail] = point;
+                        color[newTail] = MOVABLE_AREA_COLOR_ENEMY;
+                        isLast[newTail] = YES;
+                        newTail ++;
+                    }
+                }
+                else
+                {
+                    buf[newTail] = point;
+                    color[newTail] = MOVABLE_AREA_COLOR_NORMAL;
+                    isLast[newTail] = NO;
+                    newTail ++;
+                }
+            }
+        }
+        head = tail;
+        tail = newTail;
+    }
+    
+    for(int i = 1; i < newTail; i++)
+    {
+        [movableFocusArea drawDot:getCenterPositionWithHexaPoint(buf[i]) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:color[i]]];
+        [moveableAreaList addObject:[NSValue valueWithCGPoint:buf[i]]];
+    }
+}
 - (void)showMovableArea:(CGPoint)startHexaPoint velocity:(int)velocity
 {
     [self clearMovablePosition];
     CGFloat dX[6] = {-1, 0, 1, 1, 0, -1,};
     CGFloat dY[6] = {-1, -1, 0, 1, 1, 0,};
     
-    for( int i = 0 ; i < 6; i++) // index for Angle
+    
+    if(pickedUnit.unitType == BISHOP)
     {
-        for( int v = 1 ; v <= velocity; v++)
+        //NO!
+    }
+    else
+    {
+        
+        for( int i = 0 ; i < 6; i++) // index for Angle
         {
-            CGPoint point = ccp( startHexaPoint.x + dX[i] * v,
-                                startHexaPoint.y + dY[i] * v);
-            
-            if([self isEnablePosition:point] == NO)
+            for( int v = 1 ; v <= velocity; v++)
             {
-                //last point for self-die
-                [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:ccc4(30, 128, 30, 196)]];
-                [moveableAreaList addObject:[NSValue valueWithCGPoint:point]];
-                break;
-            }
-            Unit* unit = [self getUnitInHexaPoint:point];
-            if(unit != nil)
-            {
-                if(unit.owner == pickedUnit.owner)
+                CGPoint point = ccp( startHexaPoint.x + dX[i] * v,
+                                    startHexaPoint.y + dY[i] * v);
+                
+                if([self isInside:point] == NO)
                 {
-                    if(pickedUnit.unitType == HORSE)
+                    //last point for self-die
+                    [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:MOVABLE_AREA_COLOR_OUTSIDE]];
+                    [moveableAreaList addObject:[NSValue valueWithCGPoint:point]];
+                    break;
+                }
+                Unit* unit = [self getUnitInHexaPoint:point];
+                if(unit != nil)
+                {
+                    if(unit.owner == pickedUnit.owner)
                     {
-                        [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:ccc4(30, 128, 30, 196)]];
+                        // ALIY
+                        [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:MOVABLE_AREA_COLOR_ALIY]];
                         [moveableAreaList addObject:[NSValue valueWithCGPoint:point]];
-                        continue;
+                        if(pickedUnit.unitType == HORSE)
+                            continue;
+                        else
+                            break;
                     }
                     else
                     {
-                        [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:ccc4(30, 128, 30, 196)]];
+                        //ENEMY
+                        [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:MOVABLE_AREA_COLOR_ENEMY]];
                         [moveableAreaList addObject:[NSValue valueWithCGPoint:point]];
                         break;
                     }
                 }
                 else
                 {
-                    [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:ccc4(255, 30, 30, 196)]];
+                    [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:MOVABLE_AREA_COLOR_NORMAL]];
                     [moveableAreaList addObject:[NSValue valueWithCGPoint:point]];
-                    break;
                 }
-            }
-            else
-            {
-                [movableFocusArea drawDot:getCenterPositionWithHexaPoint(point) radius:MOVABLE_RAIDUS color:[CCColor colorWithCcColor4b:ccc4(128, 30, 30, 196)]];
-                [moveableAreaList addObject:[NSValue valueWithCGPoint:point]];
             }
         }
     }
@@ -433,7 +647,7 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     
 }
 
--(bool)isEnablePosition:(CGPoint)hexaPoint
+-(bool)isInside:(CGPoint)hexaPoint
 {
     for (NSValue *value in mapNodeList) {
         CGPoint point = [value CGPointValue];
@@ -449,7 +663,7 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
         CGPoint point = [value CGPointValue];
         if( CGPointEqualToPoint(hexaPoint, point))
         {
-            return true && [self isEnablePosition:hexaPoint];
+            return true;
         }
     }
     return false;
@@ -531,29 +745,53 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
 - (void)showNowMoveNode
 {
     [self clearNowMoveNode];
-    CGPoint moveHexaPoint = getHexaPointByScreenPoint(nowMovePoint);
-    if([self isEnableMovePosition:moveHexaPoint])
+    
+    if(pickedUnit.unitType == BISHOP)
     {
-        [nowMoveNode drawDot:getCenterPositionWithHexaPoint(getHexaPointByScreenPoint(nowMovePoint)) radius:MOVABLE_RAIDUS*1.5f color:[CCColor colorWithCcColor3b:ccc3(255, 0, 0)]];
+        for( int i = 1 ; i < [freedomMoveQueue count]; i++)
+        {
+            CGPoint pointFrom = getCenterPositionWithHexaPoint([[freedomMoveQueue objectAtIndex:i-1]CGPointValue]);
+            CGPoint pointTo = getCenterPositionWithHexaPoint([[freedomMoveQueue objectAtIndex:i]CGPointValue]);
+            [nowMoveNode drawSegmentFrom:pointFrom to:pointTo radius:BISHOP_PAST_RADIUS color:[CCColor colorWithCcColor4b:PAST_COLOR_BISHOP_ALREADY]];
+        }
     }
     else
     {
-        //Find Near Point
-        float min = INFINITY;
-        CGPoint nearHexaPoint;
-        for(NSValue *value in moveableAreaList)
+        CGPoint moveHexaPoint = getHexaPointByScreenPoint(nowMovePoint);
+        if([self isEnableMovePosition:moveHexaPoint])
         {
-            CGPoint point = [value CGPointValue];
-            if( min > powf((point.x - moveHexaPoint.x), 2) + powf((point.y - moveHexaPoint.y), 2) )
-            {
-                min = powf((point.x - moveHexaPoint.x), 2) + powf((point.y - moveHexaPoint.y), 2);
-                nearHexaPoint = point;
-            }
+            [nowMoveNode drawDot:getCenterPositionWithHexaPoint(getHexaPointByScreenPoint(nowMovePoint)) radius:MOVABLE_RAIDUS*1.5f color:[CCColor colorWithCcColor3b:ccc3(255, 0, 0)]];
         }
-        [nowMoveNode drawDot:getCenterPositionWithHexaPoint(nearHexaPoint) radius:MOVABLE_RAIDUS*1.5f color:[CCColor colorWithCcColor3b:ccc3(255, 0, 0)]];
-        nowMovePoint = getCenterPositionWithHexaPoint(nearHexaPoint);
+        else
+        {
+            //Find Near Point
+            CGPoint nearHexaPoint = pickedUnit.hexaPosition;
+            int vecType = getVectorTypeWithScreenPoints(nowMovePoint, getCenterPositionWithHexaPoint(pickedUnit.hexaPosition));
+            NSLog(@"vecType : %d",vecType);
+            while(1)
+            {
+                CGPoint point = nearHexaPoint - CGPointMake(dX[vecType], dY[vecType]);
+                if([self isEnableMovePosition:point] && CGPointSize(point, pickedUnit.hexaPosition) < CGPointSize(moveHexaPoint, pickedUnit.hexaPosition))
+                {
+                    nearHexaPoint = point;
+                    continue;
+                }
+                else
+                    break;
+            }
+//            for(NSValue *value in moveableAreaList)
+//            {
+//                CGPoint point = [value CGPointValue];
+//                if( min > powf((point.x - moveHexaPoint.x), 2) + powf((point.y - moveHexaPoint.y), 2) )
+//                {
+//                    min = powf((point.x - moveHexaPoint.x), 2) + powf((point.y - moveHexaPoint.y), 2);
+//                    nearHexaPoint = point;
+//                }
+//            }
+            [nowMoveNode drawDot:getCenterPositionWithHexaPoint(nearHexaPoint) radius:MOVABLE_RAIDUS*1.5f color:[CCColor colorWithCcColor3b:ccc3(255, 0, 0)]];
+            nowMovePoint = getCenterPositionWithHexaPoint(nearHexaPoint);
+        }
     }
-    
 }
 - (void)clearNowMoveNode
 {
@@ -563,20 +801,7 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
 
 
 
--(int)getVectorTypeByFrom:(CGPoint)fromHexaPoint To:(CGPoint)toHexaPoint
-{
-    CGPoint vec = ccp(toHexaPoint.x - fromHexaPoint.x, toHexaPoint.y - fromHexaPoint.y);
-    int vectorSize = [self getVectorSizeFrom:fromHexaPoint To:toHexaPoint];
-    CGPoint normalizedVec = ccp(vec.x / vectorSize, vec.y / vectorSize);
-    
-    for( int i = 0 ; i < 6; i ++)
-    {
-        if(dX[i] == normalizedVec.x
-           && dY[i] == normalizedVec.y)
-            return i;
-    }
-    return -1;
-}
+
 -(void)onMoveWithVectorType:(int)vectorType Length:(int)length Target:(Unit*)target isFirstMove:(bool)isFirstMove
 {
     if(length <= 0)
@@ -616,18 +841,16 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
         aniNode.node = target;
         aniNode.moveTo = getCenterPositionWithHexaPoint(target.hexaPosition);
         aniNode.type = MOVETO;
+        aniNode.duration = MOVE_DURATION;
         animationQueue[animationCount] = aniNode;
         animationCount++;
         
-        if([self isEnablePosition:target.hexaPosition] == NO)
+        if([self isInside:target.hexaPosition] == NO)
         {
             [self thisGuyKiiled:target];
         }
         
-        if(firstGuy.owner != target.owner)
-        {
-            [self applyDamageWithAttacker:target Target:firstGuy];
-        }
+        
         [self pushByPusher:target Target:lastGuy lastLength:(length-costLength)  isFirstPush:isFirstMove];
     }
     else
@@ -638,10 +861,11 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
         aniNode.node = target;
         aniNode.moveTo = getCenterPositionWithHexaPoint(target.hexaPosition);
         aniNode.type = MOVETO;
+        aniNode.duration = MOVE_DURATION;
         animationQueue[animationCount] = aniNode;
         animationCount++;
         
-        if([self isEnablePosition:target.hexaPosition] == NO)
+        if([self isInside:target.hexaPosition] == NO)
         {
             [self thisGuyKiiled:target];
         }
@@ -663,12 +887,17 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
 }
 -(void)pushByPusher:(Unit*)pusher Target:(Unit*)target lastLength:(int)lastLength isFirstPush:(bool)isFirstPush
 {
+    
     if(isFirstPush)
     {
-        [self onMoveWithVectorType:[self getVectorTypeByFrom:pusher.hexaPosition To:target.hexaPosition] Length:pusher.damage - target.weight Target:target isFirstMove:NO];
+        [self onMoveWithVectorType:getVectorTypeWithHexaPoints(pusher.hexaPosition, target.hexaPosition) Length:pusher.damage - target.weight Target:target isFirstMove:NO];
     }
     else
-        [self onMoveWithVectorType:[self getVectorTypeByFrom:pusher.hexaPosition To:target.hexaPosition] Length:lastLength - target.weight Target:target isFirstMove:NO];
+        [self onMoveWithVectorType:getVectorTypeWithHexaPoints(pusher.hexaPosition, target.hexaPosition) Length:lastLength - target.weight Target:target isFirstMove:NO];
+    if(pusher.owner != target.owner)
+    {
+        [self applyDamageWithAttacker:target Target:pusher];
+    }
 }
 -(void)finishMove
 {
@@ -678,24 +907,23 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
 }
 -(void)thisGuyKiiled:(Unit*)unit
 {
-    //죽는 애니메이션 하셔~
-    AnimationNode aniNode;
-    aniNode.node = unit;
-    aniNode.type = DIE;
-    animationQueue[animationCount] = aniNode;
-    animationCount++;
-    
-    
-    //[self removeChild:unit cleanup:YES];
-    //[unitList removeObject:unit];
+    if(unit.isAlive == true)
+    {
+        unit.isAlive = false;
+        //죽는 애니메이션 하셔~
+        AnimationNode aniNode;
+        aniNode.node = unit;
+        aniNode.type = DIE;
+        animationQueue[animationCount] = aniNode;
+        animationCount++;
+        
+        
+        //[self removeChild:unit cleanup:YES];
+        //[unitList removeObject:unit];
+    }
 }
 
--(int)getVectorSizeFrom:(CGPoint)fromHexaPoint To:(CGPoint)toHexaPoint
-{
-    CGPoint vec = ccp(toHexaPoint.x - fromHexaPoint.x, toHexaPoint.y - fromHexaPoint.y);
-    if(abs(vec.x) > 0) return abs(vec.x);
-    else return abs(vec.y);
-}
+
 
 -(void)startAnimation
 {
@@ -763,9 +991,9 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     auto unitOnThere =[self getUnitInHexaPoint:hexa];
     if( unitOnThere != nil)
     {
-        [self pushByPusher:horse Target:unitOnThere lastLength:-1  isFirstPush:YES];
+        int vecType = getVectorTypeWithHexaPoints(horse.hexaPosition, unitOnThere.hexaPosition);
+        hexa = hexa -ccp(dX[vecType], dY[vecType]);
     }
-    
     
     
     CGPoint vec = getCenterPositionWithHexaPoint(hexa) - getCenterPositionWithHexaPoint(horse.hexaPosition);
@@ -787,15 +1015,73 @@ bool isMovalbeAction(CGPoint startHexaPoint, int velocity, CGPoint wannaGoHexaPo
     animationCount++;
     
     horse.hexaPosition = hexa;
-    if([self isEnablePosition:horse.hexaPosition] == NO)
+
+    
+    if([self isInside:horse.hexaPosition] == NO)
     {
         [self thisGuyKiiled:horse];
+        [self finishMove];
     }
-    
-    if( unitOnThere == nil)
+    else if( unitOnThere == nil)
     {
         [self finishMove];
     }
+    else
+    {
+        [self pushByPusher:horse Target:unitOnThere lastLength:-1  isFirstPush:YES];
+    }
+}
+
+-(void)freeMove:(Unit*)target MoveQueue:(NSMutableArray*)moveQueue
+{
+    float divideNumber;
+   
+    auto unitOnThere = [self getUnitInHexaPoint:[[freedomMoveQueue lastObject]CGPointValue]];
+    if(unitOnThere != nil)
+    {
+        divideNumber = [freedomMoveQueue count] - 2;
+    }
+    else
+    {
+        divideNumber = [freedomMoveQueue count] - 1;
+    }
+    for(int i = 1; i < [freedomMoveQueue count]; i++)
+    {
+        NSValue* value = [freedomMoveQueue objectAtIndex:i];
+        CGPoint point = [value CGPointValue];
+        if(i == [freedomMoveQueue count] -1)
+        {
+            if(unitOnThere != nil)
+            {
+                target.hexaPosition = [[freedomMoveQueue objectAtIndex:i-1]CGPointValue];
+                [self pushByPusher:target Target:unitOnThere lastLength:-1  isFirstPush:YES];
+                break;
+            }
+            else
+            {
+                target.hexaPosition = [[freedomMoveQueue lastObject]CGPointValue];
+            }
+            
+        }
+        AnimationNode aniNode;
+        aniNode.node = target;
+        aniNode.moveTo = getCenterPositionWithHexaPoint(point);
+        aniNode.type = MOVETO;
+        aniNode.duration = MOVE_DURATION / divideNumber;
+        animationQueue[animationCount] = aniNode;
+        animationCount++;
+    }
+    
+    if([self isInside:target.hexaPosition] == NO)
+    {
+        [self thisGuyKiiled:target];
+        [self finishMove];
+    }
+    else if( unitOnThere == nil)
+    {
+        [self finishMove];
+    }
+    
 }
 -(void)removeAnimationUnit
 {

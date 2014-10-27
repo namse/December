@@ -17,6 +17,7 @@
 @synthesize hp;
 @synthesize weight;
 @synthesize damage;
+@synthesize isAlive;
 
 +(id)UnitWithName:(NSString *)_name unitType:(enum UnitType)_unitType HP:(int)_hp Damage:(int)_damage Velocity:(int)_velocity weight:(int)_weight owner:(enum PlayerType)_owner HexaPosition:(CGPoint)_hexaPosition
 {
@@ -33,6 +34,7 @@
         owner = _owner;
         hexaPosition = _hexaPosition;
         unitType=_unitType;
+        isAlive = true;
         
         label_Body = [CCLabelTTF labelWithString:_name fontName:@"Verdana-Bold"fontSize:UNIT_SIZE];
         switch (owner) {

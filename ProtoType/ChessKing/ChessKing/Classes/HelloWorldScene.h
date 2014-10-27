@@ -25,6 +25,13 @@
 #define DIE_DURATION 0.3f
 #define JUMP_DURATION 0.3f
 #define MAX_ANIMATION_COUNT 100
+#define BISHOP_PAST_RADIUS (MOVABLE_RAIDUS * 1.5f)
+
+#define MOVABLE_AREA_COLOR_ENEMY ccc4(255, 30, 30, 196)
+#define MOVABLE_AREA_COLOR_ALIY ccc4(30, 128, 30, 196)
+#define MOVABLE_AREA_COLOR_OUTSIDE ccc4(30,128,128, 196)
+#define MOVABLE_AREA_COLOR_NORMAL ccc4(128, 30, 30, 196)
+#define PAST_COLOR_BISHOP_ALREADY ccc4(255, 255, 255, 196)
 //#define HEXA_INDEX_SHOW
 
 @interface HelloWorldScene : CCScene
@@ -54,9 +61,11 @@
         enum AnimationType type;
         CGPoint moveTo;
         ccBezierConfig jumpConfig;
+        float duration;
     }animationQueue[MAX_ANIMATION_COUNT];
     int animationCount;
     
+    NSMutableArray * freedomMoveQueue;
 }
 // -----------------------------------------------------------------------
 
@@ -64,6 +73,7 @@
 - (id)init;
 
 - (void)showMovableArea:(CGPoint)startHexaPoint velocity:(int)velocity;
+- (void)showMovableAreaWithFreeMove:(Unit*)target MoveQueue:(NSMutableArray*)moveQueue;
 - (void)showNowMoveNode;
 - (void)clearMovablePosition;
 - (void)clearNowMoveNode;
@@ -71,18 +81,16 @@
 -(void)generateMapByHardCoding;
 -(void)initMapBorder;
 -(void)initVerts;
--(bool)isEnablePosition:(CGPoint)hexaPoint;
+-(bool)isInside:(CGPoint)hexaPoint;
 -(bool)isEnableMovePosition:(CGPoint)hexaPoint;
 -(void)generateUnitByHardCoding;
 -(Unit*)getUnitInHexaPoint:(CGPoint)hexaPoint;
 
--(int)getVectorTypeByFrom:(CGPoint)fromHexaPoint To:(CGPoint)toHexaPoint;
 -(void)onMoveWithVectorType:(int)vectorType Length:(int)length Target:(Unit*)target isFirstMove:(bool)isFirstMove;
 -(void)finishMove;
 -(void)applyDamageWithAttacker:(Unit*)attacker Target:(Unit*)target;
 -(void)pushByPusher:(Unit*)pusher Target:(Unit*)target lastLength:(int)lastLength isFirstPush:(bool)isFirstPush;
 -(void)thisGuyKiiled:(Unit*)unit;
--(int)getVectorSizeFrom:(CGPoint)fromHexaPoint To:(CGPoint)toHexaPoint;
 
 -(void)startAnimation;
 -(void)nextAnimation;
@@ -91,5 +99,6 @@
 -(void)removeAnimationUnit;
 
 -(void)horeseJump:(Unit*)horse ToHexa:(CGPoint)hexa;
+-(void)freeMove:(Unit*)target MoveQueue:(NSMutableArray*)moveQueue;
 // -----------------------------------------------------------------------
 @end
