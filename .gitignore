@@ -207,7 +207,7 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-!Supporting Files/Prefix.pch
+!Prefix.pch
 
 # CocoaPods
 #
