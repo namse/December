@@ -195,6 +195,8 @@ int getVectorTypeWithScreenPoints(CGPoint fromPoint, CGPoint toPoint)
     moveableAreaList = [NSMutableArray array];
     animationCount = 0;
     freedomMoveQueue = [NSMutableArray array];
+    turnCount = 0;
+    isFirstTurn = true;
     
     // Enable touch handling on scene node
     self.userInteractionEnabled = YES;
@@ -333,48 +335,57 @@ int getVectorTypeWithScreenPoints(CGPoint fromPoint, CGPoint toPoint)
         
         if(pickedUnit.unitType == BISHOP)
         {
-            bool didGoThere = false;
-            bool ableGoThere = false;
-            for(NSValue* value in freedomMoveQueue)
+            if(CGPointEqualToPoint(getHexaPointByScreenPoint(touchLoc), pickedUnit.hexaPosition))
             {
-                CGPoint point = [value CGPointValue];
-                if(CGPointEqualToPoint(point, getHexaPointByScreenPoint(touchLoc)))
-                {
-                    didGoThere = true;
-                    break;
-                }
-            }
-            
-            for(NSValue* value in moveableAreaList)
-            {
-                CGPoint point = [value CGPointValue];
-                if(CGPointEqualToPoint(point, getHexaPointByScreenPoint(touchLoc)))
-                {
-                    for( int i = 0 ; i < 6 ; i ++)
-                    {
-                        CGPoint dPoint = getHexaPointByScreenPoint(touchLoc) + ccp(dX[i], dY[i]);
-                        if(CGPointEqualToPoint(dPoint, [[freedomMoveQueue lastObject]CGPointValue]))
-                        {
-                            ableGoThere = true;
-                            break;
-                        }
-                    }
-                    if(ableGoThere == true)
-                        break;
-                }
-            }
-            if(ableGoThere == true && didGoThere == NO && [freedomMoveQueue count] <= pickedUnit.velocity)
-            {
+                [freedomMoveQueue removeAllObjects];
                 [freedomMoveQueue addObject:[NSValue valueWithCGPoint:getHexaPointByScreenPoint(touchLoc)]];
             }
-            else if(didGoThere == true)
+            else
             {
-                if([freedomMoveQueue count] > 1)
+                
+                bool didGoThere = false;
+                bool ableGoThere = false;
+                for(NSValue* value in freedomMoveQueue)
                 {
-                    CGPoint point = [[freedomMoveQueue objectAtIndex:[freedomMoveQueue indexOfObject:[freedomMoveQueue lastObject]]-1]CGPointValue];
+                    CGPoint point = [value CGPointValue];
                     if(CGPointEqualToPoint(point, getHexaPointByScreenPoint(touchLoc)))
                     {
-                        [freedomMoveQueue removeLastObject];
+                        didGoThere = true;
+                        break;
+                    }
+                }
+                
+                for(NSValue* value in moveableAreaList)
+                {
+                    CGPoint point = [value CGPointValue];
+                    if(CGPointEqualToPoint(point, getHexaPointByScreenPoint(touchLoc)))
+                    {
+                        for( int i = 0 ; i < 6 ; i ++)
+                        {
+                            CGPoint dPoint = getHexaPointByScreenPoint(touchLoc) + ccp(dX[i], dY[i]);
+                            if(CGPointEqualToPoint(dPoint, [[freedomMoveQueue lastObject]CGPointValue]))
+                            {
+                                ableGoThere = true;
+                                break;
+                            }
+                        }
+                        if(ableGoThere == true)
+                            break;
+                    }
+                }
+                if(ableGoThere == true && didGoThere == NO && [freedomMoveQueue count] <= pickedUnit.velocity)
+                {
+                    [freedomMoveQueue addObject:[NSValue valueWithCGPoint:getHexaPointByScreenPoint(touchLoc)]];
+                }
+                else if(didGoThere == true)
+                {
+                    if([freedomMoveQueue count] > 1)
+                    {
+                        CGPoint point = [[freedomMoveQueue objectAtIndex:[freedomMoveQueue indexOfObject:[freedomMoveQueue lastObject]]-1]CGPointValue];
+                        if(CGPointEqualToPoint(point, getHexaPointByScreenPoint(touchLoc)))
+                        {
+                            [freedomMoveQueue removeLastObject];
+                        }
                     }
                 }
             }
@@ -389,8 +400,8 @@ int getVectorTypeWithScreenPoints(CGPoint fromPoint, CGPoint toPoint)
         {
             pickedUnit.position = ccp( (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).x * 9.f + touchLoc.x) / 10.f,
                                       (getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).y * 9.f + touchLoc.y) / 10.f);
-            nowMovePoint = ccp( getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).x * 2.5 - touchLoc.x * 1.5 ,
-                               getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).y * 2.5 - touchLoc.y * 1.5);
+            nowMovePoint = ccp( getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).x * (1.f+PULL_RATIO) - touchLoc.x * PULL_RATIO ,
+                               getCenterPositionWithHexaPoint(pickedUnit.hexaPosition).y * (1.f+PULL_RATIO) - touchLoc.y * PULL_RATIO);
         
             // 아래 이거 쓸모있는건가?
             if(CGPointEqualToPoint(getHexaPointByScreenPoint(touchLoc), pickedUnit.hexaPosition) )
@@ -428,9 +439,47 @@ int getVectorTypeWithScreenPoints(CGPoint fromPoint, CGPoint toPoint)
                                     Target:pickedUnit isFirstMove:YES];
                 
             }
-            if(whoTurn == PLAYER_1)
-                whoTurn = PLAYER_2;
-            else whoTurn = PLAYER_1;
+            turnCount++;
+            
+            bool isNearAlkaStone = false;
+            for(Unit* unit in unitList)
+            {
+                if(unit.owner == pickedUnit.owner)
+                {
+                    for(int i = 0; i < 6; i++)
+                    {
+                        if(CGPointEqualToPoint(alkaStone.hexaPosition - unit.hexaPosition, ccp(dX[i], dY[i])))
+                        {
+                            isNearAlkaStone = true;
+                        }
+                    }
+                }
+            }
+            
+            
+            int maxturn = MAX_TURN_COUNT;
+            if(isNearAlkaStone == true)
+            {
+                maxturn++;
+            }
+            if(isFirstTurn == true)
+            {
+                maxturn = MAX_TURN_COUNT;
+            }
+            if(turnCount < maxturn)
+            {
+                ;
+            }
+            else
+            {
+                isFirstTurn = false;
+                turnCount = 0;
+                if(whoTurn == PLAYER_1)
+                {
+                    whoTurn = PLAYER_2;
+                }
+                else whoTurn = PLAYER_1;
+            }
         }
     }
     [self clearMovablePosition];
@@ -597,10 +646,10 @@ int getVectorTypeWithScreenPoints(CGPoint fromPoint, CGPoint toPoint)
 
 -(void)generateMapByHardCoding
 {
-    int maxY = 10;
     int maxX = 7;
+    int maxY = 10;
     int startX = 2;
-    int startY = 2;
+    int startY = 3;
     for( int x = 0 ; x < maxX; x ++)
     {
         for( int y = 0 ; y < maxY - (x%2) ; y++)
@@ -610,6 +659,7 @@ int getVectorTypeWithScreenPoints(CGPoint fromPoint, CGPoint toPoint)
             [mapNodeList addObject:[NSValue valueWithCGPoint:point]];
         }
     }
+    self.position = self.position;
 }
 
 -(void)initVerts
@@ -674,27 +724,27 @@ int getVectorTypeWithScreenPoints(CGPoint fromPoint, CGPoint toPoint)
     
     //Player_1
     {
-        Unit* pawn1 = [Unit UnitWithName:@"P" unitType:PAWN HP:5 Damage:1 Velocity:2 weight:0 owner:PLAYER_1 HexaPosition:ccp(4,6)];
+        Unit* pawn1 = [Unit UnitWithName:@"P" unitType:PAWN HP:30 Damage:3 Velocity:2 weight:0 owner:PLAYER_1 HexaPosition:ccp(4,7)];
         [self addChild:pawn1];
         [unitList addObject:pawn1];
         
-        Unit* pawn2 = [Unit UnitWithName:@"P" unitType:PAWN HP:5 Damage:1 Velocity:2 weight:0 owner:PLAYER_1 HexaPosition:ccp(6,7)];
+        Unit* pawn2 = [Unit UnitWithName:@"P" unitType:PAWN HP:30 Damage:3 Velocity:2 weight:0 owner:PLAYER_1 HexaPosition:ccp(6,8)];
         [self addChild:pawn2];
         [unitList addObject:pawn2];
         
-        Unit* horse1 = [Unit UnitWithName:@"H" unitType:HORSE HP:7 Damage:2 Velocity:4 weight:0 owner:PLAYER_1 HexaPosition:ccp(4,5)];
+        Unit* horse1 = [Unit UnitWithName:@"H" unitType:HORSE HP:30 Damage:3 Velocity:4 weight:0 owner:PLAYER_1 HexaPosition:ccp(4,6)];
         [self addChild:horse1];
         [unitList addObject:horse1];
         
-        Unit* horse2 = [Unit UnitWithName:@"H" unitType:HORSE HP:7 Damage:2 Velocity:4 weight:0 owner:PLAYER_1 HexaPosition:ccp(6,6)];
+        Unit* horse2 = [Unit UnitWithName:@"H" unitType:HORSE HP:30 Damage:3 Velocity:4 weight:0 owner:PLAYER_1 HexaPosition:ccp(6,7)];
         [self addChild:horse2];
         [unitList addObject:horse2];
         
-        Unit* bishop = [Unit UnitWithName:@"B" unitType:BISHOP HP:6 Damage:3 Velocity:3 weight:1 owner:PLAYER_1 HexaPosition:ccp(5,6)];
+        Unit* bishop = [Unit UnitWithName:@"B" unitType:BISHOP HP:30 Damage:2 Velocity:3 weight:0 owner:PLAYER_1 HexaPosition:ccp(5,7)];
         [self addChild:bishop];
         [unitList addObject:bishop];
         
-        Unit* king = [Unit UnitWithName:@"K" unitType:KING HP:6 Damage:3 Velocity:3 weight:1 owner:PLAYER_1 HexaPosition:ccp(5,5)];
+        Unit* king = [Unit UnitWithName:@"K" unitType:KING HP:30 Damage:3 Velocity:3 weight:1 owner:PLAYER_1 HexaPosition:ccp(5,6)];
         [self addChild:king];
         [unitList addObject:king];
     }
@@ -702,30 +752,34 @@ int getVectorTypeWithScreenPoints(CGPoint fromPoint, CGPoint toPoint)
     
     //Player_2
     {
-        Unit* pawn1 = [Unit UnitWithName:@"P" unitType:PAWN HP:5 Damage:1 Velocity:2 weight:0 owner:PLAYER_2 HexaPosition:ccp(4,9)];
+        Unit* pawn1 = [Unit UnitWithName:@"P" unitType:PAWN HP:30 Damage:3 Velocity:2 weight:0 owner:PLAYER_2 HexaPosition:ccp(4,10)];
         [self addChild:pawn1];
         [unitList addObject:pawn1];
         
-        Unit* pawn2 = [Unit UnitWithName:@"P" unitType:PAWN HP:5 Damage:1 Velocity:2 weight:0 owner:PLAYER_2 HexaPosition:ccp(6,10)];
+        Unit* pawn2 = [Unit UnitWithName:@"P" unitType:PAWN HP:30 Damage:3 Velocity:2 weight:0 owner:PLAYER_2 HexaPosition:ccp(6,11)];
         [self addChild:pawn2];
         [unitList addObject:pawn2];
         
-        Unit* horse1 = [Unit UnitWithName:@"H" unitType:HORSE HP:7 Damage:2 Velocity:4 weight:0 owner:PLAYER_2 HexaPosition:ccp(4,10)];
+        Unit* horse1 = [Unit UnitWithName:@"H" unitType:HORSE HP:30 Damage:3 Velocity:4 weight:0 owner:PLAYER_2 HexaPosition:ccp(4,11)];
         [self addChild:horse1];
         [unitList addObject:horse1];
         
-        Unit* horse2 = [Unit UnitWithName:@"H" unitType:HORSE HP:7 Damage:2 Velocity:4 weight:0 owner:PLAYER_2 HexaPosition:ccp(6,11)];
+        Unit* horse2 = [Unit UnitWithName:@"H" unitType:HORSE HP:30 Damage:3 Velocity:4 weight:0 owner:PLAYER_2 HexaPosition:ccp(6,12)];
         [self addChild:horse2];
         [unitList addObject:horse2];
         
-        Unit* bishop = [Unit UnitWithName:@"B" unitType:BISHOP HP:6 Damage:3 Velocity:3 weight:1 owner:PLAYER_2 HexaPosition:ccp(5,10)];
+        Unit* bishop = [Unit UnitWithName:@"B" unitType:BISHOP HP:30 Damage:2 Velocity:3 weight:0 owner:PLAYER_2 HexaPosition:ccp(5,11)];
         [self addChild:bishop];
         [unitList addObject:bishop];
         
-        Unit* king = [Unit UnitWithName:@"K" unitType:KING HP:6 Damage:3 Velocity:3 weight:1 owner:PLAYER_2 HexaPosition:ccp(5,11)];
+        Unit* king = [Unit UnitWithName:@"K" unitType:KING HP:30 Damage:3 Velocity:3 weight:1 owner:PLAYER_2 HexaPosition:ccp(5,12)];
         [self addChild:king];
         [unitList addObject:king];
     }
+    
+    alkaStone = [Unit UnitWithName:@"A" unitType:NPC HP:20 Damage:6 Velocity:0 weight:1 owner:PLAYER_NPC HexaPosition:ccp(5, 9)];
+    [self addChild:alkaStone];
+    [unitList addObject:alkaStone];
     
     for (Unit* unit in unitList) {
         [unit setPosition:getCenterPositionWithHexaPoint(unit.hexaPosition)];

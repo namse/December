@@ -12,11 +12,13 @@
 #define UNIT_SIZE 60.f
 enum PlayerType
 {
+    PLAYER_NPC = 0,
     PLAYER_1 = 1,
     PLAYER_2 = 2,
 };
 enum UnitType
 {
+    NPC,
     PAWN,
     HORSE,
     BISHOP,

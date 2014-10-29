@@ -19,7 +19,7 @@
 
 #define MAP_WIDTH 30
 #define MAP_HEIGHT 30
-#define MAP_RADIUS 50.f
+#define MAP_RADIUS 48.f
 #define MOVABLE_RAIDUS 10.f
 #define MOVE_DURATION 0.3f
 #define DIE_DURATION 0.3f
@@ -32,6 +32,11 @@
 #define MOVABLE_AREA_COLOR_OUTSIDE ccc4(30,128,128, 196)
 #define MOVABLE_AREA_COLOR_NORMAL ccc4(128, 30, 30, 196)
 #define PAST_COLOR_BISHOP_ALREADY ccc4(255, 255, 255, 196)
+
+#define MAX_TURN_COUNT 2
+
+#define PULL_RATIO 1.5f
+
 //#define HEXA_INDEX_SHOW
 
 @interface HelloWorldScene : CCScene
@@ -41,7 +46,7 @@
     
     bool isPicked;
     Unit* pickedUnit;
-    
+    Unit* alkaStone;
     CCDrawNode* movableFocusArea;
     NSMutableArray * moveableAreaList;
     CCDrawNode* nowMoveNode;
@@ -51,6 +56,9 @@
     NSMutableArray * mapNodeList;
     
     enum PlayerType whoTurn;
+    int turnCount;
+    bool isFirstTurn;
+    
     enum AnimationType{
         HORSEJUMP,
         MOVETO,
