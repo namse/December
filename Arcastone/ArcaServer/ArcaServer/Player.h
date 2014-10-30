@@ -2,7 +2,9 @@
 class Player
 {
 public:
-	Player();
+	Player(PlayerNumber playerId);
 	~Player();
+private:
+	PlayerNumber m_PlayerID;
 };
 

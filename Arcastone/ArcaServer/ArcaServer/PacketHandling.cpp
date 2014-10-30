@@ -2,6 +2,7 @@
 #include "ClientSession.h"
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"
+#include "PlayerManager.h"
 
 //@{ Handler Helper
 
@@ -121,79 +122,18 @@ void ClientSession::OnRead(size_t len)
 /////////////////////////////////////////////////////////
 REGISTER_HANDLER(PKT_CS_LOGIN)
 {
-	LoginRequest inPacket;
+	Packet::LoginRequest inPacket;
 	if (false == session->ParsePacket(inPacket))
 	{
 		printf("[DEBUG] packet parsing error", inPacket.mType);
 		return;
 	}
 
-	LoadPlayerDataContext* newDbJob = new LoadPlayerDataContext(session->GetSocketKey(), inPacket.mPlayerId);
-	GDatabaseJobManager->PushDatabaseJobRequest(newDbJob);
+	PlayerNumber playerId = GPlayerManager->CreatePlayer();
+	session->SetPlayerId(playerId);
 
+	Packet::LoginResult outPacket;
+	session->SendRequest(&outPacket);
 }
-
-REGISTER_HANDLER(PKT_CS_CHAT)
-{
-	ChatBroadcastRequest inPacket;
-	if (false == session->ParsePacket(inPacket))
-	{
-		printf("[DEBUG] packet parsing error", inPacket.mType);
-		return;
-	}
-
-	if (inPacket.mPlayerId != session->GetPlayerId())
-	{
-		printf("[DEBUG] PKT_CS_CHAT: invalid player ID", session->GetPlayerId());
-		return;
-	}
-
-	/// chatting의 경우 여기서 바로 방송
-	
-	ChatBroadcastResult outPacket;
-	outPacket.mPlayerId = inPacket.mPlayerId;
-	strcpy_s(outPacket.mName, session->GetPlayerName());
-	strcpy_s(outPacket.mChat, inPacket.mChat);
-
-	/// 채팅은 바로 방송 하면 끝
-	if (!session->Broadcast(&outPacket))
-	{
-		session->Disconnect();
-	}
-}
-
-
-REGISTER_HANDLER(PKT_CS_MOVE)
-{
-	MoveRequest inPacket;
-	if (false == session->ParsePacket(inPacket))
-	{
-		printf("[DEBUG] packet parsing error", inPacket.mType);
-		return;
-	}
-
-	if (inPacket.mPlayerId != session->GetPlayerId())
-	{
-		printf("[DEBUG] PKT_CS_MOVE: invalid player ID", session->GetPlayerId());
-		return;
-	}
-
-	/// 플레이어 좌표 업데이트하고 바로 방송하면 끝
-	session->SetPosition(inPacket.mPosX, inPacket.mPosY);
-
-	MoveBroadcastResult outPacket;
-	outPacket.mPlayerId = inPacket.mPlayerId;
-	outPacket.mPosX = inPacket.mPosX;
-	outPacket.mPosY = inPacket.mPosY;
-
-	if (!session->Broadcast(&outPacket))
-	{
-		session->Disconnect();
-	}
-
-}
-
-
-
 
 

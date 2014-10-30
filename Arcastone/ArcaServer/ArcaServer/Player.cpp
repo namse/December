@@ -2,8 +2,9 @@
 #include "Player.h"
 
 
-Player::Player()
+Player::Player(PlayerNumber playerId) : m_PlayerID(playerId)
 {
+
 }
 
 

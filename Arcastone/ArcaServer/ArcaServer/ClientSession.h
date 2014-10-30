@@ -25,7 +25,7 @@ class ClientSession : public RefCountable, public ObjectPool<ClientSession>
 {
 public:
 	ClientSession(SOCKET sock)
-		: mConnected(false), mLogon(false), mSocket(sock), mPlayerId(-1), mSendBuffer(BUFSIZE), mRecvBuffer(BUFSIZE)
+		: mConnected(false), mLogon(false), mSocket(sock), mSendBuffer(BUFSIZE), mRecvBuffer(BUFSIZE)
 		, mPosX(0), mPosY(0)
 	{
 		memset(&mClientAddr, 0, sizeof(SOCKADDR_IN)) ;
@@ -34,18 +34,15 @@ public:
 	virtual ~ClientSession() {}
 
 public:
-	int	GetPlayerId() const	{ return mPlayerId; }
+	int	GetPlayerId() const	{ return m_PlayerId; }
 	const char* GetPlayerName() const { return mPlayerName;  }
 	SOCKET GetSocketKey() const { return mSocket;  }
 	void SetPosition(float x, float y) { mPosX = x; mPosY = y; }
-
-	void	LoginDone(int pid, float x, float y, const char* name);
-	void	UpdateDone();
+	void SetPlayerId(PlayerNumber playerId) { m_PlayerId = playerId; }
 
 public: 
 	bool	IsConnected() const { return mConnected; }
 	void	OnTick();
-	void	OnDbUpdate(); ///< 주기적으로 데이터베이스에 업데이트
 
 	template <class PKT_TYPE>
 	bool ParsePacket(PKT_TYPE& pkt)
@@ -78,7 +75,6 @@ private:
 	bool			mLogon ;
 	SOCKET			mSocket ;
 
-	int				mPlayerId ;
 	SOCKADDR_IN		mClientAddr ;
 
 	CircularBuffer	mSendBuffer ;
@@ -86,6 +82,8 @@ private:
 
 	OverlappedIO	mOverlappedSend ;
 	OverlappedIO	mOverlappedRecv ;
+
+	PlayerNumber	m_PlayerId;
 
 	friend class ClientManager ;
 } ;

@@ -1,29 +1,18 @@
 #pragma once
+#include "Game.h"
+
 class GameManager
 {
-private:
+public:
 	GameManager();
 	~GameManager();
-	static GameManager* pInstance;
 
-public:
-	static GameManager* GetInstance()
-	{
-		if (nullptr == pInstance)
-		{
-			pInstance = new GameManager();
-		}
-		return pInstance;
-	}
+	void CreateGame();
 
-	void FreeInstance()
-	{
-		if (nullptr != pInstance)
-		{
-			delete pInstance;
-			pInstance = nullptr;
-		}
-		return;
-	}
+
+private:
+	std::map<Game*, GameNumber> m_GameList;
+
 };
 
+extern GameManager* GGameManager;

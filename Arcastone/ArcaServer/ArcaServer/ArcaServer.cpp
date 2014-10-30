@@ -11,6 +11,8 @@
 #include "ClientManager.h"
 #include "DatabaseJobManager.h"
 #include "DbHelper.h"
+#include "PlayerManager.h"
+#include "GameManager.h"
 
 #pragma comment(lib,"ws2_32.lib")
 
@@ -26,6 +28,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	/// Manager Init
 	GClientManager = new ClientManager ;
 	GDatabaseJobManager = new DatabaseJobManager ;
+	GPlayerManager = new PlayerManager();
+	GGameManager = new GameManager();
 
 	/// DB Helper √ ±‚»≠
 	if ( false == DbHelper::Initialize(DB_CONN_STR) )
@@ -97,6 +101,8 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	delete GClientManager ;
 	delete GDatabaseJobManager ;
+	delete GPlayerManager ;
+	delete GGameManager ;
 	return 0 ;
 }
 

@@ -21,7 +21,7 @@ bool ClientSession::OnConnect(SOCKADDR_IN* addr)
 
 	printf("[DEBUG] Client Connected: IP=%s, PORT=%d\n", inet_ntoa(mClientAddr.sin_addr), ntohs(mClientAddr.sin_port)) ;
 	
-	mConnected = true ;
+	mConnected = true;
 
 	return PostRecv() ;
 }
@@ -159,23 +159,6 @@ void ClientSession::OnTick()
 	CallFuncAfter(PLAYER_HEART_BEAT, this, &ClientSession::OnTick);
 }
 
-void ClientSession::OnDbUpdate()
-{
-	if (!IsConnected())
-		return;
-
-	UpdatePlayerDataContext* updatePlayer = new UpdatePlayerDataContext(mSocket, mPlayerId) ;
-	 
-	updatePlayer->mPosX = mPosX ;
-	updatePlayer->mPosY = mPosY ;
-	strcpy_s(updatePlayer->mComment, "updated_test") ; ///< 일단은 테스트를 위한 코멘트
-	GDatabaseJobManager->PushDatabaseJobRequest(updatePlayer) ;
-
-	CallFuncAfter(PLAYER_DB_UPDATE_INTERVAL, this, &ClientSession::OnDbUpdate);
-
-}
-
-
 void ClientSession::DatabaseJobDone(DatabaseJobContext* result)
 {
 	CRASH_ASSERT( mSocket == result->mSockKey ) ;
@@ -187,12 +170,12 @@ void ClientSession::DatabaseJobDone(DatabaseJobContext* result)
 	{
 		LoadPlayerDataContext* login = dynamic_cast<LoadPlayerDataContext*>(result) ;
 
-		LoginDone(login->mPlayerId, (float)login->mPosX, (float)login->mPosY, login->mPlayerName) ;
+		//LoginDone(login->mPlayerId, (float)login->mPosX, (float)login->mPosY, login->mPlayerName) ;
 	
 	}
 	else if ( typeInfo == typeid(UpdatePlayerDataContext) )
 	{
-		UpdateDone() ;
+		//UpdateDone() ;
 	}
 	else
 	{
@@ -200,34 +183,3 @@ void ClientSession::DatabaseJobDone(DatabaseJobContext* result)
 	}
 
 }
-
-void ClientSession::UpdateDone()
-{
-	/// 콘텐츠를 넣기 전까지는 딱히 해줄 것이 없다. 단지 테스트를 위해서..
-	printf("Player[%d] Update Done\n", mPlayerId) ;
-}
-
-
-
-void ClientSession::LoginDone(int pid, float x, float y, const char* name)
-{
-	LoginResult outPacket ;
-
-	outPacket.mPlayerId = mPlayerId = pid ;
-	outPacket.mPosX = mPosX = x ;
-	outPacket.mPosY = mPosY = y ;
-	strcpy_s(mPlayerName, name) ;
-	strcpy_s(outPacket.mName, name) ;
-
-	SendRequest(&outPacket) ;
-
-	mLogon = true ;
-
-	/// heartbeat gogo
-	OnTick();
-
-	/// first db update gogo
-	OnDbUpdate();
-}
-
-
