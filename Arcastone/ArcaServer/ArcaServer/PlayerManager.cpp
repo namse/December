@@ -17,8 +17,8 @@ PlayerNumber PlayerManager::CreatePlayer()
 {
 	static PlayerNumber playerId = 0;
 	playerId++;
-	auto player = new Player(playerId);
-	m_PlayerList.insert(PlayerList::value_type(playerId, player));
+	auto newPlayer = new Player(playerId);
+	m_PlayerList.insert(PlayerList::value_type(playerId, newPlayer));
 	
 	return playerId;
 }

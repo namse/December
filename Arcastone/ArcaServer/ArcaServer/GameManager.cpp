@@ -7,7 +7,16 @@ GameManager::GameManager()
 {
 }
 
-
 GameManager::~GameManager()
 {
+}
+
+GameNumber GameManager::CreateGame(PlayerNumber player1, PlayerNumber player2)
+{
+	static GameNumber GameId = 0;
+	GameId++;
+	auto newGame = new Game(GameId);
+	m_GameList.insert(GameList::value_type(GameId, newGame));
+
+	return GameId;
 }

@@ -3,6 +3,7 @@
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"
 #include "PlayerManager.h"
+#include "AutoMatcher.h"
 
 //@{ Handler Helper
 
@@ -134,6 +135,8 @@ REGISTER_HANDLER(PKT_CS_LOGIN)
 
 	Packet::LoginResult outPacket;
 	session->SendRequest(&outPacket);
+
+	GAutoMatcher->AddWaitPlayer(playerId);
 }
 
 

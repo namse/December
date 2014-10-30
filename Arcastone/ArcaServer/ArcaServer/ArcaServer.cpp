@@ -13,6 +13,7 @@
 #include "DbHelper.h"
 #include "PlayerManager.h"
 #include "GameManager.h"
+#include "AutoMatcher.h"
 
 #pragma comment(lib,"ws2_32.lib")
 
@@ -30,6 +31,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	GDatabaseJobManager = new DatabaseJobManager ;
 	GPlayerManager = new PlayerManager();
 	GGameManager = new GameManager();
+	GAutoMatcher = new AutoMatcher();
 
 	/// DB Helper √ ±‚»≠
 	if ( false == DbHelper::Initialize(DB_CONN_STR) )
@@ -103,6 +105,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	delete GDatabaseJobManager ;
 	delete GPlayerManager ;
 	delete GGameManager ;
+	delete GAutoMatcher ;
 	return 0 ;
 }
 

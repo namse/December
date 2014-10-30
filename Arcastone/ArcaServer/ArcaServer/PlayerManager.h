@@ -12,7 +12,7 @@ public:
 	Player*			GetPlayer(PlayerNumber playerId);
 
 private:
-	typedef std::map < PlayerNumber, Player*> PlayerList;
+	typedef std::map<PlayerNumber, Player*> PlayerList;
 	PlayerList m_PlayerList;
 };
 

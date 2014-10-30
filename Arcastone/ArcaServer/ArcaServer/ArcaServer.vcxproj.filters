@@ -108,6 +108,9 @@
     <ClInclude Include="ArcaServer.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="AutoMatcher.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CircularBuffer.cpp">
@@ -175,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="ArcaServer.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoMatcher.cpp">
+      <Filter>GameObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
