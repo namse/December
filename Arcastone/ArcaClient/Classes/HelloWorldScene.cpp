@@ -32,55 +32,15 @@ bool HelloWorld::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-    /////////////////////////////
-    // 2. add a menu item with "X" image, which is clicked to quit the program
-    //    you may modify it.
 
-    // add a "close" icon to exit the progress. it's an autorelease object
-    auto closeItem = MenuItemImage::create(
-                                           "CloseNormal.png",
-                                           "CloseSelected.png",
-                                           CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
+
+	TcpClient::getInstance()->loginRequest();
     
-	closeItem->setPosition(Vec2(origin.x + visibleSize.width - closeItem->getContentSize().width/2 ,
-                                origin.y + closeItem->getContentSize().height/2));
-
-    // create menu, it's an autorelease object
-    auto menu = Menu::create(closeItem, NULL);
-    menu->setPosition(Vec2::ZERO);
-    this->addChild(menu, 1);
-
-    /////////////////////////////
-    // 3. add your codes below...
-
-	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-	mPlayerSprite = CCSprite::create("Player.png", CCRectMake(0, 0, 27, 40));
-	mPlayerSprite->setPosition(ccp(mPlayerSprite->getContentSize().width / 2, winSize.height / 2));
-	this->addChild(mPlayerSprite);
-	
-	mPlayerSprite->retain();
-    
-	/// 게임루프에서 돌도록 추가
 	this->schedule(schedule_selector(HelloWorld::gameLogic), 1.0f);
 
 	this->setKeyboardEnabled(true);
 
     return true;
-}
-
-
-void HelloWorld::menuCloseCallback(Ref* pSender)
-{
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
-	MessageBox("You pressed the close button. Windows Store Apps do not implement a close button.","Alert");
-    return;
-#endif
-
-    Director::getInstance()->end();
-
-#if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS)
-    exit(0);
-#endif
 }
 
 
