@@ -168,7 +168,7 @@ void TcpClient::processPacket()
 		{
 		case PKT_SC_LOGIN:
 			{
-				LoginResult recvData;
+				Packet::LoginResult recvData;
 				bool ret = m_recvBuffer.Read((char*)&recvData, recvData.mSize);
 			}
 			break;
