@@ -4,8 +4,8 @@
 
 NPC::NPC()
 {
+	m_ObjectType = OT_NPC;
 }
-
 
 NPC::~NPC()
 {

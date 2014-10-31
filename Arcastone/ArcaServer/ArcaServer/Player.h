@@ -1,15 +1,16 @@
 #pragma once
-#include "Unit.h"
+#include "GameObject.h"
 #include "Group.h"
 
 class Player
 {
 public:
-	Player(PlayerNumber playerId);
+	Player(PlayerNumber playerNum);
 	~Player();
+
 private:
-	PlayerNumber	m_PlayerID;
-	std::vector<Unit*>	m_UnitList;
-	std::vector<Group*>	m_GroupList;
+	PlayerNumber		m_PlayerNum;
+	std::vector<Group*>			m_GroupList;
+	std::vector<GameObject*>	m_UnitList;
 };
 

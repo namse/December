@@ -11,14 +11,15 @@ PlayerManager::PlayerManager()
 
 PlayerManager::~PlayerManager()
 {
+	
 }
 
 PlayerNumber PlayerManager::CreatePlayer()
 {
-	static PlayerNumber playerId = 0;
-	playerId++;
-	auto newPlayer = new Player(playerId);
-	m_PlayerList.insert(PlayerList::value_type(playerId, newPlayer));
+	static PlayerNumber playerNum = 0;
+	playerNum++;
+	auto newPlayer = new Player(playerNum);
+	m_PlayerList.insert(PlayerList::value_type(playerNum, newPlayer));
 	
-	return playerId;
+	return playerNum;
 }

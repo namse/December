@@ -8,8 +8,8 @@ public:
 	~PlayerManager();
 
 	PlayerNumber	CreatePlayer();
-	void			DeletePlayer(PlayerNumber playerId);
-	Player*			GetPlayer(PlayerNumber playerId);
+	void			DeletePlayer(PlayerNumber playerNum);
+	Player*			GetPlayer(PlayerNumber playerNum);
 
 private:
 	typedef std::map<PlayerNumber, Player*> PlayerList;

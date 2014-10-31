@@ -130,13 +130,13 @@ REGISTER_HANDLER(PKT_CS_LOGIN)
 		return;
 	}
 
-	PlayerNumber playerId = GPlayerManager->CreatePlayer();
-	session->SetPlayerId(playerId);
+	PlayerNumber playerNum = GPlayerManager->CreatePlayer();
+	session->SetPlayerId(playerNum);
 
 	Packet::LoginResult outPacket;
 	session->SendRequest(&outPacket);
 
-	GAutoMatcher->AddWaitPlayer(playerId);
+	GAutoMatcher->AddWaitPlayer(playerNum);
 }
 
 

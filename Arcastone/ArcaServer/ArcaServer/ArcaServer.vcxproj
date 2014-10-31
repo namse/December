@@ -154,6 +154,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\PacketType.h" />
+    <ClInclude Include="ArcaStone.h" />
     <ClInclude Include="AutoMatcher.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="ClientManager.h" />
@@ -163,6 +164,7 @@
     <ClInclude Include="DatabaseJobManager.h" />
     <ClInclude Include="DbHelper.h" />
     <ClInclude Include="ArcaServer.h" />
+    <ClInclude Include="enums.h" />
     <ClInclude Include="Exception.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameManager.h" />
@@ -170,6 +172,7 @@
     <ClInclude Include="Field.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="Pawn.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="ProducerConsumerQueue.h" />
@@ -182,9 +185,11 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ThreadLocal.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="Unit.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ArcaStone.cpp" />
     <ClCompile Include="AutoMatcher.cpp" />
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="ClientManager.cpp" />
@@ -200,6 +205,7 @@
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="PacketHandling.cpp" />
+    <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Scheduler.cpp" />
@@ -217,6 +223,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="ThreadLocal.cpp" />
+    <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Unit.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

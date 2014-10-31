@@ -1,8 +1,13 @@
 #pragma once
-class NPC
+#include "GameObject.h"
+
+class NPC : public GameObject
 {
 public:
 	NPC();
-	~NPC();
+	virtual ~NPC();
+
+protected:
+	NPCType	m_NPCType;
 };
 

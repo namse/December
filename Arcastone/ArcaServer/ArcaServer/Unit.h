@@ -1,13 +1,17 @@
 #pragma once
-class Unit
+#include "GameObject.h"
+
+class Unit : public GameObject
 {
 public:
 	Unit();
-	~Unit();
+	virtual ~Unit();
+
+	void InitObject(ObjectNumber objectNum, PlayerNumber playerNum);
 
 protected:
-	UnitNumber		m_UnitID;
-	PlayerNumber	m_PlayerID;
+	PlayerNumber	m_PlayerNum;
+	UnitType		m_UnitType;
 
 };
 

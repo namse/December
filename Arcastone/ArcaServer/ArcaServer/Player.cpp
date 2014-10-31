@@ -2,7 +2,7 @@
 #include "Player.h"
 
 
-Player::Player(PlayerNumber playerId) : m_PlayerID(playerId)
+Player::Player(PlayerNumber playerNum) : m_PlayerNum(playerNum)
 {
 
 }

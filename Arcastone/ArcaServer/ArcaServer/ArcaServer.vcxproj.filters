@@ -90,9 +90,6 @@
     <ClInclude Include="Player.h">
       <Filter>GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Unit.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="NPC.h">
       <Filter>GameObject</Filter>
     </ClInclude>
@@ -111,6 +108,19 @@
     <ClInclude Include="Field.h">
       <Filter>GameObject</Filter>
     </ClInclude>
+    <ClInclude Include="enums.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Unit.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Pawn.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="ArcaStone.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CircularBuffer.cpp">
@@ -161,9 +171,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Unit.cpp">
-      <Filter>GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="NPC.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
@@ -182,5 +189,15 @@
     <ClCompile Include="Field.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Pawn.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Unit.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="ArcaStone.cpp" />
   </ItemGroup>
 </Project>

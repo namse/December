@@ -8,6 +8,7 @@ public:
 	~Group();
 
 private:
-	std::vector<Unit*>
+	GroupNumber			m_GroupId;
+	std::vector<Unit*>	m_UnitList;
 };
 
