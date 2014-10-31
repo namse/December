@@ -1,48 +1,105 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="win32">
-      <UniqueIdentifier>{84a8ebd7-7cf0-47f6-b75e-d441df67da40}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Classes">
-      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
-    </Filter>
     <Filter Include="resource">
       <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObjects">
+      <UniqueIdentifier>{068cbb15-456a-44a1-9131-98bb33145516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{e88481d7-464f-4cd2-b583-cca2d927d069}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects\Objects">
+      <UniqueIdentifier>{0d9f5f6e-98a6-42e5-bc7c-d5b36bd226b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects\Objects\Units">
+      <UniqueIdentifier>{e3e0d86b-8a57-48c9-a17a-735a8b4b6e76}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>win32</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
-      <Filter>Classes</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\HelloWorldScene.cpp">
-      <Filter>Classes</Filter>
+      <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\CircularBuffer.cpp">
-      <Filter>Classes</Filter>
+      <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\TcpClient.cpp">
-      <Filter>Classes</Filter>
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Game.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Player.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\main.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameScene.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\field.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Unit.cpp">
+      <Filter>GameObjects\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\NPC.cpp">
+      <Filter>GameObjects\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameObject.cpp">
+      <Filter>GameObjects</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Pawn.cpp">
+      <Filter>GameObjects\Objects\Units</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
-      <Filter>win32</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\AppDelegate.h">
-      <Filter>Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\HelloWorldScene.h">
-      <Filter>Classes</Filter>
+      <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\CircularBuffer.h">
-      <Filter>Classes</Filter>
+      <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\TcpClient.h">
-      <Filter>Classes</Filter>
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Enums.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Header.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Game.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Player.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\main.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameScene.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\field.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Unit.h">
+      <Filter>GameObjects\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\NPC.h">
+      <Filter>GameObjects\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameObject.h">
+      <Filter>GameObjects</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Pawn.h">
+      <Filter>GameObjects\Objects\Units</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

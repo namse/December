@@ -9,6 +9,8 @@
 #include <winsock2.h>
 #endif
 
+#include "Header.h"
+
 #define BUF_SIZE	32768
 
 class TcpClient
@@ -19,11 +21,9 @@ public:
 
 	bool connect(const char* serverAddr, int port);
 	
-
 	/// request test 
 	void loginRequest();
-	void chatRequest(const char* chat);
-	void moveRequest(float x, float y);
+	void fieldRequest();
 
 	
 private:

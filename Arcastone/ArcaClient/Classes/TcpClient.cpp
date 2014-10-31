@@ -4,9 +4,8 @@
 #include "base/CCDirector.h"
 #include "base/CCScheduler.h"
 #include "2d/CCLabel.h"
-#include "HelloWorldScene.h"
+#include "GameScene.h"
 #include "../../PacketType.h"
-
 
 #ifdef _WIN32
 #pragma comment(lib,"ws2_32.lib")
@@ -46,7 +45,7 @@ bool TcpClient::initialize()
 		return false;
 
 	/// thread start
-	auto t = std::thread(CC_CALLBACK_0(TcpClient::networkThread, this));
+	auto t = thread(CC_CALLBACK_0(TcpClient::networkThread, this));
 	t.detach();
 
 	return true;
@@ -61,8 +60,8 @@ TcpClient* TcpClient::getInstance()
 		if (false == s_TcpClient->initialize())
 			return nullptr;
 
-		std::string ipaddr = cocos2d::UserDefault::getInstance()->getStringForKey("ipaddr", std::string("localhost"));
-		int port = cocos2d::UserDefault::getInstance()->getIntegerForKey("port", 9001);
+		string ipaddr = UserDefault::getInstance()->getStringForKey("ipaddr", string("localhost"));
+		int port = UserDefault::getInstance()->getIntegerForKey("port", 9001);
 
 		s_TcpClient->connect(ipaddr.c_str(), port);
 	}
@@ -150,7 +149,7 @@ void TcpClient::networkThread()
 
 void TcpClient::processPacket()
 {
-	auto scheduler = cocos2d::Director::getInstance()->getScheduler();
+	auto scheduler = Director::getInstance()->getScheduler();
 
 	/// 패킷을 파싱해서 완성되는 패킷이 있으면, 해당 콜백을 불러준다. 
 	while (true)
@@ -171,36 +170,6 @@ void TcpClient::processPacket()
 			{
 				LoginResult recvData;
 				bool ret = m_recvBuffer.Read((char*)&recvData, recvData.mSize);
-				assert(ret && recvData.mPlayerId != -1);
-				CCLOG("LOGIN OK: ID[%d] Name[%s] POS[%.4f, %.4f]", recvData.mPlayerId, recvData.mName, recvData.mPosX, recvData.mPosY);
-	
-				m_loginId = recvData.mPlayerId;
-			}
-			break;
-
-		case PKT_SC_CHAT:
-			{
-				ChatBroadcastResult recvData;
-				bool ret = m_recvBuffer.Read((char*)&recvData, recvData.mSize);
-				assert(ret && recvData.mPlayerId != -1);
-			
-				auto layer = cocos2d::Director::getInstance()->getRunningScene()->getChildByName(std::string("base_layer"));
-				scheduler->performFunctionInCocosThread(CC_CALLBACK_0(HelloWorld::chatDraw, dynamic_cast<HelloWorld*>(layer), std::string(recvData.mName), std::string(recvData.mChat)));
-			}
-			break;
-
-		case PKT_SC_MOVE:
-			{
-				MoveBroadcastResult recvData;
-				bool ret = m_recvBuffer.Read((char*)&recvData, recvData.mSize);
-				assert(ret && recvData.mPlayerId != -1);
-				auto layer = cocos2d::Director::getInstance()->getRunningScene()->getChildByName(std::string("base_layer"));
-
-				if ( recvData.mPlayerId == m_loginId ) ///< in case of me
-					scheduler->performFunctionInCocosThread(CC_CALLBACK_0(HelloWorld::updateMe, dynamic_cast<HelloWorld*>(layer), recvData.mPosX, recvData.mPosY));
-				else
-					scheduler->performFunctionInCocosThread(CC_CALLBACK_0(HelloWorld::updatePeer, dynamic_cast<HelloWorld*>(layer), recvData.mPlayerId, recvData.mPosX, recvData.mPosY));
-
 			}
 			break;
 
@@ -216,39 +185,13 @@ void TcpClient::loginRequest()
 	if (m_loginId > 0)
 		return;
 
-	srand(time(NULL));
+	Packet::LoginRequest sendData;
 
-	/// 대략 아래의 id로 로그인 테스트..
-	LoginRequest sendData;
-	sendData.mPlayerId = 1000 + rand() % 101;
-
-	send((const char*)&sendData, sizeof(LoginRequest));
+	send((const char*)&sendData, sizeof(Packet::LoginRequest));
 
 }
 
-void TcpClient::chatRequest(const char* chat)
+void TcpClient::fieldRequest()
 {
-	if (m_loginId < 0)
-		return;
 
-	ChatBroadcastRequest sendData;
-
-	sendData.mPlayerId = m_loginId;
-	memcpy(sendData.mChat, chat, strlen(chat));
-
-	send((const char*)&sendData, sizeof(ChatBroadcastRequest));
-}
-
-
-void TcpClient::moveRequest(float x, float y)
-{
-	if (m_loginId < 0)
-		return;
-
-	MoveRequest sendData;
-	sendData.mPlayerId = m_loginId;
-	sendData.mPosX = x;
-	sendData.mPosY = y;
-
-	send((const char*)&sendData, sizeof(MoveRequest));
 }
