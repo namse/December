@@ -15,8 +15,10 @@ GameNumber GameManager::CreateGame(PlayerNumber player1, PlayerNumber player2)
 {
 	static GameNumber GameId = 0;
 	GameId++;
+
 	auto newGame = new Game(GameId);
 	m_GameList.insert(GameList::value_type(GameId, newGame));
+	newGame->InitGame(player1, player2);
 
 	return GameId;
 }

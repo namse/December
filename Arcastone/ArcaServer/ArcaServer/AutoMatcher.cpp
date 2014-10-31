@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "AutoMatcher.h"
+#include "GameManager.h"
 
 AutoMatcher* GAutoMatcher = nullptr;
 
@@ -13,7 +14,16 @@ AutoMatcher::~AutoMatcher()
 
 void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 {
-	m_WaitPlayerList.push_back(playerId);
+	// 단순 2인 매칭
+	if (0 < m_WaitPlayerList.size())
+	{
+		PlayerNumber matchPlayer = m_WaitPlayerList.front();
+		m_WaitPlayerList.pop();
+		GGameManager->CreateGame(playerId, matchPlayer);
+	}
+	else
+	{
+		m_WaitPlayerList.push(playerId);
+	}
 
-	// TODO : 애들 짝 지워서 버스 태워 보내세요 선생님
 }

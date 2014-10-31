@@ -167,7 +167,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Group.h" />
-    <ClInclude Include="Map.h" />
+    <ClInclude Include="Field.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="Player.h" />
@@ -197,7 +197,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Group.cpp" />
-    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Field.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="PacketHandling.cpp" />
     <ClCompile Include="Player.cpp" />

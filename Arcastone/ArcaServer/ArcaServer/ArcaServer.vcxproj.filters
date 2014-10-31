@@ -87,9 +87,6 @@
     <ClInclude Include="Game.h">
       <Filter>GameObject</Filter>
     </ClInclude>
-    <ClInclude Include="Map.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>GameObject</Filter>
     </ClInclude>
@@ -109,6 +106,9 @@
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="AutoMatcher.h">
+      <Filter>GameObject</Filter>
+    </ClInclude>
+    <ClInclude Include="Field.h">
       <Filter>GameObject</Filter>
     </ClInclude>
   </ItemGroup>
@@ -158,9 +158,6 @@
     <ClCompile Include="Game.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
-    <ClCompile Include="Map.cpp">
-      <Filter>GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
@@ -180,6 +177,9 @@
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="AutoMatcher.cpp">
+      <Filter>GameObject</Filter>
+    </ClCompile>
+    <ClCompile Include="Field.cpp">
       <Filter>GameObject</Filter>
     </ClCompile>
   </ItemGroup>

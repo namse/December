@@ -8,11 +8,11 @@ public:
 	GameManager();
 	~GameManager();
 
-	GameNumber CreateGame(PlayerNumber player1, PlayerNumber player2);
+	GameNumber		CreateGame(PlayerNumber player1, PlayerNumber player2);
 
 private:
 	typedef std::map<GameNumber, Game*> GameList;
-	GameList m_GameList;
+	GameList		m_GameList;
 };
 
 extern GameManager* GGameManager;
