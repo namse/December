@@ -21,26 +21,11 @@ void Field::InitField(int fieldWidth, int fieldHeight)
 		
 		for (posY; posY < max; ++posY)
 		{
-			FieldBlock* fieldBlock = new FieldBlock();
-			fieldBlock->objectNum = 0;
-			fieldBlock->position.x = posX;
-			fieldBlock->position.y = posY;
-			m_FieldBlockList.insert(FieldBlockList::value_type(fieldBlock->position,fieldBlock));
+			FieldBlock fieldBlock;
+			fieldBlock.m_Position = Coord(posX, posY);
+			fieldBlock.m_Status = FBS_NONE;
+			fieldBlock.m_Type = FBT_NONE;
+			m_FieldBlockList.insert(FieldBlockList::value_type(fieldBlock.m_Position, fieldBlock));
 		}
 	}
 }
-
-bool Field::SetObjectOnField(ObjectNumber objectNum, Coord setPos)
-{
-	FieldBlockList::iterator blockIter = m_FieldBlockList.find(setPos);
-	if (m_FieldBlockList.end() == blockIter)
-	{
-		return false;
-	}
-
-	FieldBlock* fieldBlock = blockIter->second;
-	fieldBlock->objectNum = objectNum;
-
-	return true;
-}
-

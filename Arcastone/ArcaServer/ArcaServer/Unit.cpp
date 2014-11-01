@@ -4,15 +4,23 @@
 
 Unit::Unit()
 {
-	m_ObjectType = OT_UNIT;
+	m_UnitType = UT_NONE;
+	m_UnitMoveType = UMT_NONE;
+	m_HP = m_Attack = m_Weight = m_MoveRange = -1;
 }
 
 Unit::~Unit()
 {
 }
 
-void Unit::InitObject(ObjectNumber objectNum, PlayerNumber playerNum)
+void Unit::InitObject(UnitData unitData, PlayerNumber ownerPlayerNum)
 {
-	GameObject::InitObject(objectNum);
-	m_PlayerNum = playerNum;
+	m_UnitType = unitData.m_UnitType;
+	m_UnitMoveType = unitData.m_UnitMoveType;
+	m_HP = unitData.m_HP;
+	m_Attack = unitData.m_Attack;
+	m_Weight = unitData.m_Weight;
+	m_MoveRange = unitData.m_MoveRange;
+
+	SetOwner(ownerPlayerNum);
 }

@@ -6,10 +6,9 @@ public:
 	~Field();
 
 	void		InitField(int fieldWidth, int fieldHeight);
-	bool		SetObjectOnField(ObjectNumber objectNum, Coord setPos);
 
 private:
-	typedef std::map<Coord, FieldBlock*> FieldBlockList;
+	typedef std::map<Coord, FieldBlock> FieldBlockList;
 	FieldBlockList	m_FieldBlockList;
 };
 

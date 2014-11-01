@@ -19,7 +19,9 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 	{
 		PlayerNumber matchPlayer = m_WaitPlayerList.front();
 		m_WaitPlayerList.pop();
-		GGameManager->CreateGame(playerId, matchPlayer);
+		auto gameID = GGameManager->CreateGame(playerId, matchPlayer);
+
+		// TODO : Packet 만들고 보내자 아자아자
 	}
 	else
 	{

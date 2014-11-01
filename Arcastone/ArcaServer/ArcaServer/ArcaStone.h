@@ -1,8 +1,8 @@
 #pragma once
-#include "NPC.h"
+#include "Unit.h"
 
 class ArcaStone :
-	public NPC
+	public Unit
 {
 public:
 	ArcaStone();

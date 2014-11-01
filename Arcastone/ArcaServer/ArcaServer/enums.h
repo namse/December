@@ -6,13 +6,21 @@
 
 typedef int PlayerNumber;
 typedef int GameNumber;
-typedef int ObjectNumber;
-typedef int GroupNumber;
+
+
+#define PLAYER_NUMBER_NPC INT_MAX
 
 struct Coord{
 	int x, y;
-
-	// 연산자 오버라이딩
+	Coord()
+	{
+		x = y = 0;
+	}
+	Coord(int _x, int _y)
+	{
+		x = _x, y = _y;
+	}
+	// 연산자 오버로딩
 	bool operator < (const Coord& right) const
 	{
 		if ((x < right.x) || (x == right.x && y < right.y))
@@ -20,7 +28,7 @@ struct Coord{
 		else
 			return false;
 	}
-	
+
 	bool operator >(const Coord& right) const
 	{
 		if ((x > right.x) || (x == right.x && y > right.y))
@@ -36,37 +44,50 @@ struct Coord{
 		else
 			return false;
 	}
+
+ 	Coord operator + (const Coord& rhs) const{
+ 		return Coord(x + rhs.x, y + rhs.y);
+	}
+
+	Coord operator - (const Coord& rhs) const{
+		return Coord(x + rhs.x, y + rhs.y);
+	}
+};
+
+
+
+enum FieldBlockType
+{
+	FBT_NONE,
+};
+enum FieldBlockStatus
+{
+	FBS_NONE,
 };
 
 struct FieldBlock{
-	Coord			position;
-	ObjectNumber	objectNum;
+	Coord			m_Position;
+	FieldBlockType	m_Type;
+	FieldBlockStatus m_Status;
 };
-
-enum ObjectType{
-	OT_UNIT,
-	OT_NPC,
-	OT_ITEM,
-};
-
 enum UnitType{
-	UC_PAWN,
-	UC_KNIGHT,
-	UC_BISHOP,
-	UC_ROOK,
-	UC_KING,
+	UT_NONE,
+
+	UT_PAWN,
+	UT_KNIGHT,
+	UT_BISHOP,
+	UT_ROOK,
+	UT_KING,
+	UT_ARCASTONE,
 };
 
-enum NPCType{
-	NT_ARCASTONE,
-};
 
-enum ObjectMoveType{
-	MT_NONE,
-	MT_STRAIGHT,
-	MT_DASH,
-	MT_JUMP,
-	MT_TELEPORT,
+enum UnitMoveType{
+	UMT_NONE,
+	UMT_STRAIGHT,
+	UMT_DASH,
+	UMT_JUMP,
+	UMT_TELEPORT,
 };
 
 enum HexaDirection{

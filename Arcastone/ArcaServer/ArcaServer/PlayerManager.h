@@ -9,7 +9,12 @@ public:
 
 	PlayerNumber	CreatePlayer();
 	void			DeletePlayer(PlayerNumber playerNum);
-	Player*			GetPlayer(PlayerNumber playerNum);
+	Player*			GetPlayer(PlayerNumber playerNum){
+		auto playerIt = m_PlayerList.find(playerNum);
+		if (playerIt == m_PlayerList.end())
+			return nullptr;
+		return playerIt->second;
+	}
 
 private:
 	typedef std::map<PlayerNumber, Player*> PlayerList;
