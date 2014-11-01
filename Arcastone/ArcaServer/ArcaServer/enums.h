@@ -1,12 +1,11 @@
 #pragma once
-
+#include "../../PacketType.h"
 #define PLAYER_UNIT_MAX 6
 #define MAP_WIDTH 7
 #define MAP_HEIGHT 8
 
 typedef int PlayerNumber;
 typedef int GameNumber;
-
 
 #define PLAYER_NUMBER_NPC INT_MAX
 
@@ -70,31 +69,11 @@ struct FieldBlock{
 	FieldBlockType	m_Type;
 	FieldBlockStatus m_Status;
 };
-enum UnitType{
-	UT_NONE,
-
-	UT_PAWN,
-	UT_KNIGHT,
-	UT_BISHOP,
-	UT_ROOK,
-	UT_KING,
-	UT_ARCASTONE,
-};
 
 
-enum UnitMoveType{
-	UMT_NONE,
-	UMT_STRAIGHT,
-	UMT_DASH,
-	UMT_JUMP,
-	UMT_TELEPORT,
-};
 
-enum HexaDirection{
-	HD_NORTH,
-	HD_NORTHEAST,
-	HD_NORTHWEST,
-	HD_SOUTHEAST,
-	HD_SOUTHWEST,
-	HD_SOUTH,
-};
+
+// enum UnitType
+// enum UnitMoveType
+// enum HexaDirection
+// Above guys is in PacketType.h
