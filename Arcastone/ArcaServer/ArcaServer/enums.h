@@ -9,11 +9,11 @@ typedef int GameNumber;
 typedef int ObjectNumber;
 typedef int GroupNumber;
 
-typedef struct coord{
+struct Coord{
 	int x, y;
 
 	// 연산자 오버라이딩
-	bool operator < (const coord& right) const
+	bool operator < (const Coord& right) const
 	{
 		if ((x < right.x) || (x == right.x && y < right.y))
 			return true;
@@ -21,7 +21,7 @@ typedef struct coord{
 			return false;
 	}
 	
-	bool operator > (const coord& right) const
+	bool operator >(const Coord& right) const
 	{
 		if ((x > right.x) || (x == right.x && y > right.y))
 			return true;
@@ -29,19 +29,19 @@ typedef struct coord{
 			return false;
 	}
 
-	bool operator == (const coord& right) const
+	bool operator == (const Coord& right) const
 	{
 		if ((x == right.x) && (y == right.y))
 			return true;
 		else
 			return false;
 	}
-}Coord;
+};
 
-typedef struct{
+struct FieldBlock{
 	Coord			position;
 	ObjectNumber	objectNum;
-}FieldBlock;
+};
 
 enum ObjectType{
 	OT_UNIT,
