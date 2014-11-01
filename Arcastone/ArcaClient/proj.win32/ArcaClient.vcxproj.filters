@@ -4,20 +4,23 @@
     <Filter Include="resource">
       <UniqueIdentifier>{715254bc-d70b-4ec5-bf29-467dd3ace079}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObjects">
-      <UniqueIdentifier>{068cbb15-456a-44a1-9131-98bb33145516}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Network">
       <UniqueIdentifier>{bb6c862e-70e9-49d9-81b7-3829a6f50471}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{e88481d7-464f-4cd2-b583-cca2d927d069}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObjects\Objects">
+    <Filter Include="GameObject">
+      <UniqueIdentifier>{068cbb15-456a-44a1-9131-98bb33145516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Unit">
       <UniqueIdentifier>{0d9f5f6e-98a6-42e5-bc7c-d5b36bd226b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObjects\Objects\Units">
+    <Filter Include="GameObject\Unit\PC">
       <UniqueIdentifier>{e3e0d86b-8a57-48c9-a17a-735a8b4b6e76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\Unit\NPC">
+      <UniqueIdentifier>{52c5edae-4ff5-4d83-8de1-e1fddf168002}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,10 +34,10 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Game.cpp">
-      <Filter>GameObjects</Filter>
+      <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Player.cpp">
-      <Filter>GameObjects</Filter>
+      <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\main.cpp">
       <Filter>Core</Filter>
@@ -43,19 +46,16 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\field.cpp">
-      <Filter>GameObjects</Filter>
+      <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Unit.cpp">
-      <Filter>GameObjects\Objects</Filter>
+      <Filter>GameObject\Unit</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\NPC.cpp">
-      <Filter>GameObjects\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GameObject.cpp">
-      <Filter>GameObjects</Filter>
+      <Filter>GameObject\Unit\NPC</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Pawn.cpp">
-      <Filter>GameObjects\Objects\Units</Filter>
+      <Filter>GameObject\Unit\PC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -75,10 +75,10 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Game.h">
-      <Filter>GameObjects</Filter>
+      <Filter>GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Player.h">
-      <Filter>GameObjects</Filter>
+      <Filter>GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\main.h">
       <Filter>Core</Filter>
@@ -87,19 +87,16 @@
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\field.h">
-      <Filter>GameObjects</Filter>
+      <Filter>GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Unit.h">
-      <Filter>GameObjects\Objects</Filter>
+      <Filter>GameObject\Unit</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\NPC.h">
-      <Filter>GameObjects\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GameObject.h">
-      <Filter>GameObjects</Filter>
+      <Filter>GameObject\Unit\NPC</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Pawn.h">
-      <Filter>GameObjects\Objects\Units</Filter>
+      <Filter>GameObject\Unit\PC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

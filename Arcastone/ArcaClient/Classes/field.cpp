@@ -10,7 +10,7 @@ field::~field()
 {
 }
 
-GameObject* field::getGameObject(Position key)
+Unit* field::getGameObject(Position key)
 {
 	return nullptr;
 }

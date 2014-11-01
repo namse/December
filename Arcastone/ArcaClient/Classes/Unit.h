@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Header.h"
-#include "GameObject.h"
+#include "Header.h"
 
-class Unit : public GameObject
+class Unit
 {
 public:
 	Unit();

@@ -9,11 +9,11 @@ public:
 	field();
 	~field();
 
-	map<Position, GameObject*>*	getGameObject(){ return &m_GameObject; }
-	GameObject*					getGameObject(Position key);
+	map<Position, Unit*>*		getGameObject(){ return &m_GameObject; }
+	Unit*						getGameObject(Position key);
 
 private:
-	map<Position, GameObject*>	m_GameObject;
+	map<Position, Unit*>		m_GameObject;
 
 };
 

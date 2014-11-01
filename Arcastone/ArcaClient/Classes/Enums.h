@@ -1,12 +1,5 @@
 #pragma once
 
-enum UnitType
-{
-	UT_PC,
-	UT_NPC,
-	UT_NONE,
-};
-
 enum PieceType
 {
 	PT_PAWN,

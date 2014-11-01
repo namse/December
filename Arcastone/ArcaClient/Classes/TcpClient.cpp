@@ -190,8 +190,3 @@ void TcpClient::loginRequest()
 	send((const char*)&sendData, sizeof(Packet::LoginRequest));
 
 }
-
-void TcpClient::fieldRequest()
-{
-
-}
