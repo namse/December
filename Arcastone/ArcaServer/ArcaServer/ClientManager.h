@@ -13,7 +13,7 @@ public:
 	ClientManager() : mLastGCTick(0)
 	{}
 
-	ClientSession* CreateClient(SOCKET sock) ;
+	ClientSession* CreateClient(SOCKET sock);
 	
 	void BroadcastPacket(ClientSession* from, PacketHeader* pkt) ;
 
@@ -25,6 +25,8 @@ public:
 
 	void FlushClientSend();
 
+	ClientSession* GetClient(PlayerNumber playerID);
+
 private:
 	void CreatePlayerDone(DatabaseJobContext* dbJob) ;
 	void DeletePlayerDone(DatabaseJobContext* dbJob) ;
@@ -35,7 +37,7 @@ private:
 	
 
 private:
-	typedef std::map<SOCKET, ClientSession*> ClientList ;
+	typedef std::map<SOCKET, ClientSession*> ClientList;
 	ClientList	mClientList ;
 
 	DWORD		mLastGCTick ;

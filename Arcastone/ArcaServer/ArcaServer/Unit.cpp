@@ -13,7 +13,7 @@ Unit::~Unit()
 {
 }
 
-void Unit::InitObject(UnitData unitData, PlayerNumber ownerPlayerNum)
+void Unit::InitUnit(UnitData unitData, PlayerNumber ownerPlayerNum)
 {
 	m_UnitType = unitData.m_UnitType;
 	m_UnitMoveType = unitData.m_UnitMoveType;

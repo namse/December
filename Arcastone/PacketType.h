@@ -1,10 +1,10 @@
 #pragma once
 
-#define MAX_CHAT_LEN	256
+#define MAX_CHAT_LEN		256
 
-#define MAX_NAME_LEN	30
-#define MAX_COMMENT_LEN	40
-#define MAX_UNIT_ON_GAME 30
+#define MAX_NAME_LEN		30
+#define MAX_COMMENT_LEN		40
+#define MAX_UNIT_ON_GAME	30
 
 enum PacketTypes
 {
@@ -23,8 +23,8 @@ enum PacketTypes
 struct PacketHeader
 {
 	PacketHeader() : mSize(0), mType(PKT_NONE) 	{}
-	short mSize ;
-	short mType ;
+	short mSize;
+	short mType;
 } ;
 
 
@@ -41,23 +41,35 @@ enum UnitType{
 	UT_MAX = 1024,
 };
 
-
 enum UnitMoveType{
-	UMT_NONE,
-	UMT_STRAIGHT,
-	UMT_DASH,
-	UMT_JUMP,
-	UMT_TELEPORT,
+	UMT_NONE = 0,
+
+	UMT_STRAIGHT = 1,
+	UMT_DASH = 2,
+	UMT_JUMP = 3,
+	UMT_TELEPORT = 4,
 };
 
 enum HexaDirection{
-	HD_NORTH,
-	HD_NORTHEAST,
-	HD_NORTHWEST,
-	HD_SOUTHEAST,
-	HD_SOUTHWEST,
-	HD_SOUTH,
+	HD_NONE = 0,
+
+	HD_NORTH = 1,
+	HD_NORTHEAST = 2,
+	HD_NORTHWEST = 3,
+	HD_SOUTHEAST = 4,
+	HD_SOUTHWEST = 5,
+	HD_SOUTH = 6,
 };
+
+enum FieldBlockType
+{
+	FBT_NONE = 0,
+};
+enum FieldBlockStatus
+{
+	FBS_NONE = 0,
+};
+
 
 namespace Packet
 {
@@ -86,16 +98,24 @@ namespace Packet
 			mSize = sizeof(GameStartResult);
 			mType = PKT_SC_GAME_START;
 			mLength = 0;
-			memset(mData, 0, sizeof(mData));
+			memset(mUnit, 0, sizeof(mUnit));
 		}
 		int mLength;
 		struct UnitData{
-			int x, y;
-			int hp;
-			int weight;
-			// TODO : Add What Client Need
+			UnitType			unitType;
+			UnitMoveType		unitMoveType;
+			int					ownerPlayer;
+			int					hp;
+			int					weight;
+			int					attack;
+			int					moveRange;
+			int					x, y;
 		};
-		UnitData mData[MAX_UNIT_ON_GAME];
+		struct FieldData{
+			int					fieldWidth, fieldHeight;
+		};
+		UnitData				mUnit[MAX_UNIT_ON_GAME];
+		FieldData				mField;
 	};
 }
 
