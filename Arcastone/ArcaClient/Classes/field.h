@@ -3,17 +3,19 @@
 #include "Header.h"
 #include "Unit.h"
 
-class field
+class Field
 {
 public:
-	field();
-	~field();
+	Field();
+	~Field();
 
-	map<Position, Unit*>*		getGameObject(){ return &m_GameObject; }
-	Unit*						getGameObject(Position key);
+	void						setUnit();
+
+	//map<Position, UnitData*>*	getUnit(){ return &m_Unit; }
+	//UnitData*					getUnit(Position key);
 
 private:
-	map<Position, Unit*>		m_GameObject;
+	//map<Position, UnitData*>	m_Unit;
 
 };
 

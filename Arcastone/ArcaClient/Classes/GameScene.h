@@ -37,9 +37,14 @@ public:
 	bool					drawToRect(float y);
 	bool					drawToHexa(int x, int y);
 
+	void					ReadUnitData(UnitData* unitData, int length);
+	// Header 안에서 typedef Packet::GameStartResult::UnitData UnitData 했음 .
+
 private:
 	map<int, CCSprite*>		m_PeerMap;
-	map<Point, Unit*>		m_Unit;
+	
+	int						m_Length;
+
 	vector<Point>			m_HexagonPoint;
 
 	vector<Point>			m_PointPath;

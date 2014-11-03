@@ -167,12 +167,20 @@ void TcpClient::processPacket()
 		switch (header.mType)
 		{
 		case PKT_SC_LOGIN:
-			{
-				Packet::LoginResult recvData;
-				bool ret = m_recvBuffer.Read((char*)&recvData, recvData.mSize);
-			}
+		{
+							 Packet::LoginResult recvData;
+							 bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+		}
 			break;
+		case PKT_SC_GAME_START:
+		{
+								  Packet::GameStartResult recvData;
+								  bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
 
+								  auto layer = cocos2d::Director::getInstance()->getRunningScene()->getChildByName(string("base_layer"));
+								  scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadUnitData, dynamic_cast<GameScene*>(layer), recvData.mData, recvData.mLength));
+		}
+			break;
 		default:
 			assert(false);
 		}
@@ -188,5 +196,4 @@ void TcpClient::loginRequest()
 	Packet::LoginRequest sendData;
 
 	send((const char*)&sendData, sizeof(Packet::LoginRequest));
-
 }

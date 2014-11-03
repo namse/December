@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Header.h"
-#include "field.h"
+#include "Field.h"
 #include "Player.h"
 
 class Game
@@ -12,14 +12,16 @@ public:
 		return instance;
 	}
 
+	Field*							getField(){ return m_Field; }
+	Player*							getPlayer(PlayerWho pw){ return m_Player[pw]; }
 
 
 private:
 	Game();
 	~Game();
 
-	field* m_Field;
-	Player* m_Player[2];
+	Field*							m_Field;
+	Player*							m_Player[2];
 
 };
 

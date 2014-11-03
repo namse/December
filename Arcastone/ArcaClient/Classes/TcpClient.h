@@ -24,6 +24,7 @@ public:
 	/// request test 
 	void loginRequest();
 	void fieldRequest();
+	void gameStartResult();
 
 	
 private:

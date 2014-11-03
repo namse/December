@@ -19,13 +19,14 @@ Scene* GameScene::createScene()
 
 bool GameScene::init()
 {
-    if ( !LayerColor::initWithColor(ccc4(255,255,255,255)))
+    if ( !LayerColor::initWithColor(ccc4(255,255,255,32)))
     {
         return false;
     }
     
     Size visibleSize = Director::getInstance()->getVisibleSize();
-    Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+	touchEventInit();
 
 	TcpClient::getInstance()->loginRequest();
 	// 서버님 로그인 하게 해줘요 !!
@@ -34,9 +35,7 @@ bool GameScene::init()
 
 	// TODO : 서버님 누구 차례인지 알려줘요 !!
 
-	touchEventInit();
-
-	Game::getInstance();
+	Field* pField = Game::getInstance().getField();
 
 	drawHexagon();
     
@@ -168,7 +167,7 @@ void GameScene::drawHexagon()
 			m_HexagonPoint.push_back(Point(i, j));	// m_HexagonPoint 에 화면에 그려지는 좌표(0~x, 0~y)들을 저장
 
 			Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
-			node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.8f, 0.0f, 0.8f, 0.0f), 1, ccc4f(0.8f, 0.0f, 0.0f, 0.8f));
+			node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, ccc4f(0.2f, 1.0f, 0.2f, 0.3f));
 
 			if(DRAW_HEXA_NUMBER) drawText(i, j, hexa);
 		}
@@ -177,25 +176,25 @@ void GameScene::drawHexagon()
 
 void GameScene::drawText(int i, int j, Hexagon* hexa)
 {
-	// 육각형 안에 정수형 인덱스 값을 보여주는 함수
-	int f = i;
+	// 육각형 안에 정수형 인덱스 값을 보여주는 함수 .
+	int f = hexa->anchor.x;
 	char szBuf1[8];
 	itoa(f, szBuf1, 10);
 
-	f = j;
+	f = hexa->anchor.y;
 	char szBuf2[8];
 	itoa(f, szBuf2, 10);
 
 	LabelTTF* vLabelx;
 	LabelTTF* vLabely;
-	vLabelx = LabelTTF::create(szBuf1, "Hevetica", 11);
-	vLabely = LabelTTF::create(szBuf2, "Hevetica", 11);
+	vLabelx = LabelTTF::create(szBuf1, "Hevetica", 12);
+	vLabely = LabelTTF::create(szBuf2, "Hevetica", 12);
 
-	vLabelx->setPosition(Point(hexa->anchor.x - 6, hexa->anchor.y));
-	vLabely->setPosition(Point(hexa->anchor.x + 6, hexa->anchor.y));
+	vLabelx->setPosition(Point(hexa->anchor.x - 7, hexa->anchor.y + 5));
+	vLabely->setPosition(Point(hexa->anchor.x + 7, hexa->anchor.y - 5));
 
-	vLabelx->setColor(Color3B(0, 0, 0));
-	vLabely->setColor(Color3B(0, 0, 255));
+	vLabelx->setColor(Color3B(255, 255, 255));
+	vLabely->setColor(Color3B(255, 0, 0));
 
 	this->addChild(vLabelx);
 	this->addChild(vLabely);
@@ -203,20 +202,21 @@ void GameScene::drawText(int i, int j, Hexagon* hexa)
 
 Point GameScene::pointConversion(Point point)
 {
-	// 입력한 index 형식의 point 값을 화면에 그릴 수 있는 point 값으로 변환해주는 함수임 .
+	// 입력한 index 형식의 point 값을 화면에 그릴 수 있는 point 값으로 변환해주는 함수 .
 	Point retPoint;
 
-	retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * point.x;
-	retPoint.y = MAP_YSTART - HEXAGON_LENGTH * 2 * sin(RADIANS_60) * (point.y + point.x*0.5 - MAP_SIZEY*0.5);
+	retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (point.x - (MAP_SIZEX - 1)*0.5);
+	retPoint.y = MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (point.y * 2 - MAP_SIZEY + point.x - (MAP_SIZEX - 3)*0.5);
+	// MAP_START 를 중앙에 위치하도록 그려주기 위한 수식들 .
 
 	return retPoint;
 }
 
 bool GameScene::drawToRect(float y)	
 {
-	// 사각형이 되도록 그려주는 부분을 제외하기 위한 함수이다 .
-	if (y <= MAP_YSTART - HEXAGON_LENGTH * 2 * sin(RADIANS_60) * (MAP_SIZEY*0.5) ||
-		y >= MAP_YSTART - HEXAGON_LENGTH * 2 * sin(RADIANS_60) * (MAP_SIZEX*0.5 - MAP_SIZEY*0.5 - 1))
+	// 사각형이 되도록 그려주는 부분을 제외하기 위한 함수 .
+	if (y <= MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (MAP_SIZEY - MAP_SIZEX*0.5 + 1) ||
+		y >= MAP_YSTART + HEXAGON_LENGTH * sin(RADIANS_60) * (MAP_SIZEY - MAP_SIZEX*0.5 + 1))
 		return true;
 
 	return false;
@@ -224,7 +224,7 @@ bool GameScene::drawToRect(float y)
 
 bool GameScene::drawToHexa(int x, int y)
 {
-	// 육각형이 되도록 그려주는 부분을 제외하기 위한 함수이다 .
+	// 육각형이 되도록 그려주는 부분을 제외하기 위한 함수 .
 	if (x + y >= MAP_SIZEX / 2 &&
 		x + y <= MAP_SIZEX / 2 + MAP_SIZEY - 1)
 		return false;
@@ -251,4 +251,9 @@ Hexagon* GameScene::createHexagon(Point anchor, int size)
 		newHexa->vertex.push_back(pos);
 	}
 	return newHexa;
+}
+
+void GameScene::ReadUnitData(Packet::GameStartResult::UnitData* unitData, int length)
+{
+
 }
