@@ -32,11 +32,13 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	m_GameField->InitField(MAP_FIELD_WIDTH, MAP_FIELD_HEIGHT); // 7 by 10's rectangle field, like ipad prototype
 
 	// create and initialize unit
+	// get group data from each player
 	for (auto playerNumber : m_PlayerList)
 	{
 		auto player = GPlayerManager->GetPlayer(playerNumber);
 		auto group = player->GetGroupList()[0];
 
+		// get unit data from group
 		for (auto it = group.m_UnitDataList.begin(); it != group.m_UnitDataList.end(); it++)
 		{
 			auto unitData = it->second;
@@ -53,12 +55,13 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 			}
 			assert(unit == nullptr);
 
-			unit->InitUnit(unitData, playerNumber); // init by copying unitData
+			// init by copying unitData
+			unit->InitUnit(unitData, playerNumber); 
 			Coord position;
 
 			if (playerNumber == player1)
 			{
-				position = START_POINT_PLAYER1 + originPosition; // 그룹 짤 때 진영 짜놓은 것 토대로 배치
+				position = START_POINT_PLAYER1 + originPosition; // locate unit by group data
 			}
 			else if (playerNumber == player2)
 			{
@@ -75,7 +78,17 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	arcaStone->SetOwner(PLAYER_NUMBER_NPC);
 	arcaStone->SetPosition(Coord(3, 3)); // Center of Map
 	m_UnitList.push_back(arcaStone);
+
+	// play turn and first attacker setting
+	m_Attacker = m_PlayerList.at( rand() % m_PlayerList.size() );
+	m_PlayTurn = 0;
 }
+
+void Game::StartGame()
+{
+	// TODO::game logic
+}
+
 
 int Game::GetUnit(OUT Unit* unitArr[])
 {

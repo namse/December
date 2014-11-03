@@ -139,4 +139,15 @@ REGISTER_HANDLER(PKT_CS_LOGIN)
 	GAutoMatcher->AddWaitPlayer(playerNum);
 }
 
+REGISTER_HANDLER(PKT_CS_ATTACK)
+{
+	Packet::AttackRequest inPacket;
+	if (false == session->ParsePacket(inPacket))
+	{
+		printf("[DEBUG] packet parsing error", inPacket.mType);
+		return;
+	}
 
+	PlayerNumber playerNum = session->GetPlayerId();
+
+}
