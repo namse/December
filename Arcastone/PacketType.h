@@ -161,13 +161,9 @@ namespace Packet
 		struct FieldData{
 			int					fieldWidth, fieldHeight;
 		};
-		struct GameData{
-			int					attacker;
-		};
 		int						mLength;
 		UnitData				mUnit[MAX_UNIT_ON_GAME];
 		FieldData				mField;
-		GameData				mGameData;
 	};
 
 	struct AttackRequest : public PacketHeader
