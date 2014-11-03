@@ -73,6 +73,13 @@ enum FieldBlockStatus
 	FBS_NONE = 0,
 };
 
+enum UnitOwner
+{
+	UO_NONE=0,
+	UO_ME=1,
+	UO_ENEMY=2,
+	UO_NPC=3,
+};
 
 namespace Packet
 {
@@ -106,7 +113,7 @@ namespace Packet
 		struct UnitData{
 			UnitType			unitType;
 			UnitMoveType		unitMoveType;
-			int					ownerPlayer;
+			UnitOwner			unitOwner;
 			int					hp;
 			int					weight;
 			int					attack;
