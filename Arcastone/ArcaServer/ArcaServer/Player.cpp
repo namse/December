@@ -35,4 +35,6 @@ void Player::SetGroupForTest()
 			group.AddUnitData(pawn, originPosition);
 		}
 	}
+
+	m_GroupList.push_back(group);
 }
