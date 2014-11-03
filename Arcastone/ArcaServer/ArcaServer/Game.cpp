@@ -3,6 +3,8 @@
 #include "PlayerManager.h"
 #include "Pawn.h"
 #include "ArcaStone.h"
+#include "ClientManager.h"
+#include "ClientSession.h"
 
 #define START_POINT_PLAYER1 Coord(3,5)
 #define START_POINT_PLAYER2 Coord(3,1)
@@ -24,6 +26,7 @@ Game::~Game()
 
 void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 {
+	m_UnitIdentityNumberCounter = 0;
 	m_PlayerList.reserve(2);
 	m_PlayerList.push_back(player1);
 	m_PlayerList.push_back(player2);
@@ -56,7 +59,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 			assert(unit != nullptr);
 
 			// init by copying unitData
-			unit->InitUnit(unitData, playerNumber);
+			unit->InitUnit(unitData, playerNumber, GenerateUnitIdentityNumber());
 			Coord position;
 
 			if (playerNumber == player1)
@@ -84,24 +87,6 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	m_PlayTurn = 0;
 }
 
-void Game::StartGame()
-{
-	// TODO::game logic
-}
-
-
-int Game::GetUnit(OUT Unit* unitArr[])
-{
-	int num = 0;
-	for (auto unit : m_UnitList)
-	{
-		unitArr[num] = unit;
-		++num;
-	}
-
-	return num;	// return all unit num
-}
-
 void Game::HandleAtttack(PlayerNumber attacker, AttackData attackData)
 {
 	if (m_Attacker != attacker) // 아직 턴이 아닌데 공격을 시도하면
@@ -110,86 +95,117 @@ void Game::HandleAtttack(PlayerNumber attacker, AttackData attackData)
 		return;
 	}
 
-
-	Unit* attackUnit = nullptr;
-
-	//공격한 유닛을 찾고
-	for (auto unit : m_UnitList)
+	Unit* attackUnit = GetUnit(attackData.id);
+	if (attackUnit == nullptr)// 잘못된 유닛으로 공격하려고 햇으니까
 	{
-		if (unit->GetPos() == Coord(attackData.x, attackData.y))
-		{
-			attackUnit = unit;
-			break;
-		}
+		//무시해!
+		return;
 	}
 
-	if (attackUnit != nullptr)
+	//공격 데이터에 문제가 있으면
+	if (attackData.Range == 0)
 	{
-		//공격 데이터에 문제가 있으면
-		if (attackData.Range == 0)
+		//무시
+		return;
+	}
+	else
+	{
+
+
+		m_UnitActionQueue.clear();
+
+
+		UnitMove(attackData.direction, attackData.Range, attackUnit, true);
+
+
+		// Send Unit Actions
 		{
-			//무시
-			return;
-		}
-		else
-		{
-			UnitMove(attackData.direction, attackData.Range, attackUnit, true);
-
-			m_PlayTurn++;
-
-			bool isNearAlkaStone = false;
-			ArcaStone* arcaStone = nullptr;
-
-			// 아르카스톤 찾고
-			for (auto unit : m_UnitList)
+			Packet::AttackResult outPacket;
+			outPacket.mQueueLength = m_UnitActionQueue.size();
+			for (unsigned int i = 0; i < m_UnitActionQueue.size(); i++)
 			{
-				if (unit->GetUnitType() == UT_ARCASTONE)
-				{
-					arcaStone = dynamic_cast<ArcaStone*>(unit);
-					break;
-				}
+				memcpy(&outPacket.mUnitActionQueue[i], &m_UnitActionQueue[i], sizeof(UnitAction));
 			}
-
-
-			for (Unit* unit : m_UnitList)
+			for (auto playerNumber : m_PlayerList)
 			{
-				//내 유닛이 아르카 스톤 옆에 있습니까?
-				if (unit->GetOwner() == m_Attacker)
+				auto session = GClientManager->GetClient(playerNumber);
+				if (session != nullptr)
+					session->SendRequest(&outPacket);
+			}
+		}
+
+
+		m_PlayTurn++;
+
+		bool isNearAlkaStone = false;
+		ArcaStone* arcaStone = nullptr;
+
+		// 아르카스톤 찾고
+		for (auto unit : m_UnitList)
+		{
+			if (unit->GetUnitType() == UT_ARCASTONE)
+			{
+				arcaStone = dynamic_cast<ArcaStone*>(unit);
+				break;
+			}
+		}
+
+
+		for (Unit* unit : m_UnitList)
+		{
+			//내 유닛이 아르카 스톤 옆에 있습니까?
+			if (unit->GetOwner() == m_Attacker)
+			{
+				for (int i = 1; i <= 6; i++) // Itor for HexaDirection
 				{
-					for (int i = 1; i <= 6; i++) // Itor for HexaDirection
+					if (arcaStone->GetPos() - unit->GetPos() == GetUnitVector((HexaDirection)i))
 					{
-						if (arcaStone->GetPos() - unit->GetPos() == GetUnitVector((HexaDirection)i))
-						{
-							isNearAlkaStone = true;
-							goto finishFindUnitNearArcastone;
-						}
+						isNearAlkaStone = true;
+						goto finishFindUnitNearArcastone;
 					}
 				}
 			}
+		}
 
-		finishFindUnitNearArcastone:
+	finishFindUnitNearArcastone:
 
-			int maxturn = MAX_TURN;
-			if (isNearAlkaStone == true)
+		int maxturn = MAX_TURN;
+		if (isNearAlkaStone == true)
+		{
+			maxturn++;
+		}
+		if (m_IsFirstTurn == true)
+		{
+			maxturn = MAX_TURN;
+		}
+		if (m_PlayTurn < maxturn)
+		{
+			;
+		}
+		else
+		{
+			m_IsFirstTurn = false;
+			m_PlayTurn = 0;
+			if (m_Attacker == m_PlayerList[0])
+				m_Attacker = m_PlayerList[1];
+			else m_Attacker = m_PlayerList[0];
+
+			// Let Them Know Is My Turn!
 			{
-				maxturn++;
+				Packet::YourTurnResult outPacket;
+				for (auto playerNumber : m_PlayerList)
+				{
+					if (m_Attacker == playerNumber)
+						outPacket.mIsReallyMyTurn = true;
+					else
+						outPacket.mIsReallyMyTurn = false;
+
+					auto session = GClientManager->GetClient(playerNumber);
+					if (session != nullptr)
+						session->SendRequest(&outPacket);
+				}
 			}
-			if (m_IsFirstTurn == true)
-			{
-				maxturn = MAX_TURN;
-			}
-			if (m_PlayTurn < maxturn)
-			{
-				;
-			}
-			else
-			{
-				m_IsFirstTurn = false;
-				m_PlayTurn = 0;
-				if (m_Attacker == m_PlayerList[0])
-					m_Attacker = m_PlayerList[1];
-				else m_Attacker = m_PlayerList[0];
-			}
+
 		}
 	}
 }
@@ -230,6 +246,17 @@ void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirst
 	{
 		// 가장 가까이에서 만난 애의 한칸 뒤에 유닛을 배치하고
 		unit->SetPosition(unit->GetPos() + GetUnitVector(direction) * (costLength - 1));
+
+		UnitAction action;
+		action.mActionType = UAT_MOVE;
+		action.mUnitId = unit->GetID();
+		action.mMoveData.mRange = costLength - 1;
+		action.mMoveData.mDirection = direction;
+		action.mMoveData.mFinalX = unit->GetPos().x;
+		action.mMoveData.mFinalY = unit->GetPos().y;
+		m_UnitActionQueue.push_back(action);
+
+
 		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // 거 유닛 바깥에 나갔슴까?
 			KillThisUnit(unit); //그럼 젠뷰쌰쓰!
 
@@ -238,7 +265,16 @@ void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirst
 	else // 당신 앞에 아무도 없다면.. 크큭 솔로군
 	{
 		unit->SetPosition(unit->GetPos() + GetUnitVector(direction) * range); // 쭉 앞으로 가시어요
-		
+
+		UnitAction action;
+		action.mActionType = UAT_MOVE;
+		action.mUnitId = unit->GetID();
+		action.mMoveData.mRange = range;
+		action.mMoveData.mDirection = direction;
+		action.mMoveData.mFinalX = unit->GetPos().x;
+		action.mMoveData.mFinalY = unit->GetPos().y;
+		m_UnitActionQueue.push_back(action);
+
 		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // 거 유닛 바깥에 나갔슴까?
 			KillThisUnit(unit); //그럼 젠뷰쌰쓰!.. 안그래도 혼잔데 낙사라니 ㅠㅠ
 	}
@@ -250,16 +286,35 @@ void Game::UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush)
 		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), pusher->GetAttack() - target->GetWeight(), target, false);
 	else // 두번째 이상의 충돌이면 이제까지의 밀린 정도를 감안해서 밀고
 		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), power - target->GetWeight(), target, false);
-	
+
 	//적이면 데미지 먹이고
 	if (pusher->GetOwner() != target->GetOwner())
 		UnitApplyDamageWithCollision(target, pusher);
+	else
+	{
+		UnitAction action;
+		action.mActionType = UAT_COLLISION;
+		action.mUnitId = pusher->GetID();
+		action.mCollisionData.mTarget = target->GetID();
+		action.mCollisionData.mMyHP = pusher->GetHP();
+		action.mCollisionData.mTargetHP = target->GetHP();
+		m_UnitActionQueue.push_back(action);
+	}
 }
 
 void Game::UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy)
 {
 	thisGuy->SetHP(thisGuy->GetHP() - thatGuy->GetAttack());
 	thatGuy->SetHP(thatGuy->GetHP() - thisGuy->GetAttack());
+
+	UnitAction action;
+	action.mActionType = UAT_COLLISION;
+	action.mUnitId = thisGuy->GetID();
+	action.mCollisionData.mTarget = thatGuy->GetID();
+	action.mCollisionData.mMyHP = thisGuy->GetHP();
+	action.mCollisionData.mTargetHP = thatGuy->GetHP();
+	m_UnitActionQueue.push_back(action);
+
 	if (thisGuy->GetHP() <= 0)
 		KillThisUnit(thisGuy);
 	if (thatGuy->GetHP() <= 0)
@@ -272,4 +327,29 @@ void Game::KillThisUnit(Unit* unit)
 
 	// Temp Code
 	unit->SetPosition(Coord(INT_MAX, INT_MAX));
+
+
+
+	UnitAction action;
+	action.mActionType = UAT_DIE;
+	action.mUnitId = unit->GetID();
+	m_UnitActionQueue.push_back(action);
+}
+
+void Game::StartGame()
+{
+	int random = rand() % m_PlayerList.size();
+	m_Attacker = m_PlayerList[random];
+	
+	Packet::YourTurnResult outPacket;
+	for (auto playerNumber : m_PlayerList)
+	{
+		if (playerNumber == m_Attacker)
+			outPacket.mIsReallyMyTurn = true;
+		else
+			outPacket.mIsReallyMyTurn = false;
+		auto session = GClientManager->GetClient(playerNumber);
+		if (session != nullptr)
+			session->SendRequest(&outPacket);
+	}
 }

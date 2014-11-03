@@ -172,4 +172,5 @@ ClientSession* ClientManager::GetClient(PlayerNumber playerID)
 			return client;
 		}
 	}
+	return nullptr;
 }

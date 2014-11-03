@@ -13,7 +13,7 @@ Unit::~Unit()
 {
 }
 
-void Unit::InitUnit(UnitData unitData, PlayerNumber ownerPlayerNum)
+void Unit::InitUnit(UnitData unitData, PlayerNumber ownerPlayerNum, UnitIdentityNumber id)
 {
 	m_UnitType = unitData.m_UnitType;
 	m_UnitMoveType = unitData.m_UnitMoveType;
@@ -23,4 +23,6 @@ void Unit::InitUnit(UnitData unitData, PlayerNumber ownerPlayerNum)
 	m_MoveRange = unitData.m_MoveRange;
 
 	SetOwner(ownerPlayerNum);
+
+	m_ID = id;
 }

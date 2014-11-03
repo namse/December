@@ -5,7 +5,7 @@
 #define MAX_NAME_LEN		30
 #define MAX_COMMENT_LEN		40
 #define MAX_UNIT_ON_GAME	30
-
+#define MAX_UNIT_ACTION 50
 enum PacketTypes
 {
 	PKT_NONE	= 0,
@@ -83,10 +83,39 @@ enum UnitOwner
 	UO_NPC=3,
 };
 
+typedef int UnitIdentityNumber;
+
 struct AttackData{
-	int					x, y;
+	UnitIdentityNumber id;
 	int					Range;
 	HexaDirection		direction;
+};
+
+enum UnitActionType{
+	UAT_NONE = 0,
+	UAT_MOVE = 1,
+	UAT_DIE = 2,
+	UAT_COLLISION = 3,
+};
+struct UnitAction{
+	UnitIdentityNumber mUnitId;
+	UnitActionType mActionType;
+	
+	// FOR MOVE
+	struct MoveData
+	{
+		int mRange;
+		HexaDirection mDirection;
+		int mFinalX, mFinalY;
+	}mMoveData;
+	
+	// FOR COLLIDE
+	struct CollisionData
+	{
+		UnitIdentityNumber mTarget;
+		int mMyHP;
+		int mTargetHP;
+	}mCollisionData;
 };
 
 namespace Packet
@@ -127,6 +156,7 @@ namespace Packet
 			int					attack;
 			int					moveRange;
 			int					x, y;
+			UnitIdentityNumber id;
 		};
 		struct FieldData{
 			int					fieldWidth, fieldHeight;
@@ -155,7 +185,11 @@ namespace Packet
 		AttackResult(){
 			mSize = sizeof(AttackResult);
 			mType = PKT_SC_ATTACK;
+			mQueueLength = 0;
+			memset(mUnitActionQueue, 0, sizeof(mUnitActionQueue));
 		}
+		int mQueueLength;
+		UnitAction mUnitActionQueue[50];
 	};
 
 	struct YourTurnResult : public PacketHeader

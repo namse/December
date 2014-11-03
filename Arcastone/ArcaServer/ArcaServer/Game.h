@@ -11,9 +11,14 @@ public:
 
 	void			InitGame(PlayerNumber player1, PlayerNumber player2);
 	void			StartGame();
-
-	int				GetUnit(OUT Unit* unitArr[]);
+	std::vector<Unit*>	GetUnitList() { return m_UnitList; }
 	PlayerNumber	GetAttacker(){ return m_Attacker; }
+	Unit*	GetUnit(UnitIdentityNumber id) {
+		for (auto unit : m_UnitList)
+			if (unit->GetID() == id)
+				return unit;
+		return nullptr;
+	}
 
 
 	void			HandleAtttack(PlayerNumber attacker, AttackData attackData);
@@ -38,7 +43,9 @@ private:
 	void KillThisUnit(Unit* unit);
 	void UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush);
 	void UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy);
-
+	UnitIdentityNumber GenerateUnitIdentityNumber() {
+		return m_UnitIdentityNumberCounter++;
+	}
 private:
 	GameNumber		m_GameNum;
 	Field			m_GameField;
@@ -47,4 +54,7 @@ private:
 	bool			m_IsFirstTurn;
 	std::vector<Unit*>			m_UnitList;
 	std::vector<PlayerNumber>	m_PlayerList;
+	std::vector<UnitAction>	m_UnitActionQueue;
+
+	UnitIdentityNumber	m_UnitIdentityNumberCounter;
 };

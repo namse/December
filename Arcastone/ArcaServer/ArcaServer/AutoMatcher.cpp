@@ -31,14 +31,10 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 		Packet::GameStartResult player2Packet;
 		
 		// get unit data
-		Unit* unitList[MAX_UNIT_ON_GAME];
-		memset(unitList, 0, sizeof(unitList));
-
-		int unitNum = game->GetUnit(unitList);
-		assert(unitList[0]);
+		auto unitList = game->GetUnitList();
 		
 		// fill unit data packet
-		for (int i = 0; i < unitNum; ++i)
+		for (unsigned int i = 0; i < unitList.size(); ++i)
 		{
 			auto unit = unitList[i];
 			assert(unit);
@@ -53,6 +49,7 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 			player1Packet.mUnit[i].moveRange = player2Packet.mUnit[i].moveRange = unit->GetMoveRange();
 			player1Packet.mUnit[i].x = player2Packet.mUnit[i].x = position.x;
 			player1Packet.mUnit[i].y = player2Packet.mUnit[i].y = position.x;
+			player1Packet.mUnit[i].id = player2Packet.mUnit[i].id = unit->GetID();
 
 			auto unitOwner = unit->GetOwner();
 			if (unitOwner == playerId) // player1's id
@@ -78,11 +75,13 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 		player1Packet.mField.fieldWidth = player2Packet.mField.fieldWidth = MAP_FIELD_WIDTH;
 		player1Packet.mField.fieldHeight = player2Packet.mField.fieldHeight = MAP_FIELD_HEIGHT;
 		player1Packet.mField.fieldHeight = player2Packet.mGameData.attacker = game->GetAttacker();
-		player1Packet.mField.fieldHeight = player2Packet.mLength = unitNum;
+		player1Packet.mField.fieldHeight = player2Packet.mLength = unitList.size();
 
 		playerSession1->SendRequest(&player1Packet);
 		playerSession2->SendRequest(&player2Packet);
 		
+
+		game->StartGame();
 	}
 	else
 	{
