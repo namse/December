@@ -4,6 +4,7 @@
 #define MAP_FIELD_WIDTH 7
 #define MAP_FIELD_HEIGHT 10
 #define PLAYER_NUMBER_NPC INT_MAX
+#define MAX_TURN	 2
 
 typedef int PlayerNumber;
 typedef int GameNumber;
@@ -49,6 +50,12 @@ struct Coord{
 
 	Coord operator - (const Coord& rhs) const{
 		return Coord(x + rhs.x, y + rhs.y);
+	}
+	Coord operator * (const int& rhs) const{
+		return Coord(x*rhs, y*rhs);
+	}
+	Coord operator / (const int& rhs) const{
+		return Coord(x / rhs, y / rhs);
 	}
 };
 

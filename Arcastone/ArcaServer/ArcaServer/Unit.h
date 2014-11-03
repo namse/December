@@ -9,6 +9,7 @@ public:
 	void			InitUnit(UnitData unitData, PlayerNumber ownerPlayerNum);
 	void			SetOwner(PlayerNumber playerNumber) { m_OwnerPlayerNum = playerNumber; }
 	void			SetPosition(Coord position) { m_Position = position; }
+	void			SetHP(int hp) { m_HP = hp; }
 
 	UnitType		GetUnitType(){ return m_UnitType; }
 	UnitMoveType	GetUnitMoveType(){ return m_UnitMoveType; }

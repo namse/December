@@ -56,7 +56,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 			assert(unit != nullptr);
 
 			// init by copying unitData
-			unit->InitUnit(unitData, playerNumber); 
+			unit->InitUnit(unitData, playerNumber);
 			Coord position;
 
 			if (playerNumber == player1)
@@ -80,7 +80,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	m_UnitList.push_back(arcaStone);
 
 	// play turn and first attacker setting
-	m_Attacker = m_PlayerList.at( rand() % m_PlayerList.size() );
+	m_Attacker = m_PlayerList.at(rand() % m_PlayerList.size());
 	m_PlayTurn = 0;
 }
 
@@ -100,4 +100,176 @@ int Game::GetUnit(OUT Unit* unitArr[])
 	}
 
 	return num;	// return all unit num
+}
+
+void Game::HandleAtttack(PlayerNumber attacker, AttackData attackData)
+{
+	if (m_Attacker != attacker) // 아직 턴이 아닌데 공격을 시도하면
+	{
+		//무시
+		return;
+	}
+
+
+	Unit* attackUnit = nullptr;
+
+	//공격한 유닛을 찾고
+	for (auto unit : m_UnitList)
+	{
+		if (unit->GetPos() == Coord(attackData.x, attackData.y))
+		{
+			attackUnit = unit;
+			break;
+		}
+	}
+
+	if (attackUnit != nullptr)
+	{
+		//공격 데이터에 문제가 있으면
+		if (attackData.Range == 0)
+		{
+			//무시
+			return;
+		}
+		else
+		{
+			UnitMove(attackData.direction, attackData.Range, attackUnit, true);
+
+			m_PlayTurn++;
+
+			bool isNearAlkaStone = false;
+			ArcaStone* arcaStone = nullptr;
+
+			// 아르카스톤 찾고
+			for (auto unit : m_UnitList)
+			{
+				if (unit->GetUnitType() == UT_ARCASTONE)
+				{
+					arcaStone = dynamic_cast<ArcaStone*>(unit);
+					break;
+				}
+			}
+
+
+			for (Unit* unit : m_UnitList)
+			{
+				//내 유닛이 아르카 스톤 옆에 있습니까?
+				if (unit->GetOwner() == m_Attacker)
+				{
+					for (int i = 1; i <= 6; i++) // Itor for HexaDirection
+					{
+						if (arcaStone->GetPos() - unit->GetPos() == GetUnitVector((HexaDirection)i))
+						{
+							isNearAlkaStone = true;
+							goto finishFindUnitNearArcastone;
+						}
+					}
+				}
+			}
+
+		finishFindUnitNearArcastone:
+
+			int maxturn = MAX_TURN;
+			if (isNearAlkaStone == true)
+			{
+				maxturn++;
+			}
+			if (m_IsFirstTurn == true)
+			{
+				maxturn = MAX_TURN;
+			}
+			if (m_PlayTurn < maxturn)
+			{
+				;
+			}
+			else
+			{
+				m_IsFirstTurn = false;
+				m_PlayTurn = 0;
+				if (m_Attacker == m_PlayerList[0])
+					m_Attacker = m_PlayerList[1];
+				else m_Attacker = m_PlayerList[0];
+			}
+		}
+	}
+}
+void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirstMove)
+{
+	if (range <= 0)
+	{
+		// finish Move
+		return;
+	}
+
+	// 처음 부딪힌 유닛과, 그 라인에서 마지막으로 연계되어 부딪힐 유닛을 찾는다.
+	Unit* firstGuy = nullptr;
+	Unit* lastGuy = nullptr;
+	int costLength = -1;
+	for (int l = 1; l <= range; l++)
+	{
+		// unit의 direction 방향으로 l만큼 거리에 서있는 유닛
+		Unit* standGuy = GetUnitInPosition(unit->GetPos() + GetUnitVector(direction) * l);
+		if (standGuy == nullptr) // 게 서있는가? - 아뇨
+		{
+			if (firstGuy == nullptr) // 처음으로 만난 놈이 아직 없는가?
+				continue;
+			else // 이제껏 충돌은 하긴 했는가? 그럼 충돌을 멈춰야겠구려
+				break;
+		}
+		else{ // 네놈, 거기 서있었구나!
+			if (firstGuy == nullptr) // 아직 아무도 만나지 못했는가?
+			{
+				costLength = l;
+				firstGuy = standGuy;
+			}
+			lastGuy = standGuy;
+		}
+	}
+
+	if (firstGuy != nullptr) // 누군가과 (입술)박치기를 했습니까?
+	{
+		// 가장 가까이에서 만난 애의 한칸 뒤에 유닛을 배치하고
+		unit->SetPosition(unit->GetPos() + GetUnitVector(direction) * (costLength - 1));
+		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // 거 유닛 바깥에 나갔슴까?
+			KillThisUnit(unit); //그럼 젠뷰쌰쓰!
+
+		UnitPush(unit, lastGuy, range - costLength, isFirstMove); // 맨 마지막에 있는 놈만 밀어버리세요.
+	}
+	else // 당신 앞에 아무도 없다면.. 크큭 솔로군
+	{
+		unit->SetPosition(unit->GetPos() + GetUnitVector(direction) * range); // 쭉 앞으로 가시어요
+		
+		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // 거 유닛 바깥에 나갔슴까?
+			KillThisUnit(unit); //그럼 젠뷰쌰쓰!.. 안그래도 혼잔데 낙사라니 ㅠㅠ
+	}
+}
+
+void Game::UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush)
+{
+	if (isFirstPush) // 첫 충돌이면 공격력에 비례해서 밀고
+		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), pusher->GetAttack() - target->GetWeight(), target, false);
+	else // 두번째 이상의 충돌이면 이제까지의 밀린 정도를 감안해서 밀고
+		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), power - target->GetWeight(), target, false);
+	
+	//적이면 데미지 먹이고
+	if (pusher->GetOwner() != target->GetOwner())
+		UnitApplyDamageWithCollision(target, pusher);
+}
+
+void Game::UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy)
+{
+	thisGuy->SetHP(thisGuy->GetHP() - thatGuy->GetAttack());
+	thatGuy->SetHP(thatGuy->GetHP() - thisGuy->GetAttack());
+	if (thisGuy->GetHP() <= 0)
+		KillThisUnit(thisGuy);
+	if (thatGuy->GetHP() <= 0)
+		KillThisUnit(thatGuy);
+}
+
+void Game::KillThisUnit(Unit* unit)
+{
+	// TODO
+
+	// Temp Code
+	unit->SetPosition(Coord(INT_MAX, INT_MAX));
 }

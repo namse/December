@@ -4,7 +4,7 @@
 #include "DatabaseJobManager.h"
 #include "PlayerManager.h"
 #include "AutoMatcher.h"
-
+#include "GameManager.h"
 //@{ Handler Helper
 
 typedef void (*HandlerFunc)(ClientSession* session);
@@ -148,6 +148,7 @@ REGISTER_HANDLER(PKT_CS_ATTACK)
 		return;
 	}
 
-	PlayerNumber playerNum = session->GetPlayerId();
+	auto game = GGameManager->GetGameWithPlayerNumber(session->GetPlayerId());
+	assert(game != nullptr);
 
 }

@@ -18,6 +18,8 @@ enum PacketTypes
 	PKT_CS_ATTACK = 4,
 	PKT_SC_ATTACK = 5,
 
+	PKT_SC_YOUR_TURN = 6,
+
 	PKT_MAX	= 1024
 } ;
 
@@ -81,6 +83,12 @@ enum UnitOwner
 	UO_NPC=3,
 };
 
+struct AttackData{
+	int					x, y;
+	int					Range;
+	HexaDirection		direction;
+};
+
 namespace Packet
 {
 	struct LoginRequest : public PacketHeader
@@ -138,12 +146,26 @@ namespace Packet
 			mSize = sizeof(AttackRequest);
 			mType = PKT_CS_ATTACK;
 		}
-		struct AttackData{
-			int					x, y;
-			int					Range;
-			HexaDirection		direction;
-		};
+
 		AttackData				mAttack;
+	};
+
+	struct AttackResult : public PacketHeader
+	{
+		AttackResult(){
+			mSize = sizeof(AttackResult);
+			mType = PKT_SC_ATTACK;
+		}
+	};
+
+	struct YourTurnResult : public PacketHeader
+	{
+		YourTurnResult(){
+			mSize = sizeof(YourTurnResult);
+			mType = PKT_SC_YOUR_TURN;
+			mIsReallyMyTurn = false;
+		}
+		bool mIsReallyMyTurn; // if it's false, that may 99% mean Enemy Turn Now.
 	};
 }
 
