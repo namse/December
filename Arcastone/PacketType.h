@@ -15,6 +15,9 @@ enum PacketTypes
 
 	PKT_SC_GAME_START = 3,
 
+	PKT_CS_ATTACK = 4,
+	PKT_SC_ATTACK = 5,
+
 	PKT_MAX	= 1024
 } ;
 
@@ -100,7 +103,6 @@ namespace Packet
 			mLength = 0;
 			memset(mUnit, 0, sizeof(mUnit));
 		}
-		int mLength;
 		struct UnitData{
 			UnitType			unitType;
 			UnitMoveType		unitMoveType;
@@ -114,8 +116,27 @@ namespace Packet
 		struct FieldData{
 			int					fieldWidth, fieldHeight;
 		};
+		struct GameData{
+			int					attacker;
+		};
+		int						mLength;
 		UnitData				mUnit[MAX_UNIT_ON_GAME];
 		FieldData				mField;
+		GameData				mGameData;
+	};
+
+	struct AttackRequest : public PacketHeader
+	{
+		AttackRequest(){
+			mSize = sizeof(AttackRequest);
+			mType = PKT_CS_ATTACK;
+		}
+		struct AttackData{
+			int					x, y;
+			int					Range;
+			HexaDirection		direction;
+		};
+		AttackData				mAttack;
 	};
 }
 

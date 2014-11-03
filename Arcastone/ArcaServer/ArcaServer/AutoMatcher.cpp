@@ -58,6 +58,8 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 		}
 		playerPacket.mField.fieldWidth = MAP_FIELD_WIDTH;
 		playerPacket.mField.fieldHeight = MAP_FIELD_HEIGHT;
+		playerPacket.mGameData.attacker = game->GetAttacker();
+		playerPacket.mLength = unitNum;
 
 		playerSession1->SendRequest(&playerPacket);
 		playerSession2->SendRequest(&playerPacket);
