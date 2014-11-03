@@ -17,7 +17,7 @@ public:
 
 private:
 	GameNumber		m_GameNum;
-	Field*			m_GameField;
+	Field			m_GameField;
 	PlayerNumber	m_Attacker;
 	int				m_PlayTurn;
 	std::vector<Unit*>			m_UnitList;

@@ -29,7 +29,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	m_PlayerList.push_back(player2);
 
 	// initialize field
-	m_GameField->InitField(MAP_FIELD_WIDTH, MAP_FIELD_HEIGHT); // 7 by 10's rectangle field, like ipad prototype
+	m_GameField.InitField(MAP_FIELD_WIDTH, MAP_FIELD_HEIGHT); // 7 by 10's rectangle field, like ipad prototype
 
 	// create and initialize unit
 	// get group data from each player
