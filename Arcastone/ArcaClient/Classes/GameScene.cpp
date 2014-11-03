@@ -26,30 +26,39 @@ bool GameScene::init()
     
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
+
+	m_HWaitGameStart = CreateEvent(NULL, TRUE, FALSE, NULL);
+
 	touchEventInit();
+
+	drawHexagon();
 
 	TcpClient::getInstance()->loginRequest();
 	// 서버님 로그인 하게 해줘요 !!
 
-	// TODO : 서버님 유닛 배치( 맵의 상태 ) 주세요 !!
-
 	// TODO : 서버님 누구 차례인지 알려줘요 !!
 
+	//WaitForSingleObject(m_HWaitGameStart, INFINITE);
+	// 서버에서 GameStartResult 를 보낼때까지 무한정 대기함
+
 	Field* pField = Game::getInstance().getField();
-
-	drawHexagon();
+	for (int i = 0; i < m_UnitDataLength; ++i)
+	{
+		pField->setUnitData(m_UnitData[i]);
+	}
     
-	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
-	// 게임 로직 실행
 
-	this->setKeyboardEnabled(true);
+
+	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
 
     return true;
 }
 
 void GameScene::gameLogic(float dt)
 {
-	
+	// 누구의 차례인지 확인하고 내 차례라면 
+
+
 }
 
 void GameScene::touchEventInit()
@@ -169,7 +178,7 @@ void GameScene::drawHexagon()
 			Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
 			node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, ccc4f(0.2f, 1.0f, 0.2f, 0.3f));
 
-			if(DRAW_HEXA_NUMBER) drawText(i, j, hexa);
+			if(DRAW_HEXA_NUMBER) drawText(i, j, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
 		}
 	}
 }
@@ -177,11 +186,14 @@ void GameScene::drawHexagon()
 void GameScene::drawText(int i, int j, Hexagon* hexa)
 {
 	// 육각형 안에 정수형 인덱스 값을 보여주는 함수 .
-	int f = hexa->anchor.x;
+	// DRAW_HEXA_POSITION 이 true면 인덱스 값이 아닌 위치 값을 보여줌
+	int f = i;
+	if (DRAW_HEXA_POSITION) f = hexa->anchor.x;
 	char szBuf1[8];
 	itoa(f, szBuf1, 10);
 
-	f = hexa->anchor.y;
+	f = j;
+	if (DRAW_HEXA_POSITION) f = hexa->anchor.y;
 	char szBuf2[8];
 	itoa(f, szBuf2, 10);
 
@@ -253,7 +265,22 @@ Hexagon* GameScene::createHexagon(Point anchor, int size)
 	return newHexa;
 }
 
-void GameScene::ReadUnitData(Packet::GameStartResult::UnitData* unitData, int length)
+void GameScene::ReadUnitData(UnitData* unitData, int length)
 {
+	m_UnitDataLength = length;
 
+	for (int i = 0; i < length; ++i)
+	{
+		m_UnitData[i] = unitData[i];
+	}
+
+	SetEvent(m_HWaitGameStart);
+}
+
+void GameScene::drawUnit()
+{
+	for (int i = 0; i < MAX_UNIT_ON_GAME; ++i)
+	{
+		m_UnitSprite[i] = Sprite::create("WhitePawn.png");
+	}
 }

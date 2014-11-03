@@ -23,6 +23,7 @@
 #define HEXAGON_LENGTH				25
 
 #define DRAW_HEXA_NUMBER			true
+#define DRAW_HEXA_POSITION			false
 
 #define RADIANS_60					CC_DEGREES_TO_RADIANS(60)
 

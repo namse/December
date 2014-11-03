@@ -178,7 +178,7 @@ void TcpClient::processPacket()
 								  bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
 
 								  auto layer = cocos2d::Director::getInstance()->getRunningScene()->getChildByName(string("base_layer"));
-								  scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadUnitData, dynamic_cast<GameScene*>(layer), recvData.mData, recvData.mLength));
+								  scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadUnitData, dynamic_cast<GameScene*>(layer), recvData.mUnit, recvData.mLength));
 		}
 			break;
 		default:

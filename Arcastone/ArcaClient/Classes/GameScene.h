@@ -31,6 +31,7 @@ public:
 
 	Hexagon*				createHexagon(Point anchor, int size);
 	void					drawHexagon();
+	void					drawUnit();
 	void					drawText(int i, int j, Hexagon* hexa);
 
 	Point					pointConversion(Point point);
@@ -43,13 +44,17 @@ public:
 private:
 	map<int, CCSprite*>		m_PeerMap;
 	
-	int						m_Length;
+	UnitData				m_UnitData[MAX_UNIT_ON_GAME];
+	CCSprite*				m_UnitSprite[MAX_UNIT_ON_GAME];
+	int						m_UnitDataLength;
 
 	vector<Point>			m_HexagonPoint;
 
 	vector<Point>			m_PointPath;
 	int						m_PointPathIndex;
 	bool					m_IsClicked;
+
+	HANDLE					m_HWaitGameStart;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

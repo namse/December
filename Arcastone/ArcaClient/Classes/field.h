@@ -9,13 +9,13 @@ public:
 	Field();
 	~Field();
 
-	void						setUnit();
+	void						setUnitData(UnitData unitData){ m_UnitData.push_back(unitData); }
 
 	//map<Position, UnitData*>*	getUnit(){ return &m_Unit; }
 	//UnitData*					getUnit(Position key);
 
 private:
-	//map<Position, UnitData*>	m_Unit;
+	vector<UnitData>			m_UnitData;
 
 };
 
