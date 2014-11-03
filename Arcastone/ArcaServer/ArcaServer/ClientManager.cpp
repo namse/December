@@ -161,3 +161,15 @@ void ClientManager::DeletePlayerDone(DatabaseJobContext* dbJob)
 	printf("PLAYER [%d] DELETED\n", deleteJob->mPlayerId) ;
 
 }
+
+ClientSession* ClientManager::GetClient(PlayerNumber playerID)
+{
+	for (auto clientIt : mClientList)
+	{
+		auto client = clientIt.second;
+		if (playerID == client->GetPlayerId())
+		{
+			return client;
+		}
+	}
+}

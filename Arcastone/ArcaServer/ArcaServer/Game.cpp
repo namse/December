@@ -14,12 +14,12 @@ Game::Game(GameNumber gameNum) : m_GameNum(gameNum)
 
 Game::~Game()
 {
-	for (auto gameObject : m_ObjectList)
+	for (auto unit : m_UnitList)
 	{
-		delete gameObject;
+		delete unit;
 	}
 	m_PlayerList.clear();
-	m_ObjectList.clear();
+	m_UnitList.clear();
 }
 
 void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
@@ -28,19 +28,21 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	m_PlayerList.push_back(player1);
 	m_PlayerList.push_back(player2);
 
-	// 필드 초기화
-	m_GameField->InitField(7, 10); // 7 by 10's rectangle field, like ipad prototype
+	// initialize field
+	m_GameField->InitField(MAP_FIELD_WIDTH, MAP_FIELD_HEIGHT); // 7 by 10's rectangle field, like ipad prototype
 
-	// 유닛 생성 및 초기화
+	// create and initialize unit
 	for (auto playerNumber : m_PlayerList)
 	{
 		auto player = GPlayerManager->GetPlayer(playerNumber);
 		auto group = player->GetGroupList()[0];
+
 		for (auto it = group.m_UnitDataList.begin(); it != group.m_UnitDataList.end(); it++)
 		{
 			auto unitData = it->second;
 			auto originPosition = it->first;
 			Unit* unit = nullptr;
+
 			switch (unitData.m_UnitType)
 			{
 			case UT_PAWN:
@@ -51,8 +53,9 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 			}
 			assert(unit == nullptr);
 
-			unit->InitObject(unitData, playerNumber); // init by coping unitData
+			unit->InitUnit(unitData, playerNumber); // init by copying unitData
 			Coord position;
+
 			if (playerNumber == player1)
 			{
 				position = START_POINT_PLAYER1 + originPosition; // 그룹 짤 때 진영 짜놓은 것 토대로 배치
@@ -62,15 +65,26 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 				position = START_POINT_PLAYER2 - originPosition; // 대칭으로
 			}
 			unit->SetPosition(position);
-			m_ObjectList.push_back(unit);
+			m_UnitList.push_back(unit);
 		};
 	}
 
-	// 아르카스톤(NPC) 생성
-
+	// create arcastone(npc)
 	ArcaStone* arcaStone = new ArcaStone();
-	// Already Initialized in Constructor !!
+
 	arcaStone->SetOwner(PLAYER_NUMBER_NPC);
 	arcaStone->SetPosition(Coord(3, 3)); // Center of Map
-	m_ObjectList.push_back(arcaStone);
+	m_UnitList.push_back(arcaStone);
+}
+
+int Game::GetUnit(OUT Unit* unitArr[])
+{
+	int num = 0;
+	for (auto unit : m_UnitList)
+	{
+		unitArr[num] = unit;
+		++num;
+	}
+
+	return num;	// return all unit num
 }

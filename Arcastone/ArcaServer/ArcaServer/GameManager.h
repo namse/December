@@ -9,6 +9,7 @@ public:
 	~GameManager();
 
 	GameNumber		CreateGame(PlayerNumber player1, PlayerNumber player2);
+	Game*			GetGame(GameNumber GameID){ return m_GameList.find(GameID)->second;  }
 
 private:
 	typedef std::map<GameNumber, Game*> GameList;
