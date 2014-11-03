@@ -53,7 +53,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 
 			}break;
 			}
-			assert(unit == nullptr);
+			assert(unit != nullptr);
 
 			// init by copying unitData
 			unit->InitUnit(unitData, playerNumber); 

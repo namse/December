@@ -34,27 +34,26 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 		memset(unitList, 0, sizeof(unitList));
 
 		int unitNum = game->GetUnit(unitList);
-		assert(!unitList[0]);
+		assert(unitList[0]);
 		
 		// fill unit data packet
 		for (int i = 0; i < unitNum; ++i)
 		{
 			auto unit = unitList[i];
-			if (!unit) break;
-			auto unitData = playerPacket.mUnit[i];
+			assert(unit);
+			
 			auto position = unit->GetPos();
 
-			unitData.unitType = unit->GetUnitType();
-			unitData.unitMoveType = unit->GetUnitMoveType();
-			unitData.ownerPlayer = unit->GetOwner();
-			unitData.hp = unit->GetHP();
-			unitData.weight = unit->GetWeight();
-			unitData.attack = unit->GetAttack();
-			unitData.moveRange = unit->GetMoveRange();
-			unitData.x = position.x;
-			unitData.y = position.x;
+			playerPacket.mUnit[i].unitType = unit->GetUnitType();
+			playerPacket.mUnit[i].unitMoveType = unit->GetUnitMoveType();
+			playerPacket.mUnit[i].ownerPlayer = unit->GetOwner();
+			playerPacket.mUnit[i].hp = unit->GetHP();
+			playerPacket.mUnit[i].weight = unit->GetWeight();
+			playerPacket.mUnit[i].attack = unit->GetAttack();
+			playerPacket.mUnit[i].moveRange = unit->GetMoveRange();
+			playerPacket.mUnit[i].x = position.x;
+			playerPacket.mUnit[i].y = position.x;
 
-			++i;
 		}
 		playerPacket.mField.fieldWidth = MAP_FIELD_WIDTH;
 		playerPacket.mField.fieldHeight = MAP_FIELD_HEIGHT;
