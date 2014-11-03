@@ -9,6 +9,21 @@ Field::Field()
 Field::~Field()
 {
 }
+
+void Field::fieldInit()
+{
+}
+
+void Field::setUnitData(UnitData unitData[], int length)
+{
+	for (int i = 0; i < length; ++i)
+		m_UnitData[i] = unitData[i];
+
+	m_UnitDataLength = length;
+}
+
+
+
 /*
 UnitData* Field::getUnit(Position key)
 {

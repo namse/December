@@ -60,7 +60,7 @@ TcpClient* TcpClient::getInstance()
 		if (false == s_TcpClient->initialize())
 			return nullptr;
 
-		string ipaddr = UserDefault::getInstance()->getStringForKey("ipaddr", string("localhost"));
+		string ipaddr = UserDefault::getInstance()->getStringForKey("ipaddr", string(LOGIN_IPADDR));
 		int port = UserDefault::getInstance()->getIntegerForKey("port", 9001);
 
 		s_TcpClient->connect(ipaddr.c_str(), port);
@@ -177,10 +177,26 @@ void TcpClient::processPacket()
 								  Packet::GameStartResult recvData;
 								  bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
 
-								  auto layer = cocos2d::Director::getInstance()->getRunningScene()->getChildByName(string("base_layer"));
+								  auto director = Director::getInstance();
+								  auto scene = director->getRunningScene();
+								  auto layer = scene->getChildByName("base_layer");
 								  scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadUnitData, dynamic_cast<GameScene*>(layer), recvData.mUnit, recvData.mLength));
 		}
 			break;
+		case PKT_SC_YOUR_TURN:
+		{
+								 Packet::YourTurnResult recvData;
+								 bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+								 auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
+								 scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::SetTurn, dynamic_cast<GameScene*>(layer), recvData.mIsReallyMyTurn));
+		}break;
+		
+		case PKT_SC_ATTACK:
+		{
+							  Packet::AttackResult recvData;
+							  bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+
+		}break;
 		default:
 			assert(false);
 		}

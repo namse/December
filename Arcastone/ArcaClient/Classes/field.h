@@ -9,13 +9,18 @@ public:
 	Field();
 	~Field();
 
-	void						setUnitData(UnitData unitData){ m_UnitData.push_back(unitData); }
+	void						fieldInit();
 
-	//map<Position, UnitData*>*	getUnit(){ return &m_Unit; }
-	//UnitData*					getUnit(Position key);
+	void						setUnitData(UnitData unitData, int idx){ m_UnitData[idx] = unitData; }
+	void						setUnitData(UnitData unitData[], int length);
+
+	UnitData					getUnitData(int idx){ return m_UnitData[idx]; }
+	UnitData*					getUnitData(){ return m_UnitData; }
+	int							getUnitDataLength(){ return m_UnitDataLength; }
 
 private:
-	vector<UnitData>			m_UnitData;
+	UnitData					m_UnitData[MAX_UNIT_ON_GAME];
+	int							m_UnitDataLength;
 
 };
 

@@ -5,6 +5,8 @@
 #include "../../PacketType.h"
 #include <vector>
 
+#define LOGIN_IPADDR				"127.0.0.1"
+
 #define MAP_IS_RECT					false
 #define MAP_IS_HEXA					true
 #define MAP_SIZEX					7

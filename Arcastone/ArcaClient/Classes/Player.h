@@ -9,11 +9,15 @@ public:
 	Player();
 	~Player();
 
-	vector<Unit*> getUnit() { return m_Unit; }
-	Unit* getUnit(int idx);
+	Unit*						getUnit(int idx);
+	int							getUnitCounter(){ return m_UnitCounter; }
+
+	void						setUnit(Unit unit){ m_Unit[m_UnitCounter++] = unit; }
+	void						setUnit(UnitData unitData);
 	
 private:
-	vector<Unit*> m_Unit;
+	Unit						m_Unit[MAX_UNIT_ON_GAME];
+	int							m_UnitCounter;
 
 };
 

@@ -23,31 +23,16 @@ bool GameScene::init()
     {
         return false;
     }
-    
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	m_HWaitGameStart = CreateEvent(NULL, TRUE, FALSE, NULL);
+	m_GameState = GS_BEFORE_LOGIN;		// 게임의 진행 상태를 로그인 전으로 설정
 
-	touchEventInit();
+	touchEventInit();					// 마우스 이벤트를 사용하기 위해 초기화
 
-	drawHexagon();
+	drawHexagon();						// 육각형을 그림. Header.h 의 #define 값들을 수정하여 육각형의 형태 조절 가능
 
-	TcpClient::getInstance()->loginRequest();
-	// 서버님 로그인 하게 해줘요 !!
-
-	// TODO : 서버님 누구 차례인지 알려줘요 !!
-
-	//WaitForSingleObject(m_HWaitGameStart, INFINITE);
-	// 서버에서 GameStartResult 를 보낼때까지 무한정 대기함
-
-	Field* pField = Game::getInstance().getField();
-	for (int i = 0; i < m_UnitDataLength; ++i)
-	{
-		pField->setUnitData(m_UnitData[i]);
-	}
-    
-
+	m_IsAction = false;
 
 	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
 
@@ -56,15 +41,38 @@ bool GameScene::init()
 
 void GameScene::gameLogic(float dt)
 {
-	// 누구의 차례인지 확인하고 내 차례라면 
 
+	switch (m_GameState)
+	{
+	case GS_BEFORE_LOGIN:
+	{
+							auto scene = Director::getInstance()->getRunningScene();
+							if (scene != nullptr && this->getParent() == scene)
+							{
+								TcpClient::getInstance()->loginRequest();
+								m_GameState = GS_WAIT_LOGIN;
+							}
+	}
+		break;
+	case GS_WAIT_LOGIN:
+	{
 
+	}
+		break;
+	case GS_GAME_START:			// GameStartResult 를 받은 상태
+	{
+									//if (m_IsAction && m_IsMyTurn) TcpClient::getInstance()->TurnEndRequest();
+	}
+		break;
+	default:
+		break;
+	}
+	
 }
 
 void GameScene::touchEventInit()
 {
-	m_PointPathIndex = 0;
-	m_IsClicked = false;
+	m_PathPointIndex = 0;
 
 	_touchListener = EventListenerTouchOneByOne::create();
 	_touchListener->setSwallowTouches(true);
@@ -78,49 +86,107 @@ void GameScene::touchEventInit()
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
-	while (m_PointPath.size() > 0)
-		m_PointPath.pop_back();						// 다 버림
-
-	Point clickPoint = touch->getLocation();
-	m_PointPath.push_back(clickPoint);				// 새로 넣음
-
-	for (int i = 0; i < m_HexagonPoint.size(); ++i)
+	if (m_IsMyTurn && !m_IsAction)			// 자신의 턴이고 행동하지 않은 경우에만 마우스 입력을 받는다.
 	{
-		Point point = pointConversion(m_HexagonPoint.at(i));	// i 번째 인덱스의 화면상 위치를 point에 저장
-
-		if (touchCheck(clickPoint, point))
+		while (m_PathDrawNode.size() > 0)
 		{
-			LabelTTF* vLabelx;
-			vLabelx = LabelTTF::create("CLICK!", "Hevetica", 20);
-			vLabelx->setPosition(Point(point.x, point.y));
-			vLabelx->setColor(Color3B(0, 255, 0));
+			int end = m_PathDrawNode.size() - 1;
+			this->removeChild(m_PathDrawNode.at(end));
+			m_PathDrawNode.pop_back();
+			// 이전에 그렸던 패스들을 지운다.
+		}
+		m_PathPoint.clear();
+		// 이전에 받았던 마우스 입력을 모두 버린다.
 
-			this->addChild(vLabelx);
+		Point clickPoint = touch->getLocation();
+
+		m_PathDrawNode.push_back(CCDrawNode::create());
+
+		this->addChild(m_PathDrawNode.at(0));
+
+		Player* pPlayer = m_Game.getPlayer(PW_PLAYERONE);
+		for (int i = 0; i < pPlayer->getUnitCounter(); ++i)
+		{
+			int x = pPlayer->getUnit(i)->getUnitStatus().x;
+			int y = pPlayer->getUnit(i)->getUnitStatus().y;
+			// 자신의 유닛들의 좌표인덱스를 하나씩 참조하고
+			Point point = conversionIndexToPoint(Point(x, y));
+			// 좌표인덱스를 화면상 위치로 변환하여
+
+			if (touchCheck(clickPoint, point))
+			{
+				// 내가 내 유닛을 클릭했는지 판정한다.
+				m_PathPoint.push_back(m_HexagonPoint.at(i));
+				// 내 유닛을 선택했다면, 벡터에 알아낸 좌표인덱스를 저장하고,
+				m_PathDrawNode.at(0)->drawDot(point, 20, ccc4f(0.7, 0.7, 0.7, 0.7));
+				// 클릭한 좌표를 하이라이트한다.
+				m_SelectedUnitIndex = pPlayer->getUnit(i)->getUnitStatus().id;
+				// 그 유닛을 선택했다는 것을 지정하기 위해 id 를 멤버변수에 저장한다.
+				break;
+			}
 		}
 	}
-
-	m_IsClicked = true;
-
 	return true;
 }
 
 void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
-	Point clickPoint = touch->getLocation();
-
-	for (int i = 0; i < m_HexagonPoint.size(); ++i)
+	if (m_IsMyTurn && !m_IsAction)
 	{
-		Point point = pointConversion(m_HexagonPoint.at(i));	// i 번째 인덱스의 화면상 위치를 point에 저장
+		// 왠진 몰라도 touchMoved 가 안돌아감;
 
-		if (touchCheck(clickPoint, point))
+		Point clickPoint = touch->getLocation();
+
+		int end = m_PathDrawNode.size() - 1;
+		this->removeChild(m_PathDrawNode.at(end));
+		m_PathDrawNode.pop_back();
+		m_PathDrawNode.push_back(CCDrawNode::create());
+
+		this->addChild(m_PathDrawNode.at(0));
+
+		m_PathDrawNode.at(0)->drawSegment(m_PathPoint.at(0), clickPoint, 15, ccc4f(0.7, 0.7, 0.7, 0.7));
+	}
+}
+
+void GameScene::onTouchEnded(Touch* touch, Event* event)
+{
+	if (m_IsMyTurn && !m_IsAction)
+	{
+		// 클릭한 상태로 턴이 넘어갔을 경우 마우스 떼도 이 코드 안돌아가니 주의
+
+		Point clickPoint = touch->getLocation();
+
+		float direction = getPointToPointDirection(m_PathPoint.at(0), clickPoint);
+		float distance = getPointToPointDirection(m_PathPoint.at(0), clickPoint);
+
+		HexaDirection hDirection;
+		if (direction < 60)
+			hDirection = HD_SOUTHEAST;
+		else if (direction < 120)
+			hDirection = HD_SOUTH;
+		else if (direction < 180)
+			hDirection = HD_SOUTHWEST;
+		else if (direction < 240)
+			hDirection = HD_NORTHWEST;
+		else if (direction < 300)
+			hDirection = HD_NORTH;
+		else hDirection = HD_NORTHEAST;
+		// enum 값 조절하면 div 함수 이용- 한줄로 표현 가능
+
+		// TODO : hDirection 과 distance 를 이용해서 선택한 유닛(m_SelectedUnitIndex) 에게 이동.공격 명령 하기
+		// 공격하거나 이동했을 경우 m_IsAction = true; 하여 행동했음을 알린다.
+
+		while (m_PathDrawNode.size() > 0)
 		{
-			LabelTTF* vLabelx;
-			vLabelx = LabelTTF::create("DRAG!", "Hevetica", 20);
-			vLabelx->setPosition(Point(point.x, point.y));
-			vLabelx->setColor(Color3B(0, 255, 0));
-
-			this->addChild(vLabelx);
+			int end = m_PathDrawNode.size() - 1;
+			this->removeChild(m_PathDrawNode.at(end));
+			m_PathDrawNode.pop_back();
+			// 이전에 그렸던 패스들을 지운다.
 		}
+		m_PathPoint.clear();
+		// 이전에 받았던 마우스 입력을 모두 버린다.
+
+		m_PathPointIndex = 0;
 	}
 }
 
@@ -135,11 +201,10 @@ bool GameScene::touchCheck(Point touch, Point anchor)
 		// 클릭한 좌표가 육각형의 x 범위에 속하는지 확인
 
 		float yHowFarToAnchor = abs(touch.y - anchor.y);
-		// yHowFarToAnchor : 육각형의 줌심에서 클릭한 좌표가 y 방향으로 떨어진 정도
 
 		float yTuningValue = yHowFarToAnchor / (HEXAGON_LENGTH * msin) * 0.5;
-		// 육각형의 중심에서 y 거리로 멀어질수록 x 판정이 좁아지는 것을 구현하기 위해서 yTuningValue 를 사용했음 .
-		
+		// 육각형의 중심에서 y 거리로 멀어질수록 x 판정이 좁아지는 것을 구현하는 코드
+
 		if (touch.x > anchor.x - HEXAGON_LENGTH * (1 - yTuningValue) &&
 			touch.x < anchor.x + HEXAGON_LENGTH * (1 - yTuningValue))
 			return true;
@@ -147,11 +212,21 @@ bool GameScene::touchCheck(Point touch, Point anchor)
 	return false;
 }
 
-void GameScene::onTouchEnded(Touch* touch, Event* event)
+float GameScene::getPointToPointDirection(Point point1, Point point2)
 {
-	m_PointPathIndex = 0;
+	// 두 Point 사이의 Direction 을 구하는 함수
+	float x = point1.x - point2.x;
+	float y = point1.y - point2.y;
+	float r = sqrt(x*x + y*y);
+	return acos(x / r);
+}
 
-	m_IsClicked = false;
+float GameScene::getPointToPointDistance(Point point1, Point point2)
+{
+	// 두 Point 사이의 Distance 를 구하는 함수
+	float x = point1.x - point2.x;
+	float y = point1.y - point2.y;
+	return sqrt(x*x + y*y);
 }
 
 void GameScene::drawHexagon()
@@ -168,7 +243,7 @@ void GameScene::drawHexagon()
 			if (drawToHexa(i, j) && MAP_IS_HEXA)	// 육각형으로 그리기 위한 조건문
 				continue;
 
-			point = pointConversion(Point(i, j));
+			point = conversionIndexToPoint(Point(i, j));
 
 			if (drawToRect(point.y) && MAP_IS_RECT)	// 사각형으로 그리기 위한 조건문
 				continue;
@@ -177,7 +252,7 @@ void GameScene::drawHexagon()
 
 			Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
 			node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, ccc4f(0.2f, 1.0f, 0.2f, 0.3f));
-
+			
 			if(DRAW_HEXA_NUMBER) drawText(i, j, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
 		}
 	}
@@ -212,7 +287,7 @@ void GameScene::drawText(int i, int j, Hexagon* hexa)
 	this->addChild(vLabely);
 }
 
-Point GameScene::pointConversion(Point point)
+Point GameScene::conversionIndexToPoint(Point point)
 {
 	// 입력한 index 형식의 point 값을 화면에 그릴 수 있는 point 값으로 변환해주는 함수 .
 	Point retPoint;
@@ -220,6 +295,17 @@ Point GameScene::pointConversion(Point point)
 	retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (point.x - (MAP_SIZEX - 1)*0.5);
 	retPoint.y = MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (point.y * 2 - MAP_SIZEY + point.x - (MAP_SIZEX - 3)*0.5);
 	// MAP_START 를 중앙에 위치하도록 그려주기 위한 수식들 .
+
+	return retPoint;
+}
+
+Point GameScene::conversionPointToIndex(Point point)
+{
+	// 입력한 화면상의 좌표를 인덱스좌표로 변환해주는 함수 .
+	Point retPoint;
+
+	retPoint.x = (point.x - MAP_XSTART) / HEXAGON_LENGTH / 1.5 + (MAP_SIZEX - 1)*0.5;
+	retPoint.y = ((point.y - MAP_YSTART) / -HEXAGON_LENGTH / sin(RADIANS_60) + MAP_SIZEY - retPoint.x + (MAP_SIZEX - 3)*0.5)*0.5;
 
 	return retPoint;
 }
@@ -265,22 +351,72 @@ Hexagon* GameScene::createHexagon(Point anchor, int size)
 	return newHexa;
 }
 
-void GameScene::ReadUnitData(UnitData* unitData, int length)
+void GameScene::ReadUnitData(UnitData unitData[], int length)
 {
-	m_UnitDataLength = length;
+	// 서버로부터 받은 유닛 데이터를 field와 unit 에 저장하는 함수
+	// 유닛을 저장한 후, 화면에 유닛을 그린다. 그리고 게임 시작 상태로 전환한다.
+	m_Game.getField()->setUnitData(unitData, length);
 
-	for (int i = 0; i < length; ++i)
+	for (int i = 0; i < MAX_UNIT_ON_GAME; ++i)
 	{
-		m_UnitData[i] = unitData[i];
+		switch (unitData[i].unitOwner)				// 유닛의 Owner 를 구분하여 올바른 대상에게 유닛을 제공
+		{
+		case UO_ME:
+			m_Game.getPlayer(PW_PLAYERONE)->setUnit(unitData[i]);
+			break;
+		case UO_ENEMY:
+			m_Game.getPlayer(PW_PLAYERTWO)->setUnit(unitData[i]);
+			break;
+		default:
+			break;
+		}
 	}
 
-	SetEvent(m_HWaitGameStart);
+	drawUnit();
+
+	m_GameState = GS_GAME_START;
 }
 
 void GameScene::drawUnit()
 {
-	for (int i = 0; i < MAX_UNIT_ON_GAME; ++i)
+	Field* pField = m_Game.getField();
+
+	for (int i = 0; i < pField->getUnitDataLength(); ++i)
 	{
-		m_UnitSprite[i] = Sprite::create("WhitePawn.png");
+		m_UnitDrawNode[i] = CCDrawNode::create();
+		this->addChild(m_UnitDrawNode[i]);
+
+		int xIndex = pField->getUnitData(i).x;
+		int yIndex = pField->getUnitData(i).y;
+		// i 번째 유닛 데이터의 x, y 인덱스를
+		Point screenPoint = conversionIndexToPoint(Point(xIndex, yIndex));
+		// 화면상의 좌표로 변환하고 screenPoint 에 저장
+
+		Hexagon* hexa = createHexagon(screenPoint, 15);
+
+		if (pField->getUnitData(i).unitOwner == UO_ME)
+			m_UnitDrawNode[i]->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.5f, 0.8f), 1, ccc4f(0.0f, 1.0f, 0.2f, 0.3f));
+		else
+			m_UnitDrawNode[i]->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.5f, 0.0f, 0.0f, 0.8f), 1, ccc4f(0.0f, 1.0f, 0.2f, 0.3f));
+		// 화면상의 좌표에 폴리곤을 그림. 유닛의 주인에 따라 다른 색
+
+		/*
+		//  현재 스프라이트 생성하는 것에 문제가 있어서 drawPolygon 으로 대체한 상태임. 추후 수정 요망
+		m_UnitSprite[i] = Sprite::create("WhithPawn.png");
+		if (pField->getUnitData(i).unitType != UT_NONE)
+		{
+			int xIndex = pField->getUnitData(i).x;
+			int yIndex = pField->getUnitData(i).y;
+			// i 번째 유닛 데이터의 x, y 인덱스를
+
+			Point screenPoint = conversionIndexToPoint(Point(xIndex, yIndex));
+			// 화면상의 좌표로 변환하고 screenPoint 에 저장
+
+			m_UnitSprite[i]->setPosition(screenPoint);
+			// 화면상의 좌표에 유닛을 배치
+
+			this->addChild(m_UnitSprite[i]);
+		}
+		*/
 	}
 }

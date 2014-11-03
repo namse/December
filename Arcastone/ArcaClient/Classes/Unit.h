@@ -9,23 +9,22 @@ public:
 	Unit();
 	~Unit();
 
-	void setHp(int args){ m_UnitStatus.Hp = args; }
-	void setAtk(int args){ m_UnitStatus.Atk = args; }
-	void setMoveRange(int args){ m_UnitStatus.MoveRange = args; }
-	void setWeight(int args){ m_UnitStatus.Weight = args; }
+	void						setUnitStatus(UnitData args){ m_UnitStatus = args; }
 
-	bool setPieceType(PieceType args){ m_UnitStatus.PieceType = args; }
-	bool setMoveType(MoveType args){ m_UnitStatus.MoveType = args; }
-	bool setAttackType(AttackType args){ m_UnitStatus.AttackType = args; }
+	void						setHp(int args){ m_UnitStatus.hp = args; }
+	void						setAtk(int args){ m_UnitStatus.attack = args; }
+	void						setMoveRange(int args){ m_UnitStatus.moveRange = args; }
+	void						setWeight(int args){ m_UnitStatus.weight = args; }
+	void						setUnitType(UnitType args){ m_UnitStatus.unitType = args; }
+	void						setMoveType(UnitMoveType args){ m_UnitStatus.unitMoveType = args; }
+	void						setUnitOwner(UnitOwner args){ m_UnitStatus.unitOwner = args; }
 
-	bool setPosition(Position args);
+	bool						setPosition(Point args);
 
-	Position getPosition(){ return m_Position; }
-	UnitStatus getUnitStatus(){ return m_UnitStatus; }
+	UnitData					getUnitStatus(){ return m_UnitStatus; }
 	
 private:
-	UnitStatus m_UnitStatus;
-	Position m_Position;
+	UnitData					m_UnitStatus;
 
 };
 
