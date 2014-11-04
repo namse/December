@@ -12,6 +12,9 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
+	AllocConsole();
+	freopen("CONOUT$", "w", stdout);
+
     // create the application instance
     AppDelegate app;
     return Application::getInstance()->run();

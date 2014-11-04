@@ -50,6 +50,7 @@ public:
 	void					ReadUnitData(UnitData unitData[], int length);
 	// Header 안에서 typedef Packet::GameStartResult::UnitData UnitData 했음 .
 	void					SetTurn(bool isMyTurn){ m_IsMyTurn = isMyTurn; }
+	void					ReadActionQueue(UnitAction unitActionQueue[], int length);
 
 private:
 	Game					m_Game;

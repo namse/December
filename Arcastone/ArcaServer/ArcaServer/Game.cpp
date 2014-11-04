@@ -87,7 +87,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	m_PlayTurn = 0;
 }
 
-void Game::HandleAtttack(PlayerNumber attacker, AttackData attackData)
+void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 {
 	if (m_Attacker != attacker) // 아직 턴이 아닌데 공격을 시도하면
 	{

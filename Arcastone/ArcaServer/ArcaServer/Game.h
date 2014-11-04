@@ -21,7 +21,7 @@ public:
 	}
 
 
-	void			HandleAtttack(PlayerNumber attacker, AttackData attackData);
+	void			HandleAttack(PlayerNumber attacker, AttackData attackData);
 
 	bool		IsPlayerInThisGame(PlayerNumber playerNumber) {
 		for (auto playerNumber_ : m_PlayerList)

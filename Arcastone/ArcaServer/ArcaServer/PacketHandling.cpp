@@ -150,5 +150,7 @@ REGISTER_HANDLER(PKT_CS_ATTACK)
 
 	auto game = GGameManager->GetGameWithPlayerNumber(session->GetPlayerId());
 	assert(game != nullptr);
+	
+	game->HandleAttack(game->GetAttacker(), inPacket.mAttack);
 
 }

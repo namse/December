@@ -193,9 +193,10 @@ void TcpClient::processPacket()
 		
 		case PKT_SC_ATTACK:
 		{
-							  Packet::AttackResult recvData;
-							  bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
-
+								  Packet::AttackResult recvData;
+								  bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+								  auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
+								  scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadActionQueue, dynamic_cast<GameScene*>(layer), recvData.mUnitActionQueue, recvData.mQueueLength));
 		}break;
 		default:
 			assert(false);

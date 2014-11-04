@@ -19,7 +19,7 @@ public:
 	void						setMoveType(UnitMoveType args){ m_UnitStatus.unitMoveType = args; }
 	void						setUnitOwner(UnitOwner args){ m_UnitStatus.unitOwner = args; }
 
-	bool						setPosition(Point args);
+	bool						setPosition(HexaPoint args);
 
 	UnitData					getUnitStatus(){ return m_UnitStatus; }
 	

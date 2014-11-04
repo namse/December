@@ -169,6 +169,8 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 {
 	if (!m_IsMyTurn) return;
 
+	m_TouchDrawNode->clear();
+
 	// 클릭한 상태로 턴이 넘어갔을 경우 마우스 떼도 이 코드 안돌아가니 주의
 
 	Unit* unit = m_Game.getPlayer(PW_PLAYERONE)->getUnit(m_SelectecUnitIndexOfPlayer);
@@ -195,20 +197,18 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
  
  	HexaDirection attackDirection;
  	if (direction < 60)
-		attackDirection = HD_SOUTHEAST;
- 	else if (direction < 120)
-		attackDirection = HD_SOUTH;
- 	else if (direction < 180)
-		attackDirection = HD_SOUTHWEST;
- 	else if (direction < 240)
-		attackDirection = HD_NORTHWEST;
- 	else if (direction < 300)
 		attackDirection = HD_NORTH;
-	else attackDirection = HD_NORTHEAST;
+ 	else if (direction < 120)
+		attackDirection = HD_NORTHEAST;
+ 	else if (direction < 180)
+		attackDirection = HD_SOUTHEAST;
+ 	else if (direction < 240)
+		attackDirection = HD_SOUTH;
+ 	else if (direction < 300)
+		attackDirection = HD_SOUTHWEST;
+	else attackDirection = HD_NORTHWEST;
 
 	TcpClient::getInstance()->attackRequest(m_SelectedUnitIndex, attackRange, attackDirection);
-
-	m_TouchDrawNode->clear();
 }
 
 // 클릭한 좌표가 특정 육각형 안에 들어있는지 확인하는 함수
@@ -236,10 +236,13 @@ bool GameScene::touchCheck(ScreenPoint touch, ScreenPoint anchor)
 // 두 Point 사이의 Direction 을 구하는 함수
 float GameScene::getPointToPointDirection(ScreenPoint point1, ScreenPoint point2)
 {
-	float x = point1.x - point2.x;
-	float y = point1.y - point2.y;
-	float r = sqrt(x*x + y*y);
-	return acos(x / r);
+	float x = point2.x - point1.x;
+	float y = point2.y - point1.y;
+	float ret = CC_RADIANS_TO_DEGREES(atan2(x, y));
+
+	if (ret < 0)
+		return ret + 360;
+	else return ret;
 }
 
 // 두 Point 사이의 Distance 를 구하는 함수
@@ -383,6 +386,62 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 	m_GameState = GS_GAME_START;
 }
 
+void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
+{
+	for (int i = 0; i < length; ++i)
+	{
+		UnitAction action = unitActionQueue[i];
+
+		Player* pPlayer = m_Game.getPlayer(PW_PLAYERONE);
+		for (int j = 0; j < pPlayer->getUnitCounter(); ++j)
+		{
+			Unit* pUnit = pPlayer->getUnit(j);
+			int unitId = pUnit->getUnitStatus().id;
+
+			if (unitId == action.mUnitId)
+			{
+				HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+				ScreenPoint sMovePoint = conversionIndexToPoint(hMovePoint);
+				Point movePoint(sMovePoint.x, sMovePoint.y);
+				
+				if (DEBUG_PRINT_PACKET)
+				{
+					printf("Move To(%d, %d)", hMovePoint.x, hMovePoint.y);
+				}
+
+				// 유닛은 인덱스로 이동
+				pUnit->setPosition(hMovePoint);
+				// 스프라이트는 좌표로 이동
+				m_UnitSprite[unitId]->setPosition(movePoint);
+				break;
+			}
+		}
+
+		pPlayer = m_Game.getPlayer(PW_PLAYERTWO);
+		for (int j = 0; j < pPlayer->getUnitCounter(); ++j)
+		{
+			Unit* pUnit = pPlayer->getUnit(j);
+			int unitId = pUnit->getUnitStatus().id;
+
+			if (unitId == action.mUnitId)
+			{
+				HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+				ScreenPoint sMovePoint = conversionIndexToPoint(hMovePoint);
+				Point movePoint(sMovePoint.x, sMovePoint.y);
+
+				if (DEBUG_PRINT_PACKET)
+				{
+					printf("Move To (%d, %d)\n", hMovePoint.x, hMovePoint.y);
+				}
+
+				pUnit->setPosition(hMovePoint);
+				m_UnitSprite[unitId]->setPosition(movePoint);
+				break;
+			}
+		}
+	}
+}
+
 void GameScene::drawUnit()
 {
 	Field* pField = m_Game.getField();
@@ -418,6 +477,5 @@ void GameScene::drawUnit()
 
 			this->addChild(m_UnitSprite[i]);
 		}
-		
 	}
 }
