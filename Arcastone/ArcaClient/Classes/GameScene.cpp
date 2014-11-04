@@ -219,26 +219,21 @@ void GameScene::drawHexagon()
 	CCDrawNode* node = CCDrawNode::create();
 	this->addChild(node);
 
-	Point point;
 
-	for (int i = 0; i < MAP_SIZEX; ++i)
+	for (int posX = 0; posX < MAP_SIZEX; ++posX)
 	{
-		for (int j = 0; j < MAP_SIZEY; ++j)
+		int posY = 0 - (posX + 1) / 2;
+		int max = (posX % 2) ? posY + MAP_SIZEY : posY + MAP_SIZEY - 1;
+
+		for (posY; posY < max; ++posY)
 		{
-			if (drawToHexa(i, j) && MAP_IS_HEXA)	// 육각형으로 그리기 위한 조건문
-				continue;
-
-			point = conversionIndexToPoint(Point(i, j));
-
-			if (drawToRect(point.y) && MAP_IS_RECT)	// 사각형으로 그리기 위한 조건문
-				continue;
-
-			m_HexagonPoint.push_back(Point(i, j));	// m_HexagonPoint 에 화면에 그려지는 좌표(0~x, 0~y)들을 저장
-
-			Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
+			m_HexagonPoint.push_back(Point(posX, posY));	// m_HexagonPoint 에 화면에 그려지는 좌표(0~x, 0~y)들을 저장
+			
+			Hexagon* hexa = createHexagon(conversionIndexToPoint(Point(posX,posY)), HEXAGON_LENGTH);
 			node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, ccc4f(0.2f, 1.0f, 0.2f, 0.3f));
 			
-			if(DRAW_HEXA_NUMBER) drawText(i, j, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
+			if (DRAW_HEXA_NUMBER) drawText(posX, posY, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
+
 		}
 	}
 }
