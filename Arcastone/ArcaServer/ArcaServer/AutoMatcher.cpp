@@ -74,7 +74,7 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 		}
 		player1Packet.mField.fieldWidth = player2Packet.mField.fieldWidth = MAP_FIELD_WIDTH;
 		player1Packet.mField.fieldHeight = player2Packet.mField.fieldHeight = MAP_FIELD_HEIGHT;
-		player1Packet.mField.fieldHeight = player2Packet.mLength = unitList.size();
+		player1Packet.mLength = player2Packet.mLength = unitList.size();
 
 		playerSession1->SendRequest(&player1Packet);
 		playerSession2->SendRequest(&player2Packet);
