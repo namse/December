@@ -47,8 +47,8 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 			player1Packet.mUnit[i].weight = player2Packet.mUnit[i].weight = unit->GetWeight();
 			player1Packet.mUnit[i].attack = player2Packet.mUnit[i].attack = unit->GetAttack();
 			player1Packet.mUnit[i].moveRange = player2Packet.mUnit[i].moveRange = unit->GetMoveRange();
-			player1Packet.mUnit[i].x = player2Packet.mUnit[i].x = position.x;
-			player1Packet.mUnit[i].y = player2Packet.mUnit[i].y = position.x;
+			player1Packet.mUnit[i].point.x = player2Packet.mUnit[i].point.x = position.x;
+			player1Packet.mUnit[i].point.y = player2Packet.mUnit[i].point.y = position.y;
 			player1Packet.mUnit[i].id = player2Packet.mUnit[i].id = unit->GetID();
 
 			auto unitOwner = unit->GetOwner();

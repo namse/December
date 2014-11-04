@@ -104,4 +104,15 @@
       <Filter>resource</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\Resources\Me.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\Projectile.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\Enomy.png">
+      <Filter>resource</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

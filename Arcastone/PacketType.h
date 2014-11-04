@@ -6,6 +6,84 @@
 #define MAX_COMMENT_LEN		40
 #define MAX_UNIT_ON_GAME	30
 #define MAX_UNIT_ACTION 50
+
+struct Coord{
+	int x, y;
+	Coord()
+	{
+		x = y = 0;
+	}
+	Coord(int _x, int _y)
+	{
+		x = _x, y = _y;
+	}
+	// 연산자 오버로딩
+	bool operator < (const Coord& right) const
+	{
+		if ((x < right.x) || (x == right.x && y < right.y))
+			return true;
+		else
+			return false;
+	}
+
+	bool operator >(const Coord& right) const
+	{
+		if ((x > right.x) || (x == right.x && y > right.y))
+			return true;
+		else
+			return false;
+	}
+
+	bool operator == (const Coord& right) const
+	{
+		if ((x == right.x) && (y == right.y))
+			return true;
+		else
+			return false;
+	}
+
+	Coord operator + (const Coord& rhs) const{
+		return Coord(x + rhs.x, y + rhs.y);
+	}
+
+	Coord operator - (const Coord& rhs) const{
+		return Coord(x + rhs.x, y + rhs.y);
+	}
+	Coord operator * (const int& rhs) const{
+		return Coord(x*rhs, y*rhs);
+	}
+	Coord operator / (const int& rhs) const{
+		return Coord(x / rhs, y / rhs);
+	}
+};
+
+class ScreenPoint{
+public:
+	ScreenPoint(){}
+	ScreenPoint(Coord point){
+		x = point.x;
+		y = point.y;
+	}
+	ScreenPoint(float _x, float _y){
+		x = _x;
+		y = _y;
+	}
+	float x, y;
+};
+class HexaPoint{
+public:
+	HexaPoint(){}
+	HexaPoint(Coord point){
+		x = point.x;
+		y = point.y;
+	}
+	HexaPoint(int _x, int _y){
+		x = _x;
+		y = _y;
+	}
+	int x, y;
+};
+
 enum PacketTypes
 {
 	PKT_NONE	= 0,
@@ -155,8 +233,8 @@ namespace Packet
 			int					weight;
 			int					attack;
 			int					moveRange;
-			int					x, y;
-			UnitIdentityNumber id;
+			HexaPoint			point;
+			UnitIdentityNumber	id;
 		};
 		struct FieldData{
 			int					fieldWidth, fieldHeight;

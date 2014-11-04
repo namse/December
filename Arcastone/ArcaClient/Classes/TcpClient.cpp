@@ -213,3 +213,17 @@ void TcpClient::loginRequest()
 
 	send((const char*)&sendData, sizeof(Packet::LoginRequest));
 }
+
+void TcpClient::attackRequest(int unitId, int attackRange, HexaDirection attackDircetion)
+{
+	Packet::AttackRequest sendData;
+	
+	AttackData attackData;
+	attackData.id = unitId;
+	attackData.Range = attackRange;
+	attackData.direction = attackDircetion;
+
+	sendData.mAttack = attackData;
+
+	send((const char*)&sendData, sizeof(Packet::AttackRequest));
+}

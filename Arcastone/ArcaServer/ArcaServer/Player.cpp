@@ -31,7 +31,7 @@ void Player::SetGroupForTest()
 		for (int row = 0; row < 2; row++)
 		{
 			UnitData pawn = m_UnitList[0];
-			auto originPosition = Coord(col - 1, row - (int)(col / 2));
+			auto originPosition = Coord(col - 1, row - (int)(col / 2) + 2);
 			group.AddUnitData(pawn, originPosition);
 		}
 	}

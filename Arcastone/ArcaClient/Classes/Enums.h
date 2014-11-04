@@ -1,5 +1,8 @@
 #pragma once
 
+#include "HexaPoint.h"
+#include "ScreenPoint.h"
+
 enum PlayerWho
 {
 	PW_PLAYERONE = 0,

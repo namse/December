@@ -27,25 +27,24 @@ public:
 	EventListenerTouchOneByOne*	_touchListener;
 	void					touchEventInit();
 	virtual bool			onTouchBegan(Touch* touch, Event* event);
-	virtual void			onTouchMoved(Touch* touch, Event* unused_event);
+	virtual void			onTouchMoved(Touch* touch, Event* event);
 	virtual void			onTouchCancelled(Touch* touch, Event* unused_event){}
-	virtual void			onTouchEnded(Touch* touch, Event *unused_event);
-	bool					touchCheck(Point touch, Point anchor);
+	virtual void			onTouchEnded(Touch* touch, Event *event);
+	bool					touchCheck(ScreenPoint touch, ScreenPoint anchor);
 
 	CREATE_FUNC(GameScene);
 
-	Hexagon*				createHexagon(Point anchor, int size);
+	Hexagon*				createHexagon(ScreenPoint anchor, int size);
 	void					drawHexagon();
 	void					drawUnit();
 	void					drawText(int i, int j, Hexagon* hexa);
 
-	Point					conversionIndexToPoint(Point point);
-	Point					conversionPointToIndex(Point point);
+	ScreenPoint				conversionIndexToPoint(HexaPoint point);
 	bool					drawToRect(float y);
 	bool					drawToHexa(int x, int y);
 
-	float					getPointToPointDirection(Point point1, Point point2);
-	float					getPointToPointDistance(Point point1, Point point2);
+	float					getPointToPointDirection(ScreenPoint point1, ScreenPoint point2);
+	float					getPointToPointDistance(ScreenPoint point1, ScreenPoint point2);
 
 	// 하위는 네트워크 관련 함수
 	void					ReadUnitData(UnitData unitData[], int length);
@@ -56,14 +55,15 @@ private:
 	Game					m_Game;
 	GameState				m_GameState;
 	bool					m_IsMyTurn;
-	bool					m_IsAction;
 
 	Player					m_Player[2];
 
-	CCDrawNode*		m_TouchDrawNode;
+	CCDrawNode*				m_TouchDrawNode;
 	int						m_SelectedUnitIndex;
+	int						m_SelectecUnitIndexOfPlayer;
+	ScreenPoint				m_CursoredPoint;
 
-	vector<Point>			m_HexagonPoint;
+	vector<Coord>			m_HexagonPoint;
 	CCSprite*				m_UnitSprite[MAX_UNIT_ON_GAME];
 	CCDrawNode*				m_UnitDrawNode[MAX_UNIT_ON_GAME];	// 유닛 그리는 실험을 위한 임시 변수
 };

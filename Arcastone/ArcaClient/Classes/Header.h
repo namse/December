@@ -7,22 +7,14 @@
 
 #define LOGIN_IPADDR				"127.0.0.1"
 
-#define MAP_IS_RECT					true
-#define MAP_IS_HEXA					false
+#define MAP_IS_RECT					false
+#define MAP_IS_HEXA					true
 #define MAP_SIZEX					7
 #define MAP_SIZEY					10
-/*
-#define MAP_SIZEY					12
-#define MAP_SIZEY					10 + 2
-#define MAP_SIZEY					10 + (MAP_IS_RECT)? MAP_SIZEX*0.5 : 0
-#define MAP_SIZEY					(int)10 + (MAP_IS_RECT)? MAP_SIZEX*0.5 : 0
-#define MAP_SIZEY					(int)(10 + (MAP_IS_RECT)? MAP_SIZEX*0.5 : 0)
-각자 다양한 버그를 일으키는데 이유를 모르겠음. 보류
-*/
 
-#define MAP_XSTART					300
+#define MAP_XSTART					400
 #define MAP_YSTART					320
-#define HEXAGON_LENGTH				25
+#define HEXAGON_LENGTH				30
 
 #define DRAW_HEXA_NUMBER			true
 #define DRAW_HEXA_POSITION			false

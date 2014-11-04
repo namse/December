@@ -79,7 +79,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	ArcaStone* arcaStone = new ArcaStone();
 
 	arcaStone->SetOwner(PLAYER_NUMBER_NPC);
-	arcaStone->SetPosition(Coord(3, 3)); // Center of Map
+	arcaStone->SetPosition(Coord(3, 5)); // Center of Map
 	m_UnitList.push_back(arcaStone);
 
 	// play turn and first attacker setting
