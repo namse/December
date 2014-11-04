@@ -29,6 +29,8 @@ bool GameScene::init()
 	m_GameState = GS_BEFORE_LOGIN;		// 게임의 진행 상태를 로그인 전으로 설정
 
 	touchEventInit();					// 마우스 이벤트를 사용하기 위해 초기화
+	m_TouchDrawNode = CCDrawNode::create();
+	addChild(m_TouchDrawNode);
 
 	drawHexagon();						// 육각형을 그림. Header.h 의 #define 값들을 수정하여 육각형의 형태 조절 가능
 
@@ -72,12 +74,13 @@ void GameScene::gameLogic(float dt)
 
 void GameScene::touchEventInit()
 {
-	m_PathPointIndex = 0;
 
 	_touchListener = EventListenerTouchOneByOne::create();
 	_touchListener->setSwallowTouches(true);
 
 	_touchListener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
+	_touchListener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
+	_touchListener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
 
 	EventDispatcher* dispatcher = Director::getInstance()->getEventDispatcher();
 
@@ -86,23 +89,12 @@ void GameScene::touchEventInit()
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
-	if (m_IsMyTurn && !m_IsAction)			// 자신의 턴이고 행동하지 않은 경우에만 마우스 입력을 받는다.
+	//if (m_IsMyTurn && !m_IsAction)			// 자신의 턴이고 행동하지 않은 경우에만 마우스 입력을 받는다.
 	{
-		while (m_PathDrawNode.size() > 0)
-		{
-			int end = m_PathDrawNode.size() - 1;
-			this->removeChild(m_PathDrawNode.at(end));
-			m_PathDrawNode.pop_back();
-			// 이전에 그렸던 패스들을 지운다.
-		}
-		m_PathPoint.clear();
-		// 이전에 받았던 마우스 입력을 모두 버린다.
-
 		Point clickPoint = touch->getLocation();
 
-		m_PathDrawNode.push_back(CCDrawNode::create());
-
-		this->addChild(m_PathDrawNode.at(0));
+		m_SelectedUnitIndex = NON_SELECT_UNIT;
+		m_TouchDrawNode->clear();
 
 		Player* pPlayer = m_Game.getPlayer(PW_PLAYERONE);
 		for (int i = 0; i < pPlayer->getUnitCounter(); ++i)
@@ -115,78 +107,71 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 
 			if (touchCheck(clickPoint, point))
 			{
-				// 내가 내 유닛을 클릭했는지 판정한다.
-				m_PathPoint.push_back(m_HexagonPoint.at(i));
-				// 내 유닛을 선택했다면, 벡터에 알아낸 좌표인덱스를 저장하고,
-				m_PathDrawNode.at(0)->drawDot(point, 20, ccc4f(0.7, 0.7, 0.7, 0.7));
-				// 클릭한 좌표를 하이라이트한다.
+				m_TouchDrawNode->drawSegment(point, point, 15, ccc4f(0.7, 0.7, 0.7, 0.7));
+
 				m_SelectedUnitIndex = pPlayer->getUnit(i)->getUnitStatus().id;
 				// 그 유닛을 선택했다는 것을 지정하기 위해 id 를 멤버변수에 저장한다.
-				break;
+				return true;
 			}
 		}
+		if (m_SelectedUnitIndex == NON_SELECT_UNIT)
+			return false; // for skip TouchMoved
 	}
-	return true;
 }
 
 void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
-	if (m_IsMyTurn && !m_IsAction)
+	//if (m_IsMyTurn && !m_IsAction)
 	{
-		// 왠진 몰라도 touchMoved 가 안돌아감;
 
 		Point clickPoint = touch->getLocation();
+		
+		Player* pPlayer = m_Game.getPlayer(PW_PLAYERONE);
+		auto unit = pPlayer->getUnit(m_SelectedUnitIndex);
 
-		int end = m_PathDrawNode.size() - 1;
-		this->removeChild(m_PathDrawNode.at(end));
-		m_PathDrawNode.pop_back();
-		m_PathDrawNode.push_back(CCDrawNode::create());
+		if (m_SelectedUnitIndex != NON_SELECT_UNIT && unit != nullptr)
+		{
+			int x = pPlayer->getUnit(m_SelectedUnitIndex)->getUnitStatus().x;
+			int y = pPlayer->getUnit(m_SelectedUnitIndex)->getUnitStatus().y;
+			Point pointFrom = conversionIndexToPoint(Point(x, y));
+			Point pointTo = conversionIndexToPoint(conversionPointToIndex(clickPoint));
 
-		this->addChild(m_PathDrawNode.at(0));
-
-		m_PathDrawNode.at(0)->drawSegment(m_PathPoint.at(0), clickPoint, 15, ccc4f(0.7, 0.7, 0.7, 0.7));
+			m_TouchDrawNode->clear();
+			m_TouchDrawNode->drawSegment(pointFrom, pointTo, 15, ccc4f(0.7, 0.7, 0.7, 0.7));
+		}
 	}
 }
 
 void GameScene::onTouchEnded(Touch* touch, Event* event)
 {
-	if (m_IsMyTurn && !m_IsAction)
+	//if (m_IsMyTurn && !m_IsAction)
 	{
 		// 클릭한 상태로 턴이 넘어갔을 경우 마우스 떼도 이 코드 안돌아가니 주의
 
-		Point clickPoint = touch->getLocation();
-
-		float direction = getPointToPointDirection(m_PathPoint.at(0), clickPoint);
-		float distance = getPointToPointDirection(m_PathPoint.at(0), clickPoint);
-
-		HexaDirection hDirection;
-		if (direction < 60)
-			hDirection = HD_SOUTHEAST;
-		else if (direction < 120)
-			hDirection = HD_SOUTH;
-		else if (direction < 180)
-			hDirection = HD_SOUTHWEST;
-		else if (direction < 240)
-			hDirection = HD_NORTHWEST;
-		else if (direction < 300)
-			hDirection = HD_NORTH;
-		else hDirection = HD_NORTHEAST;
+// 		Point clickPoint = touch->getLocation();
+// 
+// 		float direction = getPointToPointDirection(m_PathPoint.at(0), clickPoint);
+// 		float distance = getPointToPointDirection(m_PathPoint.at(0), clickPoint);
+// 
+// 		HexaDirection hDirection;
+// 		if (direction < 60)
+// 			hDirection = HD_SOUTHEAST;
+// 		else if (direction < 120)
+// 			hDirection = HD_SOUTH;
+// 		else if (direction < 180)
+// 			hDirection = HD_SOUTHWEST;
+// 		else if (direction < 240)
+// 			hDirection = HD_NORTHWEST;
+// 		else if (direction < 300)
+// 			hDirection = HD_NORTH;
+// 		else hDirection = HD_NORTHEAST;
 		// enum 값 조절하면 div 함수 이용- 한줄로 표현 가능
 
 		// TODO : hDirection 과 distance 를 이용해서 선택한 유닛(m_SelectedUnitIndex) 에게 이동.공격 명령 하기
 		// 공격하거나 이동했을 경우 m_IsAction = true; 하여 행동했음을 알린다.
 
-		while (m_PathDrawNode.size() > 0)
-		{
-			int end = m_PathDrawNode.size() - 1;
-			this->removeChild(m_PathDrawNode.at(end));
-			m_PathDrawNode.pop_back();
-			// 이전에 그렸던 패스들을 지운다.
-		}
-		m_PathPoint.clear();
-		// 이전에 받았던 마우스 입력을 모두 버린다.
 
-		m_PathPointIndex = 0;
+		m_TouchDrawNode->clear();
 	}
 }
 
@@ -287,9 +272,9 @@ void GameScene::drawText(int i, int j, Hexagon* hexa)
 	this->addChild(vLabely);
 }
 
+// 입력한 index 형식의 point 값을 화면에 그릴 수 있는 point 값으로 변환해주는 함수 .
 Point GameScene::conversionIndexToPoint(Point point)
 {
-	// 입력한 index 형식의 point 값을 화면에 그릴 수 있는 point 값으로 변환해주는 함수 .
 	Point retPoint;
 
 	retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (point.x - (MAP_SIZEX - 1)*0.5);
@@ -299,9 +284,9 @@ Point GameScene::conversionIndexToPoint(Point point)
 	return retPoint;
 }
 
+// 입력한 화면상의 좌표를 인덱스좌표로 변환해주는 함수 .
 Point GameScene::conversionPointToIndex(Point point)
 {
-	// 입력한 화면상의 좌표를 인덱스좌표로 변환해주는 함수 .
 	Point retPoint;
 
 	retPoint.x = (point.x - MAP_XSTART) / HEXAGON_LENGTH / 1.5 + (MAP_SIZEX - 1)*0.5;
@@ -400,9 +385,10 @@ void GameScene::drawUnit()
 			m_UnitDrawNode[i]->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.5f, 0.0f, 0.0f, 0.8f), 1, ccc4f(0.0f, 1.0f, 0.2f, 0.3f));
 		// 화면상의 좌표에 폴리곤을 그림. 유닛의 주인에 따라 다른 색
 
-		/*
+		
 		//  현재 스프라이트 생성하는 것에 문제가 있어서 drawPolygon 으로 대체한 상태임. 추후 수정 요망
-		m_UnitSprite[i] = Sprite::create("WhithPawn.png");
+
+		m_UnitSprite[i] = Sprite::create("Player.png"); // ("WhithPawn.png"); <- 이미지 파일 어디감?
 		if (pField->getUnitData(i).unitType != UT_NONE)
 		{
 			int xIndex = pField->getUnitData(i).x;
@@ -417,6 +403,6 @@ void GameScene::drawUnit()
 
 			this->addChild(m_UnitSprite[i]);
 		}
-		*/
+		
 	}
 }

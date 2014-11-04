@@ -60,9 +60,7 @@ private:
 
 	Player					m_Player[2];
 
-	vector<Point>			m_PathPoint;
-	int						m_PathPointIndex;
-	vector<CCDrawNode*>		m_PathDrawNode;
+	CCDrawNode*		m_TouchDrawNode;
 	int						m_SelectedUnitIndex;
 
 	vector<Point>			m_HexagonPoint;

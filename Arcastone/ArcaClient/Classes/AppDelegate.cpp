@@ -20,6 +20,17 @@ bool AppDelegate::applicationDidFinishLaunching() {
         director->setOpenGLView(glview);
     }
 
+	// set directory for debug mode
+
+#ifdef _DEBUG
+	std::vector<std::string> resDirOrders;
+#ifdef _WIN32
+	resDirOrders.push_back("../Resources/");
+#endif
+	FileUtils::getInstance()->setSearchPaths(resDirOrders);
+#endif
+
+
     // turn on display FPS
     director->setDisplayStats(true);
 

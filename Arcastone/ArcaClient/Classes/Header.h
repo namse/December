@@ -7,8 +7,8 @@
 
 #define LOGIN_IPADDR				"127.0.0.1"
 
-#define MAP_IS_RECT					false
-#define MAP_IS_HEXA					true
+#define MAP_IS_RECT					true
+#define MAP_IS_HEXA					false
 #define MAP_SIZEX					7
 #define MAP_SIZEY					10
 /*
@@ -42,4 +42,6 @@ public:
 	Header();
 	~Header();
 };
+
+#define NON_SELECT_UNIT INT_MAX
 
