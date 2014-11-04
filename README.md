@@ -6,7 +6,7 @@ NHN NEXT 2014년 3학기 게임개발경험프로젝트 with 서동유, 김승�
 Update Node
 ========
 * [Client]
-* 
+
 Hexa-Grid 맵 그리기
 
 화면 드래그 표시
