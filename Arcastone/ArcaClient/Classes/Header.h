@@ -6,7 +6,7 @@
 #include <vector>
 
 #define LOGIN_IPADDR				"127.0.0.1"
-#define DEBUG_PRINT_PACKET			true
+#define DEBUG_PRINT_PACKET			false
 
 #define MAP_IS_RECT					false
 #define MAP_IS_HEXA					true

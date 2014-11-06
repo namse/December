@@ -1,6 +1,7 @@
 #include "main.h"
 #include "AppDelegate.h"
 #include "cocos2d.h"
+#include "Header.h"
 
 USING_NS_CC;
 
@@ -12,8 +13,11 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-	AllocConsole();
-	freopen("CONOUT$", "w", stdout);
+	if (DEBUG_PRINT_PACKET)
+	{
+		AllocConsole();
+		freopen("CONOUT$", "w", stdout);
+	}
 
     // create the application instance
     AppDelegate app;

@@ -58,15 +58,17 @@ private:
 	bool					m_IsMyTurn;
 
 	Player					m_Player[2];
+	vector<Unit*>			m_Unit;
 
 	CCDrawNode*				m_TouchDrawNode;
-	int						m_SelectedUnitIndex;
-	int						m_SelectecUnitIndexOfPlayer;
 	ScreenPoint				m_CursoredPoint;
 
 	vector<Coord>			m_HexagonPoint;
 	CCSprite*				m_UnitSprite[MAX_UNIT_ON_GAME];
 	CCDrawNode*				m_UnitDrawNode[MAX_UNIT_ON_GAME];	// 유닛 그리는 실험을 위한 임시 변수
+
+	int						m_SelectedUnitIndex;
+	int						m_SelectecUnitIndexOfPlayer;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

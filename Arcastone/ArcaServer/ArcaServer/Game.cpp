@@ -74,13 +74,14 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 			m_UnitList.push_back(unit);
 		};
 	}
-
+	/*
 	// create arcastone(npc)
 	ArcaStone* arcaStone = new ArcaStone();
 
 	arcaStone->SetOwner(PLAYER_NUMBER_NPC);
 	arcaStone->SetPosition(Coord(3, 5)); // Center of Map
 	m_UnitList.push_back(arcaStone);
+	*/
 
 	// play turn and first attacker setting
 	m_Attacker = m_PlayerList.at(rand() % m_PlayerList.size());
@@ -110,8 +111,6 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	}
 	else
 	{
-
-
 		m_UnitActionQueue.clear();
 
 
@@ -150,7 +149,6 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 			}
 		}
 
-
 		for (Unit* unit : m_UnitList)
 		{
 			//내 유닛이 아르카 스톤 옆에 있습니까?
@@ -167,13 +165,14 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 			}
 		}
 
-	finishFindUnitNearArcastone:
+		finishFindUnitNearArcastone:
 
 		int maxturn = MAX_TURN;
 		if (isNearAlkaStone == true)
 		{
 			maxturn++;
 		}
+		// 가장 처음의 턴은 2회로 제한
 		if (m_IsFirstTurn == true)
 		{
 			maxturn = MAX_TURN;
@@ -327,8 +326,6 @@ void Game::KillThisUnit(Unit* unit)
 
 	// Temp Code
 	unit->SetPosition(Coord(INT_MAX, INT_MAX));
-
-
 
 	UnitAction action;
 	action.mActionType = UAT_DIE;

@@ -19,6 +19,7 @@ public:
 	int							getUnitDataLength(){ return m_UnitDataLength; }
 
 private:
+	// 필드는 유닛 데이터 필요 없을듯.
 	UnitData					m_UnitData[MAX_UNIT_ON_GAME];
 	int							m_UnitDataLength;
 

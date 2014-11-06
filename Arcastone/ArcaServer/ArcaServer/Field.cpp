@@ -17,7 +17,7 @@ void Field::InitField(int fieldWidth, int fieldHeight)
 	for (int posX = 0; posX < fieldWidth; ++posX)
 	{
 		int posY = 0 - (posX + 1) / 2;
-		int max = (posX % 2) ? posY + fieldHeight : posY + fieldHeight - 1;
+		int max = (posX % 2) ? posY + fieldHeight-1 : posY + fieldHeight;
 		
 		for (posY; posY < max; ++posY)
 		{

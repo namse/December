@@ -45,7 +45,6 @@ bool GameScene::init()
 
 void GameScene::gameLogic(float dt)
 {
-
 	switch (m_GameState)
 	{
 	case GS_BEFORE_LOGIN:
@@ -197,16 +196,19 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
  
  	HexaDirection attackDirection;
  	if (direction < 60)
-		attackDirection = HD_NORTH;
- 	else if (direction < 120)
-		attackDirection = HD_NORTHEAST;
- 	else if (direction < 180)
-		attackDirection = HD_SOUTHEAST;
- 	else if (direction < 240)
 		attackDirection = HD_SOUTH;
- 	else if (direction < 300)
+ 	else if (direction < 120)
 		attackDirection = HD_SOUTHWEST;
-	else attackDirection = HD_NORTHWEST;
+ 	else if (direction < 180)
+		attackDirection = HD_NORTHWEST;
+ 	else if (direction < 240)
+		attackDirection = HD_NORTH;
+ 	else if (direction < 300)
+		attackDirection = HD_NORTHEAST;
+	else attackDirection = HD_SOUTHEAST;
+
+	if (DEBUG_PRINT_PACKET)
+		printf("%f\n", direction);
 
 	TcpClient::getInstance()->attackRequest(m_SelectedUnitIndex, attackRange, attackDirection);
 }
@@ -243,6 +245,7 @@ float GameScene::getPointToPointDirection(ScreenPoint point1, ScreenPoint point2
 	if (ret < 0)
 		return ret + 360;
 	else return ret;
+	// 각도의 0점이랑 방향 표준 각도계로 바꿔야 할듯
 }
 
 // 두 Point 사이의 Distance 를 구하는 함수
@@ -366,7 +369,7 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 {
 	m_Game.getField()->setUnitData(unitData, length);
 
-	for (int i = 0; i < MAX_UNIT_ON_GAME; ++i)
+	for (int i = 0; i < length; ++i)
 	{
 		switch (unitData[i].unitOwner)				// 유닛의 Owner 를 구분하여 올바른 대상에게 유닛을 제공
 		{
@@ -376,9 +379,24 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 		case UO_ENEMY:
 			m_Game.getPlayer(PW_PLAYERTWO)->setUnit(unitData[i]);
 			break;
+			// if NPC
 		default:
 			break;
 		}
+	}
+
+	int loop = m_Game.getPlayer(PW_PLAYERONE)->getUnitCounter();
+	for (int i = 0; i < loop; ++i)
+	{
+		Unit* pUnit = m_Game.getPlayer(PW_PLAYERONE)->getUnit(i);
+		m_Unit.push_back(pUnit);
+	}
+
+	loop = m_Game.getPlayer(PW_PLAYERTWO)->getUnitCounter();
+	for (int i = 0; i < loop; ++i)
+	{
+		Unit* pUnit = m_Game.getPlayer(PW_PLAYERTWO)->getUnit(i);
+		m_Unit.push_back(pUnit);
 	}
 
 	drawUnit();
@@ -390,51 +408,26 @@ void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 {
 	for (int i = 0; i < length; ++i)
 	{
+		// i 번째 액션을 가져옴
 		UnitAction action = unitActionQueue[i];
 
-		Player* pPlayer = m_Game.getPlayer(PW_PLAYERONE);
-		for (int j = 0; j < pPlayer->getUnitCounter(); ++j)
+		// id를 사용하여 i 번째 액션을 적용할 유닛을 찾음
+		for (int j = 0; j < m_Unit.size(); ++j)
 		{
-			Unit* pUnit = pPlayer->getUnit(j);
+			Unit* pUnit = m_Unit.at(j);
 			int unitId = pUnit->getUnitStatus().id;
-
 			if (unitId == action.mUnitId)
 			{
 				HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
 				ScreenPoint sMovePoint = conversionIndexToPoint(hMovePoint);
 				Point movePoint(sMovePoint.x, sMovePoint.y);
-				
+
 				if (DEBUG_PRINT_PACKET)
-				{
-					printf("Move To(%d, %d)", hMovePoint.x, hMovePoint.y);
-				}
+					printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
 
 				// 유닛은 인덱스로 이동
 				pUnit->setPosition(hMovePoint);
 				// 스프라이트는 좌표로 이동
-				m_UnitSprite[unitId]->setPosition(movePoint);
-				break;
-			}
-		}
-
-		pPlayer = m_Game.getPlayer(PW_PLAYERTWO);
-		for (int j = 0; j < pPlayer->getUnitCounter(); ++j)
-		{
-			Unit* pUnit = pPlayer->getUnit(j);
-			int unitId = pUnit->getUnitStatus().id;
-
-			if (unitId == action.mUnitId)
-			{
-				HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-				ScreenPoint sMovePoint = conversionIndexToPoint(hMovePoint);
-				Point movePoint(sMovePoint.x, sMovePoint.y);
-
-				if (DEBUG_PRINT_PACKET)
-				{
-					printf("Move To (%d, %d)\n", hMovePoint.x, hMovePoint.y);
-				}
-
-				pUnit->setPosition(hMovePoint);
 				m_UnitSprite[unitId]->setPosition(movePoint);
 				break;
 			}
