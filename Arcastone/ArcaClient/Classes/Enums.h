@@ -3,6 +3,8 @@
 #include "HexaPoint.h"
 #include "ScreenPoint.h"
 
+// define
+
 #define LOGIN_IPADDR				"127.0.0.1"
 #define DEBUG_PRINT_PACKET			false
 
@@ -28,11 +30,25 @@
 #define NON_SELECT_UNIT INT_MAX
 
 
+// enum
 enum PlayerWho
 {
 	PW_PLAYERONE = 0,
 	PW_PLAYERTWO = 1,
 };
+
+enum UnitState
+{
+	US_NONE = 0,
+
+	US_NORMAL = 1,
+	US_DIE = 2,
+};
+
+// typedef 
+typedef Packet::GameStartResult::UnitData UnitData;
+
+// struct
 
 struct Hexagon
 {
@@ -40,17 +56,10 @@ struct Hexagon
 	std::vector<cocos2d::Point> vertex;
 };
 
-class Enums
+struct ScreenPoint
 {
-public:
-	Enums();
-	~Enums();
-};
 
-typedef Packet::GameStartResult::UnitData UnitData;
-
-class ScreenPoint{
-public:
+	float x, y;
 	ScreenPoint(){}
 	ScreenPoint(Coord point){
 		x = point.x;
@@ -68,13 +77,12 @@ public:
 
 		return retCoord;
 	}
-
-public:
-	float x, y;
 };
 
-class HexaPoint{
-public:
+struct HexaPoint
+{
+
+	int x, y;
 	HexaPoint(){}
 	HexaPoint(Coord point){
 		x = point.x;
@@ -102,7 +110,4 @@ public:
 
 		return retCoord;
 	}
-
-public:
-	int x, y;
 };

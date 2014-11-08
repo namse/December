@@ -2,9 +2,7 @@
 
 Pawn::Pawn()
 {
-
 }
-
 
 Pawn::~Pawn()
 {

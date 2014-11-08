@@ -7,7 +7,7 @@
 
 enum GameState{
 	GS_BEFORE_LOGIN,
-	GS_WAIT_LOGIN,
+	GS_WAIT_GAME,
 	GS_GAME_START,
 };
 class GameScene : public LayerColor
@@ -35,13 +35,16 @@ public:
 	CREATE_FUNC(GameScene);
 
 	Hexagon*				createHexagon(ScreenPoint anchor, int size);
-	void					drawHexagon();
+	Unit*					createUnit(UnitType unitType);
+
+	void					drawHexaGrid();
 	void					drawUnit();
 	void					drawText(int i, int j, Hexagon* hexa);
 
 	bool					drawToRect(float y);
 	bool					drawToHexa(int x, int y);
 
+	Unit*					getUnit(int unitID);
 	float					getPointToPointDirection(ScreenPoint point1, ScreenPoint point2);
 	float					getPointToPointDistance(ScreenPoint point1, ScreenPoint point2);
 
@@ -57,14 +60,14 @@ private:
 	bool					m_IsMyTurn;
 
 	Player					m_Player[2];
-	vector<Unit*>			m_Unit;
+	vector<Unit*>			m_UnitList;
 
 	CCDrawNode*				m_TouchDrawNode;
 	ScreenPoint				m_CursoredPoint;
 
 	vector<Coord>			m_HexagonPoint;
-	CCSprite*				m_UnitSprite[MAX_UNIT_ON_GAME];
-	CCDrawNode*				m_UnitDrawNode[MAX_UNIT_ON_GAME];	// 유닛 그리는 실험을 위한 임시 변수
+
+	vector<Unit*>			m_UnitData;
 
 	int						m_SelectedUnitIndex;
 	int						m_SelectecUnitIndexOfPlayer;

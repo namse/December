@@ -36,7 +36,7 @@ bool GameScene::init()
 	addChild(m_TouchDrawNode);
 
 	// 육각형을 그림. Header.h 의 #define 값들을 수정하여 육각형의 형태 조절 가능
-	drawHexagon();
+	drawHexaGrid();
 
 	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
 
@@ -49,15 +49,15 @@ void GameScene::gameLogic(float dt)
 	{
 	case GS_BEFORE_LOGIN:
 	{
-							auto scene = Director::getInstance()->getRunningScene();
-							if (scene != nullptr && this->getParent() == scene)
-							{
-								TcpClient::getInstance()->loginRequest();
-								m_GameState = GS_WAIT_LOGIN;
-							}
+		auto scene = Director::getInstance()->getRunningScene();
+		if (scene != nullptr && this->getParent() == scene)
+		{
+			TcpClient::getInstance()->loginRequest();
+			m_GameState = GS_WAIT_GAME;
+		}
 	}
 		break;
-	case GS_WAIT_LOGIN:
+	case GS_WAIT_GAME:
 	{
 
 	}
@@ -99,10 +99,10 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 	m_SelectedUnitIndex = NON_SELECT_UNIT;
 
 	Player* pPlayer = m_Game.getPlayer(PW_PLAYERONE);
-	for (int i = 0; i < pPlayer->getUnitCounter(); ++i)
+	for (int i = 0; i < m_UnitList.size(); ++i)
 	{
 		// 자신의 유닛들의 좌표인덱스를 하나씩 참조하고
-		HexaPoint unitPoint = pPlayer->getUnit(i)->getUnitStatus().point;
+		HexaPoint unitPoint = m_UnitList.at(i)->getPosition();
 		// 좌표인덱스를 화면상 위치로 변환하여
 		ScreenPoint screenPoint = unitPoint.HexaToScreen();
 		// 자신의 유닛을 클릭했는지 판정한다.
@@ -112,8 +112,7 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 			m_TouchDrawNode->drawDot(point, 18, ccc4f(0.7, 0.7, 0.7, 0.7));
 
 			// 그 유닛을 선택했다는 것을 지정하기 위해 id 를 멤버변수에 저장한다.
-			m_SelectedUnitIndex = pPlayer->getUnit(i)->getUnitStatus().id;
-			m_SelectecUnitIndexOfPlayer = i;
+			m_SelectedUnitIndex = m_UnitList.at(i)->getID();
 			return true;
 		}
 	}
@@ -125,7 +124,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
 	if (!m_IsMyTurn) return;
 
-	Unit* unit = m_Game.getPlayer(PW_PLAYERONE)->getUnit(m_SelectecUnitIndexOfPlayer);
+	Unit* unit =getUnit(m_SelectedUnitIndex);
 
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnitIndex == NON_SELECT_UNIT || unit == nullptr) return;
@@ -147,7 +146,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 		// 찾아냈다! 마우스는 i번째 그리드에 있어!
 		if (touchCheck(clickPoint, screenPoint))
 		{
-			HexaPoint unitPoint = unit->getUnitStatus().point;
+			HexaPoint unitPoint = unit->getPosition();
 
 			// 선택한 유닛부터 마우스가 있는 격자까지 선을 그음
 			ScreenPoint pointFrom = unitPoint.HexaToScreen();
@@ -172,8 +171,8 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	// 클릭한 상태로 턴이 넘어갔을 경우 마우스 떼도 이 코드 안돌아가니 주의
 
-	Unit* unit = m_Game.getPlayer(PW_PLAYERONE)->getUnit(m_SelectecUnitIndexOfPlayer);
-	HexaPoint unitPoint = unit->getUnitStatus().point;
+	Unit* unit = getUnit(m_SelectecUnitIndexOfPlayer);
+	HexaPoint unitPoint = unit->getPosition();
 
 	ScreenPoint pointFrom = unitPoint.HexaToScreen();
 	ScreenPoint pointTo = m_CursoredPoint;
@@ -235,6 +234,17 @@ bool GameScene::touchCheck(ScreenPoint touch, ScreenPoint anchor)
 	return false;
 }
 
+// 유닛을 찾습니다
+Unit* GameScene::getUnit(int unitID)
+{
+	for (auto unit : m_UnitList)
+	{
+		if (unitID == unit->getID())
+			return unit;
+	}
+	return nullptr; // 검색에 실패하면 null return
+}
+
 // 두 Point 사이의 Direction 을 구하는 함수
 float GameScene::getPointToPointDirection(ScreenPoint point1, ScreenPoint point2)
 {
@@ -256,7 +266,7 @@ float GameScene::getPointToPointDistance(ScreenPoint point1, ScreenPoint point2)
 	return sqrt(x*x + y*y);
 }
 
-void GameScene::drawHexagon()
+void GameScene::drawHexaGrid()
 {
 	CCDrawNode* node = CCDrawNode::create();
 	this->addChild(node);
@@ -356,42 +366,16 @@ Hexagon* GameScene::createHexagon(ScreenPoint anchor, int size)
 // 유닛을 저장한 후, 화면에 유닛을 그린다. 그리고 게임 시작 상태로 전환한다.
 void GameScene::ReadUnitData(UnitData unitData[], int length)
 {
-	m_Game.getField()->setUnitData(unitData, length);
-
 	for (int i = 0; i < length; ++i)
 	{
-		switch (unitData[i].unitOwner)				// 유닛의 Owner 를 구분하여 올바른 대상에게 유닛을 제공
-		{
-		case UO_ME:
-			m_Game.getPlayer(PW_PLAYERONE)->setUnit(unitData[i]);
-			break;
-		case UO_ENEMY:
-			m_Game.getPlayer(PW_PLAYERTWO)->setUnit(unitData[i]);
-			break;
-			// if NPC
-		default:
-			break;
-		}
-	}
-
-	int loop = m_Game.getPlayer(PW_PLAYERONE)->getUnitCounter();
-	for (int i = 0; i < loop; ++i)
-	{
-		Unit* pUnit = m_Game.getPlayer(PW_PLAYERONE)->getUnit(i);
-		m_Unit.push_back(pUnit);
-	}
-
-	loop = m_Game.getPlayer(PW_PLAYERTWO)->getUnitCounter();
-	for (int i = 0; i < loop; ++i)
-	{
-		Unit* pUnit = m_Game.getPlayer(PW_PLAYERTWO)->getUnit(i);
-		m_Unit.push_back(pUnit);
+		m_UnitList.push_back(Unit::create(unitData[i]));
 	}
 
 	drawUnit();
 
 	m_GameState = GS_GAME_START;
 }
+
 
 void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 {
@@ -401,10 +385,10 @@ void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 		UnitAction action = unitActionQueue[i];
 
 		// id를 사용하여 i 번째 액션을 적용할 유닛을 찾음
-		for (int j = 0; j < m_Unit.size(); ++j)
+		for (int j = 0; j < m_UnitList.size(); ++j)
 		{
-			Unit* pUnit = m_Unit.at(j);
-			int unitId = pUnit->getUnitStatus().id;
+			Unit* pUnit = m_UnitList.at(j);
+			int unitId = pUnit->getID();
 			if (unitId == action.mUnitId)
 			{
 				HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
@@ -417,7 +401,7 @@ void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 				// 유닛은 인덱스로 이동
 				pUnit->setPosition(hMovePoint);
 				// 스프라이트는 좌표로 이동
-				m_UnitSprite[unitId]->setPosition(movePoint);
+				pUnit->getSprite()->setPosition(movePoint);
 				break;
 			}
 		}
@@ -426,38 +410,17 @@ void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 
 void GameScene::drawUnit()
 {
-	Field* pField = m_Game.getField();
-
-	for (int i = 0; i < pField->getUnitDataLength(); ++i)
+	for (int i = 0; i < m_UnitList.size(); ++i)
 	{
-		UnitData unitData = pField->getUnitData(i);
-		switch (unitData.unitOwner)
-		{
-		case UO_ME:
-			m_UnitSprite[i] = Sprite::create("Me.png");
-			break;
-		case UO_ENEMY:
-			m_UnitSprite[i] = Sprite::create("Enomy.png");
-			break;
-		case UO_NPC:
-			m_UnitSprite[i] = Sprite::create("Projectile.png");
-			break;
-		default:
-			break;
-		}
+		Unit* unit = m_UnitList.at(i);
+		Sprite* unitSprite = unit->getSprite();
 
-		if (unitData.unitType != UT_NONE)
-		{
-			// i 번째 유닛 데이터의 x, y 인덱스를
-			HexaPoint unitPoint(unitData.point.x, unitData.point.y);
+		// 유닛의 위치를 화면상의 좌표로 변환하고 screenPoint 에 저장
+		ScreenPoint unitRealPoint = unit->getPosition().HexaToScreen();
 
-			// 화면상의 좌표로 변환하고 screenPoint 에 저장
-			ScreenPoint unitRealPoint = unitPoint.HexaToScreen();
+		// 화면상의 좌표에 유닛을 배치
+		unitSprite->setPosition(Point(unitRealPoint.x, unitRealPoint.y));
 
-			// 화면상의 좌표에 유닛을 배치
-			m_UnitSprite[i]->setPosition(Point(unitRealPoint.x, unitRealPoint.y));
-
-			this->addChild(m_UnitSprite[i]);
-		}
+		this->addChild(unitSprite);
 	}
 }
