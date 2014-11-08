@@ -147,6 +147,7 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\PacketType.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
     <ClInclude Include="..\Classes\CircularBuffer.h" />
     <ClInclude Include="..\Classes\Enums.h" />

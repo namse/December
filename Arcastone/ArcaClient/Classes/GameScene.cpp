@@ -104,7 +104,7 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 		// 자신의 유닛들의 좌표인덱스를 하나씩 참조하고
 		HexaPoint unitPoint = pPlayer->getUnit(i)->getUnitStatus().point;
 		// 좌표인덱스를 화면상 위치로 변환하여
-		ScreenPoint screenPoint = conversionIndexToPoint(unitPoint);
+		ScreenPoint screenPoint = unitPoint.HexaToScreen();
 		// 자신의 유닛을 클릭했는지 판정한다.
 		if (touchCheck(clickPoint, screenPoint))
 		{
@@ -142,7 +142,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	{
 		// 각각의 격자위치를 참조하여 현재 마우스가 어느 인덱스에 있는지 알아냄
 		HexaPoint hexaPoint(m_HexagonPoint.at(i));
-		ScreenPoint screenPoint = conversionIndexToPoint(hexaPoint);
+		ScreenPoint screenPoint = hexaPoint.HexaToScreen();
 
 		// 찾아냈다! 마우스는 i번째 그리드에 있어!
 		if (touchCheck(clickPoint, screenPoint))
@@ -150,7 +150,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 			HexaPoint unitPoint = unit->getUnitStatus().point;
 
 			// 선택한 유닛부터 마우스가 있는 격자까지 선을 그음
-			ScreenPoint pointFrom = conversionIndexToPoint(unitPoint);
+			ScreenPoint pointFrom = unitPoint.HexaToScreen();
 			ScreenPoint pointTo = screenPoint;
 
 			Point pF(pointFrom.x, pointFrom.y);
@@ -175,7 +175,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	Unit* unit = m_Game.getPlayer(PW_PLAYERONE)->getUnit(m_SelectecUnitIndexOfPlayer);
 	HexaPoint unitPoint = unit->getUnitStatus().point;
 
-	ScreenPoint pointFrom = conversionIndexToPoint(unitPoint);
+	ScreenPoint pointFrom = unitPoint.HexaToScreen();
 	ScreenPoint pointTo = m_CursoredPoint;
 
  	float direction = getPointToPointDirection(pointFrom, pointTo);
@@ -268,7 +268,7 @@ void GameScene::drawHexagon()
 			if (drawToHexa(i, j) && MAP_IS_HEXA)	// 육각형으로 그리기 위한 조건문
 				continue;
 
-			ScreenPoint point = conversionIndexToPoint(HexaPoint(i, j));
+			ScreenPoint point = HexaPoint(i, j).HexaToScreen();
 
 			if (drawToRect(point.y) && MAP_IS_RECT)	// 사각형으로 그리기 위한 조건문
 				continue;
@@ -312,17 +312,6 @@ void GameScene::drawText(int i, int j, Hexagon* hexa)
 	this->addChild(vLabely);
 }
 
-// 입력한 index 형식의 point 값을 화면에 그릴 수 있는 point 값으로 변환해주는 함수 .
-ScreenPoint GameScene::conversionIndexToPoint(HexaPoint point)
-{
-	ScreenPoint retPoint;
-
-	// MAP_START 를 중앙에 위치하도록 그려주기 위한 수식들 .
-	retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (point.x - (MAP_SIZEX - 1)*0.5);
-	retPoint.y = MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (point.y * 2 - MAP_SIZEY + point.x - (MAP_SIZEX - 3)*0.5);
-
-	return retPoint;
-}
 
 // 사각형이 되도록 그려주는 부분을 제외하기 위한 함수 .
 bool GameScene::drawToRect(float y)	
@@ -419,7 +408,7 @@ void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 			if (unitId == action.mUnitId)
 			{
 				HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-				ScreenPoint sMovePoint = conversionIndexToPoint(hMovePoint);
+				ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 				Point movePoint(sMovePoint.x, sMovePoint.y);
 
 				if (DEBUG_PRINT_PACKET)
@@ -463,7 +452,7 @@ void GameScene::drawUnit()
 			HexaPoint unitPoint(unitData.point.x, unitData.point.y);
 
 			// 화면상의 좌표로 변환하고 screenPoint 에 저장
-			ScreenPoint unitRealPoint = conversionIndexToPoint(unitPoint);
+			ScreenPoint unitRealPoint = unitPoint.HexaToScreen();
 
 			// 화면상의 좌표에 유닛을 배치
 			m_UnitSprite[i]->setPosition(Point(unitRealPoint.x, unitRealPoint.y));

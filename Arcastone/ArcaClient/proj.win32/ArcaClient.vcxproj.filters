@@ -22,31 +22,28 @@
     <Filter Include="GameObject\Unit\NPC">
       <UniqueIdentifier>{52c5edae-4ff5-4d83-8de1-e1fddf168002}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\field">
+      <UniqueIdentifier>{97a5df55-b53a-4310-8013-75a9bb1e95ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\scene">
+      <UniqueIdentifier>{5848369e-a16a-4f34-bf57-a9c8c6b2ae66}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\game">
+      <UniqueIdentifier>{6d58c0b3-9d46-4333-9f85-6fe8beaaa9c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObject\player">
+      <UniqueIdentifier>{86a64d5e-c36e-4453-970e-e529bd1ba44d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Classes\AppDelegate.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\CircularBuffer.cpp">
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\TcpClient.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Game.cpp">
-      <Filter>GameObject</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Player.cpp">
-      <Filter>GameObject</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\main.cpp">
       <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\GameScene.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\field.cpp">
-      <Filter>GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Classes\Unit.cpp">
       <Filter>GameObject\Unit</Filter>
@@ -57,11 +54,23 @@
     <ClCompile Include="..\Classes\Pawn.cpp">
       <Filter>GameObject\Unit\PC</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\AppDelegate.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\field.cpp">
+      <Filter>GameObject\field</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\GameScene.cpp">
+      <Filter>Core\scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Game.cpp">
+      <Filter>GameObject\game</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Player.cpp">
+      <Filter>GameObject\player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Classes\AppDelegate.h">
-      <Filter>Network</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\CircularBuffer.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -74,20 +83,8 @@
     <ClInclude Include="..\Classes\Header.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Game.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Player.h">
-      <Filter>GameObject</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\main.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\GameScene.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\field.h">
-      <Filter>GameObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Unit.h">
       <Filter>GameObject\Unit</Filter>
@@ -97,6 +94,24 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Pawn.h">
       <Filter>GameObject\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\AppDelegate.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\field.h">
+      <Filter>GameObject\field</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\GameScene.h">
+      <Filter>Core\scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Game.h">
+      <Filter>GameObject\game</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Player.h">
+      <Filter>GameObject\player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PacketType.h">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

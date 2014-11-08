@@ -39,7 +39,6 @@ public:
 	void					drawUnit();
 	void					drawText(int i, int j, Hexagon* hexa);
 
-	ScreenPoint				conversionIndexToPoint(HexaPoint point);
 	bool					drawToRect(float y);
 	bool					drawToHexa(int x, int y);
 

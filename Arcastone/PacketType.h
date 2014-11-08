@@ -57,33 +57,6 @@ struct Coord{
 	}
 };
 
-class ScreenPoint{
-public:
-	ScreenPoint(){}
-	ScreenPoint(Coord point){
-		x = point.x;
-		y = point.y;
-	}
-	ScreenPoint(float _x, float _y){
-		x = _x;
-		y = _y;
-	}
-	float x, y;
-};
-class HexaPoint{
-public:
-	HexaPoint(){}
-	HexaPoint(Coord point){
-		x = point.x;
-		y = point.y;
-	}
-	HexaPoint(int _x, int _y){
-		x = _x;
-		y = _y;
-	}
-	int x, y;
-};
-
 enum PacketTypes
 {
 	PKT_NONE	= 0,
@@ -233,7 +206,7 @@ namespace Packet
 			int					weight;
 			int					attack;
 			int					moveRange;
-			HexaPoint			point;
+			Coord				point;
 			UnitIdentityNumber	id;
 		};
 		struct FieldData{
