@@ -20,6 +20,9 @@ bool AppDelegate::applicationDidFinishLaunching() {
         director->setOpenGLView(glview);
     }
 
+	glview->setDesignResolutionSize(DISPLAY_SIZEX, DISPLAY_SIZEY, kResolutionShowAll);
+	glview->setFrameSize(DISPLAY_SIZEX, DISPLAY_SIZEY);
+
 	// set directory for debug mode
 
 #ifdef _DEBUG

@@ -6,13 +6,16 @@
 #define LOGIN_IPADDR				"127.0.0.1"
 #define DEBUG_PRINT_PACKET			false
 
+#define DISPLAY_SIZEX				480
+#define DISPLAY_SIZEY				690
+
 #define MAP_IS_RECT					false
 #define MAP_IS_HEXA					true
 #define MAP_SIZEX					7
 #define MAP_SIZEY					10
 
-#define MAP_XSTART					400
-#define MAP_YSTART					320
+#define MAP_XSTART					240
+#define MAP_YSTART					340
 #define HEXAGON_LENGTH				30
 
 #define DRAW_HEXA_NUMBER			true
