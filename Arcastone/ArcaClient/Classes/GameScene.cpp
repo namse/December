@@ -7,23 +7,23 @@
 
 Scene* GameScene::createScene()
 {
-    auto scene = Scene::create();
-    
-    auto layer = GameScene::create();
+	auto scene = Scene::create();
 
-    // GameScene layer 를 scene 에 추가
-    scene->addChild(layer, 1, string("base_layer"));
+	auto layer = GameScene::create();
 
-    return scene;
+	// GameScene layer 를 scene 에 추가
+	scene->addChild(layer, 1, string("base_layer"));
+
+	return scene;
 }
 
 bool GameScene::init()
 {
-    if ( !LayerColor::initWithColor(ccc4(255,255,255,32)))
-    {
-        return false;
-    }
-    Size visibleSize = Director::getInstance()->getVisibleSize();
+	if (!LayerColor::initWithColor(ccc4(255, 255, 255, 225)))
+	{
+		return false;
+	}
+	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	// 게임의 진행 상태를 로그인 전으로 설정
@@ -31,13 +31,13 @@ bool GameScene::init()
 
 	// 마우스 이벤트를 사용하기 위해 초기화
 	touchEventInit();
-	
+
 	// 육각형을 그림. Header.h 의 #define 값들을 수정하여 육각형의 형태 조절 가능
 	drawHexaGrid();
 
 	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
 
-    return true;
+	return true;
 }
 
 void GameScene::gameLogic(float dt)
@@ -61,13 +61,13 @@ void GameScene::gameLogic(float dt)
 		break;
 	case GS_GAME_START:			// GameStartResult 를 받은 상태
 	{
-									//if (m_IsAction && m_IsMyTurn) TcpClient::getInstance()->TurnEndRequest();
+		//if (m_IsAction && m_IsMyTurn) TcpClient::getInstance()->TurnEndRequest();
 	}
 		break;
 	default:
 		break;
 	}
-	
+
 }
 
 void GameScene::touchEventInit()
@@ -87,12 +87,12 @@ void GameScene::touchEventInit()
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
 	if (!m_IsMyTurn) return false;			// 자신의 턴인 경우에만 마우스 입력을 받는다.
-		
+
 	m_StartPoint.x = touch->getLocation().x;
 	m_StartPoint.y = touch->getLocation().y;
 
 	m_SelectedUnit = NON_SELECT_UNIT;
-	
+
 	for (int i = 0; i < m_UnitList.size(); ++i)
 	{
 		Unit* unit = m_UnitList.at(i);
@@ -119,25 +119,25 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
 	if (!m_IsMyTurn) return;
 
-	// 현재 마우스가 상주한 index 를 저장해두고, 이 index 값이 바뀔 때만 아래 코드 실행함
-	ScreenPoint currentPoint(touch->getLocation().x, touch->getLocation().y);
-	if (m_CursoredPoint == currentPoint) return;
-	m_CursoredPoint = currentPoint;
+	// 마우스가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 그냥 return;
+	HexaPoint touchIndex(touch->getLocation().x, touch->getLocation().y);
+	if (HexaPoint(m_CursoredPoint.ScreenToCoord()) == touchIndex) return;
+	m_CursoredPoint = ScreenPoint(touch->getLocation());
 
 	Unit* unit = getUnitByID(m_SelectedUnit);
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
-
-	// 공격이 향하는 위치 찾기
-	HexaDirection direction = getPointToPointDirection(m_StartPoint, m_CursoredPoint);
-	assert(direction != HD_NONE);
-
-	int distance = getPointToPointDistance(m_StartPoint, m_CursoredPoint);
-	if (distance > unit->getMoveRange()) distance = unit->getMoveRange();
-
 	// 이동 경로를 그려줍니다
-	drawUnitMove(unit, direction, distance);
+	// TODO : 요거 이렇게 가면 너무 자주 지우고 그리고 하니까 어떻게 좀 해주세요
+
+	// 표시된 이동경로 초기화
+	for (auto node : m_CourseSignNode)
+	{
+		this->removeChild(node);
+	}
+	m_CourseSignNode.clear();
+	drawUnitMove(unit);
 
 }
 
@@ -164,9 +164,10 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	// 공격을 취소하는 경우
 	if (distance == 0)
 		return;
- 
-	if (DEBUG_PRINT_PACKET) 
+
+	if (DEBUG_PRINT_PACKET)
 		printf("%f\n", direction);
+
 
 	TcpClient::getInstance()->attackRequest(m_SelectedUnit, distance, direction);
 	m_SelectedUnit = NON_SELECT_UNIT;
@@ -175,45 +176,126 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 {
-	// 표시된 이동경로 초기화
-	for (auto node : m_CourseSignNode)
+	Unit* atkUnit = getUnitByID(m_SelectedUnit);
+	auto signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
+	UnitMoveType atkType = atkUnit->getMoveType();
+
+	// 공격이 향하는 위치 찾기
+	if (unit == atkUnit && direction == HD_NONE && range == 0)
 	{
-		this->removeChild(node);
-	}
-	m_CourseSignNode.clear();
-
-	auto signcolor = (unit->getID() == m_SelectedUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
-
-	// 이동경로 표시
-	for (int i = 1; i <= range; ++i)
-	{
-		HexaPoint attackCourse = getPointMoveDirection(unit->getPosition(), direction, i);
-
-		// 이동경로에 다른 유닛이 존재하는가?
-		if (Unit* crashUnit = getUnitByPos(attackCourse))
+		if ((atkType == UMT_STRAIGHT) || (atkType == UMT_JUMP))
 		{
-			// 그럼 거기서부터 다른 유닛의 이동경로를 그리도록 하시오
+			direction = getPointToPointDirection(m_StartPoint, m_CursoredPoint);
+			range = getPointToPointDistance(m_StartPoint, m_CursoredPoint);
+			if (range > unit->getMoveRange()) range = unit->getMoveRange();
+		}
+		else if (atkType == UMT_DASH)
+		{
 
-			int attackRange;
-			if (unit->getID() == m_SelectedUnit) // 첫 충돌이면 현재 유닛의 공격력 - 충동 유닛의 무게만큼
-				attackRange = unit->getAttack() - crashUnit->getWeight();
-			else // 두번째 이후에는 (예상 이동 위치 - 현재까지 그려준 거리) 만큼
-				attackRange = (range - i + 1);
+		}
+		else if (atkType == UMT_TELEPORT)
+		{
 
-			// 움직이자
-			drawUnitMove(crashUnit, direction, attackRange);
-			break;
+		}
+	}
+	assert(direction != HD_NONE);
+	assert(atkType != UMT_NONE);
+
+	// 직선이동 || 충돌후 밀려남
+	if (atkType == UMT_STRAIGHT || unit != atkUnit)
+	{
+		// 이동경로 표시
+		for (int i = 1; i <= range; ++i)
+		{
+			HexaPoint attackCourse = getPointMoveDirection(unit->getPosition(), direction, i);
+
+			// 이동경로에 다른 유닛이 존재하는가?
+			if (Unit* crashUnit = getUnitByPos(attackCourse))
+			{
+				// 그럼 거기서부터 다른 유닛의 이동경로를 그리도록 하시오
+
+				int attackRange;
+				if (unit == atkUnit) // 첫 충돌이면 현재 유닛의 공격력 - 충동 유닛의 무게만큼
+					attackRange = unit->getAttack() - crashUnit->getWeight();
+				else // 두번째 이후에는 (예상 이동 위치 - 현재까지 그려준 거리) 만큼
+					attackRange = (range - i + 1);
+
+				// 움직이자
+				if (range > 0) drawUnitMove(crashUnit, direction, attackRange);
+				break;
+			}
+
+			// 아니면 바닥에 예상 이동 위치를 그려준다
+			Hexagon* courseSignHexagon = createHexagon(attackCourse.HexaToScreen(), HEXAGON_LENGTH);
+			DrawNode* courseSignNode = DrawNode::create();
+
+			courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, signcolor, 1, signcolor);
+			this->addChild(courseSignNode, 99);
+			m_CourseSignNode.push_back(courseSignNode);
 		}
 
-		// 존재하지 않으면, 바닥에 예상 이동 위치를 그려준다
-		Hexagon* courseSignHexagon = createHexagon(attackCourse.HexaToScreen(), HEXAGON_LENGTH);
-		DrawNode* courseSignNode = DrawNode::create();
-
-		courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, signcolor, 1, signcolor);
-		this->addChild(courseSignNode,1);
-		m_CourseSignNode.push_back(courseSignNode);
 	}
-	
+	// 뛰어넘기
+	else if (atkType == UMT_JUMP)
+	{
+		// 이동경로 표시
+		for (int i = 1; i <= range; ++i)
+		{
+			HexaPoint attackCourse = getPointMoveDirection(unit->getPosition(), direction, i);
+
+
+			// 이동경로에 다른 유닛이 존재하는가?
+			if (Unit* crashUnit = getUnitByPos(attackCourse))
+			{
+				// 혹시 네 주인이... E.N.E.M.Y 니?
+				// 아님 혹시 여기가... range의 끝..?
+				if ((crashUnit->getOwner() == UO_ENEMY) || (i == range))
+				{
+					// 그런데.. 이 길목에 우리편이 있으면... 걔랑 겹쳐버리잖니?
+					// 자.. 시간을 거슬러 올라가보자꾸나..
+					// 그나저나 얘.. 방향은 반대쪽이란다.. 
+					HexaDirection invDirection = getInverseDirection(direction);
+					HexaPoint beforePosition = getPointMoveDirection(attackCourse, invDirection, 1);
+
+					// 거기 혹시 우리집 유닛 있습니까?
+					if (nullptr == getUnitByPos(beforePosition) || range - 1 == 0)
+					{
+						// 님아 충돌여ㅋㅋㅋㅋㅋㅋㅋ
+						int attackRange = unit->getAttack() - crashUnit->getWeight();
+						drawUnitMove(crashUnit, direction, attackRange);
+						break;
+
+					}
+					else
+					{
+						// g헐 얘 여기서 뭘 하고 있는 거니ㅠ;
+						// 어쩔 수 없지 얘 뒤까지만 가야겠다
+
+						// 그럼 일단 지금까지 그려놓은 건 지워야지
+						for (auto node : m_CourseSignNode)
+						{
+							this->removeChild(node);
+						}
+						m_CourseSignNode.clear();
+
+						drawUnitMove(atkUnit, direction, range - 1);
+						break;
+					}
+				}
+
+			}
+
+			// 아니면 바닥에 예상 이동 위치를 그려준다
+			Hexagon* courseSignHexagon = createHexagon(attackCourse.HexaToScreen(), HEXAGON_LENGTH);
+			DrawNode* courseSignNode = DrawNode::create();
+
+			courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, signcolor, 1, signcolor);
+			this->addChild(courseSignNode, 99);
+			m_CourseSignNode.push_back(courseSignNode);
+		}
+	}
+
+
 
 }
 
@@ -266,7 +348,7 @@ HexaDirection GameScene::getPointToPointDirection(ScreenPoint point1, ScreenPoin
 	float x = point1.x - point2.x;
 	float y = point1.y - point2.y;
 	float degree = CC_RADIANS_TO_DEGREES(atan2(y, x));
- 
+
 	// 3,4분면과 270도에서 직교좌표계 보정
 	if ((x < 0 && y < 0) || (x >= 0 && y < 0))
 		degree += 360;
@@ -282,13 +364,26 @@ int GameScene::getPointToPointDistance(ScreenPoint point1, ScreenPoint point2)
 {
 	float x = point1.x - point2.x;
 	float y = point1.y - point2.y;
-	return (int)(sqrt(x*x + y*y))/30;
+	return (int)(sqrt(x*x + y*y)) / 30;
 }
+
+// 반대 좌표를 구하는 함수
+HexaDirection GameScene::getInverseDirection(HexaDirection direction)
+{
+	int res = direction + 3;
+	if (res > 6)
+		res %= 6;
+
+	assert(res != 0);
+
+	return (HexaDirection)res;
+}
+
 
 void GameScene::drawHexaGrid()
 {
 	CCDrawNode* node = CCDrawNode::create();
-	this->addChild(node);
+	this->addChild(node, 100);
 
 	for (int i = 0; i < MAP_SIZEX; ++i)
 	{
@@ -305,9 +400,24 @@ void GameScene::drawHexaGrid()
 			m_HexagonPoint.push_back(Coord(i, j));	// m_HexagonPoint 에 화면에 그려지는 좌표(0~x, 0~y)들을 저장
 
 			Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
-			node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, ccc4f(0.2f, 1.0f, 0.2f, 0.3f));
-			
-			if(DRAW_HEXA_NUMBER) drawText(i, j, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
+			node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, COLOR_OF_GRID);
+
+			// 임시로 블록 이미지 그려줌
+			Sprite* fieldBlock;
+			switch (rand() % 3)
+			{
+			case 0: fieldBlock = Sprite::create("block1.png");  break;
+			case 1: fieldBlock = Sprite::create("block2.png");  break;
+			case 2: fieldBlock = Sprite::create("block3.png");  break;
+			}
+			;
+			float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
+			fieldBlock->setScale(scale);
+			fieldBlock->setAnchorPoint(Vec2(0.5f, 0.67f));
+			fieldBlock->setPosition(point);
+			this->addChild(fieldBlock, j);
+
+			if (DRAW_HEXA_NUMBER) drawText(i, j, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
 		}
 	}
 }
@@ -343,7 +453,7 @@ void GameScene::drawText(int i, int j, Hexagon* hexa)
 
 
 // 사각형이 되도록 그려주는 부분을 제외하기 위한 함수 .
-bool GameScene::drawToRect(float y)	
+bool GameScene::drawToRect(float y)
 {
 	if (y <= MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (MAP_SIZEY - MAP_SIZEX*0.5 + 1) ||
 		y >= MAP_YSTART + HEXAGON_LENGTH * sin(RADIANS_60) * (MAP_SIZEY - MAP_SIZEX*0.5 + 1))
@@ -400,7 +510,7 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 		// 화면상의 좌표에 유닛을 배치
 		assert(unitSprite != nullptr);
 		unitSprite->setPosition(Point(unitRealPoint.x, unitRealPoint.y));
-		this->addChild(unitSprite);
+		this->addChild(unitSprite, 100);
 	}
 
 	m_GameState = GS_GAME_START;

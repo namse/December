@@ -21,8 +21,9 @@ public:
 	int							getAttack(){ return m_Attack; }
 	int							getMoveRange(){ return m_MoveRange; }
 	int							getWeight(){ return m_Weight; }
-	HexaPoint					getPosition(){ return m_Position;  }
+	HexaPoint					getPosition(){ return m_Position; }
 	UnitOwner					getOwner(){ return m_Owner; }
+	UnitMoveType					getMoveType(){ return m_MoveType; }
 	
 protected:
 	UnitType					m_UnitType;

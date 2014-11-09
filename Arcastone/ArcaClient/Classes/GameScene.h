@@ -39,7 +39,7 @@ public:
 
 	void					drawHexaGrid();
 	void					drawText(int i, int j, Hexagon* hexa);
-	void					drawUnitMove(Unit* unit, HexaDirection direction, int range);
+	void					drawUnitMove(Unit* unit, HexaDirection direction = HD_NONE, int range = 0);
 
 	bool					drawToRect(float y);
 	bool					drawToHexa(int x, int y);
@@ -49,6 +49,7 @@ public:
 	HexaDirection			getPointToPointDirection(ScreenPoint point1, ScreenPoint point2);
 	int						getPointToPointDistance(ScreenPoint point1, ScreenPoint point2);
 	HexaPoint				getPointMoveDirection(HexaPoint start, HexaDirection direction, int range);
+	HexaDirection			getInverseDirection(HexaDirection direction);
 
 	// 하위는 네트워크 관련 함수
 	void					ReadUnitData(UnitData unitData[], int length);
