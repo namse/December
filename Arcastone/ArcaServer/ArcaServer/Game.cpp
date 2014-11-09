@@ -76,7 +76,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	}
 
 	// 아르카스톤 설치
-	SetUpArca();
+	if (USE_ARCA) SetUpArca();
 
 	// 유닛 수 초기화
 	UnitCounting();
@@ -342,6 +342,9 @@ void Game::IsArca()
 
 	// 첫번쨰 턴이면 알카스톤적용X
 	if (m_IsFirstTurn)
+		return;
+	
+	if (!USE_ARCA)
 		return;
 
 	bool isNearAlkaStone = false;
