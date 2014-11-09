@@ -27,57 +27,63 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 		auto game = GGameManager->GetGame(gameID);
 		auto playerSession1 = GClientManager->GetClient(playerId);
 		auto playerSession2 = GClientManager->GetClient(matchPlayer);
-		Packet::GameStartResult player1Packet;
-		Packet::GameStartResult player2Packet;
+		Packet::GameStartResult outPacket[2];
 		
+		// get field data
+		std::map<Coord, FieldBlock> fieldMap = game->GetField()->GetFieldBlockList();
+		outPacket[0].mField = fieldMap;
+		outPacket[1].mField = fieldMap;
+
 		// get unit data
 		auto unitList = game->GetUnitList();
 		
 		// fill unit data packet
 		for (unsigned int i = 0; i < unitList.size(); ++i)
 		{
-			auto unit = unitList[i];
+			Unit* unit = unitList[i];
 			assert(unit);
 			
 			auto position = unit->GetPos();
 
-			player1Packet.mUnit[i].unitType = player2Packet.mUnit[i].unitType = unit->GetUnitType();
-			player1Packet.mUnit[i].unitMoveType = player2Packet.mUnit[i].unitMoveType = unit->GetUnitMoveType();
-			player1Packet.mUnit[i].hp = player2Packet.mUnit[i].hp = unit->GetHP();
-			player1Packet.mUnit[i].weight = player2Packet.mUnit[i].weight = unit->GetWeight();
-			player1Packet.mUnit[i].attack = player2Packet.mUnit[i].attack = unit->GetAttack();
-			player1Packet.mUnit[i].moveRange = player2Packet.mUnit[i].moveRange = unit->GetMoveRange();
-			player1Packet.mUnit[i].point.x = player2Packet.mUnit[i].point.x = position.x;
-			player1Packet.mUnit[i].point.y = player2Packet.mUnit[i].point.y = position.y;
-			player1Packet.mUnit[i].id = player2Packet.mUnit[i].id = unit->GetID();
+			for (int j = 0; j < 2; ++j)
+			{
+				outPacket[j].mUnit[i].unitType = unit->GetUnitType();
+				outPacket[j].mUnit[i].unitMoveType = unit->GetUnitMoveType();
+				outPacket[j].mUnit[i].hp = unit->GetHP();
+				outPacket[j].mUnit[i].weight = unit->GetWeight();
+				outPacket[j].mUnit[i].attack = unit->GetAttack();
+				outPacket[j].mUnit[i].moveRange = unit->GetMoveRange();
+				outPacket[j].mUnit[i].point.x = position.x;
+				outPacket[j].mUnit[i].point.y = position.y;
+				outPacket[j].mUnit[i].id = unit->GetID();
+			}
 
 			auto unitOwner = unit->GetOwner();
 			if (unitOwner == playerId) // player1's id
 			{
-				player1Packet.mUnit[i].unitOwner = UO_ME;
-				player2Packet.mUnit[i].unitOwner = UO_ENEMY;
+				outPacket[0].mUnit[i].unitOwner = UO_ME;
+				outPacket[1].mUnit[i].unitOwner = UO_ENEMY;
 			}
 			else if (unitOwner == matchPlayer) // player2's id 
 			{
-				player1Packet.mUnit[i].unitOwner = UO_ENEMY;
-				player2Packet.mUnit[i].unitOwner = UO_ME;
+				outPacket[0].mUnit[i].unitOwner = UO_ENEMY;
+				outPacket[1].mUnit[i].unitOwner = UO_ME;
 			}
 			else if (unitOwner == PLAYER_NUMBER_NPC)
 			{
-				player1Packet.mUnit[i].unitOwner = UO_NPC;
-				player2Packet.mUnit[i].unitOwner = UO_NPC;
+				outPacket[0].mUnit[i].unitOwner = UO_NPC;
+				outPacket[1].mUnit[i].unitOwner = UO_NPC;
 			}
 			else
 			{
 				assert(false);
 			}
 		}
-		player1Packet.mField.fieldWidth = player2Packet.mField.fieldWidth = MAP_FIELD_WIDTH;
-		player1Packet.mField.fieldHeight = player2Packet.mField.fieldHeight = MAP_FIELD_HEIGHT;
-		player1Packet.mLength = player2Packet.mLength = unitList.size();
 
-		playerSession1->SendRequest(&player1Packet);
-		playerSession2->SendRequest(&player2Packet);
+		outPacket[0].mLength = outPacket[1].mLength = unitList.size();
+
+		playerSession1->SendRequest(&outPacket[0]);
+		playerSession2->SendRequest(&outPacket[1]);
 		
 
 		game->StartGame();

@@ -12,12 +12,6 @@
 typedef int PlayerNumber;
 typedef int GameNumber;
 
-struct FieldBlock{
-	Coord			m_Position;
-	FieldBlockType	m_Type;
-	FieldBlockStatus m_Status;
-};
-
 
 // enum FieldBlockType
 // enum FieldBlockStatus

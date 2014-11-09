@@ -12,6 +12,7 @@ public:
 	void			InitGame(PlayerNumber player1, PlayerNumber player2);
 	void			StartGame();
 	std::vector<Unit*>	GetUnitList() { return m_UnitList; }
+	Field*			GetField(){ return &m_GameField; }
 	PlayerNumber	GetAttacker(){ return m_Attacker; }
 	Unit*	GetUnit(UnitIdentityNumber id) {
 		for (auto unit : m_UnitList)

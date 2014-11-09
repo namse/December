@@ -83,7 +83,7 @@ struct PacketHeader
 	PacketHeader() : mSize(0), mType(PKT_NONE) 	{}
 	short mSize;
 	short mType;
-} ;
+};
 
 
 enum UnitType{
@@ -130,10 +130,17 @@ enum HexaDirection{
 enum FieldBlockType
 {
 	FBT_NONE = 0,
+	//FBT_FROZEN = 1,
 };
 enum FieldBlockStatus
 {
 	FBS_NONE = 0,
+	//FBS_BURNIG = 1,
+};
+
+struct FieldBlock{
+	FieldBlockType	m_Type;
+	FieldBlockStatus m_Status;
 };
 
 enum UnitOwner
@@ -215,6 +222,7 @@ namespace Packet
 			mType = PKT_SC_GAME_START;
 			mLength = 0;
 			memset(mUnit, 0, sizeof(mUnit));
+			mField.clear();
 		}
 		struct UnitData{
 			UnitType			unitType;
@@ -227,12 +235,9 @@ namespace Packet
 			Coord				point;
 			UnitIdentityNumber	id;
 		};
-		struct FieldData{
-			int					fieldWidth, fieldHeight;
-		};
 		int						mLength;
 		UnitData				mUnit[MAX_UNIT_ON_GAME];
-		FieldData				mField;
+		std::map<Coord, FieldBlock> mField;
 	};
 
 	struct AttackRequest : public PacketHeader
