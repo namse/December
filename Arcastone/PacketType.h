@@ -109,12 +109,13 @@ enum UnitMoveType{
 enum HexaDirection{
 	HD_NONE = 0,
 
-	HD_NORTH = 1,
-	HD_NORTHEAST = 2,
+	// 시계 반대방향
+	HD_NORTHEAST = 1,
+	HD_NORTH = 2,
 	HD_NORTHWEST = 3,
-	HD_SOUTHEAST = 4,
-	HD_SOUTHWEST = 5,
-	HD_SOUTH = 6,
+	HD_SOUTHWEST = 4,
+	HD_SOUTH = 5,
+	HD_SOUTHEAST = 6,
 };
 
 enum FieldBlockType

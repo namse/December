@@ -56,10 +56,8 @@ struct Hexagon
 	std::vector<cocos2d::Point> vertex;
 };
 
-struct ScreenPoint
+struct ScreenPoint : public cocos2d::Vec2
 {
-
-	float x, y;
 	ScreenPoint(){}
 	ScreenPoint(Coord point){
 		x = point.x;
@@ -79,10 +77,8 @@ struct ScreenPoint
 	}
 };
 
-struct HexaPoint
+struct HexaPoint : public cocos2d::Vec2
 {
-
-	int x, y;
 	HexaPoint(){}
 	HexaPoint(Coord point){
 		x = point.x;

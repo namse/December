@@ -10,7 +10,8 @@ public:
 
 	static Unit*				create(UnitData unitData);
 	virtual void				init(UnitData unitData);
-	
+	virtual void				initSprite() = 0;
+
 	bool						setPosition(HexaPoint setPos);
 	void						setHP(int hp){ m_HP = hp; }
 
@@ -21,6 +22,7 @@ public:
 	int							getMoveRange(){ return m_MoveRange; }
 	int							getWeight(){ return m_Weight; }
 	HexaPoint					getPosition(){ return m_Position;  }
+	UnitOwner					getOwner(){ return m_Owner; }
 	
 protected:
 	UnitType					m_UnitType;

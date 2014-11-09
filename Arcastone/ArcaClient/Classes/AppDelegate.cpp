@@ -29,6 +29,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 	std::vector<std::string> resDirOrders;
 #ifdef _WIN32
 	resDirOrders.push_back("../Resources/");
+	resDirOrders.push_back("../../Resources/");
 #endif
 	FileUtils::getInstance()->setSearchPaths(resDirOrders);
 #endif

@@ -9,6 +9,8 @@ public:
 	Pawn();
 	~Pawn();
 
+	void						initSprite();
+
 private:
 
 

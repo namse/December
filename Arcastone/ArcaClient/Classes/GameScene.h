@@ -38,15 +38,15 @@ public:
 	Unit*					createUnit(UnitType unitType);
 
 	void					drawHexaGrid();
-	void					drawUnit();
 	void					drawText(int i, int j, Hexagon* hexa);
 
 	bool					drawToRect(float y);
 	bool					drawToHexa(int x, int y);
 
 	Unit*					getUnit(int unitID);
-	float					getPointToPointDirection(ScreenPoint point1, ScreenPoint point2);
-	float					getPointToPointDistance(ScreenPoint point1, ScreenPoint point2);
+	HexaDirection			getPointToPointDirection(ScreenPoint point1, ScreenPoint point2);
+	int						getPointToPointDistance(ScreenPoint point1, ScreenPoint point2);
+	HexaPoint				getPointMoveDirection(HexaPoint start, HexaDirection direction, int range);
 
 	// 하위는 네트워크 관련 함수
 	void					ReadUnitData(UnitData unitData[], int length);
@@ -62,15 +62,15 @@ private:
 	Player					m_Player[2];
 	vector<Unit*>			m_UnitList;
 
-	CCDrawNode*				m_TouchDrawNode;
+	vector<CCDrawNode*>		m_CourseSignNode;
+	ScreenPoint				m_StartPoint;
 	ScreenPoint				m_CursoredPoint;
 
 	vector<Coord>			m_HexagonPoint;
 
 	vector<Unit*>			m_UnitData;
 
-	int						m_SelectedUnitIndex;
-	int						m_SelectecUnitIndexOfPlayer;
+	int						m_SelectedUnit;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

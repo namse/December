@@ -12,11 +12,7 @@ Unit* Unit::create(UnitData unitData)
 	{
 	case UT_PAWN:
 	{
-					newUnit = new Pawn();
-	}break;
-	default:
-	{
-			   newUnit = new Unit();
+		newUnit = new Pawn();
 	}break;
 	}
 
@@ -32,11 +28,15 @@ void Unit::init(UnitData unitData)
 	m_State = US_NORMAL;
 
 	m_HP = unitData.hp;
+	m_ID = unitData.id;
 	m_Attack = unitData.attack;
 	m_MoveRange = unitData.moveRange;
 	m_Weight = unitData.weight;
 
 	m_Sprite = nullptr;
+
+	initSprite();
+	setPosition(HexaPoint(unitData.point));
 }
 
 bool Unit::setPosition(HexaPoint setPos)
@@ -48,3 +48,4 @@ bool Unit::setPosition(HexaPoint setPos)
 	m_Position = setPos;
 	return true;
 }
+
