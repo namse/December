@@ -68,6 +68,10 @@ struct ScreenPoint : public cocos2d::Vec2
 		x = point.x;
 		y = point.y;
 	}
+	ScreenPoint(Vec2 point){
+		x = point.x;
+		y = point.y;
+	}
 	ScreenPoint(float _x, float _y){
 		x = _x;
 		y = _y;
@@ -86,6 +90,10 @@ struct HexaPoint : public cocos2d::Vec2
 {
 	HexaPoint(){}
 	HexaPoint(Coord point){
+		x = point.x;
+		y = point.y;
+	}
+	HexaPoint(Vec2 point){
 		x = point.x;
 		y = point.y;
 	}

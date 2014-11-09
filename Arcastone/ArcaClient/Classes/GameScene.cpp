@@ -119,10 +119,10 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
 	if (!m_IsMyTurn) return;
 
-	// 현재 마우스가 상주한 index 를 저장해두고, 이 index 값이 바뀔 때만 아래 코드 실행함
-	ScreenPoint currentPoint(touch->getLocation().x, touch->getLocation().y);
-	if (m_CursoredPoint == currentPoint) return;
-	m_CursoredPoint = currentPoint;
+	// 마우스가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 그냥 return;
+	HexaPoint touchIndex(touch->getLocation().x, touch->getLocation().y);
+	if (HexaPoint(m_CursoredPoint.ScreenToCoord()) == touchIndex) return;
+	m_CursoredPoint = ScreenPoint(touch->getLocation());
 
 	Unit* unit = getUnitByID(m_SelectedUnit);
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
@@ -137,7 +137,6 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	if (distance > unit->getMoveRange()) distance = unit->getMoveRange();
 
 	// 이동 경로를 그려줍니다
-	// TODO : 요거 이렇게 가면 너무 자주 지우고 그리고 하니까 어떻게 좀 해주세요
 
 	// 표시된 이동경로 초기화
 	for (auto node : m_CourseSignNode)
