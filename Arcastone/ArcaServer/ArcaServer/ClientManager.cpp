@@ -39,7 +39,7 @@ void ClientManager::OnPeriodWork()
 {
 	/// 접속이 끊긴 세션들 주기적으로 정리 (1초 정도 마다 해주자)
 	DWORD currTick = GetTickCount() ;
-	if ( currTick - mLastGCTick >= 1000 )
+	if ( currTick - mLastGCTick >= COLLET_GARBAGESESSIONS_TICK )
 	{
 		CollectGarbageSessions() ;
 		mLastGCTick = currTick ;

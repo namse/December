@@ -19,11 +19,11 @@ Scene* GameScene::createScene()
 
 bool GameScene::init()
 {
-	if (!LayerColor::initWithColor(ccc4(255, 255, 255, 225)))
-	{
-		return false;
-	}
-	Size visibleSize = Director::getInstance()->getVisibleSize();
+    if ( !LayerColor::initWithColor(ccc4(255,255,255,225)))
+    {
+        return false;
+    }
+    Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
 	// 게임의 진행 상태를 로그인 전으로 설정

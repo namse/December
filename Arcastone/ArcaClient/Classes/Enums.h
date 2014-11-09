@@ -16,9 +16,9 @@
 #define MAP_SIZEX					7
 #define MAP_SIZEY					10
 
-#define MAP_XSTART					240
-#define MAP_YSTART					340
-#define HEXAGON_LENGTH				30
+#define MAP_XSTART					DISPLAY_SIZEX/2
+#define MAP_YSTART					DISPLAY_SIZEY/2
+#define HEXAGON_LENGTH				35
 
 #define DRAW_HEXA_NUMBER			false
 #define DRAW_HEXA_POSITION			false
@@ -27,7 +27,9 @@
 
 #define MAX_PLAYER_HAVE_UNITS		10
 
-#define COLOR_OF_PLAYER				ccc4f(0.2f, 1.0f, 0.2f, 0.5f)
+#define COLOR_OF_GRID				ccc4f(0.0f, 0.6f, 1.0f, 0.5f)
+
+#define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.5f)
 #define COLOR_OF_ENEMY				ccc4f(1.0f, 0.0f, 0.2f, 0.5f)
 
 #define NON_SELECT_UNIT INT_MAX
@@ -66,6 +68,10 @@ struct ScreenPoint : public cocos2d::Vec2
 		x = point.x;
 		y = point.y;
 	}
+	ScreenPoint(Vec2 point){
+		x = point.x;
+		y = point.y;
+	}
 	ScreenPoint(float _x, float _y){
 		x = _x;
 		y = _y;
@@ -84,6 +90,10 @@ struct HexaPoint : public cocos2d::Vec2
 {
 	HexaPoint(){}
 	HexaPoint(Coord point){
+		x = point.x;
+		y = point.y;
+	}
+	HexaPoint(Vec2 point){
 		x = point.x;
 		y = point.y;
 	}

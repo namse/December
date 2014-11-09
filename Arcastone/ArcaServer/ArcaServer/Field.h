@@ -11,6 +11,7 @@ public:
 			return true;
 		return false;
 	}
+	std::map<Coord, FieldBlock> GetFieldBlockList(){ return m_FieldBlockList; }
 
 private:
 	typedef std::map<Coord, FieldBlock> FieldBlockList;

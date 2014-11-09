@@ -22,10 +22,9 @@ void Field::InitField(int fieldWidth, int fieldHeight)
 		for (posY; posY < max; ++posY)
 		{
 			FieldBlock fieldBlock;
-			fieldBlock.m_Position = Coord(posX, posY);
 			fieldBlock.m_Status = FBS_NONE;
 			fieldBlock.m_Type = FBT_NONE;
-			m_FieldBlockList.insert(FieldBlockList::value_type(fieldBlock.m_Position, fieldBlock));
+			m_FieldBlockList.insert(FieldBlockList::value_type(Coord(posX, posY), fieldBlock));
 		}
 	}
 }

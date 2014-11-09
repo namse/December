@@ -71,6 +71,10 @@ enum PacketTypes
 
 	PKT_SC_YOUR_TURN = 6,
 
+	PKT_SC_GAME_OVER = 7,
+
+	PKT_SC_WRONG_ATTACK = 8,
+
 	PKT_MAX	= 1024
 } ;
 
@@ -81,7 +85,14 @@ struct PacketHeader
 	PacketHeader() : mSize(0), mType(PKT_NONE) 	{}
 	short mSize;
 	short mType;
-} ;
+};
+
+enum WrongAttackType
+{
+	WAT_NONE = 0,
+	WAT_NOT_YOUR_TURN = 1,
+	WAT_NO_ENOUGH_COST = 2,
+};
 
 
 enum UnitType{
@@ -106,6 +117,13 @@ enum UnitMoveType{
 	UMT_TELEPORT = 4,
 };
 
+enum UnitStatusType{
+	UST_NONE = 0,
+	UST_DEAD = 1,
+	UST_CASTING = 2,
+	// 그 외 상태이상들
+};
+
 enum HexaDirection{
 	HD_NONE = 0,
 
@@ -121,10 +139,17 @@ enum HexaDirection{
 enum FieldBlockType
 {
 	FBT_NONE = 0,
+	//FBT_FROZEN = 1,
 };
 enum FieldBlockStatus
 {
 	FBS_NONE = 0,
+	//FBS_BURNIG = 1,
+};
+
+struct FieldBlock{
+	FieldBlockType	m_Type;
+	FieldBlockStatus m_Status;
 };
 
 enum UnitOwner
@@ -133,6 +158,14 @@ enum UnitOwner
 	UO_ME=1,
 	UO_ENEMY=2,
 	UO_NPC=3,
+};
+
+enum WhosWinner
+{
+	WW_NONE = 0,
+	WW_PLAYER1 = 1,
+	WW_PLAYER2 = 2,
+	WW_DRAW = 3,	// 무승부
 };
 
 typedef int UnitIdentityNumber;
@@ -198,6 +231,7 @@ namespace Packet
 			mType = PKT_SC_GAME_START;
 			mLength = 0;
 			memset(mUnit, 0, sizeof(mUnit));
+			mField.clear();
 		}
 		struct UnitData{
 			UnitType			unitType;
@@ -210,12 +244,9 @@ namespace Packet
 			Coord				point;
 			UnitIdentityNumber	id;
 		};
-		struct FieldData{
-			int					fieldWidth, fieldHeight;
-		};
 		int						mLength;
 		UnitData				mUnit[MAX_UNIT_ON_GAME];
-		FieldData				mField;
+		std::map<Coord, FieldBlock> mField;
 	};
 
 	struct AttackRequest : public PacketHeader
@@ -224,7 +255,6 @@ namespace Packet
 			mSize = sizeof(AttackRequest);
 			mType = PKT_CS_ATTACK;
 		}
-
 		AttackData				mAttack;
 	};
 
@@ -240,6 +270,16 @@ namespace Packet
 		UnitAction mUnitActionQueue[50];
 	};
 
+	struct WrongAttackResult : public PacketHeader // 너 공격(스킬) 이상하게했어 임마
+	{
+		WrongAttackResult(){
+			mSize = sizeof(WrongAttackResult);
+			mType = PKT_SC_WRONG_ATTACK;
+			mWrongType = WAT_NONE;
+		}
+		WrongAttackType mWrongType;
+	};
+
 	struct YourTurnResult : public PacketHeader
 	{
 		YourTurnResult(){
@@ -248,6 +288,16 @@ namespace Packet
 			mIsReallyMyTurn = false;
 		}
 		bool mIsReallyMyTurn; // if it's false, that may 99% mean Enemy Turn Now.
+	};
+
+	struct GameOverResult : public PacketHeader
+	{
+		GameOverResult(){
+			mSize = sizeof(GameOverResult);
+			mType = PKT_SC_GAME_OVER;
+			mWhoIsWinner = WW_NONE;
+		}
+		WhosWinner mWhoIsWinner;
 	};
 }
 

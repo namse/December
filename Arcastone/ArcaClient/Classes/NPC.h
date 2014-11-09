@@ -8,5 +8,7 @@ class NPC : public Unit
 public:
 	NPC();
 	~NPC();
+
+	void initSprite();
 };
 
