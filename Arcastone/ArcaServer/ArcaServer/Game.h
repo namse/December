@@ -52,7 +52,7 @@ private:
 	void SetUpArca();
 	void UnitCounting();
 
-	bool IsCorrectAttack(AttackData attackData);
+	bool IsCorrectAttack(PlayerNumber attacker, AttackData attackData);
 
 private:
 	GameNumber		m_GameNum;

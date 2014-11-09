@@ -93,14 +93,8 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 
 void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 {
-	if (m_Attacker != attacker) // 아직 턴이 아닌데 공격을 시도하면
-	{
-		//무시
-		return;
-	}
-
-	// 그 외에 여러가지 공격조건에 만족하지 못한다면
-	if (!IsCorrectAttack(attackData))
+	// 공격 조건이 올바르지 않다면!!
+	if (!IsCorrectAttack(attacker, attackData))
 	{
 		// 무시!
 		return;
@@ -528,27 +522,41 @@ void Game::UnitCounting()
 	}
 }
 
-bool Game::IsCorrectAttack(AttackData attackData)
+bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 {
-	if (m_IsGameOver)		// 게임이 끝났는데 무슨 공격이야!
+	// 매우 짧게 공격해서 공격을 취소하는 경우
+	if (attackData.Range <= 0)
+	{
+		// 그냥 무시
+		return false;
+	}
+
+	// 아직 턴이 아닌데 공격을 시도하면
+	if (m_Attacker != attacker)
+	{
+		// 클라야.. 아직 너차례 아니란다..
+		Packet::WrongAttackResult outPacket;
+		outPacket.mWrongType = WAT_NOT_YOUR_TURN;
+		auto session = GClientManager->GetClient(attacker);
+		if (session != nullptr)
+			session->SendRequest(&outPacket);
+
+		return false;
+	}
+
+	// 게임이 끝났는데 무슨 공격이야!
+	if (m_IsGameOver)		
 	{
 		return false; // 무시!
 	}
 
-	if (GetUnit(attackData.id) == nullptr)// 잘못된 유닛으로 공격하려고 햇으니까
+	// 잘못된 유닛으로 공격하려고 햇으니까
+	if (GetUnit(attackData.id) == nullptr)
 	{
 		//무시해!
 		return false;
 	}
 
-	//공격 데이터에 문제가 있으면
-	if (attackData.Range <= 0)
-	{
-		// TODO : 공격이 합당한 공격인지 확인하는 코드
-		//무시
-		return false;
-	}
-
-	// 올바른 공격이군!
+	// 올바른 공격이군! 통과!
 	return true;
 }

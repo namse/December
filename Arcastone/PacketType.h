@@ -73,6 +73,8 @@ enum PacketTypes
 
 	PKT_SC_GAME_OVER = 7,
 
+	PKT_SC_WRONG_ATTACK = 8,
+
 	PKT_MAX	= 1024
 } ;
 
@@ -83,6 +85,13 @@ struct PacketHeader
 	PacketHeader() : mSize(0), mType(PKT_NONE) 	{}
 	short mSize;
 	short mType;
+};
+
+enum WrongAttackType
+{
+	WAT_NONE = 0,
+	WAT_NOT_YOUR_TURN = 1,
+	WAT_NO_ENOUGH_COST = 2,
 };
 
 
@@ -246,7 +255,6 @@ namespace Packet
 			mSize = sizeof(AttackRequest);
 			mType = PKT_CS_ATTACK;
 		}
-
 		AttackData				mAttack;
 	};
 
@@ -260,6 +268,16 @@ namespace Packet
 		}
 		int mQueueLength;
 		UnitAction mUnitActionQueue[50];
+	};
+
+	struct WrongAttackResult : public PacketHeader // 너 공격(스킬) 이상하게했어 임마
+	{
+		WrongAttackResult(){
+			mSize = sizeof(WrongAttackResult);
+			mType = PKT_SC_WRONG_ATTACK;
+			mWrongType = WAT_NONE;
+		}
+		WrongAttackType mWrongType;
 	};
 
 	struct YourTurnResult : public PacketHeader
