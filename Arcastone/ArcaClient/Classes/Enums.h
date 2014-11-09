@@ -16,9 +16,9 @@
 #define MAP_SIZEX					7
 #define MAP_SIZEY					10
 
-#define MAP_XSTART					240
-#define MAP_YSTART					340
-#define HEXAGON_LENGTH				30
+#define MAP_XSTART					DISPLAY_SIZEX/2
+#define MAP_YSTART					DISPLAY_SIZEY/2
+#define HEXAGON_LENGTH				35
 
 #define DRAW_HEXA_NUMBER			false
 #define DRAW_HEXA_POSITION			false
@@ -27,7 +27,9 @@
 
 #define MAX_PLAYER_HAVE_UNITS		10
 
-#define COLOR_OF_PLAYER				ccc4f(0.2f, 1.0f, 0.2f, 0.5f)
+#define COLOR_OF_GRID				ccc4f(0.0f, 0.6f, 1.0f, 0.5f)
+
+#define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.5f)
 #define COLOR_OF_ENEMY				ccc4f(1.0f, 0.0f, 0.2f, 0.5f)
 
 #define NON_SELECT_UNIT INT_MAX

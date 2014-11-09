@@ -12,7 +12,14 @@ void Pawn::initSprite()
 {
 	Unit::initSprite();
 	assert(m_Owner != UO_NONE);
-	if (m_Owner == UO_ME) m_Sprite->addChild(Sprite::create("Me.png"));
-	else if (m_Owner == UO_ENEMY) m_Sprite->addChild(Sprite::create("Enemy.png"));
-	else if (m_Owner == UO_NPC) m_Sprite->addChild(Sprite::create("Me.png"));
+
+	Sprite* unitSprite;
+	if (m_Owner == UO_ME) unitSprite = Sprite::create("character.png");
+	else if (m_Owner == UO_ENEMY) unitSprite = Sprite::create("character2.png");
+	else if (m_Owner == UO_NPC) unitSprite = Sprite::create("character.png");
+
+	unitSprite->setScale(HEXAGON_LENGTH*1.5 / unitSprite->getContentSize().width);
+	unitSprite->setAnchorPoint(Vec2(0.5f, 0.3f));
+
+	m_Sprite->addChild(unitSprite);
 }

@@ -19,7 +19,7 @@ Scene* GameScene::createScene()
 
 bool GameScene::init()
 {
-    if ( !LayerColor::initWithColor(ccc4(255,255,255,32)))
+    if ( !LayerColor::initWithColor(ccc4(255,255,255,225)))
     {
         return false;
     }
@@ -137,6 +137,14 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	if (distance > unit->getMoveRange()) distance = unit->getMoveRange();
 
 	// 이동 경로를 그려줍니다
+	// TODO : 요거 이렇게 가면 너무 자주 지우고 그리고 하니까 어떻게 좀 해주세요
+
+	// 표시된 이동경로 초기화
+	for (auto node : m_CourseSignNode)
+	{
+		this->removeChild(node);
+	}
+	m_CourseSignNode.clear();
 	drawUnitMove(unit, direction, distance);
 
 }
@@ -168,6 +176,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	if (DEBUG_PRINT_PACKET) 
 		printf("%f\n", direction);
 
+
 	TcpClient::getInstance()->attackRequest(m_SelectedUnit, distance, direction);
 	m_SelectedUnit = NON_SELECT_UNIT;
 }
@@ -175,12 +184,6 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 {
-	// 표시된 이동경로 초기화
-	for (auto node : m_CourseSignNode)
-	{
-		this->removeChild(node);
-	}
-	m_CourseSignNode.clear();
 
 	auto signcolor = (unit->getID() == m_SelectedUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 
@@ -210,7 +213,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 		DrawNode* courseSignNode = DrawNode::create();
 
 		courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, signcolor, 1, signcolor);
-		this->addChild(courseSignNode,1);
+		this->addChild(courseSignNode,99);
 		m_CourseSignNode.push_back(courseSignNode);
 	}
 	
@@ -288,7 +291,7 @@ int GameScene::getPointToPointDistance(ScreenPoint point1, ScreenPoint point2)
 void GameScene::drawHexaGrid()
 {
 	CCDrawNode* node = CCDrawNode::create();
-	this->addChild(node);
+	this->addChild(node,100);
 
 	for (int i = 0; i < MAP_SIZEX; ++i)
 	{
@@ -305,7 +308,22 @@ void GameScene::drawHexaGrid()
 			m_HexagonPoint.push_back(Coord(i, j));	// m_HexagonPoint 에 화면에 그려지는 좌표(0~x, 0~y)들을 저장
 
 			Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
-			node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, ccc4f(0.2f, 1.0f, 0.2f, 0.3f));
+			node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, COLOR_OF_GRID);
+
+			// 임시로 블록 이미지 그려줌
+			Sprite* fieldBlock;
+			switch (rand() % 3)
+			{
+			case 0: fieldBlock = Sprite::create("block1.png");  break;
+			case 1: fieldBlock = Sprite::create("block2.png");  break;
+			case 2: fieldBlock = Sprite::create("block3.png");  break;
+			}
+			 ;
+			float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
+			fieldBlock->setScale(scale);
+			fieldBlock->setAnchorPoint(Vec2(0.5f, 0.67f));
+			fieldBlock->setPosition(point);
+			this->addChild(fieldBlock,j);
 			
 			if(DRAW_HEXA_NUMBER) drawText(i, j, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
 		}
@@ -400,7 +418,7 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 		// 화면상의 좌표에 유닛을 배치
 		assert(unitSprite != nullptr);
 		unitSprite->setPosition(Point(unitRealPoint.x, unitRealPoint.y));
-		this->addChild(unitSprite);
+		this->addChild(unitSprite,100);
 	}
 
 	m_GameState = GS_GAME_START;

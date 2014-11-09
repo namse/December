@@ -52,23 +52,42 @@ bool Unit::setPosition(HexaPoint setPos)
 void Unit::initSprite()
 {
 	m_Sprite = Sprite::create();
+ 
+	// 체력/공격력 프레임 표시
+	auto frameHP = Sprite::create("frame_hp.png");
+	auto frameAtk = Sprite::create("frame_atk.png");
 
-	// 체력과 공격력 표시 
+	float scale = (HEXAGON_LENGTH * 3 / 4) / frameHP->getContentSize().width;
+	float position = HEXAGON_LENGTH * 3 / 4;
+
+	int zIdx = 5;
+
+	frameHP->setScale(scale);
+	frameAtk->setScale(scale);
+	
+	frameHP->setPosition(position, 0);
+	frameAtk->setPosition(-position, 0);
+
+	m_Sprite->addChild(frameHP, zIdx, "frame_hp");
+	m_Sprite->addChild(frameAtk, zIdx, "frame_atk");
+
+	// 체력과 공격력 숫자 표시
 	char buff[5];
 	itoa(m_HP, buff, 10);
-	auto labelHP = LabelTTF::create(buff, "Helvetica", 12);
+	auto labelHP = LabelTTF::create(buff, "Helvetica", 15);
 
 	itoa(m_Attack, buff, 10);
-	auto labelAtk = LabelTTF::create(buff, "Helvetica", 12);
+	auto labelAtk = LabelTTF::create(buff, "Helvetica", 15);
 
-	labelHP->setPosition(20, 0);
-	labelAtk->setPosition(-20, 0);
+	labelHP->setPosition(position, 0);
+	labelAtk->setPosition(-position, 0);
 
-	labelHP->setColor(Color3B(255, 0, 0));
+	labelHP->setColor(Color3B(255, 255, 255));
 	labelAtk->setColor(Color3B(255, 255, 255));
-
-	m_Sprite->addChild(labelHP,10,"hp");
-	m_Sprite->addChild(labelAtk,10,"atk");
+	
+	zIdx = 10;
+	m_Sprite->addChild(labelHP, zIdx, "hp");
+	m_Sprite->addChild(labelAtk, zIdx, "atk");
 }
 
 void Unit::setHP(int hp)
