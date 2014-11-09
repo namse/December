@@ -7,6 +7,7 @@ Unit::Unit()
 	m_UnitType = UT_NONE;
 	m_UnitMoveType = UMT_NONE;
 	m_HP = m_Attack = m_Weight = m_MoveRange = -1;
+	m_UnitStatus = UST_NONE;
 }
 
 Unit::~Unit()

@@ -71,6 +71,8 @@ enum PacketTypes
 
 	PKT_SC_YOUR_TURN = 6,
 
+	PKT_SC_GAME_OVER = 7,
+
 	PKT_MAX	= 1024
 } ;
 
@@ -106,6 +108,13 @@ enum UnitMoveType{
 	UMT_TELEPORT = 4,
 };
 
+enum UnitStatusType{
+	UST_NONE = 0,
+	UST_DEAD = 1,
+	UST_CASTING = 2,
+	// 그 외 상태이상들
+};
+
 enum HexaDirection{
 	HD_NONE = 0,
 
@@ -133,6 +142,14 @@ enum UnitOwner
 	UO_ME=1,
 	UO_ENEMY=2,
 	UO_NPC=3,
+};
+
+enum WhosWinner
+{
+	WW_NONE = 0,
+	WW_PLAYER1 = 1,
+	WW_PLAYER2 = 2,
+	WW_DRAW = 3,	// 무승부
 };
 
 typedef int UnitIdentityNumber;
@@ -248,6 +265,16 @@ namespace Packet
 			mIsReallyMyTurn = false;
 		}
 		bool mIsReallyMyTurn; // if it's false, that may 99% mean Enemy Turn Now.
+	};
+
+	struct GameOverResult : public PacketHeader
+	{
+		GameOverResult(){
+			mSize = sizeof(GameOverResult);
+			mType = PKT_SC_GAME_OVER;
+			mWhoIsWinner = WW_NONE;
+		}
+		WhosWinner mWhoIsWinner;
 	};
 }
 

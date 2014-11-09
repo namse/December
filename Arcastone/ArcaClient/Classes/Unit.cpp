@@ -1,5 +1,6 @@
 #include "Unit.h"
 #include "Pawn.h"
+#include "NPC.h"
 
 Unit::~Unit()
 {
@@ -12,7 +13,11 @@ Unit* Unit::create(UnitData unitData)
 	{
 	case UT_PAWN:
 	{
-		newUnit = new Pawn();
+					newUnit = new Pawn();
+	}break;
+	case UT_ARCASTONE:
+	{
+						 newUnit = new NPC();
 	}break;
 	}
 

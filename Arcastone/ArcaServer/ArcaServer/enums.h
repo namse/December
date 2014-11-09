@@ -4,7 +4,9 @@
 #define MAP_FIELD_WIDTH 7
 #define MAP_FIELD_HEIGHT 10
 #define PLAYER_NUMBER_NPC INT_MAX
-#define MAX_TURN	 2
+#define MAX_TURN	 2							// 기본적인 플레이어의 최대 턴 수
+#define COLLET_GARBAGESESSIONS_TICK 1000		// 가비지콜렉팅하는 주기
+#define USE_DRAW true	// 드로우 있게 할거야?
 
 typedef int PlayerNumber;
 typedef int GameNumber;
@@ -14,7 +16,6 @@ struct FieldBlock{
 	FieldBlockType	m_Type;
 	FieldBlockStatus m_Status;
 };
-
 
 
 // enum FieldBlockType
