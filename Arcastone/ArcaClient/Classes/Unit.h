@@ -10,10 +10,10 @@ public:
 
 	static Unit*				create(UnitData unitData);
 	virtual void				init(UnitData unitData);
-	virtual void				initSprite() = 0;
+	virtual void				initSprite();
 
 	bool						setPosition(HexaPoint setPos);
-	void						setHP(int hp){ m_HP = hp; }
+	void						setHP(int hp);
 
 	Sprite*						getSprite(){ return m_Sprite; }
 	int							getHP(){ return m_HP; }

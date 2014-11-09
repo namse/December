@@ -20,7 +20,7 @@
 #define MAP_YSTART					340
 #define HEXAGON_LENGTH				30
 
-#define DRAW_HEXA_NUMBER			true
+#define DRAW_HEXA_NUMBER			false
 #define DRAW_HEXA_POSITION			false
 
 #define RADIANS_60					CC_DEGREES_TO_RADIANS(60)
