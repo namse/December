@@ -90,13 +90,15 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 		
 	m_StartPoint.x = touch->getLocation().x;
 	m_StartPoint.y = touch->getLocation().y;
-	
+
+	m_SelectedUnit = NON_SELECT_UNIT;
 	
 	for (int i = 0; i < m_UnitList.size(); ++i)
 	{
 		Unit* unit = m_UnitList.at(i);
+
 		// 자신의 유닛인지 확인한다
-		if (unit->getOwner() != UO_ME) return false;
+		if (unit->getOwner() != UO_ME) continue;
 
 		// 자신 유닛의 좌표인덱스를 화면상 위치로 변환하여
 		ScreenPoint screenPoint = unit->getPosition().HexaToScreen();
@@ -122,35 +124,20 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	if (m_CursoredPoint == currentPoint) return;
 	m_CursoredPoint = currentPoint;
 
-	Unit* unit = getUnit(m_SelectedUnit);
+	Unit* unit = getUnitByID(m_SelectedUnit);
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
 
 	// 공격이 향하는 위치 찾기
 	HexaDirection direction = getPointToPointDirection(m_StartPoint, m_CursoredPoint);
+	assert(direction != HD_NONE);
+
 	int distance = getPointToPointDistance(m_StartPoint, m_CursoredPoint);
 	if (distance > unit->getMoveRange()) distance = unit->getMoveRange();
 
-
-	// 표시된 이동경로 초기화
-	for (auto node : m_CourseSignNode)
-	{
-		this->removeChild(node);
-	}
-	m_CourseSignNode.clear();
-
-	// 공격 경로에 이동경로 표시
-	for (int i = 1; i <= distance; ++i)
-	{
-		HexaPoint attackCourse = getPointMoveDirection(unit->getPosition(), direction, i);
-		Hexagon* courseSignHexagon = createHexagon(attackCourse.HexaToScreen(), HEXAGON_LENGTH);
-		DrawNode* courseSignNode = DrawNode::create();
-
-		courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, ccc4f(0.2f, 1.0f, 0.2f, 0.3f), 0.5, ccc4f(0.2f, 1.0f, 0.2f, 0.3f));
-		this->addChild(courseSignNode,0);
-		m_CourseSignNode.push_back(courseSignNode);
-	}
+	// 이동 경로를 그려줍니다
+	drawUnitMove(unit, direction, distance);
 
 }
 
@@ -167,7 +154,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	// 클릭한 상태로 턴이 넘어갔을 경우 마우스 떼도 이 코드 안돌아가니 주의
 
-	Unit* unit = getUnit(m_SelectedUnit);
+	Unit* unit = getUnitByID(m_SelectedUnit);
 
 	HexaDirection direction = getPointToPointDirection(m_StartPoint, m_CursoredPoint);
 	int distance = getPointToPointDistance(m_StartPoint, m_CursoredPoint);
@@ -183,6 +170,51 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	TcpClient::getInstance()->attackRequest(m_SelectedUnit, distance, direction);
 	m_SelectedUnit = NON_SELECT_UNIT;
+}
+
+
+void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
+{
+	// 표시된 이동경로 초기화
+	for (auto node : m_CourseSignNode)
+	{
+		this->removeChild(node);
+	}
+	m_CourseSignNode.clear();
+
+	auto signcolor = (unit->getID() == m_SelectedUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
+
+	// 이동경로 표시
+	for (int i = 1; i <= range; ++i)
+	{
+		HexaPoint attackCourse = getPointMoveDirection(unit->getPosition(), direction, i);
+
+		// 이동경로에 다른 유닛이 존재하는가?
+		if (Unit* crashUnit = getUnitByPos(attackCourse))
+		{
+			// 그럼 거기서부터 다른 유닛의 이동경로를 그리도록 하시오
+
+			int attackRange;
+			if (unit->getID() == m_SelectedUnit) // 첫 충돌이면 현재 유닛의 공격력 - 충동 유닛의 무게만큼
+				attackRange = unit->getAttack() - crashUnit->getWeight();
+			else // 두번째 이후에는 (예상 이동 위치 - 현재까지 그려준 거리) 만큼
+				attackRange = (range - i + 1);
+
+			// 움직이자
+			drawUnitMove(crashUnit, direction, attackRange);
+			break;
+		}
+
+		// 존재하지 않으면, 바닥에 예상 이동 위치를 그려준다
+		Hexagon* courseSignHexagon = createHexagon(attackCourse.HexaToScreen(), HEXAGON_LENGTH);
+		DrawNode* courseSignNode = DrawNode::create();
+
+		courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, signcolor, 1, signcolor);
+		this->addChild(courseSignNode,1);
+		m_CourseSignNode.push_back(courseSignNode);
+	}
+	
+
 }
 
 // 클릭한 좌표가 특정 육각형 안에 들어있는지 확인하는 함수
@@ -208,11 +240,21 @@ bool GameScene::touchCheck(ScreenPoint touch, ScreenPoint anchor)
 }
 
 // 유닛을 찾습니다
-Unit* GameScene::getUnit(int unitID)
+Unit* GameScene::getUnitByID(int unitID)
 {
 	for (auto unit : m_UnitList)
 	{
 		if (unitID == unit->getID())
+			return unit;
+	}
+	return nullptr; // 검색에 실패하면 null return
+}
+
+Unit* GameScene::getUnitByPos(HexaPoint unitPos)
+{
+	for (auto unit : m_UnitList)
+	{
+		if (unitPos == unit->getPosition())
 			return unit;
 	}
 	return nullptr; // 검색에 실패하면 null return
@@ -225,8 +267,8 @@ HexaDirection GameScene::getPointToPointDirection(ScreenPoint point1, ScreenPoin
 	float y = point1.y - point2.y;
 	float degree = CC_RADIANS_TO_DEGREES(atan2(y, x));
  
-	// 직교좌표계 보정
-	if ((x < 0 && y < 0) || (x > 0 && y < 0))
+	// 3,4분면과 270도에서 직교좌표계 보정
+	if ((x < 0 && y < 0) || (x >= 0 && y < 0))
 		degree += 360;
 
 	// 헥사그리드 좌표로 변환
@@ -356,6 +398,7 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 		ScreenPoint unitRealPoint = unit->getPosition().HexaToScreen();
 
 		// 화면상의 좌표에 유닛을 배치
+		assert(unitSprite != nullptr);
 		unitSprite->setPosition(Point(unitRealPoint.x, unitRealPoint.y));
 		this->addChild(unitSprite);
 	}

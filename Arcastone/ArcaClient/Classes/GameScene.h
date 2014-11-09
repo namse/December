@@ -39,11 +39,13 @@ public:
 
 	void					drawHexaGrid();
 	void					drawText(int i, int j, Hexagon* hexa);
+	void					drawUnitMove(Unit* unit, HexaDirection direction, int range);
 
 	bool					drawToRect(float y);
 	bool					drawToHexa(int x, int y);
 
-	Unit*					getUnit(int unitID);
+	Unit*					getUnitByID(int unitID);
+	Unit*					getUnitByPos(HexaPoint unitPos);
 	HexaDirection			getPointToPointDirection(ScreenPoint point1, ScreenPoint point2);
 	int						getPointToPointDistance(ScreenPoint point1, ScreenPoint point2);
 	HexaPoint				getPointMoveDirection(HexaPoint start, HexaDirection direction, int range);
