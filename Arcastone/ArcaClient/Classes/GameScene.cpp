@@ -104,7 +104,7 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 		ScreenPoint screenPoint = unit->getPosition().HexaToScreen();
 
 		// 자신의 유닛을 클릭했는지 판정한다.
-		if (touchCheck(m_StartPoint, screenPoint))
+		if (isInHexagon(m_StartPoint, screenPoint))
 		{
 			// 그 유닛을 선택했다는 것을 지정하기 위해 id 를 멤버변수에 저장한다.
 			m_SelectedUnit = unit->getID();
@@ -162,10 +162,11 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 {
-	Unit* atkUnit = getUnitByID(m_SelectedUnit);
-	UnitMoveType atkType = atkUnit->getMoveType();
-	HexaPoint unitPos = unit->getPosition();
-	Color4F signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
+	Unit*			atkUnit = getUnitByID(m_SelectedUnit);
+	UnitMoveType	atkType = atkUnit->getMoveType();
+	HexaPoint		unitPos = unit->getPosition();
+	int				unitAtk = unit->getAttack();
+	Color4F			signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 
 	// 공격이 향하는 위치 찾기
 	if (unit == atkUnit && direction == HD_NONE && range == 0)
@@ -187,7 +188,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 			for (auto hexaPos : m_HexagonPoint)
 			{
 				ScreenPoint tempPos = HexaPoint(hexaPos).HexaToScreen();
-				if (touchCheck(m_CursoredPoint,tempPos))
+				if (isInHexagon(m_CursoredPoint,tempPos))
 				{
 					cursor = HexaPoint(hexaPos);
 					isHexaGrid = true;
@@ -205,7 +206,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 			}
 
 			// 스택이 비었나요?
-			if (m_CourseStack.size() == 0)
+			if (m_CourseStack.empty())
 			{
 				if (!atkUnit->getPosition().isAround(cursor, 1))
 				{
@@ -245,7 +246,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 					}
 				}
 
-				if (m_CourseStack.size() == atkUnit->getAttack())
+				if (m_CourseStack.size() == unitAtk)
 				{
 					return;	// 설마 스택이 꽉 찼어요? OUT!
 				}
@@ -267,7 +268,35 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 		}
 		else if (atkType == UMT_TELEPORT)
 		{
-			// TODO : 아.. todo 주석 달기도 귀찮다... ((삶의 의지를 잃은 것 같다))
+			// 커서가 가리키는 위치 검색
+			HexaPoint cursor;
+			bool isHexaGrid = false;
+			for (auto hexaPos : m_HexagonPoint)
+			{
+				ScreenPoint tempPos = HexaPoint(hexaPos).HexaToScreen();
+				if (isInHexagon(m_CursoredPoint, tempPos))
+				{
+					cursor = HexaPoint(hexaPos);
+					isHexaGrid = true;
+					break;
+				}
+			}
+
+
+			if (!m_CourseStack.empty() && m_CourseStack.back() == cursor) return;	// 가리키는 위치에 변경이 없으면 OUT!
+
+			if (!unitPos.isAround(cursor, unitAtk)) return;	// 이동범위 벗어나면 OUT!
+
+			if (cursor == atkUnit->getPosition())
+			{
+				// 공격 유닛을 가리키면 스택 초기화
+				GameScene::releaseMoveSign();
+				m_CourseStack.clear();
+				return;
+			}
+
+			m_CourseStack.clear();
+			m_CourseStack.push_back(cursor);
 		}
 
 		releaseMoveSign();
@@ -282,24 +311,24 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 		// 이동경로 표시
 		for (int i = 1; i <= range; ++i)
 		{
-			HexaPoint attackCourse = unitPos.getMovePoint(direction, i);
+			HexaPoint atkCourse = unitPos.getMovePoint(direction, i);
 
 			// 바닥에 예상 이동 위치를 그려준다
-			drawMoveSign(attackCourse, signcolor);
+			drawMoveSign(atkCourse, signcolor);
 
 			// 이동경로에 다른 유닛이 존재하는가?
-			if (Unit* crashUnit = getUnitByPos(attackCourse))
+			if (Unit* crashUnit = getUnitByPos(atkCourse))
 			{
 				// 그럼 거기서부터 다른 유닛의 이동경로를 그리도록 하시오
 
-				int attackRange;
+				int atkRange;
 				if (unit == atkUnit) // 첫 충돌이면 현재 유닛의 공격력 - 충동 유닛의 무게만큼
-					attackRange = unit->getAttack() - crashUnit->getWeight();
+					atkRange = unitAtk - crashUnit->getWeight();
 				else // 두번째 이후에는 (예상 이동 위치 - 현재까지 그려준 거리) 만큼
-					attackRange = (range - i + 1);
+					atkRange = (range - i + 1);
 
 				// 움직이자
-				if (attackRange > 0) drawUnitMove(crashUnit, direction, attackRange);
+				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange);
 				break;
 			}
 
@@ -314,12 +343,12 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 		// 이동경로 표시
 		for (int i = 1; i <= range; ++i)
 		{
-			HexaPoint attackCourse = unitPos.getMovePoint(direction, i);
+			HexaPoint atkCourse = unitPos.getMovePoint(direction, i);
 
-			drawMoveSign(attackCourse, signcolor);
+			drawMoveSign(atkCourse, signcolor);
 
 			// 이동경로에 다른 유닛이 존재하는가?
-			if (Unit* crashUnit = getUnitByPos(attackCourse))
+			if (Unit* crashUnit = getUnitByPos(atkCourse))
 			{
 				// 혹시 네 주인이... E.N.E.M.Y 니?
 				// 아님 혹시 여기가... range의 끝..?
@@ -328,14 +357,14 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 					// 그런데.. 이 길목에 우리편이 있으면... 걔랑 겹쳐버리잖니?
 					// 자.. 시간을 거슬러 올라가보자꾸나..
 					// 그나저나 얘.. 방향은 반대쪽이란다.. 
-					HexaPoint beforePosition = attackCourse.getMovePoint(direction, -1);
+					HexaPoint beforePosition = atkCourse.getMovePoint(direction, -1);
 
 					// 거기 혹시 우리집 유닛 있습니까?
 					if (nullptr == getUnitByPos(beforePosition) || range == 1)
 					{
 						// 없음? 님아 충돌여ㅋㅋㅋㅋㅋㅋㅋ
-						int attackRange = unit->getAttack() - crashUnit->getWeight();
-						drawUnitMove(crashUnit, direction, attackRange);
+						int atkRange = unitAtk - crashUnit->getWeight();
+						drawUnitMove(crashUnit, direction, atkRange);
 						break;
 
 					}
@@ -363,8 +392,8 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 			// 충돌함?
 			if (Unit* crashUnit = getUnitByPos(*i))
 			{
-				int attackRange = unit->getAttack() - crashUnit->getWeight();
-				if (attackRange > 0) drawUnitMove(crashUnit, direction, attackRange);
+				int atkRange = unitAtk - crashUnit->getWeight();
+				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange);
 
 				// 이 뒤부터 스택 비워줌
 				vector<HexaPoint>::iterator j = ++i;
@@ -375,6 +404,16 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 				return;
 			}
 		}
+	}
+	else if (atkType == UMT_TELEPORT)
+	{
+		// 한군데만 그려줍니다
+		// 다른 유닛이 존재해 이동할 수 없는 곳은 빨간색으로
+		if (m_CourseStack.empty()) return;
+		HexaPoint movePoint = m_CourseStack.at(0);
+
+		signcolor = (getUnitByPos(movePoint) == nullptr) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
+		drawMoveSign(movePoint, signcolor);
 	}
 
 
@@ -404,8 +443,9 @@ void GameScene::releaseMoveSign()
 }
 
 
+
 // 클릭한 좌표가 특정 육각형 안에 들어있는지 확인하는 함수
-bool GameScene::touchCheck(ScreenPoint touch, ScreenPoint anchor)
+bool GameScene::isInHexagon(ScreenPoint touch, ScreenPoint anchor)
 {
 	float msin = sin(RADIANS_60);
 
@@ -592,25 +632,20 @@ void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 		UnitAction action = unitActionQueue[i];
 
 		// id를 사용하여 i 번째 액션을 적용할 유닛을 찾음
-		for (int j = 0; j < m_UnitList.size(); ++j)
-		{
-			Unit* pUnit = m_UnitList.at(j);
-			int unitId = pUnit->getID();
-			if (unitId == action.mUnitId)
-			{
-				HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-				ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
-				Point movePoint(sMovePoint.x, sMovePoint.y);
+		Unit* unit = getUnitByID(action.mUnitId);
 
-				if (DEBUG_PRINT_PACKET)
-					printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+		HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+		ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
-				// 유닛은 인덱스로 이동
-				pUnit->setPosition(hMovePoint);
-				// 스프라이트는 좌표로 이동
-				pUnit->getSprite()->setPosition(movePoint);
-				break;
-			}
-		}
+		if (DEBUG_PRINT_PACKET)
+			printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+
+		// 유닛은 인덱스로 이동
+		unit->setPosition(hMovePoint);
+		// 스프라이트는 좌표로 이동
+		unit->getSprite()->setPosition(sMovePoint);
+		break;
 	}
 }
+
+

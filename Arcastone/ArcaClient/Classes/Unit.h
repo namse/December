@@ -12,7 +12,7 @@ public:
 	virtual void				init(UnitData unitData);
 	virtual void				initSprite();
 
-	bool						setPosition(HexaPoint setPos);
+	void						setPosition(HexaPoint setPos){ m_Position = setPos; }
 	void						setHP(int hp);
 
 	Sprite*						getSprite(){ return m_Sprite; }
@@ -23,7 +23,7 @@ public:
 	int							getWeight(){ return m_Weight; }
 	HexaPoint					getPosition(){ return m_Position; }
 	UnitOwner					getOwner(){ return m_Owner; }
-	UnitMoveType					getMoveType(){ return m_MoveType; }
+	UnitMoveType				getMoveType(){ return m_MoveType; }
 	
 protected:
 	UnitType					m_UnitType;

@@ -181,24 +181,15 @@ struct HexaPoint : public cocos2d::Vec2
 
 	bool isAround(HexaPoint point, int range)
 	{
-		HexaDirection direction = getDirection(point);
+		HexaPoint vec;
+		vec.x = point.x - x;
+		vec.y = point.y - y;
 
-		HexaPoint tempPoint;
-		tempPoint.x = x;
-		tempPoint.y = y;
-
-		bool res = false;
-
-		for (int i = 1; i <= range; ++i)
+		if (abs(vec.x) > range || abs(vec.y) > range || abs(vec.x + vec.y) > range)
 		{
-			if (tempPoint.getMovePoint(direction, i) == point)
-			{
-				res = true;
-				break;
-			}
+			return false;
 		}
-
-		return res;
+		return true;
 	}
 
 	HexaPoint getMovePoint(HexaDirection direction, int range)

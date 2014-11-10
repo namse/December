@@ -32,8 +32,7 @@ public:
 	virtual void			onTouchMoved(Touch* touch, Event* event);
 	virtual void			onTouchCancelled(Touch* touch, Event* unused_event){}
 	virtual void			onTouchEnded(Touch* touch, Event *event);
-	bool					touchCheck(ScreenPoint touch, ScreenPoint anchor);
-
+	bool					isInHexagon(ScreenPoint touch, ScreenPoint anchor);
 
 	/* draw ÇÔ¼ö */
 	Hexagon*				createHexagon(ScreenPoint anchor, int size);
