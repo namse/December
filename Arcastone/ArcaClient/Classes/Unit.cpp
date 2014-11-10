@@ -1,5 +1,8 @@
 #include "Unit.h"
 #include "Soldier.h"
+#include "Rider.h"
+#include "Knight.h"
+#include "Bishop.h"
 #include "NPC.h"
 
 Unit::~Unit()
@@ -14,6 +17,18 @@ Unit* Unit::create(UnitData unitData)
 	case UT_SOLDIER:
 	{
 					newUnit = new Soldier();
+	}break;
+	case UT_RIDER:
+	{
+					   newUnit = new Rider();
+	}break;
+	case UT_KNIGHT:
+	{
+					   newUnit = new Knight();
+	}break;
+	case UT_BISHOP:
+	{
+					   newUnit = new Bishop();
 	}break;
 	case UT_ARCASTONE:
 	{
@@ -35,10 +50,8 @@ void Unit::init(UnitData unitData)
 
 	m_HP = unitData.hp;
 	m_ID = unitData.id;
-	//m_Attack = unitData.attack;
-	m_Attack = 3;
-	//m_MoveRange = unitData.moveRange;
-	m_MoveRange = 3;
+	m_Attack = unitData.attack;
+	m_MoveRange = unitData.moveRange;
 	m_Weight = unitData.weight;
 
 	m_Sprite = nullptr;

@@ -135,38 +135,38 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\Bishop.cpp" />
     <ClCompile Include="..\Classes\CircularBuffer.cpp" />
     <ClCompile Include="..\Classes\Game.cpp" />
     <ClCompile Include="..\Classes\GameScene.cpp" />
+    <ClCompile Include="..\Classes\Knight.cpp" />
     <ClCompile Include="..\Classes\main.cpp" />
     <ClCompile Include="..\Classes\field.cpp" />
     <ClCompile Include="..\Classes\NPC.cpp" />
-    <ClCompile Include="..\Classes\Soldier.cpp" />
     <ClCompile Include="..\Classes\Player.cpp" />
+    <ClCompile Include="..\Classes\Rider.cpp" />
+    <ClCompile Include="..\Classes\Soldier.cpp" />
     <ClCompile Include="..\Classes\TcpClient.cpp" />
     <ClCompile Include="..\Classes\Unit.cpp" />
-    <ClCompile Include="Bishop.cpp" />
-    <ClCompile Include="Knight.cpp" />
-    <ClCompile Include="Rider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\PacketType.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
+    <ClInclude Include="..\Classes\Bishop.h" />
     <ClInclude Include="..\Classes\CircularBuffer.h" />
     <ClInclude Include="..\Classes\Enums.h" />
     <ClInclude Include="..\Classes\Game.h" />
     <ClInclude Include="..\Classes\Header.h" />
     <ClInclude Include="..\Classes\GameScene.h" />
+    <ClInclude Include="..\Classes\Knight.h" />
     <ClInclude Include="..\Classes\main.h" />
     <ClInclude Include="..\Classes\field.h" />
     <ClInclude Include="..\Classes\NPC.h" />
-    <ClInclude Include="..\Classes\Soldier.h" />
     <ClInclude Include="..\Classes\Player.h" />
+    <ClInclude Include="..\Classes\Rider.h" />
+    <ClInclude Include="..\Classes\Soldier.h" />
     <ClInclude Include="..\Classes\TcpClient.h" />
     <ClInclude Include="..\Classes\Unit.h" />
-    <ClInclude Include="Bishop.h" />
-    <ClInclude Include="Knight.h" />
-    <ClInclude Include="Rider.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cocos2d\cocos\2d\cocos2d.vcxproj">

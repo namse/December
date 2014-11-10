@@ -66,16 +66,16 @@
     <ClCompile Include="..\Classes\Player.cpp">
       <Filter>GameObject\player</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Bishop.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Knight.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Rider.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
     <ClCompile Include="..\Classes\Soldier.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="Bishop.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="Knight.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="Rider.cpp">
       <Filter>GameObject\Unit\PC</Filter>
     </ClCompile>
   </ItemGroup>
@@ -122,13 +122,13 @@
     <ClInclude Include="..\Classes\Soldier.h">
       <Filter>GameObject\Unit\PC</Filter>
     </ClInclude>
-    <ClInclude Include="Bishop.h">
+    <ClInclude Include="..\Classes\Bishop.h">
       <Filter>GameObject\Unit\PC</Filter>
     </ClInclude>
-    <ClInclude Include="Knight.h">
+    <ClInclude Include="..\Classes\Knight.h">
       <Filter>GameObject\Unit\PC</Filter>
     </ClInclude>
-    <ClInclude Include="Rider.h">
+    <ClInclude Include="..\Classes\Rider.h">
       <Filter>GameObject\Unit\PC</Filter>
     </ClInclude>
   </ItemGroup>

@@ -28,7 +28,7 @@ JsonManager::JsonManager()
 		unit["MoveType"] = UMT_STRAIGHT;
 		unit["MoveRange"] = 2;
 		unit["Atk"] = 2;
-		unit["Hp"] = 30;
+		unit["Hp"] = 25;
 		unit["Weight"] = 0;
 		unitList.append(unit);
 		m_UnitDataCount++;
@@ -46,7 +46,7 @@ JsonManager::JsonManager()
 		unit["MoveType"] = UMT_DASH;
 		unit["MoveRange"] = 3;
 		unit["Atk"] = 3;
-		unit["Hp"] = 30;
+		unit["Hp"] = 35;
 		unit["Weight"] = 1;
 		unitList.append(unit);
 		m_UnitDataCount++;
@@ -55,7 +55,7 @@ JsonManager::JsonManager()
 		unit["MoveType"] = UMT_TELEPORT;
 		unit["MoveRange"] = 4;
 		unit["Atk"] = 6;
-		unit["Hp"] = 30;
+		unit["Hp"] = 20;
 		unit["Weight"] = 0;
 		unitList.append(unit);
 		m_UnitDataCount++;

@@ -57,7 +57,7 @@ public:
 	void					ReadFieldBlock(FieldBlock fieldBlock[], int length);
 	void					ReadUnitData(UnitData unitData[], int length);
 	void					SetTurn(bool isMyTurn){ m_IsMyTurn = isMyTurn; }
-	void					ReadActionQueue(UnitAction unitActionQueue[], int length);
+	void					ReadActionQueue(Packet::AttackResult attackResult);
 
 private:
 	Game					m_Game;

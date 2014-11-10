@@ -84,7 +84,7 @@ void GameScene::touchEventInit()
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
-	//if (!m_IsMyTurn) return false;			// 자신의 턴인 경우에만 마우스 입력을 받는다.
+	if (!m_IsMyTurn) return false;			// 자신의 턴인 경우에만 마우스 입력을 받는다.
 
 	m_StartPoint =ScreenPoint(touch->getLocation());
 	m_CursoredPoint = ScreenPoint(touch->getLocation());
@@ -118,7 +118,7 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 
 void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
-	//if (!m_IsMyTurn) return;
+	if (!m_IsMyTurn) return;
 
 	// 마우스가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 그냥 return;
 	HexaPoint touchIndex(touch->getLocation().x, touch->getLocation().y);
@@ -135,7 +135,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 
 void GameScene::onTouchEnded(Touch* touch, Event* event)
 {
-	//if (!m_IsMyTurn) return;
+	if (!m_IsMyTurn) return;
 	
 	releaseExpectMoveSign();
 	releaseMoveSign();
@@ -629,14 +629,14 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 }
 
 
-void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
+void GameScene::ReadActionQueue(Packet::AttackResult attackResult)
 {
 	while (!m_UnitActionQueue.empty()) 
 		m_UnitActionQueue.pop();
 	
-	for (int i = 0; i < length; ++i)
+	for (int i = 0; i < attackResult.mQueueLength; ++i)
 	{
-		m_UnitActionQueue.push(unitActionQueue[i]);
+		m_UnitActionQueue.push(attackResult.mUnitActionQueue[i]);
 	}
 
 	onUnitAction();
@@ -718,6 +718,60 @@ void GameScene::onUnitAction(CCNode* sender)
 				callfuncN_selector(GameScene::onUnitAction));
 			sprite->runAction(CCSequence::create(actionMove,
 				actionMoveDone, NULL));
+		}break;
+		case UAT_JUMP:{
+			HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+			ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+
+			if (DEBUG_PRINT_PACKET)
+				printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+
+			unit->setPosition(hMovePoint);
+
+			auto sprite = unit->getSprite();
+			CCFiniteTimeAction* actionMove =
+				CCMoveTo::create(MOVE_DURATION,
+				sMovePoint);
+			CCFiniteTimeAction* actionMoveDone =
+				CCCallFuncN::create(this,
+				callfuncN_selector(GameScene::onUnitAction));
+			sprite->runAction(CCSequence::create(actionMove,
+				actionMoveDone, NULL));
+		}break;
+		case UAT_DASH:{
+			HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+			ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+
+			if (DEBUG_PRINT_PACKET)
+				printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+
+			// 유닛은 인덱스로 이동
+			unit->setPosition(hMovePoint);
+
+			// 스프라이트는 좌표로 이동
+			auto sprite = unit->getSprite();
+			CCFiniteTimeAction* actionMove =
+				CCMoveTo::create(MOVE_DURATION,
+				sMovePoint);
+			CCFiniteTimeAction* actionMoveDone =
+				CCCallFuncN::create(this,
+				callfuncN_selector(GameScene::onUnitAction));
+			sprite->runAction(CCSequence::create(actionMove,
+				actionMoveDone, NULL));
+		}break;
+		case UAT_TELEPORT:{
+			HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+			ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+
+			if (DEBUG_PRINT_PACKET)
+				printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+
+			unit->setPosition(hMovePoint);
+
+			// 텔레포트는 뿅! 하고 이동
+			auto sprite = unit->getSprite();
+			CCFiniteTimeAction* actionMove =
+				CCMoveTo::create(0, sMovePoint);
 		}break;
 		case UAT_COLLISION:{
 

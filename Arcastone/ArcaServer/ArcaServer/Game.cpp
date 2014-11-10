@@ -80,11 +80,11 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 
 			if (playerNumber == player1)
 			{
-				position = START_POINT_PLAYER1 + originPosition; // locate unit by group data
+				position = Coord(0, 0) + originPosition; // locate unit by group data
 			}
 			else if (playerNumber == player2)
 			{
-				position = START_POINT_PLAYER1 - originPosition; // 대칭으로
+				position = Coord(6, 10) - originPosition; // 대칭으로
 			}
 			unit->SetPosition(position);
 			m_UnitList.push_back(unit);
@@ -184,6 +184,16 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 
 							 return ;
 						 }
+						 attackUnit->SetPosition(attackData.position[0]);
+
+						 UnitAction action;
+						 action.mActionType = UAT_TELEPORT;
+						 action.mUnitId = attackUnit->GetID();
+						 action.mMoveData.mRange = 0;
+						 action.mMoveData.mDirection = HexaDirection();
+						 action.mMoveData.mFinalX = attackData.position[0].x;
+						 action.mMoveData.mFinalY = attackData.position[0].y;
+						 m_UnitActionQueue.push_back(action);
 	}break;
 	default:
 		assert(false && "HandleAttack In UnitMoveType Wrong");
@@ -405,6 +415,14 @@ void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 
 void Game::UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush)
 {
+	// TODO : 순서 잘못됬는데, 클라가 읽는 부분도 잘못되서 이상하게 돌아가고는 있음 .
+	// 하지만 애니메이션이라던가 추가하려면, 고칠 필요 있는 부분임 .
+
+	if (isFirstPush) // 첫 충돌이면 공격력에 비례해서 밀고
+		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), pusher->GetAttack() - target->GetWeight(), target, false);
+	else // 두번째 이상의 충돌이면 이제까지의 밀린 정도를 감안해서 밀고
+		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), power - target->GetWeight(), target, false);
+
 	if (pusher->GetOwner() != target->GetOwner())
 	{
 		// 적이면 데미지 먹이고 밀고
@@ -421,11 +439,6 @@ void Game::UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush)
 		action.mCollisionData.mTargetHP = target->GetHP();
 		m_UnitActionQueue.push_back(action);
 	}
-
-	if (isFirstPush) // 첫 충돌이면 공격력에 비례해서 밀고
-		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), pusher->GetAttack() - target->GetWeight(), target, false);
-	else // 두번째 이상의 충돌이면 이제까지의 밀린 정도를 감안해서 밀고
-		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), power - target->GetWeight(), target, false);
 }
 
 void Game::UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy)

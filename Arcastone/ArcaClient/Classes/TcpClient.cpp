@@ -196,10 +196,11 @@ void TcpClient::processPacket()
 			Packet::AttackResult recvData;
 			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
 			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
-			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadActionQueue, dynamic_cast<GameScene*>(layer), recvData.mUnitActionQueue, recvData.mQueueLength));
+			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadActionQueue, dynamic_cast<GameScene*>(layer), recvData));
 		}break;
 		default:
-			assert(false);
+			//assert(false);
+			break;
 		}
 
 	}
