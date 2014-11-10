@@ -184,8 +184,11 @@ struct AttackData{
 enum UnitActionType{
 	UAT_NONE = 0,
 	UAT_MOVE = 1,
-	UAT_DIE = 2,
-	UAT_COLLISION = 3,
+	UAT_JUMP = 2,
+	UAT_DASH = 3,
+	UAT_TELEPORT = 4,
+	UAT_DIE = 5,
+	UAT_COLLISION = 6,
 };
 struct UnitAction{
 	UnitIdentityNumber mUnitId;
