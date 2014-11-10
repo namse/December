@@ -98,12 +98,13 @@ enum WrongAttackType
 enum UnitType{
 	UT_NONE = 0,
 
-	UT_PAWN = 1,
+	UT_SOLDIER = 1,
 	UT_KNIGHT = 2,
 	UT_BISHOP = 3,
 	UT_ROOK = 4,
 	UT_KING = 5,
 	UT_ARCASTONE = 6,
+	UT_RIDER = 7,
 
 	UT_MAX = 1024,
 };
@@ -231,11 +232,13 @@ namespace Packet
 			mType = PKT_SC_GAME_START;
 			mLength = 0;
 			memset(mUnit, 0, sizeof(mUnit));
-			mField.clear();
+			//mField.clear();
+			// TODO
 		}
 		struct UnitData{
 			UnitType			unitType;
 			UnitMoveType		unitMoveType;
+			UnitStatusType		unitStatusType;
 			UnitOwner			unitOwner;
 			int					hp;
 			int					weight;
@@ -246,7 +249,7 @@ namespace Packet
 		};
 		int						mLength;
 		UnitData				mUnit[MAX_UNIT_ON_GAME];
-		std::map<Coord, FieldBlock> mField;
+		//std::map<Coord, FieldBlock> mField;
 	};
 
 	struct AttackRequest : public PacketHeader
