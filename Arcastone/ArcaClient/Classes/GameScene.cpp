@@ -566,37 +566,15 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 
 void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 {
+	while (!m_UnitActionQueue.empty()) 
+		m_UnitActionQueue.pop();
+	
 	for (int i = 0; i < length; ++i)
 	{
-		// i 번째 액션을 가져옴
-		UnitAction action = unitActionQueue[i];
-
-		// id를 사용하여 i 번째 액션을 적용할 유닛을 찾음
-		Unit* unit = getUnitByID(action.mUnitId);
-
-		switch (action.mActionType)
-		{
-		case UAT_MOVE:{
-			HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-			ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
-
-			if (DEBUG_PRINT_PACKET)
-				printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
-
-			// 유닛은 인덱스로 이동
-			unit->setPosition(hMovePoint);
-			// 스프라이트는 좌표로 이동
-			unit->getSprite()->setPosition(sMovePoint);
-		}break;
-		case UAT_COLLISION:{
-
-		}break;
-		case UAT_DIE: {
-			unit->getSprite()->setVisible(false);
-		}
-		}
-		
+		m_UnitActionQueue.push(unitActionQueue[i]);
 	}
+
+	onUnitAction();
 }
 
 void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length)
@@ -639,6 +617,51 @@ void GameScene::onGameStart(Packet::GameStartResult inPacket)
 {
 	ReadFieldBlock(inPacket.mFieldList, inPacket.mFieldLength);
 	ReadUnitData(inPacket.mUnit, inPacket.mUnitLength);
+}
+
+// sender 무시하셈!
+void GameScene::onUnitAction(CCNode* sender)
+{
+	if (!m_UnitActionQueue.empty())
+	{
+		// i 번째 액션을 가져옴
+		UnitAction action = m_UnitActionQueue.front();
+		m_UnitActionQueue.pop();
+
+		// id를 사용하여 i 번째 액션을 적용할 유닛을 찾음
+		Unit* unit = getUnitByID(action.mUnitId);
+
+		switch (action.mActionType)
+		{
+		case UAT_MOVE:{
+			HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+			ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+
+			if (DEBUG_PRINT_PACKET)
+				printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+
+			// 유닛은 인덱스로 이동
+			unit->setPosition(hMovePoint);
+
+			// 스프라이트는 좌표로 이동
+			auto sprite = unit->getSprite();
+			CCFiniteTimeAction* actionMove =
+				CCMoveTo::create(MOVE_DURATION,
+				sMovePoint);
+			CCFiniteTimeAction* actionMoveDone =
+				CCCallFuncN::create(this,
+				callfuncN_selector(GameScene::onUnitAction));
+			sprite->runAction(CCSequence::create(actionMove,
+				actionMoveDone, NULL));
+		}break;
+		case UAT_COLLISION:{
+
+		}break;
+		case UAT_DIE: {
+			unit->getSprite()->setVisible(false);
+		}
+		}
+	}
 }
 
 

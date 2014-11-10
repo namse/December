@@ -42,6 +42,7 @@ public:
 	void					drawMoveSign(HexaPoint point, Color4F signColor);
 	void					releaseMoveSign();
 	
+	void					onUnitAction(CCNode* sender = NULL);
 	
 
 	/* 멤버 검색 함수 */
@@ -74,6 +75,8 @@ private:
 
 	vector<Unit*>			m_UnitData;
 
+
+	queue<UnitAction>		m_UnitActionQueue;
 };
 
 #endif
