@@ -34,7 +34,10 @@ public:
 
 private:
 	// For Attack Handling
+	void UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush);
 	void UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirstMove);
+	void UnitJump(HexaDirection direction, int range, Unit* unit);
+
 	Unit* GetUnitInPosition(Coord position){
 		for (auto unit : m_UnitList)
 			if (unit->GetPos() == position)
@@ -42,12 +45,11 @@ private:
 		return nullptr;
 	}
 	void KillThisUnit(Unit* unit);
-	void UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush);
 	void UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy);
 	UnitIdentityNumber GenerateUnitIdentityNumber() {
 		return m_UnitIdentityNumberCounter++;
 	}
-	void IsArca();
+	void IsNearArca();
 	void IsGameOver();
 	void SetUpArca();
 	void UnitCounting();

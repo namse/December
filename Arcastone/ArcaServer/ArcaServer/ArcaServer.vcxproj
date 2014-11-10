@@ -156,6 +156,7 @@
     <ClInclude Include="..\..\PacketType.h" />
     <ClInclude Include="ArcaStone.h" />
     <ClInclude Include="AutoMatcher.h" />
+    <ClInclude Include="Bishop.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="ClientManager.h" />
     <ClInclude Include="ClientSession.h" />
@@ -192,6 +193,7 @@
   <ItemGroup>
     <ClCompile Include="ArcaStone.cpp" />
     <ClCompile Include="AutoMatcher.cpp" />
+    <ClCompile Include="Bishop.cpp" />
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="ClientManager.cpp" />
     <ClCompile Include="ClientSession.cpp" />
