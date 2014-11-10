@@ -93,6 +93,7 @@ enum WrongAttackType
 	WAT_NONE = 0,
 	WAT_NOT_YOUR_TURN = 1,
 	WAT_NO_ENOUGH_COST = 2,
+	WAT_CANT_TELEPORT_THERE = 3,
 };
 
 
@@ -177,6 +178,7 @@ struct AttackData{
 	UnitIdentityNumber id;
 	int					Range;
 	HexaDirection		direction;
+	Coord				position[10];
 };
 
 enum UnitActionType{
@@ -232,7 +234,8 @@ namespace Packet
 		GameStartResult(){
 			mSize = sizeof(GameStartResult);
 			mType = PKT_SC_GAME_START;
-			mLength = 0;
+			mUnitLength = 0;
+			mFieldLength = 0;
 			memset(mUnit, 0, sizeof(mUnit));
 			memset(mFieldList, 0, sizeof(mFieldList));
 		}
@@ -248,7 +251,8 @@ namespace Packet
 			Coord				point;
 			UnitIdentityNumber	id;
 		};
-		int						mLength;
+		int						mUnitLength;
+		int						mFieldLength;
 		UnitData				mUnit[MAX_UNIT_ON_GAME];
 		FieldBlock				mFieldList[MAX_FIELD_BLOCK];
 	};
