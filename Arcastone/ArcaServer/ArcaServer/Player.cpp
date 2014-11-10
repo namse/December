@@ -9,7 +9,7 @@ Player::Player(PlayerNumber playerNum) : m_PlayerNum(playerNum)
 	data.m_Attack = 2;
 	data.m_Weight = 0;
 	data.m_MoveRange = 2;
-	data.m_UnitType = UT_PAWN;
+	data.m_UnitType = UT_SOLDIER;
 	data.m_UnitMoveType = UMT_STRAIGHT;
 
 	m_UnitList.push_back(data);

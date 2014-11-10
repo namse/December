@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "PlayerManager.h"
-#include "Pawn.h"
+#include "Soldier.h"
 #include "ArcaStone.h"
 #include "ClientManager.h"
 #include "ClientSession.h"
@@ -50,9 +50,9 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 
 			switch (unitData.m_UnitType)
 			{
-			case UT_PAWN:
+			case UT_SOLDIER:
 			{
-				unit = new Pawn();
+				unit = new Soldier();
 
 			}break;
 			}
