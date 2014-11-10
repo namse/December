@@ -7,9 +7,11 @@
 
 #include "targetver.h"
 
+#include <json.h>
 #include <stdio.h>
 #include <tchar.h>
 #include <winsock2.h>
+#include <string>
 #include <windows.h>
 #include <process.h>
 #include <assert.h>

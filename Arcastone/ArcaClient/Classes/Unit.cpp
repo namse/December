@@ -1,5 +1,5 @@
 #include "Unit.h"
-#include "Pawn.h"
+#include "Soldier.h"
 #include "NPC.h"
 
 Unit::~Unit()
@@ -11,9 +11,9 @@ Unit* Unit::create(UnitData unitData)
 	Unit* newUnit = nullptr;
 	switch (unitData.unitType)
 	{
-	case UT_PAWN:
+	case UT_SOLDIER:
 	{
-					newUnit = new Pawn();
+					newUnit = new Soldier();
 	}break;
 	case UT_ARCASTONE:
 	{
@@ -31,7 +31,7 @@ void Unit::init(UnitData unitData)
 	//m_MoveType = unitData.unitMoveType;
 	m_MoveType = UMT_JUMP;
 	m_Owner = unitData.unitOwner;
-	m_State = US_NORMAL;
+	m_State = UST_NONE;
 
 	m_HP = unitData.hp;
 	m_ID = unitData.id;

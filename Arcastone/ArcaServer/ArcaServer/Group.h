@@ -1,13 +1,17 @@
 #pragma once
+
 #include "UnitData.h"
 
-struct Group
+class Group
 {
+public:
+	Group(){}
+	~Group(){}
 
-	void AddUnitData(UnitData unitData, Coord originPosition) { m_UnitDataList.insert(GroupUnitList::value_type(originPosition, unitData)); }
+	std::vector<UnitData>* GetUnitList(){ return &m_UnitList; }
+	void SetUnitList(std::vector<UnitData> unitList){ m_UnitList = unitList; }
 
-	typedef Coord OriginPosition;
-	typedef std::map<OriginPosition, UnitData> GroupUnitList;
-	GroupUnitList m_UnitDataList;
+private:
+	std::vector<UnitData> m_UnitList;
 };
 

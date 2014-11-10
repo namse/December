@@ -24,15 +24,18 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 		auto gameID = GGameManager->CreateGame(playerId, matchPlayer);
 
 		// make and send packet
-		auto game = GGameManager->GetGame(gameID);
+		Game* game = GGameManager->GetGame(gameID);
 		auto playerSession1 = GClientManager->GetClient(playerId);
 		auto playerSession2 = GClientManager->GetClient(matchPlayer);
 		Packet::GameStartResult outPacket[2];
 		
 		// get field data
+		// TODO
+		/*
 		std::map<Coord, FieldBlock> fieldMap = game->GetField()->GetFieldBlockList();
 		outPacket[0].mField = fieldMap;
 		outPacket[1].mField = fieldMap;
+		*/
 
 		// get unit data
 		auto unitList = game->GetUnitList();

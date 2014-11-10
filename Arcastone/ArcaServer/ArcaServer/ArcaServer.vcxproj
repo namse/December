@@ -69,6 +69,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\..\jsoncpp\include\json;$(IncludePath)</IncludePath>
+    <LibraryPath>..\..\jsoncpp\build\vs71\debug\lib_json;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -91,7 +93,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;DbgHelp.lib;json_vc71_libmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -170,8 +173,11 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Group.h" />
     <ClInclude Include="Field.h" />
+    <ClInclude Include="Knight.h" />
     <ClInclude Include="ObjectPool.h" />
-    <ClInclude Include="Pawn.h" />
+    <ClInclude Include="ParsingData.h" />
+    <ClInclude Include="Rider.h" />
+    <ClInclude Include="Soldier.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerManager.h" />
     <ClInclude Include="ProducerConsumerQueue.h" />
@@ -189,6 +195,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ArcaStone.cpp" />
+    <ClCompile Include="ParsingData.cpp" />
     <ClCompile Include="AutoMatcher.cpp" />
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="ClientManager.cpp" />
@@ -201,8 +208,10 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Field.cpp" />
+    <ClCompile Include="Knight.cpp" />
     <ClCompile Include="PacketHandling.cpp" />
-    <ClCompile Include="Pawn.cpp" />
+    <ClCompile Include="Rider.cpp" />
+    <ClCompile Include="Soldier.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Scheduler.cpp" />

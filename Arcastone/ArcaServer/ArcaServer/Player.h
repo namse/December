@@ -8,12 +8,14 @@ public:
 	Player(PlayerNumber playerNum);
 	~Player();
 
-	void SetGroupForTest();
-	std::vector<Group> GetGroupList(){ return m_GroupList; }
+	Group* GetGroup(int groupIndex){ return &m_GroupList.at(groupIndex); }
+
+	void SetGroup(int groupIndex, Group group){ m_GroupList.at(groupIndex) = group; }
+	void SetGroup(Group group){ m_GroupList.push_back(group); }
 
 private:
-	PlayerNumber		m_PlayerNum;
+	PlayerNumber			m_PlayerNum;
+
 	std::vector<Group>		m_GroupList;
-	std::vector<UnitData>	m_UnitList;
 };
 
