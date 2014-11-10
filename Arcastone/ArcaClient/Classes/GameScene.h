@@ -38,8 +38,10 @@ public:
 	Hexagon*				createHexagon(ScreenPoint anchor, int size);
 	void					drawText(int i, int j, Hexagon* hexa);
 
+	void					drawExpectUnitMove(Unit* unit);
 	void					drawUnitMove(Unit* unit, HexaDirection direction = HD_NONE, int range = 0);
 	void					drawMoveSign(HexaPoint point, Color4F signColor);
+	void					releaseExpectMoveSign();
 	void					releaseMoveSign();
 	
 	void					onUnitAction(CCNode* sender = NULL);
@@ -69,6 +71,7 @@ private:
 	ScreenPoint				m_CursoredPoint;
 	int						m_SelectedUnit;
 	vector<DrawNode*>		m_CourseSignNode;
+	vector<DrawNode*>		m_ExpectSignNode;
 	vector<HexaPoint>		m_CourseStack;
 
 	vector<Coord>			m_HexagonPoint;

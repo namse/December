@@ -29,8 +29,9 @@
 
 #define COLOR_OF_GRID				ccc4f(0.0f, 0.6f, 1.0f, 0.5f)
 
-#define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.5f)
+#define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.3f)
 #define COLOR_OF_ENEMY				ccc4f(1.0f, 0.0f, 0.2f, 0.5f)
+#define COLOR_OF_EXPECT				ccc4f(0.0f, 0.6f, 1.0f, 0.2f)
 
 #define NON_SELECT_UNIT INT_MAX
 
