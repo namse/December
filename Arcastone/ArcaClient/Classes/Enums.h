@@ -20,6 +20,8 @@
 #define MAP_YSTART					DISPLAY_SIZEY/2
 #define HEXAGON_LENGTH				35
 
+#define PIXEL_TO_RANGE_MULT			0.03
+
 #define DRAW_HEXA_NUMBER			false
 #define DRAW_HEXA_POSITION			false
 
@@ -84,6 +86,27 @@ struct ScreenPoint : public cocos2d::Vec2
 
 		return retCoord;
 	}
+
+	HexaDirection getDirection()
+	{
+		float xx = x;
+		float yy = y;
+		float degree = CC_RADIANS_TO_DEGREES(atan2(yy, xx));
+
+		// 3,4분면과 270도에서 직교좌표계 보정
+		if ((xx < 0 && yy < 0) || (xx >= 0 && yy < 0))
+			degree += 360;
+
+		// 헥사그리드 좌표로 변환
+		HexaDirection Direction = (HexaDirection)((int)(degree / 60) + 1);
+
+		return Direction;
+	}
+
+	int getRange()
+	{
+		return getLength() * PIXEL_TO_RANGE_MULT;
+	}
 };
 
 struct HexaPoint : public cocos2d::Vec2
@@ -119,4 +142,102 @@ struct HexaPoint : public cocos2d::Vec2
 
 		return retCoord;
 	}
+
+	HexaDirection getDirection(HexaPoint point)
+	{
+		HexaPoint vec;
+		vec.x = point.x - x;
+		vec.y = point.y - y;
+
+		if (vec.y < 0 && vec.x == 0)
+		{
+			return HD_NORTH;
+		}
+		else if (vec.x > 0 && vec.y < 0)
+		{
+			if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+			return HD_NORTHEAST;
+		}
+		else if (vec.x < 0 && vec.y == 0)
+		{
+			return HD_NORTHWEST;
+		}
+		else if (vec.y > 0 && vec.x == 0)
+		{
+			return HD_SOUTH;
+		}
+		else if (vec.x > 0 && vec.y == 0)
+		{
+			return HD_SOUTHEAST;
+		}
+		else if (vec.x < 0 && vec.y > 0)
+		{
+			if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+			return HD_SOUTHWEST;
+		}
+
+		return HD_NONE;
+	}
+
+	bool isAround(HexaPoint point, int range)
+	{
+		HexaDirection direction = getDirection(point);
+
+		HexaPoint tempPoint;
+		tempPoint.x = x;
+		tempPoint.y = y;
+
+		bool res = false;
+
+		for (int i = 1; i <= range; ++i)
+		{
+			if (tempPoint.getMovePoint(direction, i) == point)
+			{
+				res = true;
+				break;
+			}
+		}
+
+		return res;
+	}
+
+	HexaPoint getMovePoint(HexaDirection direction, int range)
+	{
+		HexaPoint retPoint;
+		retPoint.x = x;
+		retPoint.y = y;
+
+		switch (direction)
+		{
+		case HD_NORTH:
+		{
+			retPoint.y -= range;
+		}break;
+		case HD_NORTHEAST:
+		{
+			retPoint.x += range;
+			retPoint.y -= range;
+		}break;
+		case HD_NORTHWEST:
+		{
+			retPoint.x -= range;
+		}break;
+		case HD_SOUTH:
+		{
+			retPoint.y += range;
+		}break;
+		case HD_SOUTHEAST:
+		{
+			retPoint.x += range;
+		}break;
+		case HD_SOUTHWEST:
+		{
+			retPoint.y += range;
+			retPoint.x -= range;
+		}break;
+		}
+
+		return retPoint;
+	}
+
 };

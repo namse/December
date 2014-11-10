@@ -11,7 +11,7 @@ Unit* Unit::create(UnitData unitData)
 	Unit* newUnit = nullptr;
 	switch (unitData.unitType)
 	{
-	case UT_PAWN:
+	case UT_SOLDIER:
 	{
 					newUnit = new Pawn();
 	}break;
@@ -28,8 +28,8 @@ Unit* Unit::create(UnitData unitData)
 void Unit::init(UnitData unitData)
 {
 	m_UnitType = unitData.unitType;
-	//m_MoveType = unitData.unitMoveType;
-	m_MoveType = UMT_JUMP;
+	m_MoveType = unitData.unitMoveType;
+	//m_MoveType = UMT_JUMP;
 	m_Owner = unitData.unitOwner;
 	m_State = US_NORMAL;
 

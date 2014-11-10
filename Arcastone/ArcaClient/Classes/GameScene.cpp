@@ -86,7 +86,7 @@ void GameScene::touchEventInit()
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
-	if (!m_IsMyTurn) return false;			// 자신의 턴인 경우에만 마우스 입력을 받는다.
+	//if (!m_IsMyTurn) return false;			// 자신의 턴인 경우에만 마우스 입력을 받는다.
 
 	m_StartPoint.x = touch->getLocation().x;
 	m_StartPoint.y = touch->getLocation().y;
@@ -117,7 +117,7 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 
 void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
-	if (!m_IsMyTurn) return;
+	//if (!m_IsMyTurn) return;
 
 	// 마우스가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 그냥 return;
 	HexaPoint touchIndex(touch->getLocation().x, touch->getLocation().y);
@@ -128,36 +128,22 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
-	// 이동 경로를 그려줍니다
-	// TODO : 요거 이렇게 가면 너무 자주 지우고 그리고 하니까 어떻게 좀 해주세요
-
-	// 표시된 이동경로 초기화
-	for (auto node : m_CourseSignNode)
-	{
-		this->removeChild(node);
-	}
-	m_CourseSignNode.clear();
 	drawUnitMove(unit);
-
+	// TODO : 요거 이렇게 가면 너무 자주 지우고 그리고 하니까 어떻게 좀 해주세요
 }
 
 void GameScene::onTouchEnded(Touch* touch, Event* event)
 {
-	if (!m_IsMyTurn) return;
+	//if (!m_IsMyTurn) return;
 
-	for (auto node : m_CourseSignNode)
-	{
-		this->removeChild(node);
-	}
-	m_CourseSignNode.clear();
-
+	GameScene::releaseMoveSign();
+	m_CourseStack.clear();
 
 	// 클릭한 상태로 턴이 넘어갔을 경우 마우스 떼도 이 코드 안돌아가니 주의
-
 	Unit* unit = getUnitByID(m_SelectedUnit);
 
-	HexaDirection direction = getPointToPointDirection(m_StartPoint, m_CursoredPoint);
-	int distance = getPointToPointDistance(m_StartPoint, m_CursoredPoint);
+	HexaDirection direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).getDirection();
+	int distance = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).getRange();
 
 	if (distance > unit->getMoveRange()) distance = unit->getMoveRange();
 
@@ -177,37 +163,129 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 {
 	Unit* atkUnit = getUnitByID(m_SelectedUnit);
-	auto signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 	UnitMoveType atkType = atkUnit->getMoveType();
+	HexaPoint unitPos = unit->getPosition();
+	Color4F signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 
 	// 공격이 향하는 위치 찾기
 	if (unit == atkUnit && direction == HD_NONE && range == 0)
 	{
+		// 공격 타입이 STARIGHT거나 JUMP이면
 		if ((atkType == UMT_STRAIGHT) || (atkType == UMT_JUMP))
 		{
-			direction = getPointToPointDirection(m_StartPoint, m_CursoredPoint);
-			range = getPointToPointDistance(m_StartPoint, m_CursoredPoint);
+			direction = ((ScreenPoint)(m_StartPoint-m_CursoredPoint)).getDirection();
+			range = ((ScreenPoint)(m_StartPoint-m_CursoredPoint)).getRange();
 			if (range > unit->getMoveRange()) range = unit->getMoveRange();
+			
 		}
+		// 공격 타입이 DASH이면
 		else if (atkType == UMT_DASH)
 		{
+			// 커서가 가리키는 위치 검색
+			HexaPoint cursor;
+			bool isHexaGrid = false;
+			for (auto hexaPos : m_HexagonPoint)
+			{
+				ScreenPoint tempPos = HexaPoint(hexaPos).HexaToScreen();
+				if (touchCheck(m_CursoredPoint,tempPos))
+				{
+					cursor = HexaPoint(hexaPos);
+					isHexaGrid = true;
+					break;
+				}
+			}
 
+			if (!isHexaGrid) return;	// 헥사그리드 범위가 아니면 OUT!
+			if (cursor == atkUnit->getPosition())
+			{
+				// 공격 유닛을 가리키면 스택 초기화
+				GameScene::releaseMoveSign();
+				m_CourseStack.clear();
+				return;
+			}
+
+			// 스택이 비었나요?
+			if (m_CourseStack.size() == 0)
+			{
+				if (!atkUnit->getPosition().isAround(cursor, 1))
+				{
+					return;	// 공격 유닛 기준으로 1칸 범위에 없으면 OUT!
+				}
+
+			}
+			else
+			{
+				if (m_CourseStack.back() == cursor) return;	// 가리키는 위치에 변경이 없으면 OUT!
+
+				if (getUnitByPos(m_CourseStack.back()) != nullptr)
+				{
+					// 마지막 위치에서 충돌했으면
+					if (m_CourseStack.size() == 1)	return;
+					m_CourseStack.pop_back();
+				}
+
+				if (!m_CourseStack.back().isAround(cursor, 1))
+				{
+					return;	// 스택에 저장된 마지막 요소 기준으로 1칸 범위에 없으면 OUT!
+				}
+
+				// 지금 선택된 좌표가 이미 스택에 저장돼있습니까?
+				vector<HexaPoint>::iterator i;
+				for (i = m_CourseStack.begin(); i != m_CourseStack.end(); ++i)
+				{
+					if (*i == cursor)
+					{
+						// 저장돼있다면 거기부터 마지막 요소까지 삭제해버리세요
+						vector<HexaPoint>::iterator j;
+						for (j = i; j != m_CourseStack.end();)
+						{
+							j = m_CourseStack.erase(j);
+						}
+						break;
+					}
+				}
+
+				if (m_CourseStack.size() == atkUnit->getAttack())
+				{
+					return;	// 설마 스택이 꽉 찼어요? OUT!
+				}
+
+			}
+
+			m_CourseStack.push_back(cursor);
+			range = m_CourseStack.size();
+			if (range >= 2)
+			{
+				// 뒤에서 두번째에 있는 요소와 비교
+				HexaPoint prevPos = m_CourseStack.at(range-2);
+				direction = prevPos.getDirection(cursor);
+			}
+			else if (m_CourseStack.size() == 1)
+			{
+				direction = atkUnit->getPosition().getDirection(cursor);
+			}
 		}
 		else if (atkType == UMT_TELEPORT)
 		{
-
+			// TODO : 아.. todo 주석 달기도 귀찮다... ((삶의 의지를 잃은 것 같다))
 		}
-	}
-	assert(direction != HD_NONE);
-	assert(atkType != UMT_NONE);
 
+		releaseMoveSign();
+	}
+
+	// 본격적으로 그려줍니다
 	// 직선이동 || 충돌후 밀려남
 	if (atkType == UMT_STRAIGHT || unit != atkUnit)
 	{
+		assert(direction != HD_NONE);
+
 		// 이동경로 표시
 		for (int i = 1; i <= range; ++i)
 		{
-			HexaPoint attackCourse = getPointMoveDirection(unit->getPosition(), direction, i);
+			HexaPoint attackCourse = unitPos.getMovePoint(direction, i);
+
+			// 바닥에 예상 이동 위치를 그려준다
+			drawMoveSign(attackCourse, signcolor);
 
 			// 이동경로에 다른 유닛이 존재하는가?
 			if (Unit* crashUnit = getUnitByPos(attackCourse))
@@ -221,28 +299,24 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 					attackRange = (range - i + 1);
 
 				// 움직이자
-				if (range > 0) drawUnitMove(crashUnit, direction, attackRange);
+				if (attackRange > 0) drawUnitMove(crashUnit, direction, attackRange);
 				break;
 			}
 
-			// 아니면 바닥에 예상 이동 위치를 그려준다
-			Hexagon* courseSignHexagon = createHexagon(attackCourse.HexaToScreen(), HEXAGON_LENGTH);
-			DrawNode* courseSignNode = DrawNode::create();
-
-			courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, signcolor, 1, signcolor);
-			this->addChild(courseSignNode, 99);
-			m_CourseSignNode.push_back(courseSignNode);
 		}
 
 	}
 	// 뛰어넘기
 	else if (atkType == UMT_JUMP)
 	{
+
+		assert(direction != HD_NONE);
 		// 이동경로 표시
 		for (int i = 1; i <= range; ++i)
 		{
-			HexaPoint attackCourse = getPointMoveDirection(unit->getPosition(), direction, i);
+			HexaPoint attackCourse = unitPos.getMovePoint(direction, i);
 
+			drawMoveSign(attackCourse, signcolor);
 
 			// 이동경로에 다른 유닛이 존재하는가?
 			if (Unit* crashUnit = getUnitByPos(attackCourse))
@@ -254,13 +328,12 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 					// 그런데.. 이 길목에 우리편이 있으면... 걔랑 겹쳐버리잖니?
 					// 자.. 시간을 거슬러 올라가보자꾸나..
 					// 그나저나 얘.. 방향은 반대쪽이란다.. 
-					HexaDirection invDirection = getInverseDirection(direction);
-					HexaPoint beforePosition = getPointMoveDirection(attackCourse, invDirection, 1);
+					HexaPoint beforePosition = attackCourse.getMovePoint(direction, -1);
 
 					// 거기 혹시 우리집 유닛 있습니까?
-					if (nullptr == getUnitByPos(beforePosition) || range - 1 == 0)
+					if (nullptr == getUnitByPos(beforePosition) || range == 1)
 					{
-						// 님아 충돌여ㅋㅋㅋㅋㅋㅋㅋ
+						// 없음? 님아 충돌여ㅋㅋㅋㅋㅋㅋㅋ
 						int attackRange = unit->getAttack() - crashUnit->getWeight();
 						drawUnitMove(crashUnit, direction, attackRange);
 						break;
@@ -270,34 +343,66 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 					{
 						// g헐 얘 여기서 뭘 하고 있는 거니ㅠ;
 						// 어쩔 수 없지 얘 뒤까지만 가야겠다
-
-						// 그럼 일단 지금까지 그려놓은 건 지워야지
-						for (auto node : m_CourseSignNode)
-						{
-							this->removeChild(node);
-						}
-						m_CourseSignNode.clear();
-
-						drawUnitMove(atkUnit, direction, range - 1);
+						releaseMoveSign();
+						if (range - 1 > 0) drawUnitMove(atkUnit, direction, range - 1);
 						break;
 					}
 				}
 
 			}
 
-			// 아니면 바닥에 예상 이동 위치를 그려준다
-			Hexagon* courseSignHexagon = createHexagon(attackCourse.HexaToScreen(), HEXAGON_LENGTH);
-			DrawNode* courseSignNode = DrawNode::create();
+		}
+	}
+	else if (atkType == UMT_DASH)
+	{
+		// 스택에 들어가있는대로 그려주세요!
+		vector<HexaPoint>::iterator i;
+		for (i = m_CourseStack.begin(); i != m_CourseStack.end(); ++i)
+		{
+			drawMoveSign(*i, signcolor);
+			// 충돌함?
+			if (Unit* crashUnit = getUnitByPos(*i))
+			{
+				int attackRange = unit->getAttack() - crashUnit->getWeight();
+				if (attackRange > 0) drawUnitMove(crashUnit, direction, attackRange);
 
-			courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, signcolor, 1, signcolor);
-			this->addChild(courseSignNode, 99);
-			m_CourseSignNode.push_back(courseSignNode);
+				// 이 뒤부터 스택 비워줌
+				vector<HexaPoint>::iterator j = ++i;
+				for (; j != m_CourseStack.end();)
+				{
+					j = m_CourseStack.erase(j);
+				}
+				return;
+			}
 		}
 	}
 
 
 
 }
+
+// 예상좌표를 그리는 함수
+void GameScene::drawMoveSign(HexaPoint point, Color4F signColor)
+{
+	Hexagon* courseSignHexagon = createHexagon(point.HexaToScreen(), HEXAGON_LENGTH);
+	DrawNode* courseSignNode = DrawNode::create();
+
+	courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, signColor, 1, signColor);
+	this->addChild(courseSignNode, 99);
+	m_CourseSignNode.push_back(courseSignNode);
+}
+
+
+// 그려놓은 예상좌표를 초기화하는 함수
+void GameScene::releaseMoveSign()
+{
+	for (auto node : m_CourseSignNode)
+	{
+		this->removeChild(node);
+	}
+	m_CourseSignNode.clear();
+}
+
 
 // 클릭한 좌표가 특정 육각형 안에 들어있는지 확인하는 함수
 bool GameScene::touchCheck(ScreenPoint touch, ScreenPoint anchor)
@@ -341,44 +446,6 @@ Unit* GameScene::getUnitByPos(HexaPoint unitPos)
 	}
 	return nullptr; // 검색에 실패하면 null return
 }
-
-// 두 Point 사이의 Direction 을 구하는 함수
-HexaDirection GameScene::getPointToPointDirection(ScreenPoint point1, ScreenPoint point2)
-{
-	float x = point1.x - point2.x;
-	float y = point1.y - point2.y;
-	float degree = CC_RADIANS_TO_DEGREES(atan2(y, x));
-
-	// 3,4분면과 270도에서 직교좌표계 보정
-	if ((x < 0 && y < 0) || (x >= 0 && y < 0))
-		degree += 360;
-
-	// 헥사그리드 좌표로 변환
-	HexaDirection Direction = (HexaDirection)((int)(degree / 60) + 1);
-
-	return Direction;
-}
-
-// 두 Point 사이의 Distance 를 구하는 함수
-int GameScene::getPointToPointDistance(ScreenPoint point1, ScreenPoint point2)
-{
-	float x = point1.x - point2.x;
-	float y = point1.y - point2.y;
-	return (int)(sqrt(x*x + y*y)) / 30;
-}
-
-// 반대 좌표를 구하는 함수
-HexaDirection GameScene::getInverseDirection(HexaDirection direction)
-{
-	int res = direction + 3;
-	if (res > 6)
-		res %= 6;
-
-	assert(res != 0);
-
-	return (HexaDirection)res;
-}
-
 
 void GameScene::drawHexaGrid()
 {
@@ -546,41 +613,4 @@ void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 			}
 		}
 	}
-}
-
-HexaPoint GameScene::getPointMoveDirection(HexaPoint start, HexaDirection direction, int range)
-{
-	HexaPoint retPoint = start;
-
-	switch (direction)
-	{
-	case HD_NORTH:
-	{
-		retPoint.y -= range;
-	}break;
-	case HD_NORTHEAST:
-	{
-		retPoint.x += range;
-		retPoint.y -= range;
-	}break;
-	case HD_NORTHWEST:
-	{
-		retPoint.x -= range;
-	}break;
-	case HD_SOUTH:
-	{
-		retPoint.y += range;
-	}break;
-	case HD_SOUTHEAST:
-	{
-		retPoint.x += range;
-	}break;
-	case HD_SOUTHWEST:
-	{
-		retPoint.y += range;
-		retPoint.x -= range;
-	}break;
-	}
-
-	return retPoint;
 }
