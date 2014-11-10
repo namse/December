@@ -14,6 +14,7 @@
 #include "PlayerManager.h"
 #include "GameManager.h"
 #include "AutoMatcher.h"
+#include "JsonManager.h"
 
 #pragma comment(lib,"ws2_32.lib")
 
@@ -32,6 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	GPlayerManager = new PlayerManager();
 	GGameManager = new GameManager();
 	GAutoMatcher = new AutoMatcher();
+	GJsonManager = new JsonManager();
 
 	/// DB Helper √ ±‚»≠
 	if ( false == DbHelper::Initialize(DB_CONN_STR) )
@@ -106,6 +108,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	delete GPlayerManager ;
 	delete GGameManager ;
 	delete GAutoMatcher ;
+	delete GJsonManager ;
 	return 0 ;
 }
 

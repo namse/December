@@ -1,18 +1,20 @@
 #pragma once
 
+#include "UnitData.h"
+
 class JsonManager
 {
-
-
 public:
 	JsonManager();
 	~JsonManager();
 
-private:
-	void WriteJson();
+	UnitData GetUnitData(UnitType unitType);
+	int GetUnitDataCount(){ return m_UnitDataCount; }
 
-	Packet::GameStartResult::UnitData m_UnitData[MAX_UNIT_TYPE];
-	int			m_UnitTypeCount;
+private:
+
+	UnitData m_UnitData[100];
+	int			m_UnitDataCount;
 
 };
 

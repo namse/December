@@ -141,10 +141,13 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClCompile Include="..\Classes\main.cpp" />
     <ClCompile Include="..\Classes\field.cpp" />
     <ClCompile Include="..\Classes\NPC.cpp" />
-    <ClCompile Include="..\Classes\Pawn.cpp" />
+    <ClCompile Include="..\Classes\Soldier.cpp" />
     <ClCompile Include="..\Classes\Player.cpp" />
     <ClCompile Include="..\Classes\TcpClient.cpp" />
     <ClCompile Include="..\Classes\Unit.cpp" />
+    <ClCompile Include="Bishop.cpp" />
+    <ClCompile Include="Knight.cpp" />
+    <ClCompile Include="Rider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\PacketType.h" />
@@ -157,10 +160,13 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ClInclude Include="..\Classes\main.h" />
     <ClInclude Include="..\Classes\field.h" />
     <ClInclude Include="..\Classes\NPC.h" />
-    <ClInclude Include="..\Classes\Pawn.h" />
+    <ClInclude Include="..\Classes\Soldier.h" />
     <ClInclude Include="..\Classes\Player.h" />
     <ClInclude Include="..\Classes\TcpClient.h" />
     <ClInclude Include="..\Classes\Unit.h" />
+    <ClInclude Include="Bishop.h" />
+    <ClInclude Include="Knight.h" />
+    <ClInclude Include="Rider.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\cocos2d\cocos\2d\cocos2d.vcxproj">

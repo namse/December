@@ -1,40 +1,40 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "JsonManager.h"
 
 Player::Player(PlayerNumber playerNum) : m_PlayerNum(playerNum)
 {
-	UnitData data;
+	// 임시로 유닛 데이터 넣는 곳 임다
 
-	data.m_HP = 30;
-	data.m_Attack = 2;
-	data.m_Weight = 0;
-	data.m_MoveRange = 2;
-	data.m_UnitType = UT_SOLDIER;
-	data.m_UnitMoveType = UMT_STRAIGHT;
+	UnitData data[6];
 
-	m_UnitList.push_back(data);
+	data[0] = GJsonManager->GetUnitData(UT_SOLDIER);
+	data[0].m_Position = Coord(2, 3);
 
-	SetGroupForTest();
+	data[1] = GJsonManager->GetUnitData(UT_SOLDIER);
+	data[1].m_Position = Coord(4, 2);
+
+	data[2] = GJsonManager->GetUnitData(UT_RIDER);
+	data[2].m_Position = Coord(2, 4);
+
+	data[3] = GJsonManager->GetUnitData(UT_RIDER);
+	data[3].m_Position = Coord(4, 3);
+
+	data[4] = GJsonManager->GetUnitData(UT_KNIGHT);
+	data[4].m_Position = Coord(3, 2);
+
+	data[5] = GJsonManager->GetUnitData(UT_BISHOP);
+	data[5].m_Position = Coord(3, 3);
+
+	Group group;
+	for (int i = 0; i < 6; ++i)
+	{
+		group.AddUnitData(data[i], data[i].m_Position);
+	}
+	m_GroupList.push_back(group);
 }
 
 
 Player::~Player()
 {
-}
-
-void Player::SetGroupForTest()
-{
-	Group group;
-
-	for (int col = 0; col < 3; col++)
-	{
-		for (int row = 0; row < 2; row++)
-		{
-			UnitData pawn = m_UnitList[0];
-			auto originPosition = Coord(col - 1, row - (int)(col / 2) + 2);
-			group.AddUnitData(pawn, originPosition);
-		}
-	}
-
-	m_GroupList.push_back(group);
 }

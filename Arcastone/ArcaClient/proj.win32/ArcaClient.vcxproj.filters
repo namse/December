@@ -51,9 +51,6 @@
     <ClCompile Include="..\Classes\NPC.cpp">
       <Filter>GameObject\Unit\NPC</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Pawn.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -68,6 +65,18 @@
     </ClCompile>
     <ClCompile Include="..\Classes\Player.cpp">
       <Filter>GameObject\player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Soldier.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="Bishop.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="Knight.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="Rider.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -92,9 +101,6 @@
     <ClInclude Include="..\Classes\NPC.h">
       <Filter>GameObject\Unit\NPC</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Pawn.h">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -112,6 +118,18 @@
     </ClInclude>
     <ClInclude Include="..\..\PacketType.h">
       <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Soldier.h">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="Bishop.h">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="Knight.h">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="Rider.h">
+      <Filter>GameObject\Unit\PC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

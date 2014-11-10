@@ -69,6 +69,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>..\ArcaServer\json;$(IncludePath)</IncludePath>
+    <LibraryPath>..\ArcaServer\json;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -91,7 +93,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;DbgHelp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;DbgHelp.lib;json_vc71_libmtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -171,6 +173,7 @@
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Group.h" />
     <ClInclude Include="Field.h" />
+    <ClInclude Include="JsonManager.h" />
     <ClInclude Include="Knight.h" />
     <ClInclude Include="ObjectPool.h" />
     <ClInclude Include="Rider.h" />
@@ -205,6 +208,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Field.cpp" />
+    <ClCompile Include="JsonManager.cpp" />
     <ClCompile Include="Knight.cpp" />
     <ClCompile Include="PacketHandling.cpp" />
     <ClCompile Include="Rider.cpp" />

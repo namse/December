@@ -8,7 +8,6 @@ public:
 	Player(PlayerNumber playerNum);
 	~Player();
 
-	void SetGroupForTest();
 	std::vector<Group> GetGroupList(){ return m_GroupList; }
 
 private:
