@@ -40,8 +40,8 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 				outPacket[0].mFieldList[i] = fieldBlock;
 				outPacket[1].mFieldList[i] = fieldBlock;
 			}
-			outPacket[0].mLength = blockCount;
-			outPacket[1].mLength = blockCount;
+			outPacket[0].mFieldLength = blockCount;
+			outPacket[1].mFieldLength = blockCount;
 		}
 
 		{
@@ -90,6 +90,8 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 					assert(false);
 				}
 			}
+			outPacket[0].mUnitLength = unitList.size();
+			outPacket[1].mUnitLength = unitList.size();
 		}
 
 		auto playerSession1 = GClientManager->GetClient(playerId);
