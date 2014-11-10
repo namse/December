@@ -11,10 +11,8 @@
 #define DISPLAY_SIZEX				480
 #define DISPLAY_SIZEY				690
 
-#define MAP_IS_RECT					false
-#define MAP_IS_HEXA					true
 #define MAP_SIZEX					7
-#define MAP_SIZEY					10
+#define MAP_SIZEY					11
 
 #define MAP_XSTART					DISPLAY_SIZEX/2
 #define MAP_YSTART					DISPLAY_SIZEY/2

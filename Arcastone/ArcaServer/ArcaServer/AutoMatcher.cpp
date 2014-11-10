@@ -39,6 +39,7 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 				FieldBlock fieldBlock = pField->GetFieldBlock(i);
 				outPacket[0].mFieldList[i] = fieldBlock;
 				outPacket[1].mFieldList[i] = fieldBlock;
+				printf("%d, %d\n", outPacket[0].mFieldList[i].m_Position.x, outPacket[0].mFieldList[i].m_Position.y);
 			}
 			outPacket[0].mFieldLength = blockCount;
 			outPacket[1].mFieldLength = blockCount;

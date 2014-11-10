@@ -26,6 +26,7 @@ void Field::InitField(int fieldWidth, int fieldHeight)
 			if (x + y >= MAP_FIELD_WIDTH / 2 &&
 				x + y <= MAP_FIELD_WIDTH / 2 + MAP_FIELD_HEIGHT - 1)
 			{
+				printf("%d / %d\n", x, y);
 				m_FieldBlockList[i].m_Position = Coord(x, y);
 				m_FieldBlockList[i].m_Status = FBS_NONE;
 				m_FieldBlockList[i].m_Type = FBT_NONE;

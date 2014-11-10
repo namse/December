@@ -65,7 +65,7 @@ TcpClient* TcpClient::getInstance()
 
 		s_TcpClient->connect(ipaddr.c_str(), port);
 	}
-		
+
 
 	return s_TcpClient;
 }
@@ -80,7 +80,7 @@ bool TcpClient::connect(const char* serverAddr, int port)
 	struct hostent* host;
 	struct sockaddr_in hostAddr;
 
-	if ((host = gethostbyname(serverAddr)) == 0) 
+	if ((host = gethostbyname(serverAddr)) == 0)
 		return false;
 
 	memset(&hostAddr, 0, sizeof(hostAddr));
@@ -93,7 +93,7 @@ bool TcpClient::connect(const char* serverAddr, int port)
 		CCLOG("CONNECT FAILED");
 		return false;
 	}
-	
+
 	//u_long arg = 1;
 	//ioctlsocket(mSocket, FIONBIO, &arg);
 
@@ -107,7 +107,7 @@ bool TcpClient::connect(const char* serverAddr, int port)
 bool TcpClient::send(const char* data, int length)
 {
 	int count = 0;
-	while (count < length) 
+	while (count < length)
 	{
 		int n = ::send(m_sock, data + count, length, 0);
 		if (n == SOCKET_ERROR)
@@ -124,7 +124,7 @@ bool TcpClient::send(const char* data, int length)
 
 void TcpClient::networkThread()
 {
-	while ( true ) 
+	while (true)
 	{
 		char inBuf[4096] = { 0, };
 
@@ -135,7 +135,7 @@ void TcpClient::networkThread()
 			sleep(0); ///< for cpu low-utilization
 			continue;
 		}
-			
+
 
 		if (!m_recvBuffer.Write(inBuf, n))
 		{
@@ -158,45 +158,47 @@ void TcpClient::processPacket()
 
 		if (false == m_recvBuffer.Peek((char*)&header, sizeof(PacketHeader)))
 			break;
-			
+
 
 		if (header.mSize > m_recvBuffer.GetStoredSize())
 			break;
-	
+
 
 		switch (header.mType)
 		{
 		case PKT_SC_LOGIN:
 		{
-							 Packet::LoginResult recvData;
-							 bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+			Packet::LoginResult recvData;
+			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
 		}
 			break;
 		case PKT_SC_GAME_START:
 		{
-								  Packet::GameStartResult recvData;
-								  bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+			Packet::GameStartResult recvData;
+			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
 
-								  auto director = Director::getInstance();
-								  auto scene = director->getRunningScene();
-								  auto layer = scene->getChildByName("base_layer");
-								  scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadUnitData, dynamic_cast<GameScene*>(layer), recvData.mUnit, recvData.mLength));
+			auto director = Director::getInstance();
+			auto scene = director->getRunningScene();
+			auto layer = scene->getChildByName("base_layer");
+			//scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadFieldBlock, dynamic_cast<GameScene*>(layer), recvData.mFieldList, recvData.mFieldLength));
+			//scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadUnitData, dynamic_cast<GameScene*>(layer), recvData.mUnit, recvData.mUnitLength));
+			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::onGameStart, dynamic_cast<GameScene*>(layer), recvData));
 		}
 			break;
 		case PKT_SC_YOUR_TURN:
 		{
-								 Packet::YourTurnResult recvData;
-								 bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
-								 auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
-								 scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::SetTurn, dynamic_cast<GameScene*>(layer), recvData.mIsReallyMyTurn));
+			Packet::YourTurnResult recvData;
+			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
+			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::SetTurn, dynamic_cast<GameScene*>(layer), recvData.mIsReallyMyTurn));
 		}break;
-		
+
 		case PKT_SC_ATTACK:
 		{
-								  Packet::AttackResult recvData;
-								  bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
-								  auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
-								  scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadActionQueue, dynamic_cast<GameScene*>(layer), recvData.mUnitActionQueue, recvData.mQueueLength));
+			Packet::AttackResult recvData;
+			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
+			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadActionQueue, dynamic_cast<GameScene*>(layer), recvData.mUnitActionQueue, recvData.mQueueLength));
 		}break;
 		default:
 			assert(false);
@@ -218,7 +220,7 @@ void TcpClient::loginRequest()
 void TcpClient::attackRequest(int unitId, int attackRange, HexaDirection attackDircetion)
 {
 	Packet::AttackRequest sendData;
-	
+
 	AttackData attackData;
 	attackData.id = unitId;
 	attackData.Range = attackRange;
