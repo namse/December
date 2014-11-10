@@ -49,6 +49,9 @@
     <Filter Include="GameLogic\Unit\PC">
       <UniqueIdentifier>{52c1919c-78d6-4570-8d3b-0b8db93e262e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameLogic\Unit\PC\Pawn">
+      <UniqueIdentifier>{e9b72ec7-4e3b-4e90-ba00-592c4e7f5875}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -132,6 +135,9 @@
     <ClInclude Include="GameManager.h">
       <Filter>GameLogic\Game\GameMamanger</Filter>
     </ClInclude>
+    <ClInclude Include="Pawn.h">
+      <Filter>GameLogic\Unit\PC\Pawn</Filter>
+    </ClInclude>
     <ClInclude Include="Player.h">
       <Filter>GameLogic\Player</Filter>
     </ClInclude>
@@ -149,18 +155,6 @@
     </ClInclude>
     <ClInclude Include="ArcaStone.h">
       <Filter>GameLogic\Unit\NPC</Filter>
-    </ClInclude>
-    <ClInclude Include="Knight.h">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="Soldier.h">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="ParsingData.h">
-      <Filter>GameLogic\UnitData</Filter>
-    </ClInclude>
-    <ClInclude Include="Rider.h">
-      <Filter>GameLogic\Unit\PC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -218,6 +212,9 @@
     <ClCompile Include="GameManager.cpp">
       <Filter>GameLogic\Game\GameMamanger</Filter>
     </ClCompile>
+    <ClCompile Include="Pawn.cpp">
+      <Filter>GameLogic\Unit\PC\Pawn</Filter>
+    </ClCompile>
     <ClCompile Include="Player.cpp">
       <Filter>GameLogic\Player</Filter>
     </ClCompile>
@@ -229,18 +226,6 @@
     </ClCompile>
     <ClCompile Include="ArcaStone.cpp">
       <Filter>GameLogic\Unit\NPC</Filter>
-    </ClCompile>
-    <ClCompile Include="Knight.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="Soldier.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="Rider.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="ParsingData.cpp">
-      <Filter>GameLogic\UnitData</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

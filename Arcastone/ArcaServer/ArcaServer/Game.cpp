@@ -1,13 +1,13 @@
 #include "stdafx.h"
 #include "Game.h"
 #include "PlayerManager.h"
-#include "Unit.h"
-#include "Soldier.h"
-#include "Knight.h"
-#include "Rider.h"
+#include "Pawn.h"
 #include "ArcaStone.h"
 #include "ClientManager.h"
 #include "ClientSession.h"
+
+#define START_POINT_PLAYER1 Coord(3,5)
+#define START_POINT_PLAYER2 Coord(3,1)
 
 
 Game::Game(GameNumber gameNum) : m_GameNum(gameNum)
@@ -38,59 +38,39 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	// get group data from each player
 	for (auto playerNumber : m_PlayerList)
 	{
-		Player* pPlayer = GPlayerManager->GetPlayer(playerNumber);
-		std::vector<UnitData>* group = pPlayer->GetGroup(0)->GetUnitList();
+		auto player = GPlayerManager->GetPlayer(playerNumber);
+		auto group = player->GetGroupList()[0];
 
 		// get unit data from group
-		for (int i = 0; i < group->size(); ++i)
+		for (auto it = group.m_UnitDataList.begin(); it != group.m_UnitDataList.end(); it++)
 		{
-			UnitData unitData = group->at(i);
-
+			auto unitData = it->second;
+			auto originPosition = it->first;
 			Unit* unit = nullptr;
 
 			switch (unitData.m_UnitType)
 			{
-				case UT_SOLDIER:
-				{
-									unit = new Soldier();
-									break;
-				}
-				case UT_KNIGHT:
-				{
-									unit = new Knight();
-									break;
-				}
-				case UT_RIDER:
-				{
-									unit = new Rider();
-									break;
-				}
-				case UT_ARCASTONE:
-				{
-										unit = new ArcaStone();
-										break;
-				}
+			case UT_PAWN:
+			{
+				unit = new Pawn();
+
+			}break;
 			}
 			assert(unit != nullptr);
 
 			// init by copying unitData
 			unit->InitUnit(unitData, playerNumber, GenerateUnitIdentityNumber());
-
 			Coord position;
-			
+
 			if (playerNumber == player1)
 			{
-				position = unitData.m_Position; // locate unit by group data
+				position = START_POINT_PLAYER1 + originPosition; // locate unit by group data
 			}
 			else if (playerNumber == player2)
 			{
-				// ´ëÄªÀ¸·Î
-				int x = MAP_FIELD_CENTER_WIDTH * 2 - unitData.m_Position.x;
-				int y = MAP_FIELD_CENTER_HEIGHT * 2 - unitData.m_Position.y;
-				position = Coord(x, y);
+				position = START_POINT_PLAYER2 - originPosition; // ´ëÄªÀ¸·Î
 			}
 			unit->SetPosition(position);
-
 			m_UnitList.push_back(unit);
 		};
 	}
@@ -503,7 +483,7 @@ void Game::UnitCounting()
 	for (Unit* unit : m_UnitList)
 	{
 		// »ì¾ÆÀÖ´Â À¯´Ö
-		if (unit->GetUnitStatusTypeType() != UST_DEAD)
+		if (unit->GetUnitStatus() != UST_DEAD)
 		{
 			if (unit->GetOwner() == m_PlayerList.at(0))
 			{

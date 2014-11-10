@@ -20,7 +20,7 @@
 #define MAP_YSTART					DISPLAY_SIZEY/2
 #define HEXAGON_LENGTH				35
 
-#define DRAW_HEXA_NUMBER			true
+#define DRAW_HEXA_NUMBER			false
 #define DRAW_HEXA_POSITION			false
 
 #define RADIANS_60					CC_DEGREES_TO_RADIANS(60)
@@ -40,6 +40,14 @@ enum PlayerWho
 {
 	PW_PLAYERONE = 0,
 	PW_PLAYERTWO = 1,
+};
+
+enum UnitState
+{
+	US_NONE = 0,
+
+	US_NORMAL = 1,
+	US_DIE = 2,
 };
 
 // typedef 

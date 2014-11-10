@@ -29,7 +29,7 @@ protected:
 	UnitType					m_UnitType;
 	UnitMoveType				m_MoveType;
 	UnitOwner					m_Owner;
-	UnitStatusType				m_State;
+	UnitState					m_State;
 
 	int							m_ID;
 	int							m_HP;

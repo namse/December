@@ -444,11 +444,8 @@ void GameScene::drawText(int i, int j, Hexagon* hexa)
 	vLabelx->setPosition(Point(hexa->anchor.x - 7, hexa->anchor.y + 5));
 	vLabely->setPosition(Point(hexa->anchor.x + 7, hexa->anchor.y - 5));
 
-	vLabelx->setColor(Color3B(0, 0, 255));
+	vLabelx->setColor(Color3B(255, 255, 255));
 	vLabely->setColor(Color3B(255, 0, 0));
-
-	vLabelx->setZOrder(999);
-	vLabely->setZOrder(999);
 
 	this->addChild(vLabelx);
 	this->addChild(vLabely);
