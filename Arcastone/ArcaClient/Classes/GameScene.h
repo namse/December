@@ -41,8 +41,10 @@ public:
 	bool					drawToRect(float y);
 	bool					drawToHexa(int x, int y);
 
+	void					drawExpectUnitMove(Unit* unit);
 	void					drawUnitMove(Unit* unit, HexaDirection direction = HD_NONE, int range = 0);
 	void					drawMoveSign(HexaPoint point, Color4F signColor);
+	void					releaseExpectMoveSign();
 	void					releaseMoveSign();
 	
 	
@@ -69,6 +71,7 @@ private:
 	ScreenPoint				m_CursoredPoint;
 	int						m_SelectedUnit;
 	vector<DrawNode*>		m_CourseSignNode;
+	vector<DrawNode*>		m_ExpectSignNode;
 	vector<HexaPoint>		m_CourseStack;
 
 	vector<Coord>			m_HexagonPoint;

@@ -108,6 +108,9 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 		{
 			// 그 유닛을 선택했다는 것을 지정하기 위해 id 를 멤버변수에 저장한다.
 			m_SelectedUnit = unit->getID();
+
+			// 가능한 이동 경로를 그려준다
+			
 			return true;
 		}
 	}
@@ -135,8 +138,9 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 void GameScene::onTouchEnded(Touch* touch, Event* event)
 {
 	//if (!m_IsMyTurn) return;
-
-	GameScene::releaseMoveSign();
+	
+	releaseExpectMoveSign();
+	releaseMoveSign();
 	m_CourseStack.clear();
 
 	// 클릭한 상태로 턴이 넘어갔을 경우 마우스 떼도 이 코드 안돌아가니 주의
@@ -157,6 +161,67 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	TcpClient::getInstance()->attackRequest(m_SelectedUnit, distance, direction);
 	m_SelectedUnit = NON_SELECT_UNIT;
+}
+
+void GameScene::drawExpectUnitMove(Unit* unit)
+{
+	int unitAtk = unit->getAttack();
+	HexaPoint unitPos = unit->getPosition();
+
+	switch (unit->getMoveType())
+	{
+	case UMT_STRAIGHT:
+	case UMT_JUMP:
+	{
+		for (int i = 1; i <= 6; ++i)
+		{
+			HexaDirection direction = (HexaDirection)i;
+			for (int j = 1; j <= unitAtk; ++j)
+			{
+				HexaPoint movePoint = unitPos.getMovePoint(direction, j);
+
+				Hexagon* expectSignHexagon = createHexagon(movePoint.HexaToScreen(), HEXAGON_LENGTH);
+				DrawNode* expectSignNode = DrawNode::create();
+
+				expectSignNode->drawPolygon(&expectSignHexagon->vertex[0], 6, COLOR_OF_EXPECT, 1, COLOR_OF_EXPECT);
+				this->addChild(expectSignNode, 98);
+				m_ExpectSignNode.push_back(expectSignNode);
+			}
+		}
+	}break;
+
+	case UMT_DASH:
+	case UMT_TELEPORT:
+	{
+		for (int x = -unitAtk; x <= unitAtk; ++x)
+		{
+			for (int y = -unitAtk; y <= unitAtk; ++y)
+			{
+				if (abs(x + y) > unitAtk) continue;
+
+				HexaPoint movePoint(x, y);
+
+				Hexagon* expectSignHexagon = createHexagon(movePoint.HexaToScreen(), HEXAGON_LENGTH);
+				DrawNode* expectSignNode = DrawNode::create();
+
+				expectSignNode->drawPolygon(&expectSignHexagon->vertex[0], 6, COLOR_OF_EXPECT, 1, COLOR_OF_EXPECT);
+				this->addChild(expectSignNode, 98);
+				m_ExpectSignNode.push_back(expectSignNode);
+			}
+		}
+
+	}break;
+
+	}
+}
+
+void GameScene::releaseExpectMoveSign()
+{
+	for (auto node : m_ExpectSignNode)
+	{
+		this->removeChild(node);
+	}
+	m_ExpectSignNode.clear();
 }
 
 
@@ -420,7 +485,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 
 }
 
-// 예상좌표를 그리는 함수
+// 이동경로를 그리는 함수
 void GameScene::drawMoveSign(HexaPoint point, Color4F signColor)
 {
 	Hexagon* courseSignHexagon = createHexagon(point.HexaToScreen(), HEXAGON_LENGTH);
@@ -432,7 +497,7 @@ void GameScene::drawMoveSign(HexaPoint point, Color4F signColor)
 }
 
 
-// 그려놓은 예상좌표를 초기화하는 함수
+// 그려놓은 이동경로를 초기화하는 함수
 void GameScene::releaseMoveSign()
 {
 	for (auto node : m_CourseSignNode)
@@ -647,5 +712,6 @@ void GameScene::ReadActionQueue(UnitAction unitActionQueue[], int length)
 		break;
 	}
 }
+
 
 
