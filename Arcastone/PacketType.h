@@ -46,9 +46,9 @@ struct Coord{
 	Coord operator + (const Coord& rhs) const{
 		return Coord(x + rhs.x, y + rhs.y);
 	}
-
+	 
 	Coord operator - (const Coord& rhs) const{
-		return Coord(x + rhs.x, y + rhs.y);
+		return Coord(x - rhs.x, y - rhs.y);
 	}
 	Coord operator * (const int& rhs) const{
 		return Coord(x*rhs, y*rhs);
