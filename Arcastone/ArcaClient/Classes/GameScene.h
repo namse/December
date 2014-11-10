@@ -36,10 +36,7 @@ public:
 
 	/* draw 함수 */
 	Hexagon*				createHexagon(ScreenPoint anchor, int size);
-	void					drawHexaGrid();
 	void					drawText(int i, int j, Hexagon* hexa);
-	bool					drawToRect(float y);
-	bool					drawToHexa(int x, int y);
 
 	void					drawExpectUnitMove(Unit* unit);
 	void					drawUnitMove(Unit* unit, HexaDirection direction = HD_NONE, int range = 0);
@@ -55,6 +52,8 @@ public:
 
 
 	/* 네트워크 관련 함수 */
+	void					onGameStart(Packet::GameStartResult inPacket);
+	void					ReadFieldBlock(FieldBlock fieldBlock[], int length);
 	void					ReadUnitData(UnitData unitData[], int length);
 	void					SetTurn(bool isMyTurn){ m_IsMyTurn = isMyTurn; }
 	void					ReadActionQueue(UnitAction unitActionQueue[], int length);
