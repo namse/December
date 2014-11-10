@@ -180,8 +180,6 @@ void TcpClient::processPacket()
 			auto director = Director::getInstance();
 			auto scene = director->getRunningScene();
 			auto layer = scene->getChildByName("base_layer");
-			//scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadFieldBlock, dynamic_cast<GameScene*>(layer), recvData.mFieldList, recvData.mFieldLength));
-			//scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadUnitData, dynamic_cast<GameScene*>(layer), recvData.mUnit, recvData.mUnitLength));
 			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::onGameStart, dynamic_cast<GameScene*>(layer), recvData));
 		}
 			break;

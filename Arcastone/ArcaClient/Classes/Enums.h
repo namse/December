@@ -20,7 +20,7 @@
 
 #define PIXEL_TO_RANGE_MULT			0.03
 
-#define DRAW_HEXA_NUMBER			false
+#define DRAW_HEXA_NUMBER			true
 #define DRAW_HEXA_POSITION			false
 
 #define RADIANS_60					CC_DEGREES_TO_RADIANS(60)

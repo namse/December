@@ -628,7 +628,7 @@ void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length)
 		fieldBlock->setScale(scale);
 		fieldBlock->setAnchorPoint(Vec2(0.5f, 0.67f));
 		fieldBlock->setPosition(point);
-		this->addChild(fieldBlock, y);
+		//this->addChild(fieldBlock, y);
 
 		if (DRAW_HEXA_NUMBER) drawText(x, y, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
 
