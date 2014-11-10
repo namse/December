@@ -84,7 +84,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 			}
 			else if (playerNumber == player2)
 			{
-				position = START_POINT_PLAYER2 - originPosition; // ´ëÄªÀ¸·Î
+				position = START_POINT_PLAYER1 - originPosition; // ´ëÄªÀ¸·Î
 			}
 			unit->SetPosition(position);
 			m_UnitList.push_back(unit);

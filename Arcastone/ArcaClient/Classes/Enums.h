@@ -11,10 +11,8 @@
 #define DISPLAY_SIZEX				480
 #define DISPLAY_SIZEY				690
 
-#define MAP_IS_RECT					false
-#define MAP_IS_HEXA					true
 #define MAP_SIZEX					7
-#define MAP_SIZEY					10
+#define MAP_SIZEY					11
 
 #define MAP_XSTART					DISPLAY_SIZEX/2
 #define MAP_YSTART					DISPLAY_SIZEY/2
@@ -22,7 +20,7 @@
 
 #define PIXEL_TO_RANGE_MULT			0.03
 
-#define DRAW_HEXA_NUMBER			false
+#define DRAW_HEXA_NUMBER			true
 #define DRAW_HEXA_POSITION			false
 
 #define RADIANS_60					CC_DEGREES_TO_RADIANS(60)
@@ -31,8 +29,9 @@
 
 #define COLOR_OF_GRID				ccc4f(0.0f, 0.6f, 1.0f, 0.5f)
 
-#define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.5f)
+#define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.3f)
 #define COLOR_OF_ENEMY				ccc4f(1.0f, 0.0f, 0.2f, 0.5f)
+#define COLOR_OF_EXPECT				ccc4f(0.0f, 0.6f, 1.0f, 0.2f)
 
 #define NON_SELECT_UNIT INT_MAX
 
