@@ -35,6 +35,7 @@
 
 #define NON_SELECT_UNIT INT_MAX
 
+#define MOVE_DURATION 0.3f
 
 // enum
 enum PlayerWho
