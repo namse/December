@@ -5,7 +5,8 @@
 #define MAX_NAME_LEN		30
 #define MAX_COMMENT_LEN		40
 #define MAX_UNIT_ON_GAME	30
-#define MAX_UNIT_ACTION 50
+#define MAX_UNIT_ACTION		50
+#define MAX_FIELD_BLOCK		7*11
 
 struct Coord{
 	int x, y;
@@ -151,6 +152,7 @@ enum FieldBlockStatus
 struct FieldBlock{
 	FieldBlockType	m_Type;
 	FieldBlockStatus m_Status;
+	Coord m_Position;
 };
 
 enum UnitOwner
@@ -232,8 +234,7 @@ namespace Packet
 			mType = PKT_SC_GAME_START;
 			mLength = 0;
 			memset(mUnit, 0, sizeof(mUnit));
-			//mField.clear();
-			// TODO
+			memset(mFieldList, 0, sizeof(mFieldList));
 		}
 		struct UnitData{
 			UnitType			unitType;
@@ -249,7 +250,7 @@ namespace Packet
 		};
 		int						mLength;
 		UnitData				mUnit[MAX_UNIT_ON_GAME];
-		//std::map<Coord, FieldBlock> mField;
+		FieldBlock				mFieldList[MAX_FIELD_BLOCK];
 	};
 
 	struct AttackRequest : public PacketHeader

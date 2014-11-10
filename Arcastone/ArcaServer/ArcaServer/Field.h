@@ -6,15 +6,13 @@ public:
 	~Field();
 
 	void		InitField(int fieldWidth, int fieldHeight);
-	bool isInsideOfField(Coord position){
-		if (m_FieldBlockList.find(position) != m_FieldBlockList.end())
-			return true;
-		return false;
-	}
-	std::map<Coord, FieldBlock> GetFieldBlockList(){ return m_FieldBlockList; }
+	bool isInsideOfField(Coord position);
+
+	FieldBlock GetFieldBlock(int i){ return m_FieldBlockList[i]; }
+	int GetFieldBlockListSize(){ return m_FieldBlockListSize; }
 
 private:
-	typedef std::map<Coord, FieldBlock> FieldBlockList;
-	FieldBlockList	m_FieldBlockList;
+	int m_FieldBlockListSize;
+	FieldBlock	m_FieldBlockList[MAX_FIELD_BLOCK];
 };
 

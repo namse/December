@@ -21,68 +21,79 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 	{
 		PlayerNumber matchPlayer = m_WaitPlayerList.front();
 		m_WaitPlayerList.pop();
+
 		auto gameID = GGameManager->CreateGame(playerId, matchPlayer);
 
 		// make and send packet
-		auto game = GGameManager->GetGame(gameID);
-		auto playerSession1 = GClientManager->GetClient(playerId);
-		auto playerSession2 = GClientManager->GetClient(matchPlayer);
+		Game* game = GGameManager->GetGame(gameID);
+
 		Packet::GameStartResult outPacket[2];
-		
-		/*
-		// get field data
-		std::map<Coord, FieldBlock> fieldMap = game->GetField()->GetFieldBlockList();
-		outPacket[0].mField = fieldMap;
-		outPacket[1].mField = fieldMap;
-		*/
 
-		// get unit data
-		auto unitList = game->GetUnitList();
-		
-		// fill unit data packet
-		for (unsigned int i = 0; i < unitList.size(); ++i)
 		{
-			Unit* unit = unitList[i];
-			assert(unit);
-			
-			auto position = unit->GetPos();
+			// get field data
+			Field* pField = game->GetField();
+			int blockCount = pField->GetFieldBlockListSize();
 
-			for (int j = 0; j < 2; ++j)
+			for (int i = 0; i < blockCount; ++i)
 			{
-				outPacket[j].mUnit[i].unitType = unit->GetUnitType();
-				outPacket[j].mUnit[i].unitMoveType = unit->GetUnitMoveType();
-				outPacket[j].mUnit[i].hp = unit->GetHP();
-				outPacket[j].mUnit[i].weight = unit->GetWeight();
-				outPacket[j].mUnit[i].attack = unit->GetAttack();
-				outPacket[j].mUnit[i].moveRange = unit->GetMoveRange();
-				outPacket[j].mUnit[i].point.x = position.x;
-				outPacket[j].mUnit[i].point.y = position.y;
-				outPacket[j].mUnit[i].id = unit->GetID();
+				FieldBlock fieldBlock = pField->GetFieldBlock(i);
+				outPacket[0].mFieldList[i] = fieldBlock;
+				outPacket[1].mFieldList[i] = fieldBlock;
 			}
+			outPacket[0].mLength = blockCount;
+			outPacket[1].mLength = blockCount;
+		}
 
-			auto unitOwner = unit->GetOwner();
-			if (unitOwner == playerId) // player1's id
+		{
+			// get unit data
+			auto unitList = game->GetUnitList();
+
+			// fill unit data packet
+			for (unsigned int i = 0; i < unitList.size(); ++i)
 			{
-				outPacket[0].mUnit[i].unitOwner = UO_ME;
-				outPacket[1].mUnit[i].unitOwner = UO_ENEMY;
-			}
-			else if (unitOwner == matchPlayer) // player2's id 
-			{
-				outPacket[0].mUnit[i].unitOwner = UO_ENEMY;
-				outPacket[1].mUnit[i].unitOwner = UO_ME;
-			}
-			else if (unitOwner == PLAYER_NUMBER_NPC)
-			{
-				outPacket[0].mUnit[i].unitOwner = UO_NPC;
-				outPacket[1].mUnit[i].unitOwner = UO_NPC;
-			}
-			else
-			{
-				assert(false);
+				Unit* unit = unitList[i];
+				assert(unit);
+
+				auto position = unit->GetPos();
+
+				for (int j = 0; j < 2; ++j)
+				{
+					outPacket[j].mUnit[i].unitType = unit->GetUnitType();
+					outPacket[j].mUnit[i].unitMoveType = unit->GetUnitMoveType();
+					outPacket[j].mUnit[i].hp = unit->GetHP();
+					outPacket[j].mUnit[i].weight = unit->GetWeight();
+					outPacket[j].mUnit[i].attack = unit->GetAttack();
+					outPacket[j].mUnit[i].moveRange = unit->GetMoveRange();
+					outPacket[j].mUnit[i].point.x = position.x;
+					outPacket[j].mUnit[i].point.y = position.y;
+					outPacket[j].mUnit[i].id = unit->GetID();
+				}
+
+				auto unitOwner = unit->GetOwner();
+				if (unitOwner == playerId) // player1's id
+				{
+					outPacket[0].mUnit[i].unitOwner = UO_ME;
+					outPacket[1].mUnit[i].unitOwner = UO_ENEMY;
+				}
+				else if (unitOwner == matchPlayer) // player2's id 
+				{
+					outPacket[0].mUnit[i].unitOwner = UO_ENEMY;
+					outPacket[1].mUnit[i].unitOwner = UO_ME;
+				}
+				else if (unitOwner == PLAYER_NUMBER_NPC)
+				{
+					outPacket[0].mUnit[i].unitOwner = UO_NPC;
+					outPacket[1].mUnit[i].unitOwner = UO_NPC;
+				}
+				else
+				{
+					assert(false);
+				}
 			}
 		}
 
-		outPacket[0].mLength = outPacket[1].mLength = unitList.size();
+		auto playerSession1 = GClientManager->GetClient(playerId);
+		auto playerSession2 = GClientManager->GetClient(matchPlayer);
 
 		playerSession1->SendRequest(&outPacket[0]);
 		playerSession2->SendRequest(&outPacket[1]);
