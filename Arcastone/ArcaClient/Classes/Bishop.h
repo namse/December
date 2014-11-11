@@ -7,7 +7,7 @@ class Bishop : public Unit
 {
 public:
 	Bishop();
-	~Bishop();
+	~Bishop(); ///# 마찬가지...
 
 	void						initSprite();
 

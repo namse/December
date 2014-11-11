@@ -6,6 +6,8 @@
 class Unit
 {
 public:
+	///# 생성자는? 생성자에서 반드시 멤버 변수들 초기화 할 것
+
 	virtual ~Unit();
 
 	static Unit*				create(UnitData unitData);

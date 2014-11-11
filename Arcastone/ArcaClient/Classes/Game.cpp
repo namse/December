@@ -11,7 +11,7 @@ Game::Game()
 
 Game::~Game()
 {
-	m_Field = nullptr;
+	m_Field = nullptr; ///# 헐? null 먼저 만들고 delete?
 	delete m_Field;
 	m_Player[0] = nullptr;
 	delete m_Player[0];
