@@ -7,7 +7,7 @@ class Knight : public Unit
 {
 public:
 	Knight();
-	~Knight();
+	virtual ~Knight();
 
 	void						initSprite();
 

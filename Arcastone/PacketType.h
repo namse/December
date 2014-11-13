@@ -8,55 +8,7 @@
 #define MAX_UNIT_ACTION		50
 #define MAX_FIELD_BLOCK		7*11
 
-struct Coord{
-	int x, y;
-	Coord()
-	{
-		x = y = 0;
-	}
-	Coord(int _x, int _y)
-	{
-		x = _x, y = _y;
-	}
-	// 연산자 오버로딩
-	bool operator < (const Coord& right) const
-	{
-		if ((x < right.x) || (x == right.x && y < right.y))
-			return true;
-		else
-			return false;
-	}
-
-	bool operator >(const Coord& right) const
-	{
-		if ((x > right.x) || (x == right.x && y > right.y))
-			return true;
-		else
-			return false;
-	}
-
-	bool operator == (const Coord& right) const
-	{
-		if ((x == right.x) && (y == right.y))
-			return true;
-		else
-			return false;
-	}
-
-	Coord operator + (const Coord& rhs) const{
-		return Coord(x + rhs.x, y + rhs.y);
-	}
-	 
-	Coord operator - (const Coord& rhs) const{
-		return Coord(x - rhs.x, y - rhs.y);
-	}
-	Coord operator * (const int& rhs) const{
-		return Coord(x*rhs, y*rhs);
-	}
-	Coord operator / (const int& rhs) const{
-		return Coord(x / rhs, y / rhs);
-	}
-};
+typedef int UnitIdentityNumber;
 
 enum PacketTypes
 {
@@ -81,13 +33,6 @@ enum PacketTypes
 
 #pragma pack(push, 1)
 
-struct PacketHeader
-{
-	PacketHeader() : mSize(0), mType(PKT_NONE) 	{}
-	short mSize;
-	short mType;
-};
-
 enum WrongAttackType
 {
 	WAT_NONE = 0,
@@ -95,7 +40,6 @@ enum WrongAttackType
 	WAT_NO_ENOUGH_COST = 2,
 	WAT_CANT_TELEPORT_THERE = 3,
 };
-
 
 enum UnitType{
 	UT_NONE = 0,
@@ -144,16 +88,11 @@ enum FieldBlockType
 	FBT_NONE = 0,
 	//FBT_FROZEN = 1,
 };
+
 enum FieldBlockStatus
 {
 	FBS_NONE = 0,
 	//FBS_BURNIG = 1,
-};
-
-struct FieldBlock{
-	FieldBlockType	m_Type;
-	FieldBlockStatus m_Status;
-	Coord m_Position;
 };
 
 enum UnitOwner
@@ -172,15 +111,6 @@ enum WhosWinner
 	WW_DRAW = 3,	// 무승부
 };
 
-typedef int UnitIdentityNumber;
-
-struct AttackData{
-	UnitIdentityNumber id;
-	int					Range;
-	HexaDirection		direction;
-	Coord				position[10];
-};
-
 enum UnitActionType{
 	UAT_NONE = 0,
 	UAT_MOVE = 1,
@@ -190,10 +120,61 @@ enum UnitActionType{
 	UAT_DIE = 5,
 	UAT_COLLISION = 6,
 };
+
+struct Coord{
+	int x, y;
+	Coord()
+	{
+		x = y = 0;
+	}
+	Coord(int _x, int _y)
+	{
+		x = _x, y = _y;
+	}
+	// 연산자 오버로딩
+	bool operator < (const Coord& right) const
+	{
+		if ((x < right.x) || (x == right.x && y < right.y))
+			return true;
+		else
+			return false;
+	}
+
+	bool operator >(const Coord& right) const
+	{
+		if ((x > right.x) || (x == right.x && y > right.y))
+			return true;
+		else
+			return false;
+	}
+
+	bool operator == (const Coord& right) const
+	{
+		if ((x == right.x) && (y == right.y))
+			return true;
+		else
+			return false;
+	}
+
+	Coord operator + (const Coord& rhs) const{
+		return Coord(x + rhs.x, y + rhs.y);
+	}
+
+	Coord operator - (const Coord& rhs) const{
+		return Coord(x - rhs.x, y - rhs.y);
+	}
+	Coord operator * (const int& rhs) const{
+		return Coord(x*rhs, y*rhs);
+	}
+	Coord operator / (const int& rhs) const{
+		return Coord(x / rhs, y / rhs);
+	}
+};
+
 struct UnitAction{
 	UnitIdentityNumber mUnitId;
 	UnitActionType mActionType;
-	
+
 	// FOR MOVE
 	struct MoveData
 	{
@@ -201,7 +182,7 @@ struct UnitAction{
 		HexaDirection mDirection;
 		int mFinalX, mFinalY;
 	}mMoveData;
-	
+
 	// FOR COLLIDE
 	struct CollisionData
 	{
@@ -209,6 +190,27 @@ struct UnitAction{
 		int mMyHP;
 		int mTargetHP;
 	}mCollisionData;
+};
+
+struct AttackData{
+	UnitIdentityNumber id;
+	UnitMoveType		attackType;
+	int					Range;
+	HexaDirection		direction;
+	Coord				position[10];
+};
+
+struct PacketHeader
+{
+	PacketHeader() : mSize(0), mType(PKT_NONE) 	{}
+	short mSize;
+	short mType;
+};
+
+struct FieldBlock{
+	FieldBlockType	m_Type;
+	FieldBlockStatus m_Status;
+	Coord m_Position;
 };
 
 namespace Packet

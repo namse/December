@@ -38,9 +38,10 @@ public:
 	Hexagon*				createHexagon(ScreenPoint anchor, int size);
 	void					drawText(int i, int j, Hexagon* hexa);
 
-	void					drawExpectUnitMove(Unit* unit);
+	void					DrawExpectUnitMove(Unit* unit);
 	void					drawUnitMove(Unit* unit, HexaDirection direction = HD_NONE, int range = 0);
 	void					drawMoveSign(HexaPoint point, Color4F signColor);
+	void					HighlightHexagon(ScreenPoint position);
 	void					releaseExpectMoveSign();
 	void					releaseMoveSign();
 	

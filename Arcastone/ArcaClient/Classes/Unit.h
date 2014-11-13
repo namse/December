@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Header.h"
-#include "Header.h"
 
 class Unit
 {
 public:
+	Unit();
 	virtual ~Unit();
 
 	static Unit*				create(UnitData unitData);
@@ -13,17 +13,17 @@ public:
 	virtual void				initSprite();
 
 	void						setPosition(HexaPoint setPos){ m_Position = setPos; }
-	void						setHP(int hp);
+	void						SetHP(int hp);
 
-	Sprite*						getSprite(){ return m_Sprite; }
-	int							getHP(){ return m_HP; }
-	int							getID(){ return m_ID; }
-	int							getAttack(){ return m_Attack; }
-	int							getMoveRange(){ return m_MoveRange; }
-	int							getWeight(){ return m_Weight; }
-	HexaPoint					getPosition(){ return m_Position; }
-	UnitOwner					getOwner(){ return m_Owner; }
-	UnitMoveType				getMoveType(){ return m_MoveType; }
+	Sprite*						GetSprite(){ return m_Sprite; }
+	int							GetHP(){ return m_HP; }
+	int							GetID(){ return m_ID; }
+	int							GetAttack(){ return m_Attack; }
+	int							GetMoveRange(){ return m_MoveRange; }
+	int							GetWeight(){ return m_Weight; }
+	HexaPoint					GetPosition(){ return m_Position; }
+	UnitOwner					GetOwner(){ return m_Owner; }
+	UnitMoveType				GetMoveType(){ return m_MoveType; }
 	
 protected:
 	UnitType					m_UnitType;

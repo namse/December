@@ -44,7 +44,7 @@ JsonManager::JsonManager()
 
 		unit["name"] = UT_KNIGHT;
 		unit["MoveType"] = UMT_DASH;
-		unit["MoveRange"] = 3;
+		unit["MoveRange"] = 4;
 		unit["Atk"] = 3;
 		unit["Hp"] = 35;
 		unit["Weight"] = 1;

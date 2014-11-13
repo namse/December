@@ -7,7 +7,7 @@ class Bishop : public Unit
 {
 public:
 	Bishop();
-	~Bishop();
+	virtual ~Bishop();
 
 	void						initSprite();
 

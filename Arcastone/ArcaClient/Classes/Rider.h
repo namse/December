@@ -7,7 +7,7 @@ class Rider : public Unit
 {
 public:
 	Rider();
-	~Rider();
+	virtual ~Rider();
 
 	void						initSprite();
 

@@ -416,7 +416,7 @@ void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 void Game::UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush)
 {
 	// TODO : 순서 잘못됬는데, 클라가 읽는 부분도 잘못되서 이상하게 돌아가고는 있음 .
-	// 하지만 애니메이션이라던가 추가하려면, 고칠 필요 있는 부분임 .
+	// 하지만 애니메이션이라던가 추가하려면, 고칠 필요 있는 부분임 
 
 	if (isFirstPush) // 첫 충돌이면 공격력에 비례해서 밀고
 		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), pusher->GetAttack() - target->GetWeight(), target, false);

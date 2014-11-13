@@ -89,12 +89,10 @@ struct ScreenPoint : public cocos2d::Vec2
 
 	HexaDirection getDirection()
 	{
-		float xx = x;
-		float yy = y;
-		float degree = CC_RADIANS_TO_DEGREES(atan2(yy, xx));
+		float degree = CC_RADIANS_TO_DEGREES(atan2(y, x));
 
 		// 3,4분면과 270도에서 직교좌표계 보정
-		if ((xx < 0 && yy < 0) || (xx >= 0 && yy < 0))
+		if ((x < 0 && y < 0) || (x >= 0 && y < 0))
 			degree += 360;
 
 		// 헥사그리드 좌표로 변환
@@ -103,7 +101,7 @@ struct ScreenPoint : public cocos2d::Vec2
 		return Direction;
 	}
 
-	int getRange()
+	int GetRange()
 	{
 		return getLength() * PIXEL_TO_RANGE_MULT;
 	}
@@ -192,7 +190,7 @@ struct HexaPoint : public cocos2d::Vec2
 		return true;
 	}
 
-	HexaPoint getMovePoint(HexaDirection direction, int range)
+	HexaPoint GetMovePoint(HexaDirection direction, int range)
 	{
 		HexaPoint retPoint;
 		retPoint.x = x;

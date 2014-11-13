@@ -5,6 +5,11 @@
 #include "Bishop.h"
 #include "NPC.h"
 
+Unit::Unit()
+{
+
+}
+
 Unit::~Unit()
 {
 }
@@ -14,29 +19,32 @@ Unit* Unit::create(UnitData unitData)
 	Unit* newUnit = nullptr;
 	switch (unitData.unitType)
 	{
-	case UT_SOLDIER:
-	{
-					newUnit = new Soldier();
-	}break;
-	case UT_RIDER:
-	{
-					   newUnit = new Rider();
-	}break;
-	case UT_KNIGHT:
-	{
-					   newUnit = new Knight();
-	}break;
-	case UT_BISHOP:
-	{
-					   newUnit = new Bishop();
-	}break;
-	case UT_ARCASTONE:
-	{
-						 newUnit = new NPC();
-	}break;
+		case UT_SOLDIER:
+		{
+						newUnit = new Soldier();
+		}break;
+		case UT_RIDER:
+		{
+						   newUnit = new Rider();
+		}break;
+		case UT_KNIGHT:
+		{
+						   newUnit = new Knight();
+		}break;
+		case UT_BISHOP:
+		{
+						   newUnit = new Bishop();
+		}break;
+		case UT_ARCASTONE:
+		{
+							 newUnit = new NPC();
+		}break;
+		default:
+			assert(false && "Unit::create - Non defined new unitType");
 	}
 
 	if (newUnit != nullptr) newUnit->init(unitData);
+
 	return newUnit;
 }
 
@@ -101,7 +109,7 @@ void Unit::initSprite()
 	m_Sprite->addChild(labelAtk, zIdx, "atk");
 }
 
-void Unit::setHP(int hp)
+void Unit::SetHP(int hp)
 {
 	m_HP = hp;
 

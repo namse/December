@@ -216,16 +216,66 @@ void TcpClient::loginRequest()
 	send((const char*)&sendData, sizeof(Packet::LoginRequest));
 }
 
-void TcpClient::attackRequest(int unitId, int attackRange, HexaDirection attackDircetion)
+void TcpClient::attackRequest(AttackData attackData)
 {
 	Packet::AttackRequest sendData;
 
-	AttackData attackData;
-	attackData.id = unitId;
-	attackData.Range = attackRange;
-	attackData.direction = attackDircetion;
-
 	sendData.mAttack = attackData;
+
+	#pragma region DEBUG CODE
+	if (DEBUG_PRINT_PACKET)
+	{
+		printf("Send Attack Request\n");
+
+		bool printDirection, printRange, printPosition;
+		switch (attackData.attackType)
+		{
+		case UMT_STRAIGHT:
+			printf("Attack Type : Straight\n");
+			printDirection = true;
+			printRange = true;
+			printPosition = false;
+			break;
+
+		case UMT_JUMP:
+			printf("Attack Type : Jump\n");
+			printDirection = true;
+			printRange = true;
+			printPosition = false;
+			break;
+
+		case UMT_DASH:
+			printf("Attack Type : Dash\n");
+			printDirection = false;
+			printRange = true;
+			printPosition = true;
+			break;
+
+		case UMT_TELEPORT:
+			printf("Attack Type : Teleport\n");
+			printDirection = false;
+			printRange = false;
+			printPosition = true;
+			break;
+		}
+
+		if (printDirection)
+			printf("Attack Direction : %d\n", attackData.direction);
+		if (printRange)
+			printf("Attack Range : %d\n", attackData.direction);
+		if (printPosition)
+			printf("Attack Position : %d\n", attackData.position[0]);
+
+		if (attackData.attackType == UMT_DASH)
+		{
+			for (int i = 1; i < attackData.Range; ++i)
+			{
+				if (printPosition)
+					printf("Attack Position : %d\n", attackData.position[i]);
+			}
+		}
+	}
+#pragma endregion
 
 	send((const char*)&sendData, sizeof(Packet::AttackRequest));
 }

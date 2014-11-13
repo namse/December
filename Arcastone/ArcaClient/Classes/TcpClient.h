@@ -24,7 +24,7 @@ public:
 	/// request test 
 	void loginRequest();
 	void fieldRequest();
-	void attackRequest(int unitId, int attackRange, HexaDirection attackDircetion);
+	void attackRequest(AttackData attackData);
 	void gameStartResult();
 
 	
