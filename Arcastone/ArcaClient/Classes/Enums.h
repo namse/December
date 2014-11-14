@@ -87,7 +87,7 @@ struct ScreenPoint : public cocos2d::Vec2
 		return retCoord;
 	}
 
-	HexaDirection getDirection()
+	HexaDirection GetDirection()
 	{
 		float degree = CC_RADIANS_TO_DEGREES(atan2(y, x));
 
@@ -141,7 +141,7 @@ struct HexaPoint : public cocos2d::Vec2
 		return retCoord;
 	}
 
-	HexaDirection getDirection(HexaPoint point)
+	HexaDirection GetDirection(HexaPoint point)
 	{
 		HexaPoint vec;
 		vec.x = point.x - x;

@@ -83,7 +83,7 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
 	if (!m_IsMyTurn) return false;			// 자신의 턴인 경우에만 마우스 입력을 받는다.
 
-	m_StartPoint =ScreenPoint(touch->getLocation());
+	m_StartPoint = ScreenPoint(touch->getLocation());
 	m_CursoredPoint = ScreenPoint(touch->getLocation());
 
 	m_SelectedUnit = NON_SELECT_UNIT;
@@ -117,48 +117,82 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
 	if (!m_IsMyTurn) return;
 
-	// 마우스가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 그냥 return;
-	HexaPoint touchIndex(touch->getLocation().x, touch->getLocation().y);
-	if (HexaPoint(m_CursoredPoint.ScreenToCoord()) == touchIndex) return;
-
-	m_CursoredPoint = ScreenPoint(touch->getLocation());
-
 	Unit* unit = getUnitByID(m_SelectedUnit);
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
-	drawUnitMove(unit);
+	// 어딜 터치했는지 찾아서
+	HexaPoint touchIndex;
+	touchIndex = ScreenToHexa(ScreenPoint(touch->getLocation().x, touch->getLocation().y));
+	
+	HexaPoint cursoredPoint;
+	cursoredPoint = ScreenToHexa(m_CursoredPoint);
+
+	// 터치한 위치가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 그냥 return;
+	if (touchIndex == cursoredPoint) return;
+
+	m_CursoredPoint = ScreenPoint(touch->getLocation());
+
 	// TODO : 요거 이렇게 가면 너무 자주 지우고 그리고 하니까 어떻게 좀 해주세요
+	drawUnitMove(unit, HD_NONE, 0, true);
 }
 
 void GameScene::onTouchEnded(Touch* touch, Event* event)
 {
 	{
+		// 이동할 수 있는 모든 범위 표시 지움
 		releaseExpectMoveSign();
 		// 그려진 이동 경로 지움
 		releaseMoveSign();
-
-		m_CourseStack.clear();
 	}
 
-	//
 	if (!m_IsMyTurn) return;
 
 	Unit* unit = getUnitByID(m_SelectedUnit);
+	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
+	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
-	HexaDirection direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).getDirection();
-	int distance = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
-
-	if (distance > unit->GetMoveRange()) distance = unit->GetMoveRange();
-
-	// 공격을 취소하는 경우
-	if (distance == 0)
-		return;
+	HexaDirection direction = HD_NONE;
+	int distance = 0;
 
 	AttackData attackData;
+
+	switch (unit->GetMoveType())
+	{
+	case UMT_STRAIGHT:
+	case UMT_JUMP:{
+		// 스트레이트와 점프는 방향과 거리를 입력
+		direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetDirection();
+		distance = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
+
+		if (distance > unit->GetMoveRange()) distance = unit->GetMoveRange();
+
+		// 공격을 취소하는 경우
+		if (distance == 0)
+			return;
+	}break;
+
+	case UMT_DASH:{
+		for (int i = 0; i < m_CourseStack.size(); ++i)
+		{
+			// 대쉬는 이동 스택을 입력
+			attackData.position[i] = m_CourseStack.at(i).HexaToCoord();
+		}
+	}break;
+
+	case UMT_TELEPORT:{
+		// 텔포는 이동 칸 하나 입력
+		attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
+	}break;
+
+	default:
+		assert(false && "drawUnitMove -> not defined New attackType !");
+	}
+
+	m_CourseStack.clear();
+
 	attackData.direction = direction;
 	attackData.Range = distance;
-
 
 	TcpClient::getInstance()->attackRequest(attackData);
 	m_SelectedUnit = NON_SELECT_UNIT;
@@ -172,44 +206,45 @@ void GameScene::DrawExpectUnitMove(Unit* unit)
 
 	switch (unit->GetMoveType())
 	{
-	case UMT_STRAIGHT:
-	case UMT_JUMP:
-	{
-		for (int i = 1; i <= 6; ++i)
+		case UMT_STRAIGHT:
+		case UMT_JUMP:
 		{
-			HexaDirection direction = (HexaDirection)i;
-			for (int j = 1; j <= unitMoveRange; ++j)
+			for (int i = 1; i <= 6; ++i)
 			{
-				HexaPoint movePoint = unitPos.GetMovePoint(direction, j);
-				ScreenPoint realMovePoint = movePoint.HexaToScreen();
+				HexaDirection direction = (HexaDirection)i;
+				for (int j = 1; j <= unitMoveRange; ++j)
+				{
+					HexaPoint movePoint = unitPos.GetMovePoint(direction, j);
+					ScreenPoint realMovePoint = movePoint.HexaToScreen();
 
-				HighlightHexagon(realMovePoint);
+					HighlightHexagon(realMovePoint);
+				}
 			}
-		}
-	}break;
+		}break;
 
-	case UMT_DASH:
-	case UMT_TELEPORT:
-	{
-		for (int x = -unitMoveRange; x <= unitMoveRange; ++x)
+		case UMT_DASH:
+		case UMT_TELEPORT:
 		{
-			for (int y = -unitMoveRange; y <= unitMoveRange; ++y)
+			for (int x = -unitMoveRange; x <= unitMoveRange; ++x)
 			{
-				if (abs(x + y) > unitMoveRange) continue;
+				for (int y = -unitMoveRange; y <= unitMoveRange; ++y)
+				{
+					if (abs(x + y) > unitMoveRange) continue;
 
-				HexaPoint movePoint(unitPos.x + x, unitPos.y + y);
+					HexaPoint movePoint(unitPos.x + x, unitPos.y + y);
 
-				Hexagon* expectSignHexagon = createHexagon(movePoint.HexaToScreen(), HEXAGON_LENGTH);
-				DrawNode* expectSignNode = DrawNode::create();
+					Hexagon* expectSignHexagon = createHexagon(movePoint.HexaToScreen(), HEXAGON_LENGTH);
+					DrawNode* expectSignNode = DrawNode::create();
 
-				expectSignNode->drawPolygon(&expectSignHexagon->vertex[0], 6, COLOR_OF_EXPECT, 1, COLOR_OF_EXPECT);
-				this->addChild(expectSignNode, 98);
-				m_ExpectSignNode.push_back(expectSignNode);
+					expectSignNode->drawPolygon(&expectSignHexagon->vertex[0], 6, COLOR_OF_EXPECT, 1, COLOR_OF_EXPECT);
+					this->addChild(expectSignNode, 98);
+					m_ExpectSignNode.push_back(expectSignNode);
+				}
 			}
-		}
 
-	}break;
-
+		}break;
+		default:
+			assert(false && "drawUnitMove -> not defined New attackType !");
 	}
 }
 
@@ -222,8 +257,8 @@ void GameScene::releaseExpectMoveSign()
 	m_ExpectSignNode.clear();
 }
 
-// 재귀함수
-void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
+// 재귀함수로 그려준다. 마지막 인자는 마우스를 이동해서 호출한건지 확인
+void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, bool isFirstCall)
 {
 	// 인자로 들어온 unit 은 어떻게 이동하는지 현재 확인할 유닛
 	Unit*			atkUnit = getUnitByID(m_SelectedUnit);
@@ -235,15 +270,19 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 	int				unitAtk = unit->GetAttack();
 	Color4F			signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 
-	// 재귀호출의 첫 시작인 경우, 공격이 향하는 위치 찾는다
+	// 유닛 패스를 처음부터 그리는 경우
 	#pragma region If First Call
-	if (direction == HD_NONE && range == 0)
+	if (isFirstCall)
 	{
+		// 처음부터 다시 그려줌
+		releaseMoveSign();
+
 		switch (atkType)
 		{
 		case UMT_STRAIGHT:
 		case UMT_JUMP:{
-						  direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).getDirection();
+
+						  direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetDirection();
 						  range = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
 						  if (range > unit->GetMoveRange()) range = unit->GetMoveRange();
 		}break;
@@ -268,7 +307,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 						  if (cursor == atkUnit->GetPosition())
 						  {
 							  // 공격 유닛을 가리키면 스택 초기화
-							  GameScene::releaseMoveSign();
+							  releaseMoveSign();
 							  m_CourseStack.clear();
 							  return;
 						  }
@@ -322,11 +361,11 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 						  {
 							  // 뒤에서 두번째에 있는 요소와 비교
 							  HexaPoint prevPos = m_CourseStack.at(range - 2);
-							  direction = prevPos.getDirection(cursor);
+							  direction = prevPos.GetDirection(cursor);
 						  }
 						  else if (m_CourseStack.size() == 1)
 						  {
-							  direction = atkUnit->GetPosition().getDirection(cursor);
+							  direction = atkUnit->GetPosition().GetDirection(cursor);
 						  }
 		}break;
 
@@ -354,14 +393,14 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 							  if (cursor == atkUnit->GetPosition())
 							  {
 								  // 공격 유닛을 가리키면 스택 초기화
-								  GameScene::releaseMoveSign();
+								  releaseMoveSign();
 								  m_CourseStack.clear();
 								  return;
 							  }
 
+							  releaseMoveSign();
 							  m_CourseStack.clear();
 							  m_CourseStack.push_back(cursor);
-							  releaseMoveSign();
 		}break;
 		default:
 			assert(false && "drawUnitMove -> not defined New attackType !");
@@ -390,7 +429,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 				int atkRange = unitAtk - crashUnit->GetWeight();
 
 				// 움직이자
-				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange);
+				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
 					break;
 			}
 		}
@@ -421,7 +460,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 					{
 						// 없음? 님아 충돌여ㅋㅋㅋㅋㅋㅋㅋ
 						int atkRange = unitAtk - crashUnit->GetWeight();
-						drawUnitMove(crashUnit, direction, atkRange);
+						drawUnitMove(crashUnit, direction, atkRange, false);
 						break;
 					}
 					else
@@ -429,7 +468,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 						// g헐 얘 여기서 뭘 하고 있는 거니ㅠ;
 						// 어쩔 수 없지 얘 뒤까지만 가야겠다
 						releaseMoveSign();
-						if (range - 1 > 0) drawUnitMove(atkUnit, direction, range - 1);
+						if (range - 1 > 0) drawUnitMove(atkUnit, direction, range - 1, false);
 						break;
 					}
 				}
@@ -447,7 +486,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 			if (Unit* crashUnit = getUnitByPos(*i))
 			{
 				int atkRange = unitAtk - crashUnit->GetWeight();
-				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange);
+				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
 
 				// 이 뒤부터 스택 비워줌
 				vector<HexaPoint>::iterator j = ++i;
@@ -493,7 +532,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range)
 				int atkRange = (range - i + 1);
 
 				// 움직이자
-				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange);
+				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
 					break;
 			}
 		}
@@ -511,7 +550,6 @@ void GameScene::drawMoveSign(HexaPoint point, Color4F signColor)
 	m_CourseSignNode.push_back(courseSignNode);
 }
 
-
 // 그려놓은 이동경로를 초기화하는 함수
 void GameScene::releaseMoveSign()
 {
@@ -521,8 +559,6 @@ void GameScene::releaseMoveSign()
 	}
 	m_CourseSignNode.clear();
 }
-
-
 
 // 클릭한 좌표가 특정 육각형 안에 들어있는지 확인하는 함수
 bool GameScene::isInHexagon(ScreenPoint touch, ScreenPoint anchor)
@@ -636,6 +672,7 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 
 		// 화면상의 좌표에 유닛을 배치
 		assert(unitSprite != nullptr);
+
 		unitSprite->setPosition(Point(unitRealPoint.x, unitRealPoint.y));
 		this->addChild(unitSprite, 100);
 	}
@@ -669,7 +706,7 @@ void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length)
 		CCLOG("%d, %d", x, y);
 		ScreenPoint point = HexaPoint(x, y).HexaToScreen();
 
-		m_HexagonPoint.push_back(Coord(x, y));	// m_HexagonPoint 에 화면에 그려지는 좌표(0~x, 0~y)들을 저장
+		m_HexagonPoint.push_back(HexaPoint(x, y));	// m_HexagonPoint 에 화면에 그려지는 좌표(0~x, 0~y)들을 저장
 
 		Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
 		node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, COLOR_OF_GRID);
@@ -712,88 +749,99 @@ void GameScene::onUnitAction(CCNode* sender)
 		// id를 사용하여 i 번째 액션을 적용할 유닛을 찾음
 		Unit* unit = getUnitByID(action.mUnitId);
 
+		if (DEBUG_PRINT_PACKET)
+			printf("Read Ation from Server\n");
+
 		switch (action.mActionType)
 		{
 		case UAT_MOVE:{
-			HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-			ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
-			if (DEBUG_PRINT_PACKET)
-				printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+						  if (DEBUG_PRINT_PACKET)
+							  printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
 
-			// 유닛은 인덱스로 이동
-			unit->setPosition(hMovePoint);
+						  // 유닛은 인덱스로 이동
+						  unit->setPosition(hMovePoint);
 
-			// 스프라이트는 좌표로 이동
-			auto sprite = unit->GetSprite();
-			CCFiniteTimeAction* actionMove =
-				CCMoveTo::create(MOVE_DURATION,
-				sMovePoint);
-			CCFiniteTimeAction* actionMoveDone =
-				CCCallFuncN::create(this,
-				callfuncN_selector(GameScene::onUnitAction));
-			sprite->runAction(CCSequence::create(actionMove,
-				actionMoveDone, NULL));
+						  // 스프라이트는 좌표로 이동
+						  auto sprite = unit->GetSprite();
+						  CCFiniteTimeAction* actionMove =
+							  CCMoveTo::create(MOVE_DURATION,
+							  sMovePoint);
+						  CCFiniteTimeAction* actionMoveDone =
+							  CCCallFuncN::create(this,
+							  callfuncN_selector(GameScene::onUnitAction));
+						  sprite->runAction(CCSequence::create(actionMove,
+							  actionMoveDone, NULL));
 		}break;
+
 		case UAT_JUMP:{
-			HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-			ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
-			if (DEBUG_PRINT_PACKET)
-				printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+						  if (DEBUG_PRINT_PACKET)
+							  printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
 
-			unit->setPosition(hMovePoint);
+						  unit->setPosition(hMovePoint);
 
-			auto sprite = unit->GetSprite();
-			CCFiniteTimeAction* actionMove =
-				CCMoveTo::create(MOVE_DURATION,
-				sMovePoint);
-			CCFiniteTimeAction* actionMoveDone =
-				CCCallFuncN::create(this,
-				callfuncN_selector(GameScene::onUnitAction));
-			sprite->runAction(CCSequence::create(actionMove,
-				actionMoveDone, NULL));
+						  auto sprite = unit->GetSprite();
+						  CCFiniteTimeAction* actionMove =
+							  CCMoveTo::create(MOVE_DURATION,
+							  sMovePoint);
+						  CCFiniteTimeAction* actionMoveDone =
+							  CCCallFuncN::create(this,
+							  callfuncN_selector(GameScene::onUnitAction));
+						  sprite->runAction(CCSequence::create(actionMove,
+							  actionMoveDone, NULL));
 		}break;
+
 		case UAT_DASH:{
-			HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-			ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+						  // 적용할 액션의 이동타입이 대쉬면?
+						  // 다른 타입의 액션이 들어올때까지 반복
+						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
-			if (DEBUG_PRINT_PACKET)
-				printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+						  if (DEBUG_PRINT_PACKET)
+							  printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
 
-			// 유닛은 인덱스로 이동
-			unit->setPosition(hMovePoint);
+						  // 유닛은 인덱스로 이동
+						  unit->setPosition(hMovePoint);
 
-			// 스프라이트는 좌표로 이동
-			auto sprite = unit->GetSprite();
-			CCFiniteTimeAction* actionMove =
-				CCMoveTo::create(MOVE_DURATION,
-				sMovePoint);
-			CCFiniteTimeAction* actionMoveDone =
-				CCCallFuncN::create(this,
-				callfuncN_selector(GameScene::onUnitAction));
-			sprite->runAction(CCSequence::create(actionMove,
-				actionMoveDone, NULL));
+						  // 스프라이트는 좌표로 이동
+						  auto sprite = unit->GetSprite();
+						  CCFiniteTimeAction* actionMove =
+							  CCMoveTo::create(MOVE_DURATION,
+							  sMovePoint);
+						  // TODO : CCBezier
+
+						  CCFiniteTimeAction* actionMoveDone =
+							  CCCallFuncN::create(this,
+							  callfuncN_selector(GameScene::onUnitAction));
+						  sprite->runAction(CCSequence::create(actionMove,
+							  actionMoveDone, NULL));
 		}break;
+
 		case UAT_TELEPORT:{
-			HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-			ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+							  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+							  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
-			if (DEBUG_PRINT_PACKET)
-				printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+							  if (DEBUG_PRINT_PACKET)
+								  printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
 
-			unit->setPosition(hMovePoint);
+							  unit->setPosition(hMovePoint);
 
-			// 텔레포트는 뿅! 하고 이동
-			auto sprite = unit->GetSprite();
-			CCFiniteTimeAction* actionMove =
-				CCMoveTo::create(0, sMovePoint);
+							  // 텔레포트는 뿅! 하고 이동
+							  auto sprite = unit->GetSprite();
+							  CCFiniteTimeAction* actionMove =
+								  CCMoveTo::create(0, sMovePoint);
+
 		}break;
 		case UAT_COLLISION:{
 
 		}break;
 		case UAT_DIE: {
-			unit->GetSprite()->setVisible(false);
+						  unit->GetSprite()->setVisible(false);
 		}
 		}
 	}
@@ -807,4 +855,20 @@ void GameScene::HighlightHexagon(ScreenPoint position)
 	expectSignNode->drawPolygon(&expectSignHexagon->vertex[0], 6, COLOR_OF_EXPECT, 1, COLOR_OF_EXPECT);
 	this->addChild(expectSignNode, 98);
 	m_ExpectSignNode.push_back(expectSignNode);
+}
+
+HexaPoint GameScene::ScreenToHexa(ScreenPoint point)
+{
+	HexaPoint retPoint(-1, -1);
+
+	for (int i = 0; i < m_HexagonPoint.size(); ++i)
+	{
+		if (isInHexagon(point, m_HexagonPoint.at(i).HexaToScreen()))
+		{
+			retPoint = m_HexagonPoint.at(i);
+			break;
+		}
+	}
+	
+	return retPoint;
 }

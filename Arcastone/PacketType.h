@@ -7,6 +7,8 @@
 #define MAX_UNIT_ON_GAME	30
 #define MAX_UNIT_ACTION		50
 #define MAX_FIELD_BLOCK		7*11
+#define MAX_MOVE_RANGE		20
+#define MXX_UNIT_ACTION_QUEUE 64
 
 typedef int UnitIdentityNumber;
 
@@ -197,7 +199,7 @@ struct AttackData{
 	UnitMoveType		attackType;
 	int					Range;
 	HexaDirection		direction;
-	Coord				position[10];
+	Coord				position[MAX_MOVE_RANGE];
 };
 
 struct PacketHeader
@@ -280,7 +282,7 @@ namespace Packet
 			memset(mUnitActionQueue, 0, sizeof(mUnitActionQueue));
 		}
 		int mQueueLength;
-		UnitAction mUnitActionQueue[50];
+		UnitAction mUnitActionQueue[MXX_UNIT_ACTION_QUEUE];
 	};
 
 	struct WrongAttackResult : public PacketHeader // 너 공격(스킬) 이상하게했어 임마

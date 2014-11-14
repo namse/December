@@ -39,7 +39,7 @@ public:
 	void					drawText(int i, int j, Hexagon* hexa);
 
 	void					DrawExpectUnitMove(Unit* unit);
-	void					drawUnitMove(Unit* unit, HexaDirection direction = HD_NONE, int range = 0);
+	void					drawUnitMove(Unit* unit, HexaDirection direction, int range, bool isFirstCall);
 	void					drawMoveSign(HexaPoint point, Color4F signColor);
 	void					HighlightHexagon(ScreenPoint position);
 	void					releaseExpectMoveSign();
@@ -61,6 +61,9 @@ public:
 	void					ReadActionQueue(Packet::AttackResult attackResult);
 
 private:
+	HexaPoint				ScreenToHexa(ScreenPoint point);
+
+private:
 	Game					m_Game;
 	GameState				m_GameState;
 	bool					m_IsMyTurn;
@@ -75,7 +78,7 @@ private:
 	vector<DrawNode*>		m_ExpectSignNode;
 	vector<HexaPoint>		m_CourseStack;
 
-	vector<Coord>			m_HexagonPoint;
+	vector<HexaPoint>		m_HexagonPoint;
 
 	vector<Unit*>			m_UnitData;
 
