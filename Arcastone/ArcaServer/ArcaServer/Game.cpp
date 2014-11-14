@@ -122,74 +122,74 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	m_UnitActionQueue.clear();
 	switch (unitMoveType)
 	{
-	case UMT_STRAIGHT:
-	{
-						 // 유닛 이동 시작!
-					UnitMove(attackData.direction, attackData.range, attackUnit, true);	// 함수 내에서 유닛들 데굴데굴 구루는중~
-	}break;
+		case UMT_STRAIGHT:
+		{
+							 // 유닛 이동 시작!
+						UnitMove(attackData.direction, attackData.range, attackUnit, true);	// 함수 내에서 유닛들 데굴데굴 구루는중~
+		}break;
 
-	case UMT_JUMP:
-	{
-					 UnitJump(attackData.direction, attackData.range, attackUnit);
+		case UMT_JUMP:
+		{
+						 UnitJump(attackData.direction, attackData.range, attackUnit);
 
-	}break;
+		}break;
 
-	case UMT_DASH:
-	{
-					 // 대쉬방향을 알기 위해 BeforePosition 을 사용해보아요
-					 Coord beforePosition = attackUnit->GetPos();
+		case UMT_DASH:
+		{
+						 // 대쉬방향을 알기 위해 BeforePosition 을 사용해보아요
+						 Coord beforePosition = attackUnit->GetPos();
 
-					 // 입력한 range 만큼 '한칸씩' 이동하겠어요~
-					 for (int move = 0; move < attackData.range; ++move)
-					 {
-						 Unit* target = GetUnitInPosition(attackData.position[move]);
-						 // 아! 물론 이동하려는 위치에 유닛이 있으면
-						 if (target != nullptr)
+						 // 입력한 range 만큼 '한칸씩' 이동하겠어요~
+						 for (int move = 0; move < attackData.range; ++move)
 						 {
-							 HexaDirection direction = GetHexaDirection(beforePosition, attackData.position[move]);
-							 // 만난 유닛을 밀어버려요!
-							 UnitPush(attackUnit, target, 0, true);
-							 break;
+							 Unit* target = GetUnitInPosition(attackData.position[move]);
+							 // 아! 물론 이동하려는 위치에 유닛이 있으면
+							 if (target != nullptr)
+							 {
+								 HexaDirection direction = GetHexaDirection(beforePosition, attackData.position[move]);
+								 // 만난 유닛을 밀어버려요!
+								 UnitPush(attackUnit, target, 0, true);
+								 break;
+							 }
+							 // 유닛을 만나지 않으면 계속 질주하세욧!
+							 else
+							 {
+								 HexaDirection direction = GetHexaDirection(beforePosition, attackData.position[move]);
+
+								 attackUnit->SetPosition(attackData.position[move]);
+
+								 UnitAction action;
+								 action.mActionType = UAT_DASH;
+								 action.mUnitId = attackUnit->GetID();
+								 action.mMoveData.mRange = 1;
+								 action.mMoveData.mDirection = direction;
+								 action.mMoveData.mFinalX = attackData.position[move].x;
+								 action.mMoveData.mFinalY = attackData.position[move].y;
+
+								 m_UnitActionQueue.push_back(action);
+								 if (DEBUG_PRINT) PrintUnitActionQueue(action);
+
+								 Coord beforePosition = attackData.position[move];
+							 }
 						 }
-						 // 유닛을 만나지 않으면 계속 질주하세욧!
-						 else
-						 {
-							 HexaDirection direction = GetHexaDirection(beforePosition, attackData.position[move]);
 
-							 attackUnit->SetPosition(attackData.position[move]);
+		}break;
+
+		case UMT_TELEPORT:
+		{
+							 attackUnit->SetPosition(attackData.position[0]);
 
 							 UnitAction action;
-							 action.mActionType = UAT_DASH;
+							 action.mActionType = UAT_TELEPORT;
 							 action.mUnitId = attackUnit->GetID();
-							 action.mMoveData.mRange = 1;
-							 action.mMoveData.mDirection = direction;
-							 action.mMoveData.mFinalX = attackData.position[move].x;
-							 action.mMoveData.mFinalY = attackData.position[move].y;
+							 action.mMoveData.mRange = 0;
+							 action.mMoveData.mDirection = HexaDirection();
+							 action.mMoveData.mFinalX = attackData.position[0].x;
+							 action.mMoveData.mFinalY = attackData.position[0].y;
 
 							 m_UnitActionQueue.push_back(action);
 							 if (DEBUG_PRINT) PrintUnitActionQueue(action);
-
-							 Coord beforePosition = attackData.position[move];
-						 }
-					 }
-
-	}break;
-
-	case UMT_TELEPORT:
-	{
-						 attackUnit->SetPosition(attackData.position[0]);
-
-						 UnitAction action;
-						 action.mActionType = UAT_TELEPORT;
-						 action.mUnitId = attackUnit->GetID();
-						 action.mMoveData.mRange = 0;
-						 action.mMoveData.mDirection = HexaDirection();
-						 action.mMoveData.mFinalX = attackData.position[0].x;
-						 action.mMoveData.mFinalY = attackData.position[0].y;
-
-						 m_UnitActionQueue.push_back(action);
-						 if (DEBUG_PRINT) PrintUnitActionQueue(action);
-	}break;
+		}break;
 
 	default:
 		assert(false && "HandleAttack In UnitMoveType Wrong");
@@ -702,12 +702,15 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 		// 공격을 취소하는 경우
 		if (attackData.range == 0)
 			return false;
+		break;
 	case UMT_JUMP:
 		if (attackData.range == 0)
 			return false;
+		break;
 	case UMT_DASH:
 		if (attackData.range == 0)
 			return false;
+		break;
 	case UMT_TELEPORT:
 		// 텔포하려는 위치에 유닛이 있는 경우 -> 합!체!
 		if (GetUnitInPosition(attackData.position[0]) != nullptr)
@@ -721,6 +724,7 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 
 			return false;
 		}
+		break;
 	}
 
 	// 아직 턴이 아닌데 공격을 시도하면

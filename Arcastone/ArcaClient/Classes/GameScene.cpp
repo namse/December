@@ -201,7 +201,16 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		// 텔포는 이동 칸 하나 입력
 
 		if (m_CourseStack.size() == 1)
-			attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
+		{
+			// 유닛이 없는 칸만 이동가능
+			if (getUnitByPos(m_CourseStack.at(0)))
+			{
+
+				attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
+			}
+			else return;
+		}
+		else return;
 	}break;
 
 	default:
@@ -277,7 +286,7 @@ void GameScene::releaseExpectMoveSign()
 	m_ExpectSignNode.clear();
 }
 
-// 재귀함수로 그려준다. 마지막 인자는 마우스를 이동해서 호출한건지 확인
+// 재귀함수로 그려준다. 마지막 인자는 마우스무브로 호출된건지, 충돌로 호출된건지 확인
 void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, bool isFirstCall)
 {
 	// 인자로 들어온 unit 은 어떻게 이동하는지 현재 확인할 유닛
@@ -285,9 +294,15 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 	// atkUnit 은 처음에 이동한 유닛임
 
 	UnitMoveType	atkType = atkUnit->GetMoveType();
+	int				unitAtk = atkUnit->GetAttack();
+	// 밀려나는 유닛은 STRAIGHT 로 이동
+	if (!isFirstCall)
+	{
+		atkType = UMT_STRAIGHT;
+		unitAtk = range;
+	}
 
 	HexaPoint		unitPos = unit->GetPosition();
-	int				unitAtk = unit->GetAttack();
 	int				unitRange = unit->GetMoveRange();
 	Color4F			signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 
@@ -413,6 +428,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 
 							  if (cursor == atkUnit->GetPosition())
 							  {
+
 								  // 공격 유닛을 가리키면 스택 초기화
 								  releaseMoveSign();
 								  m_CourseStack.clear();
@@ -447,7 +463,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 			{
 				// 그럼 거기서부터 다른 유닛의 이동경로를 그리도록 하시오
 				// 첫 충돌이면 현재 유닛의 공격력 - 충동 유닛의 무게만큼
-				int atkRange = unitAtk - crashUnit->GetWeight();
+				int atkRange = unitAtk - crashUnit->GetWeight() - 1;
 
 				// 움직이자
 				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
@@ -480,7 +496,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 					if (nullptr == getUnitByPos(beforePosition) || range == 1)
 					{
 						// 없음? 님아 충돌여ㅋㅋㅋㅋㅋㅋㅋ
-						int atkRange = unitAtk - crashUnit->GetWeight();
+						int atkRange = unitAtk - crashUnit->GetWeight() - 1;
 						drawUnitMove(crashUnit, direction, atkRange, false);
 						break;
 					}
@@ -498,33 +514,32 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 	}break;
 
 	case UMT_DASH:{
+		if (m_CourseStack.empty()) return;
 		// 스택에 들어가있는대로 그려주세요!
-		vector<HexaPoint>::iterator i;
-		for (i = m_CourseStack.begin(); i != m_CourseStack.end(); ++i)
+		for (int i = 0; i < m_CourseStack.size(); ++i)
 		{
-			drawMoveSign(*i, signcolor);
-			// 충돌함?
-			if (Unit* crashUnit = getUnitByPos(*i))
-			{
-				int atkRange = unitAtk - crashUnit->GetWeight();
-				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
+			drawMoveSign(m_CourseStack.at(i), signcolor);
 
-				// 이 뒤부터 스택 비워줌
-				vector<HexaPoint>::iterator j = ++i;
-				for (; j != m_CourseStack.end();)
+			// 그리던 중 충돌 시
+			Unit* crashUnit = getUnitByPos(m_CourseStack.at(i));
+			if (crashUnit != nullptr)
+			{
+				// 이 뒤의 코스들을 제거
+				for (int j = m_CourseStack.size() - 1; j != i; --j)
 				{
-					j = m_CourseStack.erase(j);
+					m_CourseStack.pop_back();
 				}
-				return;
+				int atkRange = unitAtk - crashUnit->GetWeight() - 1;
+				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
 			}
 		}
 	}break;
 
 	case UMT_TELEPORT:{
-		// 다른 유닛이 존재해 이동할 수 없는 곳은 빨간색으로
 		if (m_CourseStack.empty()) return;
 		HexaPoint movePoint = m_CourseStack.at(0);
 
+		// 다른 유닛이 존재해 이동할 수 없는 곳은 빨간색으로
 		signcolor = (getUnitByPos(movePoint) == nullptr) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 		drawMoveSign(movePoint, signcolor);
 	}break;
