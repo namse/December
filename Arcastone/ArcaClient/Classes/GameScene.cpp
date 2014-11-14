@@ -777,7 +777,7 @@ void GameScene::onUnitAction(CCNode* sender)
 						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
 						  if (DEBUG_PRINT_PACKET)
-							  printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+							  printf("Move To(%d, %d)\n", (int)hMovePoint.x, (int)hMovePoint.y);
 
 						  // À¯´ÖÀº ÀÎµ¦½º·Î ÀÌµ¿
 						  unit->setPosition(hMovePoint);
@@ -799,7 +799,7 @@ void GameScene::onUnitAction(CCNode* sender)
 						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
 						  if (DEBUG_PRINT_PACKET)
-							  printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+							  printf("Move To(%d, %d)\n", (int)hMovePoint.x, (int)hMovePoint.y);
 
 						  unit->setPosition(hMovePoint);
 
@@ -821,7 +821,7 @@ void GameScene::onUnitAction(CCNode* sender)
 						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
 						  if (DEBUG_PRINT_PACKET)
-							  printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+							  printf("Move To(%d, %d)\n", (int)hMovePoint.x, (int)hMovePoint.y);
 
 						  // À¯´ÖÀº ÀÎµ¦½º·Î ÀÌµ¿
 						  unit->setPosition(hMovePoint);
@@ -845,7 +845,7 @@ void GameScene::onUnitAction(CCNode* sender)
 							  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
 							  if (DEBUG_PRINT_PACKET)
-								  printf("Move To(%d, %d)\n", hMovePoint.x, hMovePoint.y);
+								  printf("Move To(%d, %d)\n", (int)hMovePoint.x, (int)hMovePoint.y);
 
 							  unit->setPosition(hMovePoint);
 
