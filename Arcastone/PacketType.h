@@ -30,6 +30,8 @@ enum PacketTypes
 
 	PKT_SC_WRONG_ATTACK = 8,
 
+	PKT_SC_COST_RENEWAL = 9,
+
 	PKT_MAX	= 1024
 } ;
 
@@ -315,6 +317,17 @@ namespace Packet
 			mWhoIsWinner = WW_NONE;
 		}
 		WhosWinner mWhoIsWinner;
+	};
+
+	struct CostRenewalResult : public PacketHeader
+	{
+		CostRenewalResult(){
+			mSize = sizeof(CostRenewalResult);
+			mType = PKT_SC_COST_RENEWAL;
+			mCost = -1;
+			mMaxCost = -1;
+		}
+		int mCost, mMaxCost;
 	};
 }
 

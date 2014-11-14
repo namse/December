@@ -58,6 +58,8 @@ private:
 
 	void PrintUnitActionQueue(UnitAction attackData);
 
+	int GetPlayerIndexByPlayerNumber(PlayerNumber playerNumber);
+
 private:
 	GameNumber		m_GameNum;
 	Field			m_GameField;

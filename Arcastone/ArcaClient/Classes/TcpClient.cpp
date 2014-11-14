@@ -198,6 +198,15 @@ void TcpClient::processPacket()
 			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
 			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadActionQueue, dynamic_cast<GameScene*>(layer), recvData));
 		}break;
+
+		case PKT_SC_COST_RENEWAL:
+		{
+			Packet::CostRenewalResult recvData;
+			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
+			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ReadRestCost, dynamic_cast<GameScene*>(layer), recvData));
+		}break;
+
 		default:
 			//assert(false);
 			break;

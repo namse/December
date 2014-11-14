@@ -59,6 +59,7 @@ public:
 	void					ReadUnitData(UnitData unitData[], int length);
 	void					SetTurn(bool isMyTurn){ m_IsMyTurn = isMyTurn; }
 	void					ReadActionQueue(Packet::AttackResult attackResult);
+	void					ReadRestCost(Packet::CostRenewalResult recvData);
 
 private:
 	HexaPoint				ScreenToHexa(ScreenPoint point);

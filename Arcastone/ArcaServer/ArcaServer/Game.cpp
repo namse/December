@@ -231,13 +231,21 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 		return;
 	}
 
-	// TODO : 플레이어의 남은 이동 가능 횟수 패킷 전달
-
 	IsNearArca();	// 아르카스톤에 대한 턴 처리 해주고..
 
 	m_PlayTurn++;	// 턴 경과요~
-	
-	// TODO : 남은 턴 수, 최대 턴 수 패킷 전달
+
+	{
+		// 너 마나 이만큼 남았어~
+		Packet::CostRenewalResult outPacket;
+		outPacket.mCost = m_CanCommand;
+
+		int attackerIndex = GetPlayerIndexByPlayerNumber(m_Attacker);
+		outPacket.mMaxCost = m_MaxTurn[attackerIndex];
+		auto session = GClientManager->GetClient(m_Attacker);
+		if (session != nullptr)
+			session->SendRequest(&outPacket);
+	}
 
 	// 남은 턴 횟수가 없다면
 	if (m_CanCommand <= 0)
@@ -819,4 +827,11 @@ UnitDie:
 	printf("Die Unit ID : %d\n", (int)attackData.mUnitId);
 
 	return;
+}
+
+int Game::GetPlayerIndexByPlayerNumber(PlayerNumber playerNumber)
+{
+	if (playerNumber == m_PlayerList.at(0))
+		return 0;
+	else return 1;
 }

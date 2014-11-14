@@ -59,6 +59,7 @@ void GameScene::gameLogic(float dt)
 
 	case GS_GAME_START:			// GameStartResult 를 받은 상태
 	{
+
 		//if (m_IsAction && m_IsMyTurn) TcpClient::getInstance()->TurnEndRequest();
 	}break;
 	}
@@ -958,4 +959,9 @@ UnitDie:
 	printf("Die Unit ID : %d\n", (int)attackData.mUnitId);
 
 	return;
+}
+
+void GameScene::ReadRestCost(Packet::CostRenewalResult recvData)
+{
+	printf("Rest Cost : %d\nMax Cost : %d", recvData.mCost, recvData.mMaxCost);
 }
