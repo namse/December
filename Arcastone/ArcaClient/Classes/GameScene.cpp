@@ -159,8 +159,21 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	switch (unit->GetMoveType())
 	{
-	case UMT_STRAIGHT:
+	case UMT_STRAIGHT:{
+		attackData.attackType = UMT_STRAIGHT;
+		// 스트레이트와 점프는 방향과 거리를 입력
+		direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetDirection();
+		distance = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
+
+		if (distance > unit->GetMoveRange()) distance = unit->GetMoveRange();
+
+		// 공격을 취소하는 경우
+		if (distance == 0)
+			return;
+	}break;
+
 	case UMT_JUMP:{
+		attackData.attackType = UMT_JUMP;
 		// 스트레이트와 점프는 방향과 거리를 입력
 		direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetDirection();
 		distance = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
@@ -173,6 +186,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	}break;
 
 	case UMT_DASH:{
+		attackData.attackType = UMT_DASH;
 		for (int i = 0; i < m_CourseStack.size(); ++i)
 		{
 			// 대쉬는 이동 스택을 입력
@@ -181,6 +195,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	}break;
 
 	case UMT_TELEPORT:{
+		attackData.attackType = UMT_TELEPORT;
 		// 텔포는 이동 칸 하나 입력
 		attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
 	}break;
@@ -191,6 +206,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	m_CourseStack.clear();
 
+	attackData.id = unit->GetID();
 	attackData.direction = direction;
 	attackData.Range = distance;
 
