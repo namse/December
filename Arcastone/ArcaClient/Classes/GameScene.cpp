@@ -203,7 +203,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		if (m_CourseStack.size() == 1)
 		{
 			// 유닛이 없는 칸만 이동가능
-			if (getUnitByPos(m_CourseStack.at(0)))
+			if (getUnitByPos(m_CourseStack.at(0)) == nullptr)
 			{
 
 				attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
