@@ -125,8 +125,15 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	case UMT_STRAIGHT:
 	{
 						 // 유닛 이동 시작!
-						 UnitMove(attackData.direction, attackData.Range, attackUnit, true);	// 함수 내에서 유닛들 데굴데굴 구루는중~
+					UnitMove(attackData.direction, attackData.Range, attackUnit, true);	// 함수 내에서 유닛들 데굴데굴 구루는중~
 	}break;
+
+	case UMT_JUMP:
+	{
+					 UnitJump(attackData.direction, attackData.Range, attackUnit);
+
+	}break;
+
 	case UMT_DASH:
 	{
 					 // 대쉬방향을 알기 위해 BeforePosition 을 사용해보아요
@@ -165,25 +172,9 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 					 }
 
 	}break;
-	case UMT_JUMP:
-	{
-					 UnitJump(attackData.direction, attackData.Range, attackUnit);
 
-	}break;
 	case UMT_TELEPORT:
 	{
-						 // 텔포하려는 위치에 유닛이 있는 경우 -> 합!체!
-						 if (GetUnitInPosition(attackData.position[0]) != nullptr)
-						 {
-							 // 하면 안되지!
-							 Packet::WrongAttackResult outPacket;
-							 outPacket.mWrongType = WAT_CANT_TELEPORT_THERE;
-							 auto session = GClientManager->GetClient(attacker);
-							 if (session != nullptr)
-								 session->SendRequest(&outPacket);
-
-							 return ;
-						 }
 						 attackUnit->SetPosition(attackData.position[0]);
 
 						 UnitAction action;
@@ -195,6 +186,7 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 						 action.mMoveData.mFinalY = attackData.position[0].y;
 						 m_UnitActionQueue.push_back(action);
 	}break;
+
 	default:
 		assert(false && "HandleAttack In UnitMoveType Wrong");
 	}
@@ -279,6 +271,7 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 		}
 	}
 }
+
 void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirstMove)
 {
 	if (range <= 0)
@@ -683,11 +676,31 @@ void Game::UnitCounting()
 
 bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 {
-	// 매우 짧게 공격해서 공격을 취소하는 경우
-	if (attackData.Range <= 0)
+	switch (attackData.attackType)
 	{
-		// 그냥 무시
-		return false;
+	case UMT_STRAIGHT:
+		// 공격을 취소하는 경우
+		if (attackData.Range == 0)
+			return false;
+	case UMT_JUMP:
+		if (attackData.Range == 0)
+			return false;
+	case UMT_DASH:
+		if (attackData.Range == 0)
+			return false;
+	case UMT_TELEPORT:
+		// 텔포하려는 위치에 유닛이 있는 경우 -> 합!체!
+		if (GetUnitInPosition(attackData.position[0]) != nullptr)
+		{
+			// 하면 안되지!
+			Packet::WrongAttackResult outPacket;
+			outPacket.mWrongType = WAT_CANT_TELEPORT_THERE;
+			auto session = GClientManager->GetClient(attacker);
+			if (session != nullptr)
+				session->SendRequest(&outPacket);
+
+			return false;
+		}
 	}
 
 	// 아직 턴이 아닌데 공격을 시도하면

@@ -134,6 +134,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	m_CursoredPoint = ScreenPoint(touch->getLocation());
 
 	// TODO : 요거 이렇게 가면 너무 자주 지우고 그리고 하니까 어떻게 좀 해주세요
+	// 이 안에서 유닛 이동 스택 쌓는데, 그게 attackData 에도 사용되니까 주의
 	drawUnitMove(unit, HD_NONE, 0, true);
 }
 
@@ -197,7 +198,8 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	case UMT_TELEPORT:{
 		attackData.attackType = UMT_TELEPORT;
 		// 텔포는 이동 칸 하나 입력
-		attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
+		if (m_CourseStack.size() == 1)
+			attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
 	}break;
 
 	default:
@@ -211,8 +213,8 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	attackData.Range = distance;
 
 	TcpClient::getInstance()->attackRequest(attackData);
+
 	m_SelectedUnit = NON_SELECT_UNIT;
-	
 }
 
 void GameScene::DrawExpectUnitMove(Unit* unit)
@@ -851,6 +853,7 @@ void GameScene::onUnitAction(CCNode* sender)
 							  auto sprite = unit->GetSprite();
 							  CCFiniteTimeAction* actionMove =
 								  CCMoveTo::create(0, sMovePoint);
+							  sprite->runAction(actionMove);
 
 		}break;
 		case UAT_COLLISION:{
