@@ -125,12 +125,12 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	case UMT_STRAIGHT:
 	{
 						 // 유닛 이동 시작!
-					UnitMove(attackData.direction, attackData.Range, attackUnit, true);	// 함수 내에서 유닛들 데굴데굴 구루는중~
+					UnitMove(attackData.direction, attackData.range, attackUnit, true);	// 함수 내에서 유닛들 데굴데굴 구루는중~
 	}break;
 
 	case UMT_JUMP:
 	{
-					 UnitJump(attackData.direction, attackData.Range, attackUnit);
+					 UnitJump(attackData.direction, attackData.range, attackUnit);
 
 	}break;
 
@@ -139,8 +139,8 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 					 // 대쉬방향을 알기 위해 BeforePosition 을 사용해보아요
 					 Coord beforePosition = attackUnit->GetPos();
 
-					 // 입력한 Range 만큼 '한칸씩' 이동하겠어요~
-					 for (int move = 0; move < attackData.Range; ++move)
+					 // 입력한 range 만큼 '한칸씩' 이동하겠어요~
+					 for (int move = 0; move < attackData.range; ++move)
 					 {
 						 Unit* target = GetUnitInPosition(attackData.position[move]);
 						 // 아! 물론 이동하려는 위치에 유닛이 있으면
@@ -700,13 +700,13 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 	{
 	case UMT_STRAIGHT:
 		// 공격을 취소하는 경우
-		if (attackData.Range == 0)
+		if (attackData.range == 0)
 			return false;
 	case UMT_JUMP:
-		if (attackData.Range == 0)
+		if (attackData.range == 0)
 			return false;
 	case UMT_DASH:
-		if (attackData.Range == 0)
+		if (attackData.range == 0)
 			return false;
 	case UMT_TELEPORT:
 		// 텔포하려는 위치에 유닛이 있는 경우 -> 합!체!
@@ -793,9 +793,6 @@ void Game::PrintUnitActionQueue(UnitAction attackData)
 	return;
 
 UnitMove:
-	printf("Action Type : Unit Move");
-	printf("\n");
-
 	printf("Unit ID : %d\n Move Range : %d\n Move Direction : %d\n Move Point : %d, %d\n",
 		(int)attackData.mUnitId,
 		attackData.mMoveData.mRange,

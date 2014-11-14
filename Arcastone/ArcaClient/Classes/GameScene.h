@@ -63,6 +63,8 @@ public:
 private:
 	HexaPoint				ScreenToHexa(ScreenPoint point);
 
+	void					PrintUnitAction(UnitAction unitAction);
+
 private:
 	Game					m_Game;
 	GameState				m_GameState;

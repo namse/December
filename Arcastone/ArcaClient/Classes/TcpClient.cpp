@@ -262,16 +262,16 @@ void TcpClient::attackRequest(AttackData attackData)
 		if (printDirection)
 			printf("Attack Direction : %d\n", (int)attackData.direction);
 		if (printRange)
-			printf("Attack Range : %d\n", (int)attackData.direction);
+			printf("Attack Range : %d\n", attackData.range);
 		if (printPosition)
 			printf("Attack Position : %d, %d\n", (int)attackData.position[0].x, (int)attackData.position[0].y);
 
 		if (attackData.attackType == UMT_DASH)
 		{
-			for (int i = 1; i < attackData.Range; ++i)
+			for (int i = 1; i < attackData.range; ++i)
 			{
 				if (printPosition)
-					printf("Attack Position : (int)%d, %d\n", (int)attackData.position[i].x, (int)attackData.position[i].y);
+					printf("Attack Position : %d, %d\n", (int)attackData.position[i].x, (int)attackData.position[i].y);
 			}
 		}
 	}

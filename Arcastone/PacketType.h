@@ -199,7 +199,7 @@ struct UnitAction{
 struct AttackData{
 	UnitIdentityNumber id;
 	UnitMoveType		attackType;
-	int					Range;
+	int					range;
 	HexaDirection		direction;
 	Coord				position[MAX_MOVE_RANGE];
 };

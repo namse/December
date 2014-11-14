@@ -188,7 +188,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	case UMT_DASH:{
 		attackData.attackType = UMT_DASH;
-		distance = m_CourseStack.size() - 1;
+		distance = m_CourseStack.size();
 		for (int i = 0; i < m_CourseStack.size(); ++i)
 		{
 			// 대쉬는 이동 스택을 입력
@@ -212,7 +212,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	attackData.id = unit->GetID();
 	attackData.direction = direction;
-	attackData.Range = distance;
+	attackData.range = distance;
 
 	TcpClient::getInstance()->attackRequest(attackData);
 
@@ -288,6 +288,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 
 	HexaPoint		unitPos = unit->GetPosition();
 	int				unitAtk = unit->GetAttack();
+	int				unitRange = unit->GetMoveRange();
 	Color4F			signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 
 	// 유닛 패스를 처음부터 그리는 경우
@@ -358,7 +359,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 							  {
 								  if (*i == cursor)
 								  {
-									  // 저장돼있다면 거기부터 마지막 요소까지 삭제해버리세요
+									  // 저장돼있다면 거기 다음부터 마지막 요소까지 삭제해버리세요
 									  vector<HexaPoint>::iterator j;
 									  for (j = i; j != m_CourseStack.end();)
 									  {
@@ -368,7 +369,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 								  }
 							  }
 
-							  if (m_CourseStack.size() == unitAtk)
+							  if (m_CourseStack.size() == unitRange)
 							  {
 								  return;	// 설마 스택이 꽉 찼어요? OUT!
 							  }
@@ -408,7 +409,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 							  if (!m_CourseStack.empty() && m_CourseStack.back() == cursor) return;
 
 							  // 이동범위 벗어나면 OUT!
-							  if (!unitPos.isAround(cursor, unitAtk)) return;
+							  if (!unitPos.isAround(cursor, unitRange)) return;
 
 							  if (cursor == atkUnit->GetPosition())
 							  {
@@ -747,7 +748,6 @@ void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length)
 		this->addChild(fieldBlock, y);
 
 		if (DRAW_HEXA_NUMBER) drawText(x, y, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
-
 	}
 }
 
@@ -769,17 +769,13 @@ void GameScene::onUnitAction(CCNode* sender)
 		// id를 사용하여 i 번째 액션을 적용할 유닛을 찾음
 		Unit* unit = getUnitByID(action.mUnitId);
 
-		if (DEBUG_PRINT_PACKET)
-			printf("Read Ation from Server\n");
+		PrintUnitAction(action);
 
 		switch (action.mActionType)
 		{
 		case UAT_MOVE:{
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
 						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
-
-						  if (DEBUG_PRINT_PACKET)
-							  printf("Move To(%d, %d)\n", (int)hMovePoint.x, (int)hMovePoint.y);
 
 						  // 유닛은 인덱스로 이동
 						  unit->setPosition(hMovePoint);
@@ -800,9 +796,6 @@ void GameScene::onUnitAction(CCNode* sender)
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
 						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
-						  if (DEBUG_PRINT_PACKET)
-							  printf("Move To(%d, %d)\n", (int)hMovePoint.x, (int)hMovePoint.y);
-
 						  unit->setPosition(hMovePoint);
 
 						  auto sprite = unit->GetSprite();
@@ -821,9 +814,6 @@ void GameScene::onUnitAction(CCNode* sender)
 						  // 다른 타입의 액션이 들어올때까지 반복
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
 						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
-
-						  if (DEBUG_PRINT_PACKET)
-							  printf("Move To(%d, %d)\n", (int)hMovePoint.x, (int)hMovePoint.y);
 
 						  // 유닛은 인덱스로 이동
 						  unit->setPosition(hMovePoint);
@@ -845,9 +835,6 @@ void GameScene::onUnitAction(CCNode* sender)
 		case UAT_TELEPORT:{
 							  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
 							  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
-
-							  if (DEBUG_PRINT_PACKET)
-								  printf("Move To(%d, %d)\n", (int)hMovePoint.x, (int)hMovePoint.y);
 
 							  unit->setPosition(hMovePoint);
 
@@ -892,4 +879,68 @@ HexaPoint GameScene::ScreenToHexa(ScreenPoint point)
 	}
 	
 	return retPoint;
+}
+
+void GameScene::PrintUnitAction(UnitAction attackData)
+{
+	printf("Read Unit Action Queue\n");
+	switch (attackData.mActionType)
+	{
+	case UAT_MOVE:
+		printf("MoveType : UAT_MOVE");
+		printf("\n");
+		goto UnitMove;
+	case UAT_STRAIGHT:
+		printf("MoveType : UAT_STRAIGHT");
+		printf("\n");
+		goto UnitMove;
+	case UAT_JUMP:
+		printf("MoveType : UAT_JUMP");
+		printf("\n");
+		goto UnitMove;
+	case UAT_DASH:
+		printf("MoveType : UAT_DASH");
+		printf("\n");
+		goto UnitMove;
+	case UAT_TELEPORT:
+		printf("MoveType : UAT_TELEPORT");
+		printf("\n");
+		goto UnitMove;
+
+	case UAT_COLLISION:
+		printf("Action Type : Unit Collision");
+		printf("\n");
+		goto UnitCollision;
+
+	case UAT_DIE:
+		printf("Action Type : Unit Die");
+		printf("\n");
+		goto UnitDie;
+	}
+
+	return;
+
+UnitMove:
+	printf("Unit ID : %d\n Move Range : %d\n Move Direction : %d\n Move Point : %d, %d\n",
+		(int)attackData.mUnitId,
+		attackData.mMoveData.mRange,
+		(int)attackData.mMoveData.mDirection,
+		(int)attackData.mMoveData.mFinalX,
+		(int)attackData.mMoveData.mFinalY);
+	printf("\n");
+
+	return;
+
+UnitCollision:
+	printf("Attacker ID : %d\n", (int)attackData.mUnitId);
+	printf("Target ID : %d\n", (int)attackData.mCollisionData.mTarget);
+	printf("Attacker HP : %d\n", attackData.mCollisionData.mMyHP);
+	printf("Target HP : %d\n", attackData.mCollisionData.mTargetHP);
+
+	return;
+
+UnitDie:
+	printf("Die Unit ID : %d\n", (int)attackData.mUnitId);
+
+	return;
 }
