@@ -188,6 +188,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	case UMT_DASH:{
 		attackData.attackType = UMT_DASH;
+		distance = m_CourseStack.size() - 1;
 		for (int i = 0; i < m_CourseStack.size(); ++i)
 		{
 			// 대쉬는 이동 스택을 입력
@@ -198,6 +199,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	case UMT_TELEPORT:{
 		attackData.attackType = UMT_TELEPORT;
 		// 텔포는 이동 칸 하나 입력
+
 		if (m_CourseStack.size() == 1)
 			attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
 	}break;

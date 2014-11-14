@@ -12,7 +12,7 @@
 
 #define START_POINT_PLAYER1 Coord(3,5)
 #define START_POINT_PLAYER2 Coord(3,1)
-
+#define DEBUG_PRINT			true
 
 Game::Game(GameNumber gameNum) : m_GameNum(gameNum)
 {
@@ -165,7 +165,9 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 							 action.mMoveData.mDirection = direction;
 							 action.mMoveData.mFinalX = attackData.position[move].x;
 							 action.mMoveData.mFinalY = attackData.position[move].y;
+
 							 m_UnitActionQueue.push_back(action);
+							 if (DEBUG_PRINT) PrintUnitActionQueue(action);
 
 							 Coord beforePosition = attackData.position[move];
 						 }
@@ -184,7 +186,9 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 						 action.mMoveData.mDirection = HexaDirection();
 						 action.mMoveData.mFinalX = attackData.position[0].x;
 						 action.mMoveData.mFinalY = attackData.position[0].y;
+
 						 m_UnitActionQueue.push_back(action);
+						 if (DEBUG_PRINT) PrintUnitActionQueue(action);
 	}break;
 
 	default:
@@ -317,7 +321,9 @@ void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirst
 		action.mMoveData.mDirection = direction;
 		action.mMoveData.mFinalX = unit->GetPos().x;
 		action.mMoveData.mFinalY = unit->GetPos().y;
+
 		m_UnitActionQueue.push_back(action);
+		if (DEBUG_PRINT) PrintUnitActionQueue(action);
 
 
 		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // °Å À¯´Ö ¹Ù±ù¿¡ ³ª°¬½¿±î?
@@ -336,7 +342,9 @@ void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirst
 		action.mMoveData.mDirection = direction;
 		action.mMoveData.mFinalX = unit->GetPos().x;
 		action.mMoveData.mFinalY = unit->GetPos().y;
+
 		m_UnitActionQueue.push_back(action);
+		if (DEBUG_PRINT) PrintUnitActionQueue(action);
 
 		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // °Å À¯´Ö ¹Ù±ù¿¡ ³ª°¬½¿±î?
 			KillThisUnit(unit); //±×·³ Á¨ºä›X¾²!.. ¾È±×·¡µµ È¥ÀÜµ¥ ³«»ç¶ó´Ï ¤Ð¤Ð
@@ -364,7 +372,9 @@ void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 		action.mMoveData.mDirection = direction;
 		action.mMoveData.mFinalX = attackPosition.x;
 		action.mMoveData.mFinalY = attackPosition.y;
+
 		m_UnitActionQueue.push_back(action);
+		if (DEBUG_PRINT) PrintUnitActionQueue(action);
 		return;
 	}
 
@@ -386,7 +396,9 @@ void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 			action.mMoveData.mDirection = direction;
 			action.mMoveData.mFinalX = attackPositionBefore.x;
 			action.mMoveData.mFinalY = attackPositionBefore.y;
+
 			m_UnitActionQueue.push_back(action);
+			if (DEBUG_PRINT) PrintUnitActionQueue(action);
 
 			UnitPush(unit, standUnit, 0, true);
 			return;
@@ -396,8 +408,10 @@ void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 		{
 			// ¿¡À×.. ±×·³ ¸ø°¡°Ú³×
 			// °Å±ä ¸ø°¡¿ä Å¬¶ó´Ô¾Æ~
+			if (DEBUG_PRINT) printf("Send Wrong Attack Type Packet : WAT_CANT_JUMP_THERE\n");
+
 			Packet::WrongAttackResult outPacket;
-			outPacket.mWrongType = WAT_CANT_TELEPORT_THERE;
+			outPacket.mWrongType = WAT_CANT_JUMP_THERE;
 			auto session = GClientManager->GetClient(m_Attacker);
 			if (session != nullptr)
 				session->SendRequest(&outPacket);
@@ -430,7 +444,9 @@ void Game::UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush)
 		action.mCollisionData.mTarget = target->GetID();
 		action.mCollisionData.mMyHP = pusher->GetHP();
 		action.mCollisionData.mTargetHP = target->GetHP();
+
 		m_UnitActionQueue.push_back(action);
+		if (DEBUG_PRINT) PrintUnitActionQueue(action);
 	}
 }
 
@@ -445,7 +461,9 @@ void Game::UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy)
 	action.mCollisionData.mTarget = thatGuy->GetID();
 	action.mCollisionData.mMyHP = thisGuy->GetHP();
 	action.mCollisionData.mTargetHP = thatGuy->GetHP();
+
 	m_UnitActionQueue.push_back(action);
+	if (DEBUG_PRINT) PrintUnitActionQueue(action);
 
 	if (thisGuy->GetHP() <= 0)
 		KillThisUnit(thisGuy);
@@ -460,7 +478,9 @@ void Game::KillThisUnit(Unit* unit)
 	UnitAction action;
 	action.mActionType = UAT_DIE;
 	action.mUnitId = unit->GetID();
+
 	m_UnitActionQueue.push_back(action);
+	if (DEBUG_PRINT) PrintUnitActionQueue(action);
 }
 
 void Game::StartGame()
@@ -731,4 +751,71 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 
 	// ¿Ã¹Ù¸¥ °ø°ÝÀÌ±º! Åë°ú!
 	return true;
+}
+
+void Game::PrintUnitActionQueue(UnitAction attackData)
+{
+	printf("Add Unit Action Queue\n");
+	switch (attackData.mActionType)
+	{
+	case UAT_MOVE:
+		printf("MoveType : UAT_MOVE");
+		printf("\n");
+		goto UnitMove;
+	case UAT_STRAIGHT:
+		printf("MoveType : UAT_STRAIGHT");
+		printf("\n");
+		goto UnitMove;
+	case UAT_JUMP:
+		printf("MoveType : UAT_JUMP");
+		printf("\n");
+		goto UnitMove;
+	case UAT_DASH:
+		printf("MoveType : UAT_DASH");
+		printf("\n");
+		goto UnitMove;
+	case UAT_TELEPORT:
+		printf("MoveType : UAT_TELEPORT");
+		printf("\n");
+		goto UnitMove;
+
+	case UAT_COLLISION:
+		printf("Action Type : Unit Collision");
+		printf("\n");
+		goto UnitCollision;
+
+	case UAT_DIE:
+		printf("Action Type : Unit Die");
+		printf("\n");
+		goto UnitDie;
+	}
+
+	return;
+
+UnitMove:
+	printf("Action Type : Unit Move");
+	printf("\n");
+
+	printf("Unit ID : %d\n Move Range : %d\n Move Direction : %d\n Move Point : %d, %d\n",
+		(int)attackData.mUnitId,
+		attackData.mMoveData.mRange,
+		(int)attackData.mMoveData.mDirection,
+		(int)attackData.mMoveData.mFinalX,
+		(int)attackData.mMoveData.mFinalY);
+	printf("\n");
+
+	return;
+
+UnitCollision:
+	printf("Attacker ID : %d\n", (int)attackData.mUnitId);
+	printf("Target ID : %d\n", (int)attackData.mCollisionData.mTarget);
+	printf("Attacker HP : %d\n", attackData.mCollisionData.mMyHP);
+	printf("Target HP : %d\n", attackData.mCollisionData.mTargetHP);
+
+	return;
+
+UnitDie:
+	printf("Die Unit ID : %d\n", (int)attackData.mUnitId);
+
+	return;
 }

@@ -41,6 +41,7 @@ enum WrongAttackType
 	WAT_NOT_YOUR_TURN = 1,
 	WAT_NO_ENOUGH_COST = 2,
 	WAT_CANT_TELEPORT_THERE = 3,
+	WAT_CANT_JUMP_THERE = 4,
 };
 
 enum UnitType{
@@ -116,11 +117,12 @@ enum WhosWinner
 enum UnitActionType{
 	UAT_NONE = 0,
 	UAT_MOVE = 1,
-	UAT_JUMP = 2,
-	UAT_DASH = 3,
-	UAT_TELEPORT = 4,
-	UAT_DIE = 5,
-	UAT_COLLISION = 6,
+	UAT_STRAIGHT = 2,
+	UAT_JUMP = 3,
+	UAT_DASH = 4,
+	UAT_TELEPORT = 5,
+	UAT_DIE = 6,
+	UAT_COLLISION = 7,
 };
 
 struct Coord{

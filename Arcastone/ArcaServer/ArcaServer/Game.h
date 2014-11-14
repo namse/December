@@ -56,6 +56,8 @@ private:
 
 	bool IsCorrectAttack(PlayerNumber attacker, AttackData attackData);
 
+	void PrintUnitActionQueue(UnitAction attackData);
+
 private:
 	GameNumber		m_GameNum;
 	Field			m_GameField;
