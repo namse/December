@@ -38,7 +38,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	/// DB Helper 초기화
 	if ( false == DbHelper::Initialize(DB_CONN_STR) )
 		return -1 ;
-
+	//utf-8 test
 	/// 윈속 초기화
 	WSADATA wsa ;
 	if (WSAStartup(MAKEWORD(2,2), &wsa) != 0)
