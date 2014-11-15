@@ -1,4 +1,4 @@
-#ifndef __WEB_SOCK_W32_H__
+﻿#ifndef __WEB_SOCK_W32_H__
 #define __WEB_SOCK_W32_H__
 
 // Windows uses _DEBUG and NDEBUG

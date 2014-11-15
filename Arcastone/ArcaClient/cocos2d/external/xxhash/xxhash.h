@@ -1,4 +1,4 @@
-/*
+﻿/*
    xxHash - Fast Hash algorithm
    Header File
    Copyright (C) 2012-2014, Yann Collet.

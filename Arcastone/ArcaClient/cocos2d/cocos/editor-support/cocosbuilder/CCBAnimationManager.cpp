@@ -1,4 +1,4 @@
-#include "CCBAnimationManager.h"
+﻿#include "CCBAnimationManager.h"
 #include "CCBSequence.h"
 #include "CCBSequenceProperty.h"
 #include "CCBReader.h"

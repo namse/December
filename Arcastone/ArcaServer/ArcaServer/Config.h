@@ -1,20 +1,20 @@
-#pragma once
+ï»¿#pragma once
 
 
-/// DB ¿¬°á ½ºÆ®¸µ 
+/// DB ì—°ê²° ìŠ¤íŠ¸ë§ 
 #define DB_CONN_STR "..\\Database\\user_example.db3"
 #define LISTEN_PORT	9001
 
-/// Å¸ÀÌ¸Ó ½ÇÇà °£°İ (ms)
+/// íƒ€ì´ë¨¸ ì‹¤í–‰ ê°„ê²© (ms)
 #define APC_TIMER_INTERVAL	100
 
 
-/// ÇÃ·¹ÀÌ¾îÀÇ HeartBeat ÁÖ±â
+/// í”Œë ˆì´ì–´ì˜ HeartBeat ì£¼ê¸°
 #define PLAYER_HEART_BEAT	1000
 
-/// 1ºĞ¸¶´Ù ÇÃ·¹ÀÌ¾î »óÅÂ ÀúÀå
+/// 1ë¶„ë§ˆë‹¤ í”Œë ˆì´ì–´ ìƒíƒœ ì €ì¥
 #define PLAYER_DB_UPDATE_INTERVAL	(60*1000)
 
 
-/// ¼¼¼Çº° send/recv ¹öÆÛ Å©±â
+/// ì„¸ì…˜ë³„ send/recv ë²„í¼ í¬ê¸°
 #define BUFSIZE	(1024*10)

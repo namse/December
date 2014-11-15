@@ -1,4 +1,4 @@
-//
+﻿//
 //  NSString+URLEncoding.h
 //
 //  Created by Jon Crosby on 10/19/07.

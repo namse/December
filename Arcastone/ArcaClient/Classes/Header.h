@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "cocos2d.h"
 #include "../../PacketType.h"
@@ -9,4 +9,4 @@
 using namespace std;
 using namespace cocos2d;
 
-// typedef, define µî ¼±¾ğºÎ ¸ğµÎ Enums.h·Î ¿Å±è
+// typedef, define ë“± ì„ ì–¸ë¶€ ëª¨ë‘ Enums.hë¡œ ì˜®ê¹€

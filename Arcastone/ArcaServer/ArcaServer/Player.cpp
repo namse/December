@@ -1,10 +1,10 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Player.h"
 #include "JsonManager.h"
 
 Player::Player(PlayerNumber playerNum) : m_PlayerNum(playerNum)
 {
-	// ÀÓ½Ã·Î À¯´Ö µ¥ÀÌÅÍ ³Ö´Â °÷ ÀÓ´Ù
+	// ì„ì‹œë¡œ ìœ ë‹› ë°ì´í„° ë„£ëŠ” ê³³ ì„ë‹¤
 
 	/*
 	UnitData data[6];

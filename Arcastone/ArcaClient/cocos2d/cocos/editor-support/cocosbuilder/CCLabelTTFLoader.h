@@ -1,4 +1,4 @@
-#ifndef _CCB_CCLABELTTFLOADER_H_
+﻿#ifndef _CCB_CCLABELTTFLOADER_H_
 #define _CCB_CCLABELTTFLOADER_H_
 
 #include "base/CCRef.h"

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ArcaStone.h"
@@ -60,20 +60,20 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 			}
 			else if (playerNumber == player2)
 			{
-				position = Coord(6, 10) - originPosition; // ´ëÄªÀ¸·Î
+				position = Coord(6, 10) - originPosition; // ëŒ€ì¹­ìœ¼ë¡œ
 			}
 			unit->SetPosition(position);
 			m_UnitList.push_back(unit);
 		};
 	}
 
-	// ¾Æ¸£Ä«½ºÅæ ¼³Ä¡
+	// ì•„ë¥´ì¹´ìŠ¤í†¤ ì„¤ì¹˜
 	if (USE_ARCA) SetUpNPC(UT_ARCASTONE, Coord(3,5));
 
-	// Àå¾Ö¹° ¼³Ä¡
+	// ì¥ì• ë¬¼ ì„¤ì¹˜
 	if (USE_ROCK) SetUpNPC(UT_ROCK, Coord(3,6));
 
-	// À¯´Ö ¼ö ÃÊ±âÈ­
+	// ìœ ë‹› ìˆ˜ ì´ˆê¸°í™”
 	UnitCounting();
 	
 	// play turn and first attacker setting
@@ -88,10 +88,10 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 
 void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 {
-	// °ø°İ Á¶°ÇÀÌ ¿Ã¹Ù¸£Áö ¾Ê´Ù¸é!!
+	// ê³µê²© ì¡°ê±´ì´ ì˜¬ë°”ë¥´ì§€ ì•Šë‹¤ë©´!!
 	if (!IsCorrectAttack(attacker, attackData))
 	{
-		// ¹«½Ã!
+		// ë¬´ì‹œ!
 		return;
 	}
 
@@ -103,8 +103,8 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	{
 		case UMT_STRAIGHT:
 		{
-							 // À¯´Ö ÀÌµ¿ ½ÃÀÛ!
-						UnitMove(attackData.direction, attackData.range, attackUnit, true);	// ÇÔ¼ö ³»¿¡¼­ À¯´Öµé µ¥±¼µ¥±¼ ±¸·ç´ÂÁß~
+							 // ìœ ë‹› ì´ë™ ì‹œì‘!
+						UnitMove(attackData.direction, attackData.range, attackUnit, true);	// í•¨ìˆ˜ ë‚´ì—ì„œ ìœ ë‹›ë“¤ ë°êµ´ë°êµ´ êµ¬ë£¨ëŠ”ì¤‘~
 		}break;
 
 		case UMT_JUMP:
@@ -115,22 +115,22 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 
 		case UMT_DASH:
 		{
-						 // ´ë½¬¹æÇâÀ» ¾Ë±â À§ÇØ BeforePosition À» »ç¿ëÇØº¸¾Æ¿ä
+						 // ëŒ€ì‰¬ë°©í–¥ì„ ì•Œê¸° ìœ„í•´ BeforePosition ì„ ì‚¬ìš©í•´ë³´ì•„ìš”
 						 Coord beforePosition = attackUnit->GetPos();
 
-						 // ÀÔ·ÂÇÑ range ¸¸Å­ 'ÇÑÄ­¾¿' ÀÌµ¿ÇÏ°Ú¾î¿ä~
+						 // ì…ë ¥í•œ range ë§Œí¼ 'í•œì¹¸ì”©' ì´ë™í•˜ê² ì–´ìš”~
 						 for (int move = 0; move < attackData.range; ++move)
 						 {
 							 Unit* target = GetUnitInPosition(attackData.position[move]);
-							 // ¾Æ! ¹°·Ğ ÀÌµ¿ÇÏ·Á´Â À§Ä¡¿¡ À¯´ÖÀÌ ÀÖÀ¸¸é
+							 // ì•„! ë¬¼ë¡  ì´ë™í•˜ë ¤ëŠ” ìœ„ì¹˜ì— ìœ ë‹›ì´ ìˆìœ¼ë©´
 							 if (target != nullptr)
 							 {
 								 HexaDirection direction = GetHexaDirection(beforePosition, attackData.position[move]);
-								 // ¸¸³­ À¯´ÖÀ» ¹Ğ¾î¹ö·Á¿ä!
+								 // ë§Œë‚œ ìœ ë‹›ì„ ë°€ì–´ë²„ë ¤ìš”!
 								 UnitPush(attackUnit, target, 0, true);
 								 break;
 							 }
-							 // À¯´ÖÀ» ¸¸³ªÁö ¾ÊÀ¸¸é °è¼Ó ÁúÁÖÇÏ¼¼¿ê!
+							 // ìœ ë‹›ì„ ë§Œë‚˜ì§€ ì•Šìœ¼ë©´ ê³„ì† ì§ˆì£¼í•˜ì„¸ìš§!
 							 else
 							 {
 								 HexaDirection direction = GetHexaDirection(beforePosition, attackData.position[move]);
@@ -175,10 +175,10 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	}
 
 
-	// ÀÌµ¿ÇßÀ¸´Ï±î ÀÌµ¿ °¡´É È½¼ö - 1
+	// ì´ë™í–ˆìœ¼ë‹ˆê¹Œ ì´ë™ ê°€ëŠ¥ íšŸìˆ˜ - 1
 	m_CanCommand--;
 
-	// À¯´ÖÀÌ ¾î¶»°Ô ¾î¶»°Ô ÀÌµ¿Çß´ÂÁö ÅëÂ°·Î ¾Ë·ÁÁØ´Ù!
+	// ìœ ë‹›ì´ ì–´ë–»ê²Œ ì–´ë–»ê²Œ ì´ë™í–ˆëŠ”ì§€ í†µì§¸ë¡œ ì•Œë ¤ì¤€ë‹¤!
 	{
 		Packet::AttackResult outPacket;
 		outPacket.mQueueLength = m_UnitActionQueue.size();
@@ -196,12 +196,12 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	
 	IsGameOver();
 
-	IsNearArca();	// ¾Æ¸£Ä«½ºÅæ¿¡ ´ëÇÑ ÅÏ Ã³¸® ÇØÁÖ°í..
+	IsNearArca();	// ì•„ë¥´ì¹´ìŠ¤í†¤ì— ëŒ€í•œ í„´ ì²˜ë¦¬ í•´ì£¼ê³ ..
 
-	m_PlayTurn++;	// ÅÏ °æ°ú¿ä~
+	m_PlayTurn++;	// í„´ ê²½ê³¼ìš”~
 
 	{
-		// ³Ê ¸¶³ª ÀÌ¸¸Å­ ³²¾Ò¾î~
+		// ë„ˆ ë§ˆë‚˜ ì´ë§Œí¼ ë‚¨ì•˜ì–´~
 		Packet::CostRenewalResult outPacket;
 		outPacket.mCost = m_CanCommand;
 
@@ -212,18 +212,18 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 			session->SendRequest(&outPacket);
 	}
 
-	// ³²Àº ÅÏ È½¼ö°¡ ¾ø´Ù¸é
+	// ë‚¨ì€ í„´ íšŸìˆ˜ê°€ ì—†ë‹¤ë©´
 	if (m_CanCommand <= 0)
 	{
 		m_IsFirstTurn = false;
 
 		if (m_Attacker == m_PlayerList[0])
 		{
-			// °ø°İÀÚ¸¦ ¹Ù²Ù°í
+			// ê³µê²©ìë¥¼ ë°”ê¾¸ê³ 
 			m_Attacker = m_PlayerList[1];
-			// ¾ó¸¶³ª ¿òÁ÷ÀÏ ¼ö ÀÖ´ÂÁö ¾Ë·ÁÁØ´Ù.
+			// ì–¼ë§ˆë‚˜ ì›€ì§ì¼ ìˆ˜ ìˆëŠ”ì§€ ì•Œë ¤ì¤€ë‹¤.
 			m_CanCommand = m_MaxTurn[1];
-			// ÇÃ·¹ÀÌ¾îÀÇ ¸¶³ª·®À» Àç¹ÖÇÏ´Â ½ºÅ³À» ³Ö°í½Í´Ù¸é ÀÌ °ª¿¡ ÀÏÁ¤°ªÀ» »©ÁÖ¸é µÈ´Ù.
+			// í”Œë ˆì´ì–´ì˜ ë§ˆë‚˜ëŸ‰ì„ ì¬ë°í•˜ëŠ” ìŠ¤í‚¬ì„ ë„£ê³ ì‹¶ë‹¤ë©´ ì´ ê°’ì— ì¼ì •ê°’ì„ ë¹¼ì£¼ë©´ ëœë‹¤.
 		}
 		else
 		{
@@ -231,7 +231,7 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 			m_CanCommand = m_MaxTurn[0];
 		}
 
-		// °ø°İÇÏ¶ó´Â ½ÅÈ£¸¦ º¸³½´Ù!
+		// ê³µê²©í•˜ë¼ëŠ” ì‹ í˜¸ë¥¼ ë³´ë‚¸ë‹¤!
 		{
 			Packet::YourTurnResult outPacket;
 			for (auto playerNumber : m_PlayerList)
@@ -257,23 +257,23 @@ void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirst
 		return;
 	}
 
-	// Ã³À½ ºÎµúÈù À¯´Ö°ú, ±× ¶óÀÎ¿¡¼­ ¸¶Áö¸·À¸·Î ¿¬°èµÇ¾î ºÎµúÈú À¯´ÖÀ» Ã£´Â´Ù.
+	// ì²˜ìŒ ë¶€ë”ªíŒ ìœ ë‹›ê³¼, ê·¸ ë¼ì¸ì—ì„œ ë§ˆì§€ë§‰ìœ¼ë¡œ ì—°ê³„ë˜ì–´ ë¶€ë”ªí ìœ ë‹›ì„ ì°¾ëŠ”ë‹¤.
 	Unit* firstGuy = nullptr;
 	Unit* lastGuy = nullptr;
 	int costLength = -1;
 	for (int l = 1; l <= range; l++)
 	{
-		// unitÀÇ direction ¹æÇâÀ¸·Î l¸¸Å­ °Å¸®¿¡ ¼­ÀÖ´Â À¯´Ö
+		// unitì˜ direction ë°©í–¥ìœ¼ë¡œ lë§Œí¼ ê±°ë¦¬ì— ì„œìˆëŠ” ìœ ë‹›
 		Unit* standUnit = GetUnitInPosition(unit->GetPos() + GetUnitVector(direction) * l);
-		if (standUnit == nullptr) // °Ô ¼­ÀÖ´Â°¡? - ¾Æ´¢
+		if (standUnit == nullptr) // ê²Œ ì„œìˆëŠ”ê°€? - ì•„ë‡¨
 		{
-			if (firstGuy == nullptr) // Ã³À½À¸·Î ¸¸³­ ³ğÀÌ ¾ÆÁ÷ ¾ø´Â°¡?
+			if (firstGuy == nullptr) // ì²˜ìŒìœ¼ë¡œ ë§Œë‚œ ë†ˆì´ ì•„ì§ ì—†ëŠ”ê°€?
 				continue;
-			else // ÀÌÁ¦²¯ Ãæµ¹Àº ÇÏ±ä Çß´Â°¡? ±×·³ Ãæµ¹À» ¸ØÃç¾ß°Ú±¸·Á
+			else // ì´ì œê» ì¶©ëŒì€ í•˜ê¸´ í–ˆëŠ”ê°€? ê·¸ëŸ¼ ì¶©ëŒì„ ë©ˆì¶°ì•¼ê² êµ¬ë ¤
 				break;
 		}
-		else{ // ³×³ğ, °Å±â ¼­ÀÖ¾ú±¸³ª!
-			if (firstGuy == nullptr) // ¾ÆÁ÷ ¾Æ¹«µµ ¸¸³ªÁö ¸øÇß´Â°¡?
+		else{ // ë„¤ë†ˆ, ê±°ê¸° ì„œìˆì—ˆêµ¬ë‚˜!
+			if (firstGuy == nullptr) // ì•„ì§ ì•„ë¬´ë„ ë§Œë‚˜ì§€ ëª»í–ˆëŠ”ê°€?
 			{
 				costLength = l;
 				firstGuy = standUnit;
@@ -282,9 +282,9 @@ void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirst
 		}
 	}
 
-	if (firstGuy != nullptr) // ´©±º°¡¿Í (ÀÔ¼ú)¹ÚÄ¡±â¸¦ Çß½À´Ï±î?
+	if (firstGuy != nullptr) // ëˆ„êµ°ê°€ì™€ (ì…ìˆ )ë°•ì¹˜ê¸°ë¥¼ í–ˆìŠµë‹ˆê¹Œ?
 	{
-		// °¡Àå °¡±îÀÌ¿¡¼­ ¸¸³­ ¾ÖÀÇ ÇÑÄ­ µÚ¿¡ À¯´ÖÀ» ¹èÄ¡ÇÏ°í
+		// ê°€ì¥ ê°€ê¹Œì´ì—ì„œ ë§Œë‚œ ì• ì˜ í•œì¹¸ ë’¤ì— ìœ ë‹›ì„ ë°°ì¹˜í•˜ê³ 
 		unit->SetPosition(unit->GetPos() + GetUnitVector(direction) * (costLength - 1));
 
 		UnitAction action;
@@ -299,14 +299,14 @@ void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirst
 		if (DEBUG_PRINT) PrintUnitActionQueue(action);
 
 
-		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // °Å À¯´Ö ¹Ù±ù¿¡ ³ª°¬½¿±î?
-			KillThisUnit(unit); //±×·³ Á¨ºä›X¾²!
+		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // ê±° ìœ ë‹› ë°”ê¹¥ì— ë‚˜ê°”ìŠ´ê¹Œ?
+			KillThisUnit(unit); //ê·¸ëŸ¼ ì  ë·°Â›Xì“°!
 
-		UnitPush(unit, lastGuy, range - costLength, isFirstMove); // ¸Ç ¸¶Áö¸·¿¡ ÀÖ´Â ³ğ¸¸ ¹Ğ¾î¹ö¸®¼¼¿ä.
+		UnitPush(unit, lastGuy, range - costLength, isFirstMove); // ë§¨ ë§ˆì§€ë§‰ì— ìˆëŠ” ë†ˆë§Œ ë°€ì–´ë²„ë¦¬ì„¸ìš”.
 	}
-	else // ´ç½Å ¾Õ¿¡ ¾Æ¹«µµ ¾ø´Ù¸é.. Å©Åª ¼Ö·Î±º
+	else // ë‹¹ì‹  ì•ì— ì•„ë¬´ë„ ì—†ë‹¤ë©´.. í¬í­ ì†”ë¡œêµ°
 	{
-		unit->SetPosition(unit->GetPos() + GetUnitVector(direction) * range); // Âß ¾ÕÀ¸·Î °¡½Ã¾î¿ä
+		unit->SetPosition(unit->GetPos() + GetUnitVector(direction) * range); // ì­‰ ì•ìœ¼ë¡œ ê°€ì‹œì–´ìš”
 
 		UnitAction action;
 		action.mActionType = UAT_MOVE;
@@ -319,23 +319,23 @@ void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirst
 		m_UnitActionQueue.push_back(action);
 		if (DEBUG_PRINT) PrintUnitActionQueue(action);
 
-		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // °Å À¯´Ö ¹Ù±ù¿¡ ³ª°¬½¿±î?
-			KillThisUnit(unit); //±×·³ Á¨ºä›X¾²!.. ¾È±×·¡µµ È¥ÀÜµ¥ ³«»ç¶ó´Ï ¤Ğ¤Ğ
+		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // ê±° ìœ ë‹› ë°”ê¹¥ì— ë‚˜ê°”ìŠ´ê¹Œ?
+			KillThisUnit(unit); //ê·¸ëŸ¼ ì  ë·°Â›Xì“°!.. ì•ˆê·¸ë˜ë„ í˜¼ì”ë° ë‚™ì‚¬ë¼ë‹ˆ ã… ã… 
 	}
 }
 
 void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 {
-	// ³­ Áö±İ ¿©±â·Î ÀÌµ¿ÇÒ°Çµ¥
+	// ë‚œ ì§€ê¸ˆ ì—¬ê¸°ë¡œ ì´ë™í• ê±´ë°
 	Coord moveVector = Coord(GetUnitVector(direction) * range);
 	Coord attackPosition = Coord(unit->GetPos() + moveVector);
 
-	// °ø°İÀ¯´ÖÀÌ ÀÌµ¿ÇÏ´Â À§Ä¡¿¡ ÀÌ¹Ì À¯´ÖÀÌ ÀÕ´Ï?
+	// ê³µê²©ìœ ë‹›ì´ ì´ë™í•˜ëŠ” ìœ„ì¹˜ì— ì´ë¯¸ ìœ ë‹›ì´ ì‡ë‹ˆ?
 	Unit* standUnit = GetUnitInPosition(attackPosition);
 
-	if (standUnit == nullptr) // ¾ø´Âµğ¿ä?
+	if (standUnit == nullptr) // ì—†ëŠ”ë””ìš”?
 	{
-		// ±×·³ ±×³É °¡¼¼¿ê
+		// ê·¸ëŸ¼ ê·¸ëƒ¥ ê°€ì„¸ìš§
 		unit->SetPosition(attackPosition);
 
 		UnitAction action;
@@ -351,15 +351,15 @@ void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 		return;
 	}
 
-	else	// ÀÖ³×¿ä?
+	else	// ìˆë„¤ìš”?
 	{
-		// ±×·³ È£..È¤½Ã ±× ÀüÄ­¿¡µµ À¯´ÖÀÌ ÀÖ´Ï?
+		// ê·¸ëŸ¼ í˜¸..í˜¹ì‹œ ê·¸ ì „ì¹¸ì—ë„ ìœ ë‹›ì´ ìˆë‹ˆ?
 		Coord attackPositionBefore = Coord(attackPosition - GetUnitVector(direction));
 		Unit* standUnitBefore = GetUnitInPosition(attackPositionBefore);
 
-		if (standUnitBefore == nullptr) // ¾ø³×¿ä?
+		if (standUnitBefore == nullptr) // ì—†ë„¤ìš”?
 		{
-			// ±×·³ ÂÀÇÁÇØµµ µÇ°Ú±º!
+			// ê·¸ëŸ¼ ì©œí”„í•´ë„ ë˜ê² êµ°!
 			unit->SetPosition(attackPositionBefore);
 
 			UnitAction action;
@@ -377,10 +377,10 @@ void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 			return;
 		}
 
-		else // ÀÖ¾î¿ä!
+		else // ìˆì–´ìš”!
 		{
-			// ¿¡À×.. ±×·³ ¸ø°¡°Ú³×
-			// °Å±ä ¸ø°¡¿ä Å¬¶ó´Ô¾Æ~
+			// ì—ì‰.. ê·¸ëŸ¼ ëª»ê°€ê² ë„¤
+			// ê±°ê¸´ ëª»ê°€ìš” í´ë¼ë‹˜ì•„~
 			if (DEBUG_PRINT) printf("Send Wrong Attack Type Packet : WAT_CANT_JUMP_THERE\n");
 
 			Packet::WrongAttackResult outPacket;
@@ -395,22 +395,22 @@ void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 
 void Game::UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush)
 {
-	// TODO : ¼ø¼­ Àß¸ø‰ç´Âµ¥, Å¬¶ó°¡ ÀĞ´Â ºÎºĞµµ Àß¸øµÇ¼­ ÀÌ»óÇÏ°Ô µ¹¾Æ°¡°í´Â ÀÖÀ½ .
-	// ÇÏÁö¸¸ ¾Ö´Ï¸ŞÀÌ¼ÇÀÌ¶ó´ø°¡ Ãß°¡ÇÏ·Á¸é, °íÄ¥ ÇÊ¿ä ÀÖ´Â ºÎºĞÀÓ 
+	// TODO : ìˆœì„œ ì˜ëª»Â‰æ¦®ì¨‰? í´ë¼ê°€ ì½ëŠ” ë¶€ë¶„ë„ ì˜ëª»ë˜ì„œ ì´ìƒí•˜ê²Œ ëŒì•„ê°€ê³ ëŠ” ìˆìŒ .
+	// í•˜ì§€ë§Œ ì• ë‹ˆë©”ì´ì…˜ì´ë¼ë˜ê°€ ì¶”ê°€í•˜ë ¤ë©´, ê³ ì¹  í•„ìš” ìˆëŠ” ë¶€ë¶„ì„ 
 
-	if (isFirstPush) // Ã¹ Ãæµ¹ÀÌ¸é °ø°İ·Â¿¡ ºñ·ÊÇØ¼­ ¹Ğ°í
+	if (isFirstPush) // ì²« ì¶©ëŒì´ë©´ ê³µê²©ë ¥ì— ë¹„ë¡€í•´ì„œ ë°€ê³ 
 		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), pusher->GetAttack() - target->GetWeight(), target, false);
-	else // µÎ¹øÂ° ÀÌ»óÀÇ Ãæµ¹ÀÌ¸é ÀÌÁ¦±îÁöÀÇ ¹Ğ¸° Á¤µµ¸¦ °¨¾ÈÇØ¼­ ¹Ğ°í
+	else // ë‘ë²ˆì§¸ ì´ìƒì˜ ì¶©ëŒì´ë©´ ì´ì œê¹Œì§€ì˜ ë°€ë¦° ì •ë„ë¥¼ ê°ì•ˆí•´ì„œ ë°€ê³ 
 		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), power - target->GetWeight(), target, false);
 
 	if (pusher->GetOwner() != target->GetOwner())
 	{
-		// ÀûÀÌ¸é µ¥¹ÌÁö ¸ÔÀÌ°í ¹Ğ°í
+		// ì ì´ë©´ ë°ë¯¸ì§€ ë¨¹ì´ê³  ë°€ê³ 
 		UnitApplyDamageWithCollision(target, pusher);
 	}
 	else
 	{
-		// ¾Æ±ºÀÌ¸é ±×³É ¹Î´Ù
+		// ì•„êµ°ì´ë©´ ê·¸ëƒ¥ ë¯¼ë‹¤
 		UnitAction action;
 		action.mActionType = UAT_COLLISION;
 		action.mUnitId = pusher->GetID();
@@ -476,10 +476,10 @@ void Game::StartGame()
 
 void Game::IsNearArca()
 {
-	// ¿·¿¡ ¾ËÄ«½ºÅæÀÌ ÀÖ´ÂÁö º¸°í, Àü¿¡ ¾ø¾ú´Âµ¥ ÀÌ¹ø¿¡ ÀÖÀ¸¸é ÀÌµ¿°¡´ÉÈ½¼ö++
-	// ¹İ´ë¸é --
+	// ì˜†ì— ì•Œì¹´ìŠ¤í†¤ì´ ìˆëŠ”ì§€ ë³´ê³ , ì „ì— ì—†ì—ˆëŠ”ë° ì´ë²ˆì— ìˆìœ¼ë©´ ì´ë™ê°€ëŠ¥íšŸìˆ˜++
+	// ë°˜ëŒ€ë©´ --
 
-	// Ã¹¹ø¤Š ÅÏÀÌ¸é ¾ËÄ«½ºÅæÀû¿ëX
+	// ì²«ë²ˆ? í„´ì´ë©´ ì•Œì¹´ìŠ¤í†¤ì ìš©X
 	if (m_IsFirstTurn)
 		return;
 	
@@ -489,7 +489,7 @@ void Game::IsNearArca()
 	bool isNearAlkaStone = false;
 	ArcaStone* arcaStone = nullptr;
 
-	// ¾Æ¸£Ä«½ºÅæ Ã£°í
+	// ì•„ë¥´ì¹´ìŠ¤í†¤ ì°¾ê³ 
 	for (auto unit : m_UnitList)
 	{
 		if (unit->GetUnitType() == UT_ARCASTONE)
@@ -498,22 +498,22 @@ void Game::IsNearArca()
 			break;
 		}
 	}
-	// ŸÓ ¾Æ¸£Ä«½ºÅæ ¾ø´Âµ¥¿©?
+	// ÂŸ?ì•„ë¥´ì¹´ìŠ¤í†¤ ì—†ëŠ”ë°ì—¬?
 	if (arcaStone == nullptr)
 	{
-		// ±×·³ ±×³É Áö³ª°¡
+		// ê·¸ëŸ¼ ê·¸ëƒ¥ ì§€ë‚˜ê°€
 		return;
 	}
 
 	for (Unit* unit : m_UnitList)
 	{
-		//³» À¯´ÖÀÌ ¾Æ¸£Ä« ½ºÅæ ¿·¿¡ ÀÖ½À´Ï±î?
+		//ë‚´ ìœ ë‹›ì´ ì•„ë¥´ì¹´ ìŠ¤í†¤ ì˜†ì— ìˆìŠµë‹ˆê¹Œ?
 		if (unit->GetOwner() == m_Attacker)
 		{
 			for (int i = 1; i <= 6; i++) // Itor for HexaDirection
 			{
 				Coord positionGap = Coord(arcaStone->GetPos().x - unit->GetPos().x, arcaStone->GetPos().y - unit->GetPos().y);
-				// Ã³¸®
+				// ì²˜ë¦¬
 				if (positionGap == GetUnitVector((HexaDirection)i))
 				{
 					isNearAlkaStone = true;
@@ -529,74 +529,74 @@ finishFindUnitNearArcastone:
 		whosTurn = 0;
 	else whosTurn = 1;
 
-	if (isNearAlkaStone)	// ÀÌ¹ø ÅÏ¿¡ ¾Æ¸£Ä«½ºÅæÀÌ ¿·¿¡ ÀÖ°í
+	if (isNearAlkaStone)	// ì´ë²ˆ í„´ì— ì•„ë¥´ì¹´ìŠ¤í†¤ì´ ì˜†ì— ìˆê³ 
 	{
-		if (m_IsNearArca[whosTurn])	// Àü ÅÏ¿¡µµ ¿·¿¡ ÀÖ¾ú´Ù¸é
+		if (m_IsNearArca[whosTurn])	// ì „ í„´ì—ë„ ì˜†ì— ìˆì—ˆë‹¤ë©´
 		{
-			// ¾Ë°Ô¹¹¶÷
+			// ì•Œê²Œë­ëŒ
 		}
-		else				// Àü ÅÏ¿¡´Â ¿·¿¡ ¾ø¾ú´Ù¸é
+		else				// ì „ í„´ì—ëŠ” ì˜†ì— ì—†ì—ˆë‹¤ë©´
 		{
-			// ÃÖ´ë ÀÌµ¿°¡´É È½¼ö¸¦ 1 Áõ°¡½ÃÅ²´Ù.
+			// ìµœëŒ€ ì´ë™ê°€ëŠ¥ íšŸìˆ˜ë¥¼ 1 ì¦ê°€ì‹œí‚¨ë‹¤.
 			m_MaxTurn[whosTurn]++;
-			// ÇöÀç ÀÌµ¿°¡´É È½¼öµµ 1 Áõ°¡½ÃÅ²´Ù.
+			// í˜„ì¬ ì´ë™ê°€ëŠ¥ íšŸìˆ˜ë„ 1 ì¦ê°€ì‹œí‚¨ë‹¤.
 			m_CanCommand++;
-			// ±×´ë °ç¿¡ ¾Æ¸£Ä«½ºÅæÀÌ ÀÖÀ¸¶ó
+			// ê·¸ëŒ€ ê³ì— ì•„ë¥´ì¹´ìŠ¤í†¤ì´ ìˆìœ¼ë¼
 			m_IsNearArca[whosTurn] = true;
 		}
 	}
-	else					// ÀÌ¹ø ÅÏ¿¡ ¾Æ¸£Ä«½ºÅæÀÌ ¿·¿¡ ¾ø°í
+	else					// ì´ë²ˆ í„´ì— ì•„ë¥´ì¹´ìŠ¤í†¤ì´ ì˜†ì— ì—†ê³ 
 	{
-		if (m_IsNearArca[whosTurn])	// Àü ÅÏ¿¡´Â ¿·¿¡ ÀÖ¾ú´Ù¸é
+		if (m_IsNearArca[whosTurn])	// ì „ í„´ì—ëŠ” ì˜†ì— ìˆì—ˆë‹¤ë©´
 		{
 			m_MaxTurn[whosTurn]--;
 			m_CanCommand--;
 			m_IsNearArca[whosTurn] = false;
 		}
-		else				// Àü ÅÏ¿¡µµ ¿·¿¡ ¾ø¾ú´Ù¸é
+		else				// ì „ í„´ì—ë„ ì˜†ì— ì—†ì—ˆë‹¤ë©´
 		{
-			// ¹«½Ã
+			// ë¬´ì‹œ
 		}
 	}
 }
 
 void Game::IsGameOver()
 {
-	// À¯´Ö Ä«¿îÆÃ!
+	// ìœ ë‹› ì¹´ìš´íŒ…!
 	UnitCounting();
 
-	// m_IsGameOver = false; °ÔÀÓÀÌ Á¾·áµÇÁö ¾ÊÀº »óÅÂ¿¡¼­ ÀÌ ÇÔ¼ö°¡ ½ÇÇà‰ç´Ù°í °¡Á¤ .
+	// m_IsGameOver = false; ê²Œì„ì´ ì¢…ë£Œë˜ì§€ ì•Šì€ ìƒíƒœì—ì„œ ì´ í•¨ìˆ˜ê°€ ì‹¤í–‰Â‰æ¦®é³´?ê°€ì • .
 
-	// ÇÃ·¹ÀÌ¾î1 Àü¸êÀÌ¿ä~
+	// í”Œë ˆì´ì–´1 ì „ë©¸ì´ìš”~
 	if (m_LivingUnitCount[0] == 0)
 	{
-		// ±×·³ °ÔÀÓÀ» Á¾·á½ÃÄÑ¾ßÁö!
+		// ê·¸ëŸ¼ ê²Œì„ì„ ì¢…ë£Œì‹œì¼œì•¼ì§€!
 		m_IsGameOver = true;
 		m_Winner = WW_PLAYER1;
 		GameOver();
 	}
 
-	// ÇÃ·¹ÀÌ¾î2 Àü¸êÀÌ¿ä~
+	// í”Œë ˆì´ì–´2 ì „ë©¸ì´ìš”~
 	if (m_LivingUnitCount[1] == 0)
 	{
 		m_Winner = WW_PLAYER2;
-		// ÇÃ·¹ÀÌ¾î1µµ Àü¸êÀÎµğ¿ä? ±×·³ ´©°¡ ÀÌ±ä°Å¾ß?
+		// í”Œë ˆì´ì–´1ë„ ì „ë©¸ì¸ë””ìš”? ê·¸ëŸ¼ ëˆ„ê°€ ì´ê¸´ê±°ì•¼?
 		if (m_IsGameOver)
 		{
-			// ¹«½ÂºÎ°¡ ÀÖ´Â °ÔÀÓÀÌ¶ó¸é ¹«½ÂºÎÁö!
+			// ë¬´ìŠ¹ë¶€ê°€ ìˆëŠ” ê²Œì„ì´ë¼ë©´ ë¬´ìŠ¹ë¶€ì§€!
 			if (USE_DRAW)
 			{
 				m_Winner = WW_DRAW;
 			}
-			// ¾Æ´Ï¸é ¸¶Áö¸·¿¡ °ø°İÇÑ »ç¶÷ÀÌ ÀÌ±ä°ÅÁö!
+			// ì•„ë‹ˆë©´ ë§ˆì§€ë§‰ì— ê³µê²©í•œ ì‚¬ëŒì´ ì´ê¸´ê±°ì§€!
 			else
 			{
-				// ÇÃ·¹ÀÌ¾î1ÀÌ °ø°İÀÚ·¡¸Å¿ä?
+				// í”Œë ˆì´ì–´1ì´ ê³µê²©ìë˜ë§¤ìš”?
 				if (m_PlayerList.at(0) == m_Attacker)
 				{
 					m_Winner = WW_PLAYER1;
 				}
-				// ¾Æ´Ï¶ó¸é ÇÃ·¹ÀÌ¾î2°¡ ÀÌ±ä°Å±º
+				// ì•„ë‹ˆë¼ë©´ í”Œë ˆì´ì–´2ê°€ ì´ê¸´ê±°êµ°
 				else
 				{
 					m_Winner = WW_PLAYER2;
@@ -621,7 +621,7 @@ void Game::GameOverForSurrender(PlayerNumber srrender)
 	}
 	else
 	{
-		// ¿¡·¯»óÈ²
+		// ì—ëŸ¬ìƒí™©
 		m_Winner == WW_DRAW;
 	}
 
@@ -632,7 +632,7 @@ void Game::GameOver()
 {
 	if (m_IsGameOver)
 	{
-		// °ÔÀÓÀÌ ³¡³µÀ¸¸é ½ÂÀÚ ¾Ë·ÁÁÜ
+		// ê²Œì„ì´ ëë‚¬ìœ¼ë©´ ìŠ¹ì ì•Œë ¤ì¤Œ
 		Packet::GameOverResult outPacket;
 		for (auto playerNumber : m_PlayerList)
 		{
@@ -662,19 +662,19 @@ void Game::UnitCounting()
 {
 	for (int i = 0; i < 3; ++i)
 	{
-		// 0À¸·Î ÃÊ±âÈ­
+		// 0ìœ¼ë¡œ ì´ˆê¸°í™”
 		m_UnitCount[i] = 0;
 		m_LivingUnitCount[i] = 0;
 	}
 
 	for (Unit* unit : m_UnitList)
 	{
-		// »ì¾ÆÀÖ´Â À¯´Ö
+		// ì‚´ì•„ìˆëŠ” ìœ ë‹›
 		if (unit->GetUnitStatus() != UST_DEAD)
 		{
 			if (unit->GetOwner() == m_PlayerList.at(0))
 			{
-				// ÇÃ·¹ÀÌ¾î1 À¯´Ö ÇÏ³ª¿ä~
+				// í”Œë ˆì´ì–´1 ìœ ë‹› í•˜ë‚˜ìš”~
 				m_UnitCount[0]++;
 				m_LivingUnitCount[0]++;
 			}
@@ -685,12 +685,12 @@ void Game::UnitCounting()
 			}
 			else
 			{
-				// NPC ÀÇ À¯´Ö¼öµµ ¼¼ÁÖÀÚ. ÇÊ¿äÇÒÁø ¸ğ¸£°Ú´ç!
+				// NPC ì˜ ìœ ë‹›ìˆ˜ë„ ì„¸ì£¼ì. í•„ìš”í• ì§„ ëª¨ë¥´ê² ë‹¹!
 				m_UnitCount[2]++;
 				m_LivingUnitCount[2]++;
 			}
 		}
-		// Á×Àº À¯´Ö
+		// ì£½ì€ ìœ ë‹›
 		else
 		{
 			if (unit->GetOwner() == m_PlayerList.at(0))
@@ -714,7 +714,7 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 	switch (attackData.attackType)
 	{
 	case UMT_STRAIGHT:
-		// °ø°İÀ» Ãë¼ÒÇÏ´Â °æ¿ì
+		// ê³µê²©ì„ ì·¨ì†Œí•˜ëŠ” ê²½ìš°
 		if (attackData.range == 0)
 			return false;
 		break;
@@ -727,10 +727,10 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 			return false;
 		break;
 	case UMT_TELEPORT:
-		// ÅÚÆ÷ÇÏ·Á´Â À§Ä¡¿¡ À¯´ÖÀÌ ÀÖ´Â °æ¿ì -> ÇÕ!Ã¼!
+		// í…”í¬í•˜ë ¤ëŠ” ìœ„ì¹˜ì— ìœ ë‹›ì´ ìˆëŠ” ê²½ìš° -> í•©!ì²´!
 		if (GetUnitInPosition(attackData.position[0]) != nullptr)
 		{
-			// ÇÏ¸é ¾ÈµÇÁö!
+			// í•˜ë©´ ì•ˆë˜ì§€!
 			Packet::WrongAttackResult outPacket;
 			outPacket.mWrongType = WAT_CANT_TELEPORT_THERE;
 			auto session = GClientManager->GetClient(attacker);
@@ -742,10 +742,10 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 		break;
 	}
 
-	// ¾ÆÁ÷ ÅÏÀÌ ¾Æ´Ñµ¥ °ø°İÀ» ½ÃµµÇÏ¸é
+	// ì•„ì§ í„´ì´ ì•„ë‹Œë° ê³µê²©ì„ ì‹œë„í•˜ë©´
 	if (m_Attacker != attacker)
 	{
-		// Å¬¶ó¾ß.. ¾ÆÁ÷ ³ÊÂ÷·Ê ¾Æ´Ï¶õ´Ù..
+		// í´ë¼ì•¼.. ì•„ì§ ë„ˆì°¨ë¡€ ì•„ë‹ˆë€ë‹¤..
 		Packet::WrongAttackResult outPacket;
 		outPacket.mWrongType = WAT_NOT_YOUR_TURN;
 		auto session = GClientManager->GetClient(attacker);
@@ -755,20 +755,20 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 		return false;
 	}
 
-	// °ÔÀÓÀÌ ³¡³µ´Âµ¥ ¹«½¼ °ø°İÀÌ¾ß!
+	// ê²Œì„ì´ ëë‚¬ëŠ”ë° ë¬´ìŠ¨ ê³µê²©ì´ì•¼!
 	if (m_IsGameOver)		
 	{
-		return false; // ¹«½Ã!
+		return false; // ë¬´ì‹œ!
 	}
 
-	// Àß¸øµÈ À¯´ÖÀ¸·Î °ø°İÇÏ·Á°í ÇŞÀ¸´Ï±î
+	// ì˜ëª»ëœ ìœ ë‹›ìœ¼ë¡œ ê³µê²©í•˜ë ¤ê³  í–‡ìœ¼ë‹ˆê¹Œ
 	if (GetUnit(attackData.id) == nullptr)
 	{
-		//¹«½ÃÇØ!
+		//ë¬´ì‹œí•´!
 		return false;
 	}
 
-	// ¿Ã¹Ù¸¥ °ø°İÀÌ±º! Åë°ú!
+	// ì˜¬ë°”ë¥¸ ê³µê²©ì´êµ°! í†µê³¼!
 	return true;
 }
 

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "HexaPoint.h"
 #include "ScreenPoint.h"
@@ -91,11 +91,11 @@ struct ScreenPoint : public cocos2d::Vec2
 	{
 		float degree = CC_RADIANS_TO_DEGREES(atan2(y, x));
 
-		// 3,4ºĞ¸é°ú 270µµ¿¡¼­ Á÷±³ÁÂÇ¥°è º¸Á¤
+		// 3,4ë¶„ë©´ê³¼ 270ë„ì—ì„œ ì§êµì¢Œí‘œê³„ ë³´ì •
 		if ((x < 0 && y < 0) || (x >= 0 && y < 0))
 			degree += 360;
 
-		// Çí»ç±×¸®µå ÁÂÇ¥·Î º¯È¯
+		// í—¥ì‚¬ê·¸ë¦¬ë“œ ì¢Œí‘œë¡œ ë³€í™˜
 		HexaDirection Direction = (HexaDirection)((int)(degree / 60) + 1);
 
 		return Direction;
@@ -126,7 +126,7 @@ struct HexaPoint : public cocos2d::Vec2
 	{
 		ScreenPoint retPoint;
 
-		// MAP_START ¸¦ Áß¾Ó¿¡ À§Ä¡ÇÏµµ·Ï ±×·ÁÁÖ±â À§ÇÑ ¼ö½Äµé .
+		// MAP_START ë¥¼ ì¤‘ì•™ì— ìœ„ì¹˜í•˜ë„ë¡ ê·¸ë ¤ì£¼ê¸° ìœ„í•œ ìˆ˜ì‹ë“¤ .
 		retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (x - (MAP_SIZEX - 1)*0.5);
 		retPoint.y = MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (y * 2 - MAP_SIZEY + x - (MAP_SIZEX - 3)*0.5);
 

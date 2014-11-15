@@ -1,4 +1,4 @@
-#ifndef __JS_EXTENSION_REGISTRATION_H__
+﻿#ifndef __JS_EXTENSION_REGISTRATION_H__
 #define __JS_EXTENSION_REGISTRATION_H__
 
 #include "jsapi.h"

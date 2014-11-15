@@ -1,4 +1,4 @@
-#ifndef _CCB_CCMENULOADER_H_
+﻿#ifndef _CCB_CCMENULOADER_H_
 #define _CCB_CCMENULOADER_H_
 
 #include "CCLayerLoader.h"

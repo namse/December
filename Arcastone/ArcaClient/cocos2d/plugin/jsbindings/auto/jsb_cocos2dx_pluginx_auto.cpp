@@ -1,4 +1,4 @@
-#include "jsb_cocos2dx_pluginx_auto.hpp"
+﻿#include "jsb_cocos2dx_pluginx_auto.hpp"
 #include "jsb_pluginx_spidermonkey_specifics.h"
 #include "jsb_pluginx_basic_conversions.h"
 using namespace pluginx;

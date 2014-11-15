@@ -1,4 +1,4 @@
-//
+﻿//
 //  SinaWeiboConstants.h
 //  sinaweibo_ios_sdk
 //

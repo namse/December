@@ -1,4 +1,4 @@
-// Copyright 2011 Google Inc. All Rights Reserved.
+﻿// Copyright 2011 Google Inc. All Rights Reserved.
 //
 // This code is licensed under the same terms as WebM:
 //  Software License Agreement:  http://www.webmproject.org/license/software/

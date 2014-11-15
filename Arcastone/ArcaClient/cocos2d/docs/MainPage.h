@@ -1,4 +1,4 @@
-/*! 
+﻿/*! 
 @mainpage cocos2d-x
 
 @image html cocos2dx_portrait.png

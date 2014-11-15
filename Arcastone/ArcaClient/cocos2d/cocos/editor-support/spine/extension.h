@@ -1,4 +1,4 @@
-/*
+﻿/*
  Implementation notes:
 
  - An OOP style is used where each "class" is made up of a struct and a number of functions prefixed with the struct name.

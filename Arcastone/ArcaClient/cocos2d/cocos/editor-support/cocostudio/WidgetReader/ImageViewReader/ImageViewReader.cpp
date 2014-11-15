@@ -1,4 +1,4 @@
-
+﻿
 
 #include "ImageViewReader.h"
 #include "ui/UIImageView.h"

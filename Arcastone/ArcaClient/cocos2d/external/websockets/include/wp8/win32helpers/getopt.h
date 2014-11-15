@@ -1,4 +1,4 @@
-#ifndef __GETOPT_H__
+﻿#ifndef __GETOPT_H__
 #define __GETOPT_H__
 
 #ifdef __cplusplus

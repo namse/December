@@ -1,4 +1,4 @@
-/* ==================================================================================================== */
+﻿/* ==================================================================================================== */
 /* FMOD Ex - output development header file. Copyright (c), Firelight Technologies Pty, Ltd. 2004-2011. */
 /*                                                                                                      */
 /* Use this header if you are wanting to develop your own output plugin to use with                     */

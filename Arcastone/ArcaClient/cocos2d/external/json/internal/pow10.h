@@ -1,4 +1,4 @@
-#ifndef RAPIDJSON_POW10_
+﻿#ifndef RAPIDJSON_POW10_
 #define RAPIDJSON_POW10_
 
 namespace rapidjson {

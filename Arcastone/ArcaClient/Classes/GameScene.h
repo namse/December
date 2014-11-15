@@ -1,4 +1,4 @@
-#ifndef __GAME_SCENE_H__
+ï»¿#ifndef __GAME_SCENE_H__
 #define __GAME_SCENE_H__
 
 #include "Header.h"
@@ -25,7 +25,7 @@ public:
 
 	void					gameLogic(float dt);
 
-	/* touch ÇÔ¼ö */
+	/* touch í•¨ìˆ˜ */
 	EventListenerTouchOneByOne*	_touchListener;
 	void					touchEventInit();
 	virtual bool			onTouchBegan(Touch* touch, Event* event);
@@ -34,7 +34,7 @@ public:
 	virtual void			onTouchEnded(Touch* touch, Event *event);
 	bool					isInHexagon(ScreenPoint touch, ScreenPoint anchor);
 
-	/* draw ÇÔ¼ö */
+	/* draw í•¨ìˆ˜ */
 	Hexagon*				createHexagon(ScreenPoint anchor, int size);
 	void					drawText(int i, int j, Hexagon* hexa);
 
@@ -48,12 +48,12 @@ public:
 	void					onUnitAction(CCNode* sender = NULL);
 	
 
-	/* ¸â¹ö °Ë»ö ÇÔ¼ö */
+	/* ë©¤ë²„ ê²€ìƒ‰ í•¨ìˆ˜ */
 	Unit*					getUnitByID(int unitID);
 	Unit*					getUnitByPos(HexaPoint unitPos);
 
 
-	/* ³×Æ®¿öÅ© °ü·Ã ÇÔ¼ö */
+	/* ë„¤íŠ¸ì›Œí¬ ê´€ë ¨ í•¨ìˆ˜ */
 	void					onGameStart(Packet::GameStartResult inPacket);
 	void					ReadFieldBlock(FieldBlock fieldBlock[], int length);
 	void					ReadUnitData(UnitData unitData[], int length);

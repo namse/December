@@ -1,4 +1,4 @@
-
+﻿
 
 #include "CheckBoxReader.h"
 #include "ui/UICheckBox.h"

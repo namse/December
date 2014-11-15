@@ -1,4 +1,4 @@
-#include "Magician.h"
+﻿#include "Magician.h"
 
 
 Magician::Magician()

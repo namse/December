@@ -1,4 +1,4 @@
-#include "GameScene.h"
+ï»¿#include "GameScene.h"
 #include "base/CCEventKeyboard.h"
 #include "TcpClient.h"
 
@@ -11,7 +11,7 @@ Scene* GameScene::createScene()
 
 	auto layer = GameScene::create();
 
-	// GameScene layer ¸¦ scene ¿¡ Ãß°¡
+	// GameScene layer ë¥¼ scene ì— ì¶”ê°€
 	scene->addChild(layer, 1, string("base_layer"));
 
 	return scene;
@@ -26,10 +26,10 @@ bool GameScene::init()
     Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	// °ÔÀÓÀÇ ÁøÇà »óÅÂ¸¦ ·Î±×ÀÎ ÀüÀ¸·Î ¼³Á¤
+	// ê²Œì„ì˜ ì§„í–‰ ìƒíƒœë¥¼ ë¡œê·¸ì¸ ì „ìœ¼ë¡œ ì„¤ì •
 	m_GameState = GS_BEFORE_LOGIN;
 
-	// ¸¶¿ì½º ÀÌº¥Æ®¸¦ »ç¿ëÇÏ±â À§ÇØ ÃÊ±âÈ­
+	// ë§ˆìš°ìŠ¤ ì´ë²¤íŠ¸ë¥¼ ì‚¬ìš©í•˜ê¸° ìœ„í•´ ì´ˆê¸°í™”
 	touchEventInit();
 
 
@@ -57,7 +57,7 @@ void GameScene::gameLogic(float dt)
 
 	}break;
 
-	case GS_GAME_START:			// GameStartResult ¸¦ ¹ŞÀº »óÅÂ
+	case GS_GAME_START:			// GameStartResult ë¥¼ ë°›ì€ ìƒíƒœ
 	{
 
 		//if (m_IsAction && m_IsMyTurn) TcpClient::getInstance()->TurnEndRequest();
@@ -82,7 +82,7 @@ void GameScene::touchEventInit()
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
-	if (!m_IsMyTurn) return false;			// ÀÚ½ÅÀÇ ÅÏÀÎ °æ¿ì¿¡¸¸ ¸¶¿ì½º ÀÔ·ÂÀ» ¹Ş´Â´Ù.
+	if (!m_IsMyTurn) return false;			// ìì‹ ì˜ í„´ì¸ ê²½ìš°ì—ë§Œ ë§ˆìš°ìŠ¤ ì…ë ¥ì„ ë°›ëŠ”ë‹¤.
 
 	m_StartPoint = ScreenPoint(touch->getLocation());
 	m_CursoredPoint = ScreenPoint(touch->getLocation());
@@ -93,19 +93,19 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 	{
 		Unit* unit = m_UnitList.at(i);
 
-		// ÀÚ½ÅÀÇ À¯´ÖÀÎÁö È®ÀÎÇÑ´Ù
+		// ìì‹ ì˜ ìœ ë‹›ì¸ì§€ í™•ì¸í•œë‹¤
 		if (unit->GetOwner() != UO_ME) continue;
 
-		// ÀÚ½Å À¯´ÖÀÇ ÁÂÇ¥ÀÎµ¦½º¸¦ È­¸é»ó À§Ä¡·Î º¯È¯ÇÏ¿©
+		// ìì‹  ìœ ë‹›ì˜ ì¢Œí‘œì¸ë±ìŠ¤ë¥¼ í™”ë©´ìƒ ìœ„ì¹˜ë¡œ ë³€í™˜í•˜ì—¬
 		ScreenPoint screenPoint = unit->GetPosition().HexaToScreen();
 
-		// ÀÚ½ÅÀÇ À¯´ÖÀ» Å¬¸¯Çß´ÂÁö ÆÇÁ¤ÇÑ´Ù.
+		// ìì‹ ì˜ ìœ ë‹›ì„ í´ë¦­í–ˆëŠ”ì§€ íŒì •í•œë‹¤.
 		if (isInHexagon(m_StartPoint, screenPoint))
 		{
-			// ±× À¯´ÖÀ» ¼±ÅÃÇß´Ù´Â °ÍÀ» ÁöÁ¤ÇÏ±â À§ÇØ id ¸¦ ¸â¹öº¯¼ö¿¡ ÀúÀåÇÑ´Ù.
+			// ê·¸ ìœ ë‹›ì„ ì„ íƒí–ˆë‹¤ëŠ” ê²ƒì„ ì§€ì •í•˜ê¸° ìœ„í•´ id ë¥¼ ë©¤ë²„ë³€ìˆ˜ì— ì €ì¥í•œë‹¤.
 			m_SelectedUnit = unit->GetID();
 
-			// À¯´ÖÀÌ ÀÌµ¿°¡´ÉÇÑ Çí»ç°ïÀ» ÇÏÀÌ¶óÀÌÆ®ÇÑ´Ù
+			// ìœ ë‹›ì´ ì´ë™ê°€ëŠ¥í•œ í—¥ì‚¬ê³¤ì„ í•˜ì´ë¼ì´íŠ¸í•œë‹¤
 			DrawExpectUnitMove(unit);
 			return true;
 		}
@@ -119,39 +119,39 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	if (!m_IsMyTurn) return;
 
 	Unit* unit = getUnitByID(m_SelectedUnit);
-	// ÀûÇÕÇÑ À¯´ÖÀ» ¼±ÅÃÇÏÁö ¾Ê¾Ò°Å³ª, À¯´ÖÀÌ nullptr ÀÌ¸é ÆĞ½º
+	// ì í•©í•œ ìœ ë‹›ì„ ì„ íƒí•˜ì§€ ì•Šì•˜ê±°ë‚˜, ìœ ë‹›ì´ nullptr ì´ë©´ íŒ¨ìŠ¤
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
-	// ¾îµô ÅÍÄ¡Çß´ÂÁö Ã£¾Æ¼­
+	// ì–´ë”œ í„°ì¹˜í–ˆëŠ”ì§€ ì°¾ì•„ì„œ
 	HexaPoint touchIndex;
 	touchIndex = ScreenToHexa(ScreenPoint(touch->getLocation().x, touch->getLocation().y));
 	
 	HexaPoint cursoredPoint;
 	cursoredPoint = ScreenToHexa(m_CursoredPoint);
 
-	// ÅÍÄ¡ÇÑ À§Ä¡°¡ (ÀÎµ¦½º´ÜÀ§·Î) ÀÌµ¿Çß´ÂÁö È®ÀÎÇÏ°í ÀÌµ¿¾ÈÇßÀ¸¸é ±×³É return;
+	// í„°ì¹˜í•œ ìœ„ì¹˜ê°€ (ì¸ë±ìŠ¤ë‹¨ìœ„ë¡œ) ì´ë™í–ˆëŠ”ì§€ í™•ì¸í•˜ê³  ì´ë™ì•ˆí–ˆìœ¼ë©´ ê·¸ëƒ¥ return;
 	if (touchIndex == cursoredPoint) return;
 
 	m_CursoredPoint = ScreenPoint(touch->getLocation());
 
-	// TODO : ¿ä°Å ÀÌ·¸°Ô °¡¸é ³Ê¹« ÀÚÁÖ Áö¿ì°í ±×¸®°í ÇÏ´Ï±î ¾î¶»°Ô Á» ÇØÁÖ¼¼¿ä
-	// ÀÌ ¾È¿¡¼­ À¯´Ö ÀÌµ¿ ½ºÅÃ ½×´Âµ¥, ±×°Ô attackData ¿¡µµ »ç¿ëµÇ´Ï±î ÁÖÀÇ
+	// TODO : ìš”ê±° ì´ë ‡ê²Œ ê°€ë©´ ë„ˆë¬´ ìì£¼ ì§€ìš°ê³  ê·¸ë¦¬ê³  í•˜ë‹ˆê¹Œ ì–´ë–»ê²Œ ì¢€ í•´ì£¼ì„¸ìš”
+	// ì´ ì•ˆì—ì„œ ìœ ë‹› ì´ë™ ìŠ¤íƒ ìŒ“ëŠ”ë°, ê·¸ê²Œ attackData ì—ë„ ì‚¬ìš©ë˜ë‹ˆê¹Œ ì£¼ì˜
 	drawUnitMove(unit, HD_NONE, 0, true);
 }
 
 void GameScene::onTouchEnded(Touch* touch, Event* event)
 {
 	{
-		// ÀÌµ¿ÇÒ ¼ö ÀÖ´Â ¸ğµç ¹üÀ§ Ç¥½Ã Áö¿ò
+		// ì´ë™í•  ìˆ˜ ìˆëŠ” ëª¨ë“  ë²”ìœ„ í‘œì‹œ ì§€ì›€
 		releaseExpectMoveSign();
-		// ±×·ÁÁø ÀÌµ¿ °æ·Î Áö¿ò
+		// ê·¸ë ¤ì§„ ì´ë™ ê²½ë¡œ ì§€ì›€
 		releaseMoveSign();
 	}
 
 	if (!m_IsMyTurn) return;
 
 	Unit* unit = getUnitByID(m_SelectedUnit);
-	// ÀûÇÕÇÑ À¯´ÖÀ» ¼±ÅÃÇÏÁö ¾Ê¾Ò°Å³ª, À¯´ÖÀÌ nullptr ÀÌ¸é ÆĞ½º
+	// ì í•©í•œ ìœ ë‹›ì„ ì„ íƒí•˜ì§€ ì•Šì•˜ê±°ë‚˜, ìœ ë‹›ì´ nullptr ì´ë©´ íŒ¨ìŠ¤
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
 	HexaDirection direction = HD_NONE;
@@ -163,26 +163,26 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	{
 	case UMT_STRAIGHT:{
 		attackData.attackType = UMT_STRAIGHT;
-		// ½ºÆ®·¹ÀÌÆ®¿Í Á¡ÇÁ´Â ¹æÇâ°ú °Å¸®¸¦ ÀÔ·Â
+		// ìŠ¤íŠ¸ë ˆì´íŠ¸ì™€ ì í”„ëŠ” ë°©í–¥ê³¼ ê±°ë¦¬ë¥¼ ì…ë ¥
 		direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetDirection();
 		distance = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
 
 		if (distance > unit->GetMoveRange()) distance = unit->GetMoveRange();
 
-		// °ø°İÀ» Ãë¼ÒÇÏ´Â °æ¿ì
+		// ê³µê²©ì„ ì·¨ì†Œí•˜ëŠ” ê²½ìš°
 		if (distance == 0)
 			return;
 	}break;
 
 	case UMT_JUMP:{
 		attackData.attackType = UMT_JUMP;
-		// ½ºÆ®·¹ÀÌÆ®¿Í Á¡ÇÁ´Â ¹æÇâ°ú °Å¸®¸¦ ÀÔ·Â
+		// ìŠ¤íŠ¸ë ˆì´íŠ¸ì™€ ì í”„ëŠ” ë°©í–¥ê³¼ ê±°ë¦¬ë¥¼ ì…ë ¥
 		direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetDirection();
 		distance = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
 
 		if (distance > unit->GetMoveRange()) distance = unit->GetMoveRange();
 
-		// °ø°İÀ» Ãë¼ÒÇÏ´Â °æ¿ì
+		// ê³µê²©ì„ ì·¨ì†Œí•˜ëŠ” ê²½ìš°
 		if (distance == 0)
 			return;
 	}break;
@@ -192,18 +192,18 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		distance = m_CourseStack.size();
 		for (int i = 0; i < m_CourseStack.size(); ++i)
 		{
-			// ´ë½¬´Â ÀÌµ¿ ½ºÅÃÀ» ÀÔ·Â
+			// ëŒ€ì‰¬ëŠ” ì´ë™ ìŠ¤íƒì„ ì…ë ¥
 			attackData.position[i] = m_CourseStack.at(i).HexaToCoord();
 		}
 	}break;
 
 	case UMT_TELEPORT:{
 		attackData.attackType = UMT_TELEPORT;
-		// ÅÚÆ÷´Â ÀÌµ¿ Ä­ ÇÏ³ª ÀÔ·Â
+		// í…”í¬ëŠ” ì´ë™ ì¹¸ í•˜ë‚˜ ì…ë ¥
 
 		if (m_CourseStack.size() == 1)
 		{
-			// À¯´ÖÀÌ ¾ø´Â Ä­¸¸ ÀÌµ¿°¡´É
+			// ìœ ë‹›ì´ ì—†ëŠ” ì¹¸ë§Œ ì´ë™ê°€ëŠ¥
 			if (getUnitByPos(m_CourseStack.at(0)) == nullptr)
 			{
 
@@ -287,16 +287,16 @@ void GameScene::releaseExpectMoveSign()
 	m_ExpectSignNode.clear();
 }
 
-// Àç±ÍÇÔ¼ö·Î ±×·ÁÁØ´Ù. ¸¶Áö¸· ÀÎÀÚ´Â ¸¶¿ì½º¹«ºê·Î È£ÃâµÈ°ÇÁö, Ãæµ¹·Î È£ÃâµÈ°ÇÁö È®ÀÎ
+// ì¬ê·€í•¨ìˆ˜ë¡œ ê·¸ë ¤ì¤€ë‹¤. ë§ˆì§€ë§‰ ì¸ìëŠ” ë§ˆìš°ìŠ¤ë¬´ë¸Œë¡œ í˜¸ì¶œëœê±´ì§€, ì¶©ëŒë¡œ í˜¸ì¶œëœê±´ì§€ í™•ì¸
 void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, bool isFirstCall)
 {
-	// ÀÎÀÚ·Î µé¾î¿Â unit Àº ¾î¶»°Ô ÀÌµ¿ÇÏ´ÂÁö ÇöÀç È®ÀÎÇÒ À¯´Ö
+	// ì¸ìë¡œ ë“¤ì–´ì˜¨ unit ì€ ì–´ë–»ê²Œ ì´ë™í•˜ëŠ”ì§€ í˜„ì¬ í™•ì¸í•  ìœ ë‹›
 	Unit*			atkUnit = getUnitByID(m_SelectedUnit);
-	// atkUnit Àº Ã³À½¿¡ ÀÌµ¿ÇÑ À¯´ÖÀÓ
+	// atkUnit ì€ ì²˜ìŒì— ì´ë™í•œ ìœ ë‹›ì„
 
 	UnitMoveType	atkType = atkUnit->GetMoveType();
 	int				unitAtk = atkUnit->GetAttack();
-	// ¹Ğ·Á³ª´Â À¯´ÖÀº STRAIGHT ·Î ÀÌµ¿
+	// ë°€ë ¤ë‚˜ëŠ” ìœ ë‹›ì€ STRAIGHT ë¡œ ì´ë™
 	if (!isFirstCall)
 	{
 		atkType = UMT_STRAIGHT;
@@ -307,11 +307,11 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 	int				unitRange = unit->GetMoveRange();
 	Color4F			signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 
-	// À¯´Ö ÆĞ½º¸¦ Ã³À½ºÎÅÍ ±×¸®´Â °æ¿ì
+	// ìœ ë‹› íŒ¨ìŠ¤ë¥¼ ì²˜ìŒë¶€í„° ê·¸ë¦¬ëŠ” ê²½ìš°
 	#pragma region If First Call
 	if (isFirstCall)
 	{
-		// Ã³À½ºÎÅÍ ´Ù½Ã ±×·ÁÁÜ
+		// ì²˜ìŒë¶€í„° ë‹¤ì‹œ ê·¸ë ¤ì¤Œ
 		releaseMoveSign();
 
 		switch (atkType)
@@ -325,7 +325,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 		}break;
 
 		case UMT_DASH:{
-						  // Ä¿¼­°¡ °¡¸®Å°´Â À§Ä¡ °Ë»ö
+						  // ì»¤ì„œê°€ ê°€ë¦¬í‚¤ëŠ” ìœ„ì¹˜ ê²€ìƒ‰
 						  HexaPoint cursor;
 						  bool isHexaGrid = false;
 						  for (auto hexaPos : m_HexagonPoint)
@@ -339,43 +339,43 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 							  }
 						  }
 
-						  if (!isHexaGrid) return;	// Çí»ç±×¸®µå ¹üÀ§°¡ ¾Æ´Ï¸é OUT!
+						  if (!isHexaGrid) return;	// í—¥ì‚¬ê·¸ë¦¬ë“œ ë²”ìœ„ê°€ ì•„ë‹ˆë©´ OUT!
 
 						  if (cursor == atkUnit->GetPosition())
 						  {
-							  // °ø°İ À¯´ÖÀ» °¡¸®Å°¸é ½ºÅÃ ÃÊ±âÈ­
+							  // ê³µê²© ìœ ë‹›ì„ ê°€ë¦¬í‚¤ë©´ ìŠ¤íƒ ì´ˆê¸°í™”
 							  releaseMoveSign();
 							  m_CourseStack.clear();
 							  return;
 						  }
 
-						  // ½ºÅÃÀÌ ºñ¾ú³ª¿ä?
+						  // ìŠ¤íƒì´ ë¹„ì—ˆë‚˜ìš”?
 						  if (m_CourseStack.empty())
 						  {
-							  // °ø°İ À¯´Ö ±âÁØÀ¸·Î 1Ä­ ¹üÀ§¿¡ ¾øÀ¸¸é OUT!
+							  // ê³µê²© ìœ ë‹› ê¸°ì¤€ìœ¼ë¡œ 1ì¹¸ ë²”ìœ„ì— ì—†ìœ¼ë©´ OUT!
 							  if (!atkUnit->GetPosition().isAround(cursor, 1)) return;
 						  }
 						  else
 						  {
-							  if (m_CourseStack.back() == cursor) return;	// °¡¸®Å°´Â À§Ä¡¿¡ º¯°æÀÌ ¾øÀ¸¸é OUT!
+							  if (m_CourseStack.back() == cursor) return;	// ê°€ë¦¬í‚¤ëŠ” ìœ„ì¹˜ì— ë³€ê²½ì´ ì—†ìœ¼ë©´ OUT!
 
 							  if (getUnitByPos(m_CourseStack.back()) != nullptr)
 							  {
-								  // ¸¶Áö¸· À§Ä¡¿¡¼­ Ãæµ¹ÇßÀ¸¸é
+								  // ë§ˆì§€ë§‰ ìœ„ì¹˜ì—ì„œ ì¶©ëŒí–ˆìœ¼ë©´
 								  if (m_CourseStack.size() == 1)	return;
 								  m_CourseStack.pop_back();
 							  }
 
-							  // ½ºÅÃ¿¡ ÀúÀåµÈ ¸¶Áö¸· ¿ä¼Ò ±âÁØÀ¸·Î 1Ä­ ¹üÀ§¿¡ ¾øÀ¸¸é OUT!
+							  // ìŠ¤íƒì— ì €ì¥ëœ ë§ˆì§€ë§‰ ìš”ì†Œ ê¸°ì¤€ìœ¼ë¡œ 1ì¹¸ ë²”ìœ„ì— ì—†ìœ¼ë©´ OUT!
 							  if (!m_CourseStack.back().isAround(cursor, 1)) return;
 
-							  // Áö±İ ¼±ÅÃµÈ ÁÂÇ¥°¡ ÀÌ¹Ì ½ºÅÃ¿¡ ÀúÀåµÅÀÖ½À´Ï±î?
+							  // ì§€ê¸ˆ ì„ íƒëœ ì¢Œí‘œê°€ ì´ë¯¸ ìŠ¤íƒì— ì €ì¥ë¼ìˆìŠµë‹ˆê¹Œ?
 							  vector<HexaPoint>::iterator i;
 							  for (i = m_CourseStack.begin(); i != m_CourseStack.end(); ++i)
 							  {
 								  if (*i == cursor)
 								  {
-									  // ÀúÀåµÅÀÖ´Ù¸é °Å±â ´ÙÀ½ºÎÅÍ ¸¶Áö¸· ¿ä¼Ò±îÁö »èÁ¦ÇØ¹ö¸®¼¼¿ä
+									  // ì €ì¥ë¼ìˆë‹¤ë©´ ê±°ê¸° ë‹¤ìŒë¶€í„° ë§ˆì§€ë§‰ ìš”ì†Œê¹Œì§€ ì‚­ì œí•´ë²„ë¦¬ì„¸ìš”
 									  vector<HexaPoint>::iterator j;
 									  for (j = i; j != m_CourseStack.end();)
 									  {
@@ -387,7 +387,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 
 							  if (m_CourseStack.size() == unitRange)
 							  {
-								  return;	// ¼³¸¶ ½ºÅÃÀÌ ²Ë Ã¡¾î¿ä? OUT!
+								  return;	// ì„¤ë§ˆ ìŠ¤íƒì´ ê½‰ ì°¼ì–´ìš”? OUT!
 							  }
 
 						  }
@@ -396,7 +396,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 						  range = m_CourseStack.size();
 						  if (range >= 2)
 						  {
-							  // µÚ¿¡¼­ µÎ¹øÂ°¿¡ ÀÖ´Â ¿ä¼Ò¿Í ºñ±³
+							  // ë’¤ì—ì„œ ë‘ë²ˆì§¸ì— ìˆëŠ” ìš”ì†Œì™€ ë¹„êµ
 							  HexaPoint prevPos = m_CourseStack.at(range - 2);
 							  direction = prevPos.GetDirection(cursor);
 						  }
@@ -407,7 +407,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 		}break;
 
 		case UMT_TELEPORT:{
-							  // Ä¿¼­°¡ °¡¸®Å°´Â À§Ä¡ °Ë»ö
+							  // ì»¤ì„œê°€ ê°€ë¦¬í‚¤ëŠ” ìœ„ì¹˜ ê²€ìƒ‰
 							  HexaPoint cursor;
 							  bool isHexaGrid = false;
 							  for (auto hexaPos : m_HexagonPoint)
@@ -421,16 +421,16 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 								  }
 							  }
 
-							  // °¡¸®Å°´Â À§Ä¡¿¡ º¯°æÀÌ ¾øÀ¸¸é OUT!
+							  // ê°€ë¦¬í‚¤ëŠ” ìœ„ì¹˜ì— ë³€ê²½ì´ ì—†ìœ¼ë©´ OUT!
 							  if (!m_CourseStack.empty() && m_CourseStack.back() == cursor) return;
 
-							  // ÀÌµ¿¹üÀ§ ¹ş¾î³ª¸é OUT!
+							  // ì´ë™ë²”ìœ„ ë²—ì–´ë‚˜ë©´ OUT!
 							  if (!unitPos.isAround(cursor, unitRange)) return;
 
 							  if (cursor == atkUnit->GetPosition())
 							  {
 
-								  // °ø°İ À¯´ÖÀ» °¡¸®Å°¸é ½ºÅÃ ÃÊ±âÈ­
+								  // ê³µê²© ìœ ë‹›ì„ ê°€ë¦¬í‚¤ë©´ ìŠ¤íƒ ì´ˆê¸°í™”
 								  releaseMoveSign();
 								  m_CourseStack.clear();
 								  return;
@@ -446,27 +446,27 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 	}
 #pragma endregion
 
-	// º»°İÀûÀ¸·Î À¯´ÖÀÌ ÀÌµ¿ÇÒ ¼ö ÀÖ´Â °÷µéÀ» ±×·ÁÁİ´Ï´Ù
+	// ë³¸ê²©ì ìœ¼ë¡œ ìœ ë‹›ì´ ì´ë™í•  ìˆ˜ ìˆëŠ” ê³³ë“¤ì„ ê·¸ë ¤ì¤ë‹ˆë‹¤
 	#pragma region Attack Unit Move Draw
 	switch (atkType)
 	{
 	case UMT_STRAIGHT:{
-		// ÀÌµ¿°æ·Î Ç¥½Ã
+		// ì´ë™ê²½ë¡œ í‘œì‹œ
 		for (int i = 1; i <= range; ++i)
 		{
 			HexaPoint atkCourse = unitPos.GetMovePoint(direction, i);
 
-			// ¹Ù´Ú¿¡ ¿¹»ó ÀÌµ¿ À§Ä¡¸¦ ±×·ÁÁØ´Ù
+			// ë°”ë‹¥ì— ì˜ˆìƒ ì´ë™ ìœ„ì¹˜ë¥¼ ê·¸ë ¤ì¤€ë‹¤
 			drawMoveSign(atkCourse, signcolor);
 
-			// ÀÌµ¿°æ·Î¿¡ ´Ù¸¥ À¯´ÖÀÌ Á¸ÀçÇÏ´Â°¡?
+			// ì´ë™ê²½ë¡œì— ë‹¤ë¥¸ ìœ ë‹›ì´ ì¡´ì¬í•˜ëŠ”ê°€?
 			if (Unit* crashUnit = getUnitByPos(atkCourse))
 			{
-				// ±×·³ °Å±â¼­ºÎÅÍ ´Ù¸¥ À¯´ÖÀÇ ÀÌµ¿°æ·Î¸¦ ±×¸®µµ·Ï ÇÏ½Ã¿À
-				// Ã¹ Ãæµ¹ÀÌ¸é ÇöÀç À¯´ÖÀÇ °ø°İ·Â - Ãæµ¿ À¯´ÖÀÇ ¹«°Ô¸¸Å­
+				// ê·¸ëŸ¼ ê±°ê¸°ì„œë¶€í„° ë‹¤ë¥¸ ìœ ë‹›ì˜ ì´ë™ê²½ë¡œë¥¼ ê·¸ë¦¬ë„ë¡ í•˜ì‹œì˜¤
+				// ì²« ì¶©ëŒì´ë©´ í˜„ì¬ ìœ ë‹›ì˜ ê³µê²©ë ¥ - ì¶©ë™ ìœ ë‹›ì˜ ë¬´ê²Œë§Œí¼
 				int atkRange = unitAtk - crashUnit->GetWeight() - 1;
 
-				// ¿òÁ÷ÀÌÀÚ
+				// ì›€ì§ì´ì
 				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
 					break;
 			}
@@ -474,37 +474,37 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 	}break;
 
 	case UMT_JUMP:{
-		// ÀÌµ¿°æ·Î Ç¥½Ã
+		// ì´ë™ê²½ë¡œ í‘œì‹œ
 		for (int i = 1; i <= range; ++i)
 		{
 			HexaPoint atkCourse = unitPos.GetMovePoint(direction, i);
 
 			drawMoveSign(atkCourse, signcolor);
 
-			// ÀÌµ¿°æ·Î¿¡ ´Ù¸¥ À¯´ÖÀÌ Á¸ÀçÇÏ´Â°¡?
+			// ì´ë™ê²½ë¡œì— ë‹¤ë¥¸ ìœ ë‹›ì´ ì¡´ì¬í•˜ëŠ”ê°€?
 			if (Unit* crashUnit = getUnitByPos(atkCourse))
 			{
-				// È¤½Ã ³× ÁÖÀÎÀÌ... E.N.E.M.Y ´Ï?
-				// ¾Æ´Ô È¤½Ã ¿©±â°¡... rangeÀÇ ³¡..?
+				// í˜¹ì‹œ ë„¤ ì£¼ì¸ì´... E.N.E.M.Y ë‹ˆ?
+				// ì•„ë‹˜ í˜¹ì‹œ ì—¬ê¸°ê°€... rangeì˜ ë..?
 				if ((crashUnit->GetOwner() == UO_ENEMY) || (i == range))
 				{
-					// ±×·±µ¥.. ÀÌ ±æ¸ñ¿¡ ¿ì¸®ÆíÀÌ ÀÖÀ¸¸é... °Â¶û °ãÃÄ¹ö¸®Àİ´Ï?
-					// ÀÚ.. ½Ã°£À» °Å½½·¯ ¿Ã¶ó°¡º¸ÀÚ²Ù³ª..
-					// ±×³ªÀú³ª ¾ê.. ¹æÇâÀº ¹İ´ëÂÊÀÌ¶õ´Ù.. 
+					// ê·¸ëŸ°ë°.. ì´ ê¸¸ëª©ì— ìš°ë¦¬í¸ì´ ìˆìœ¼ë©´... ê±”ë‘ ê²¹ì³ë²„ë¦¬ì–ë‹ˆ?
+					// ì.. ì‹œê°„ì„ ê±°ìŠ¬ëŸ¬ ì˜¬ë¼ê°€ë³´ìê¾¸ë‚˜..
+					// ê·¸ë‚˜ì €ë‚˜ ì–˜.. ë°©í–¥ì€ ë°˜ëŒ€ìª½ì´ë€ë‹¤.. 
 					HexaPoint beforePosition = atkCourse.GetMovePoint(direction, -1);
 
-					// °Å±â È¤½Ã ¿ì¸®Áı À¯´Ö ÀÖ½À´Ï±î?
+					// ê±°ê¸° í˜¹ì‹œ ìš°ë¦¬ì§‘ ìœ ë‹› ìˆìŠµë‹ˆê¹Œ?
 					if (nullptr == getUnitByPos(beforePosition) || range == 1)
 					{
-						// ¾øÀ½? ´Ô¾Æ Ãæµ¹¿©¤»¤»¤»¤»¤»¤»¤»
+						// ì—†ìŒ? ë‹˜ì•„ ì¶©ëŒì—¬ã…‹ã…‹ã…‹ã…‹ã…‹ã…‹ã…‹
 						int atkRange = unitAtk - crashUnit->GetWeight() - 1;
 						drawUnitMove(crashUnit, direction, atkRange, false);
 						break;
 					}
 					else
 					{
-						// gÇæ ¾ê ¿©±â¼­ ¹» ÇÏ°í ÀÖ´Â °Å´Ï¤Ğ;
-						// ¾îÂ¿ ¼ö ¾øÁö ¾ê µÚ±îÁö¸¸ °¡¾ß°Ú´Ù
+						// gí— ì–˜ ì—¬ê¸°ì„œ ë­˜ í•˜ê³  ìˆëŠ” ê±°ë‹ˆã… ;
+						// ì–´ì©” ìˆ˜ ì—†ì§€ ì–˜ ë’¤ê¹Œì§€ë§Œ ê°€ì•¼ê² ë‹¤
 						releaseMoveSign();
 						if (range - 1 > 0) drawUnitMove(atkUnit, direction, range - 1, false);
 						break;
@@ -516,16 +516,16 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 
 	case UMT_DASH:{
 		if (m_CourseStack.empty()) return;
-		// ½ºÅÃ¿¡ µé¾î°¡ÀÖ´Â´ë·Î ±×·ÁÁÖ¼¼¿ä!
+		// ìŠ¤íƒì— ë“¤ì–´ê°€ìˆëŠ”ëŒ€ë¡œ ê·¸ë ¤ì£¼ì„¸ìš”!
 		for (int i = 0; i < m_CourseStack.size(); ++i)
 		{
 			drawMoveSign(m_CourseStack.at(i), signcolor);
 
-			// ±×¸®´ø Áß Ãæµ¹ ½Ã
+			// ê·¸ë¦¬ë˜ ì¤‘ ì¶©ëŒ ì‹œ
 			Unit* crashUnit = getUnitByPos(m_CourseStack.at(i));
 			if (crashUnit != nullptr)
 			{
-				// ÀÌ µÚÀÇ ÄÚ½ºµéÀ» Á¦°Å
+				// ì´ ë’¤ì˜ ì½”ìŠ¤ë“¤ì„ ì œê±°
 				for (int j = m_CourseStack.size() - 1; j != i; --j)
 				{
 					m_CourseStack.pop_back();
@@ -540,7 +540,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 		if (m_CourseStack.empty()) return;
 		HexaPoint movePoint = m_CourseStack.at(0);
 
-		// ´Ù¸¥ À¯´ÖÀÌ Á¸ÀçÇØ ÀÌµ¿ÇÒ ¼ö ¾ø´Â °÷Àº »¡°£»öÀ¸·Î
+		// ë‹¤ë¥¸ ìœ ë‹›ì´ ì¡´ì¬í•´ ì´ë™í•  ìˆ˜ ì—†ëŠ” ê³³ì€ ë¹¨ê°„ìƒ‰ìœ¼ë¡œ
 		signcolor = (getUnitByPos(movePoint) == nullptr) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
 		drawMoveSign(movePoint, signcolor);
 	}break;
@@ -550,25 +550,25 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 	}
 #pragma endregion
 
-	// °ø°İ¿¡ ÀÇÇØ ³¯¶ó°¡´Â À¯´ÖÀ» ±×·ÁÁÜ
+	// ê³µê²©ì— ì˜í•´ ë‚ ë¼ê°€ëŠ” ìœ ë‹›ì„ ê·¸ë ¤ì¤Œ
 	if (unit != atkUnit)
 	{
-		// ÀÌµ¿°æ·Î Ç¥½Ã
+		// ì´ë™ê²½ë¡œ í‘œì‹œ
 		for (int i = 1; i <= range; ++i)
 		{
 			HexaPoint atkCourse = unitPos.GetMovePoint(direction, i);
 
-			// ¹Ù´Ú¿¡ ¿¹»ó ÀÌµ¿ À§Ä¡¸¦ ±×·ÁÁØ´Ù
+			// ë°”ë‹¥ì— ì˜ˆìƒ ì´ë™ ìœ„ì¹˜ë¥¼ ê·¸ë ¤ì¤€ë‹¤
 			drawMoveSign(atkCourse, signcolor);
 
-			// ÀÌµ¿°æ·Î¿¡ ´Ù¸¥ À¯´ÖÀÌ Á¸ÀçÇÏ´Â°¡?
+			// ì´ë™ê²½ë¡œì— ë‹¤ë¥¸ ìœ ë‹›ì´ ì¡´ì¬í•˜ëŠ”ê°€?
 			if (Unit* crashUnit = getUnitByPos(atkCourse))
 			{
-				// ±×·³ °Å±â¼­ºÎÅÍ ´Ù¸¥ À¯´ÖÀÇ ÀÌµ¿°æ·Î¸¦ ±×¸®µµ·Ï ÇÏ½Ã¿À
-				// µÎ¹øÂ° ÀÌÈÄ¿¡´Â (¿¹»ó ÀÌµ¿ À§Ä¡ - ÇöÀç±îÁö ±×·ÁÁØ °Å¸®) ¸¸Å­
+				// ê·¸ëŸ¼ ê±°ê¸°ì„œë¶€í„° ë‹¤ë¥¸ ìœ ë‹›ì˜ ì´ë™ê²½ë¡œë¥¼ ê·¸ë¦¬ë„ë¡ í•˜ì‹œì˜¤
+				// ë‘ë²ˆì§¸ ì´í›„ì—ëŠ” (ì˜ˆìƒ ì´ë™ ìœ„ì¹˜ - í˜„ì¬ê¹Œì§€ ê·¸ë ¤ì¤€ ê±°ë¦¬) ë§Œí¼
 				int atkRange = (range - i + 1);
 
-				// ¿òÁ÷ÀÌÀÚ
+				// ì›€ì§ì´ì
 				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
 					break;
 			}
@@ -576,7 +576,7 @@ void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, boo
 	}
 }
 
-// ÀÌµ¿°æ·Î¸¦ ±×¸®´Â ÇÔ¼ö
+// ì´ë™ê²½ë¡œë¥¼ ê·¸ë¦¬ëŠ” í•¨ìˆ˜
 void GameScene::drawMoveSign(HexaPoint point, Color4F signColor)
 {
 	Hexagon* courseSignHexagon = createHexagon(point.HexaToScreen(), HEXAGON_LENGTH);
@@ -587,7 +587,7 @@ void GameScene::drawMoveSign(HexaPoint point, Color4F signColor)
 	m_CourseSignNode.push_back(courseSignNode);
 }
 
-// ±×·Á³õÀº ÀÌµ¿°æ·Î¸¦ ÃÊ±âÈ­ÇÏ´Â ÇÔ¼ö
+// ê·¸ë ¤ë†“ì€ ì´ë™ê²½ë¡œë¥¼ ì´ˆê¸°í™”í•˜ëŠ” í•¨ìˆ˜
 void GameScene::releaseMoveSign()
 {
 	for (auto node : m_CourseSignNode)
@@ -597,19 +597,19 @@ void GameScene::releaseMoveSign()
 	m_CourseSignNode.clear();
 }
 
-// Å¬¸¯ÇÑ ÁÂÇ¥°¡ Æ¯Á¤ À°°¢Çü ¾È¿¡ µé¾îÀÖ´ÂÁö È®ÀÎÇÏ´Â ÇÔ¼ö
+// í´ë¦­í•œ ì¢Œí‘œê°€ íŠ¹ì • ìœ¡ê°í˜• ì•ˆì— ë“¤ì–´ìˆëŠ”ì§€ í™•ì¸í•˜ëŠ” í•¨ìˆ˜
 bool GameScene::isInHexagon(ScreenPoint touch, ScreenPoint anchor)
 {
 	float msin = sin(RADIANS_60);
 
-	// Å¬¸¯ÇÑ ÁÂÇ¥°¡ À°°¢ÇüÀÇ x ¹üÀ§¿¡ ¼ÓÇÏ´ÂÁö È®ÀÎ
+	// í´ë¦­í•œ ì¢Œí‘œê°€ ìœ¡ê°í˜•ì˜ x ë²”ìœ„ì— ì†í•˜ëŠ”ì§€ í™•ì¸
 	if (touch.y > anchor.y - HEXAGON_LENGTH * msin &&
 		touch.y < anchor.y + HEXAGON_LENGTH * msin)
 	{
 
 		float yHowFarToAnchor = abs(touch.y - anchor.y);
 
-		// À°°¢ÇüÀÇ Áß½É¿¡¼­ y °Å¸®·Î ¸Ö¾îÁú¼ö·Ï x ÆÇÁ¤ÀÌ Á¼¾ÆÁö´Â °ÍÀ» ±¸ÇöÇÏ´Â ÄÚµå
+		// ìœ¡ê°í˜•ì˜ ì¤‘ì‹¬ì—ì„œ y ê±°ë¦¬ë¡œ ë©€ì–´ì§ˆìˆ˜ë¡ x íŒì •ì´ ì¢ì•„ì§€ëŠ” ê²ƒì„ êµ¬í˜„í•˜ëŠ” ì½”ë“œ
 		float yTuningValue = yHowFarToAnchor / (HEXAGON_LENGTH * msin) * 0.5;
 
 		if (touch.x > anchor.x - HEXAGON_LENGTH * (1 - yTuningValue) &&
@@ -619,7 +619,7 @@ bool GameScene::isInHexagon(ScreenPoint touch, ScreenPoint anchor)
 	return false;
 }
 
-// À¯´ÖÀ» Ã£½À´Ï´Ù
+// ìœ ë‹›ì„ ì°¾ìŠµë‹ˆë‹¤
 Unit* GameScene::getUnitByID(int unitID)
 {
 	for (auto unit : m_UnitList)
@@ -627,7 +627,7 @@ Unit* GameScene::getUnitByID(int unitID)
 		if (unitID == unit->GetID())
 			return unit;
 	}
-	return nullptr; // °Ë»ö¿¡ ½ÇÆĞÇÏ¸é null return
+	return nullptr; // ê²€ìƒ‰ì— ì‹¤íŒ¨í•˜ë©´ null return
 }
 
 Unit* GameScene::getUnitByPos(HexaPoint unitPos)
@@ -637,13 +637,13 @@ Unit* GameScene::getUnitByPos(HexaPoint unitPos)
 		if (unitPos == unit->GetPosition())
 			return unit;
 	}
-	return nullptr; // °Ë»ö¿¡ ½ÇÆĞÇÏ¸é null return
+	return nullptr; // ê²€ìƒ‰ì— ì‹¤íŒ¨í•˜ë©´ null return
 }
 
 
 
-// À°°¢Çü ¾È¿¡ Á¤¼öÇü ÀÎµ¦½º °ªÀ» º¸¿©ÁÖ´Â ÇÔ¼ö .
-// DRAW_HEXA_POSITION ÀÌ true¸é ÀÎµ¦½º °ªÀÌ ¾Æ´Ñ À§Ä¡ °ªÀ» º¸¿©ÁÜ
+// ìœ¡ê°í˜• ì•ˆì— ì •ìˆ˜í˜• ì¸ë±ìŠ¤ ê°’ì„ ë³´ì—¬ì£¼ëŠ” í•¨ìˆ˜ .
+// DRAW_HEXA_POSITION ì´ trueë©´ ì¸ë±ìŠ¤ ê°’ì´ ì•„ë‹Œ ìœ„ì¹˜ ê°’ì„ ë³´ì—¬ì¤Œ
 void GameScene::drawText(int i, int j, Hexagon* hexa)
 {
 	int f = i;
@@ -672,7 +672,7 @@ void GameScene::drawText(int i, int j, Hexagon* hexa)
 }
 
 
-// Áß½ÉÁ¡°ú Å©±â¸¦ ³ÖÀ¸¸é, ±×¿¡ ´ëÇÑ À°°¢ÇüÀÇ °¢ ²ÀÁşÁ¡À» º¤ÅÍ¿¡ ³Ö¾î¼­ ¸®ÅÏÇÏ´Â ÇÔ¼ö .
+// ì¤‘ì‹¬ì ê³¼ í¬ê¸°ë¥¼ ë„£ìœ¼ë©´, ê·¸ì— ëŒ€í•œ ìœ¡ê°í˜•ì˜ ê° ê¼­ì§“ì ì„ ë²¡í„°ì— ë„£ì–´ì„œ ë¦¬í„´í•˜ëŠ” í•¨ìˆ˜ .
 Hexagon* GameScene::createHexagon(ScreenPoint anchor, int size)
 {
 	Hexagon* newHexa = new Hexagon;
@@ -691,8 +691,8 @@ Hexagon* GameScene::createHexagon(ScreenPoint anchor, int size)
 	return newHexa;
 }
 
-// ¼­¹ö·ÎºÎÅÍ ¹ŞÀº À¯´Ö µ¥ÀÌÅÍ¸¦ field¿Í unit ¿¡ ÀúÀåÇÏ´Â ÇÔ¼ö
-// À¯´ÖÀ» ÀúÀåÇÑ ÈÄ, È­¸é¿¡ À¯´ÖÀ» ±×¸°´Ù. ±×¸®°í °ÔÀÓ ½ÃÀÛ »óÅÂ·Î ÀüÈ¯ÇÑ´Ù.
+// ì„œë²„ë¡œë¶€í„° ë°›ì€ ìœ ë‹› ë°ì´í„°ë¥¼ fieldì™€ unit ì— ì €ì¥í•˜ëŠ” í•¨ìˆ˜
+// ìœ ë‹›ì„ ì €ì¥í•œ í›„, í™”ë©´ì— ìœ ë‹›ì„ ê·¸ë¦°ë‹¤. ê·¸ë¦¬ê³  ê²Œì„ ì‹œì‘ ìƒíƒœë¡œ ì „í™˜í•œë‹¤.
 void GameScene::ReadUnitData(UnitData unitData[], int length)
 {
 	m_UnitList.reserve(length);
@@ -703,11 +703,11 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 
 		m_UnitList.push_back(unit);
 
-		// À¯´ÖÀÇ À§Ä¡¸¦ È­¸é»óÀÇ ÁÂÇ¥·Î º¯È¯ÇÏ°í screenPoint ¿¡ ÀúÀå
+		// ìœ ë‹›ì˜ ìœ„ì¹˜ë¥¼ í™”ë©´ìƒì˜ ì¢Œí‘œë¡œ ë³€í™˜í•˜ê³  screenPoint ì— ì €ì¥
 		Sprite* unitSprite = unit->GetSprite();
 		ScreenPoint unitRealPoint = unit->GetPosition().HexaToScreen();
 
-		// È­¸é»óÀÇ ÁÂÇ¥¿¡ À¯´ÖÀ» ¹èÄ¡
+		// í™”ë©´ìƒì˜ ì¢Œí‘œì— ìœ ë‹›ì„ ë°°ì¹˜
 		assert(unitSprite != nullptr);
 
 		unitSprite->setPosition(Point(unitRealPoint.x, unitRealPoint.y));
@@ -743,12 +743,12 @@ void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length)
 		CCLOG("%d, %d", x, y);
 		ScreenPoint point = HexaPoint(x, y).HexaToScreen();
 
-		m_HexagonPoint.push_back(HexaPoint(x, y));	// m_HexagonPoint ¿¡ È­¸é¿¡ ±×·ÁÁö´Â ÁÂÇ¥(0~x, 0~y)µéÀ» ÀúÀå
+		m_HexagonPoint.push_back(HexaPoint(x, y));	// m_HexagonPoint ì— í™”ë©´ì— ê·¸ë ¤ì§€ëŠ” ì¢Œí‘œ(0~x, 0~y)ë“¤ì„ ì €ì¥
 
 		Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
 		node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, COLOR_OF_GRID);
 
-		// ÀÓ½Ã·Î ºí·Ï ÀÌ¹ÌÁö ±×·ÁÁÜ
+		// ì„ì‹œë¡œ ë¸”ë¡ ì´ë¯¸ì§€ ê·¸ë ¤ì¤Œ
 		Sprite* fieldBlock;
 		switch (rand() % 3)
 		{
@@ -763,7 +763,7 @@ void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length)
 		fieldBlock->setPosition(point);
 		this->addChild(fieldBlock, y);
 
-		if (DRAW_HEXA_NUMBER) drawText(x, y, hexa);	// Çí»ç°ï ¾È¿¡ Á¤¼öÇü ÀÎµ¦½º °ªÀ» º¸¿©ÁÙ °ÍÀÎ°¡?
+		if (DRAW_HEXA_NUMBER) drawText(x, y, hexa);	// í—¥ì‚¬ê³¤ ì•ˆì— ì •ìˆ˜í˜• ì¸ë±ìŠ¤ ê°’ì„ ë³´ì—¬ì¤„ ê²ƒì¸ê°€?
 	}
 }
 
@@ -773,16 +773,16 @@ void GameScene::onGameStart(Packet::GameStartResult inPacket)
 	ReadUnitData(inPacket.mUnit, inPacket.mUnitLength);
 }
 
-// sender ¹«½ÃÇÏ¼À!
+// sender ë¬´ì‹œí•˜ì…ˆ!
 void GameScene::onUnitAction(CCNode* sender)
 {
 	if (!m_UnitActionQueue.empty())
 	{
-		// i ¹øÂ° ¾×¼ÇÀ» °¡Á®¿È
+		// i ë²ˆì§¸ ì•¡ì…˜ì„ ê°€ì ¸ì˜´
 		UnitAction action = m_UnitActionQueue.front();
 		m_UnitActionQueue.pop();
 
-		// id¸¦ »ç¿ëÇÏ¿© i ¹øÂ° ¾×¼ÇÀ» Àû¿ëÇÒ À¯´ÖÀ» Ã£À½
+		// idë¥¼ ì‚¬ìš©í•˜ì—¬ i ë²ˆì§¸ ì•¡ì…˜ì„ ì ìš©í•  ìœ ë‹›ì„ ì°¾ìŒ
 		Unit* unit = getUnitByID(action.mUnitId);
 
 		PrintUnitAction(action);
@@ -793,10 +793,10 @@ void GameScene::onUnitAction(CCNode* sender)
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
 						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
-						  // À¯´ÖÀº ÀÎµ¦½º·Î ÀÌµ¿
+						  // ìœ ë‹›ì€ ì¸ë±ìŠ¤ë¡œ ì´ë™
 						  unit->setPosition(hMovePoint);
 
-						  // ½ºÇÁ¶óÀÌÆ®´Â ÁÂÇ¥·Î ÀÌµ¿
+						  // ìŠ¤í”„ë¼ì´íŠ¸ëŠ” ì¢Œí‘œë¡œ ì´ë™
 						  auto sprite = unit->GetSprite();
 						  CCFiniteTimeAction* actionMove =
 							  CCMoveTo::create(MOVE_DURATION,
@@ -826,15 +826,15 @@ void GameScene::onUnitAction(CCNode* sender)
 		}break;
 
 		case UAT_DASH:{
-						  // Àû¿ëÇÒ ¾×¼ÇÀÇ ÀÌµ¿Å¸ÀÔÀÌ ´ë½¬¸é?
-						  // ´Ù¸¥ Å¸ÀÔÀÇ ¾×¼ÇÀÌ µé¾î¿Ã¶§±îÁö ¹İº¹
+						  // ì ìš©í•  ì•¡ì…˜ì˜ ì´ë™íƒ€ì…ì´ ëŒ€ì‰¬ë©´?
+						  // ë‹¤ë¥¸ íƒ€ì…ì˜ ì•¡ì…˜ì´ ë“¤ì–´ì˜¬ë•Œê¹Œì§€ ë°˜ë³µ
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
 						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
 
-						  // À¯´ÖÀº ÀÎµ¦½º·Î ÀÌµ¿
+						  // ìœ ë‹›ì€ ì¸ë±ìŠ¤ë¡œ ì´ë™
 						  unit->setPosition(hMovePoint);
 
-						  // ½ºÇÁ¶óÀÌÆ®´Â ÁÂÇ¥·Î ÀÌµ¿
+						  // ìŠ¤í”„ë¼ì´íŠ¸ëŠ” ì¢Œí‘œë¡œ ì´ë™
 						  auto sprite = unit->GetSprite();
 						  CCFiniteTimeAction* actionMove =
 							  CCMoveTo::create(MOVE_DURATION,
@@ -854,7 +854,7 @@ void GameScene::onUnitAction(CCNode* sender)
 
 							  unit->setPosition(hMovePoint);
 
-							  // ÅÚ·¹Æ÷Æ®´Â »Ğ! ÇÏ°í ÀÌµ¿
+							  // í…”ë ˆí¬íŠ¸ëŠ” ë¿…! í•˜ê³  ì´ë™
 							  auto sprite = unit->GetSprite();
 							  CCFiniteTimeAction* actionMove =
 								  CCMoveTo::create(0, sMovePoint);

@@ -1,4 +1,4 @@
-#ifndef __CCB_CCSEQUENCE_H__
+﻿#ifndef __CCB_CCSEQUENCE_H__
 #define __CCB_CCSEQUENCE_H__
 
 #include <string>

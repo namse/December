@@ -1,4 +1,4 @@
-/* pnglibconf.h - library build configuration */
+﻿/* pnglibconf.h - library build configuration */
 
 /* libpng version 1.6.2 - April 25, 2013 */
 

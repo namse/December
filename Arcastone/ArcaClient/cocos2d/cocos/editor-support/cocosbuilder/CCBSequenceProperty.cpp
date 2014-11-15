@@ -1,4 +1,4 @@
-#include "CCBSequenceProperty.h"
+﻿#include "CCBSequenceProperty.h"
 
 using namespace cocos2d;
 using namespace std;

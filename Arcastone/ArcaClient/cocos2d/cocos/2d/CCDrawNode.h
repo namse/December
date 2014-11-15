@@ -1,4 +1,4 @@
-/* Copyright (c) 2012 Scott Lembcke and Howling Moon Software
+﻿/* Copyright (c) 2012 Scott Lembcke and Howling Moon Software
  * Copyright (c) 2012 cocos2d-x.org
  * Copyright (c) 2013-2014 Chukong Technologies Inc.
  *

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2012 cocos2d-x.org
  * http://www.cocos2d-x.org
  *
@@ -96,7 +96,7 @@ public:
         Vec2 endLineB);
 
 protected:
-    /** Contains the receiver’s current value. */
+    /** Contains the receiver?s current value. */
     float           _value;
     /** Contains the minimum value of the receiver.
      * The default value of this property is 0.0. */

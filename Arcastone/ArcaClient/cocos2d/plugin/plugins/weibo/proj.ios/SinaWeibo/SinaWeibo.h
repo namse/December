@@ -1,4 +1,4 @@
-//
+﻿//
 //  SinaWeibo.h
 //  sinaweibo_ios_sdk
 //
@@ -73,7 +73,7 @@
 
 
 /**
- * @description 第三方应用需实现此协议，登录时传入此类对象，用于完成登录结果的回调
+ * @description 寧т??밧??③若?경ㅵ溫竊?삣??뜸??ζㅷ굳野배괌竊?ⓧ?若??삣?瀯???瘟
  */
 @protocol SinaWeiboDelegate <NSObject>
 

@@ -1,4 +1,4 @@
-#include "MciPlayer.h"
+﻿#include "MciPlayer.h"
 
 #define WIN_CLASS_NAME        "CocosDenshionCallbackWnd"
 #define BREAK_IF(cond)      if (cond) break;

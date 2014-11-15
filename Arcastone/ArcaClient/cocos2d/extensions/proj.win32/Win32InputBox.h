@@ -1,4 +1,4 @@
-#ifndef __03022006__WIN32INPUTBOX__
+﻿#ifndef __03022006__WIN32INPUTBOX__
 #define __03022006__WIN32INPUTBOX__
 
 #include "cocos2d.h"

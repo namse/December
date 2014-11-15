@@ -1,4 +1,4 @@
-#include "jsb_pluginx_spidermonkey_specifics.h"
+﻿#include "jsb_pluginx_spidermonkey_specifics.h"
 
 namespace pluginx {
 

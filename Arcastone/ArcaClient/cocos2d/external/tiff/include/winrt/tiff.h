@@ -1,4 +1,4 @@
-/* $Id: tiff.h,v 1.67 2011-01-24 21:06:32 olivier Exp $ */
+﻿/* $Id: tiff.h,v 1.67 2011-01-24 21:06:32 olivier Exp $ */
 
 /*
  * Copyright (c) 1988-1997 Sam Leffler

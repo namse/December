@@ -1,4 +1,4 @@
-#ifndef __CCB_SEQUENCE_PROPERTY_H__
+﻿#ifndef __CCB_SEQUENCE_PROPERTY_H__
 #define __CCB_SEQUENCE_PROPERTY_H__
 
 #include "base/CCRef.h"

@@ -1,4 +1,4 @@
-#ifndef RAPIDJSON_STRINGBUFFER_H_
+﻿#ifndef RAPIDJSON_STRINGBUFFER_H_
 #define RAPIDJSON_STRINGBUFFER_H_
 
 #include "rapidjson.h"

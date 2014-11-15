@@ -1,4 +1,4 @@
-#ifndef __CCB_CCBANIMATION_MANAGER_H__
+﻿#ifndef __CCB_CCBANIMATION_MANAGER_H__
 #define __CCB_CCBANIMATION_MANAGER_H__
 
 #include "base/CCMap.h"

@@ -1,4 +1,4 @@
-//
+﻿//
 //  GADAdMobExtras.h
 //  Google Ads iOS SDK
 //

@@ -1,4 +1,4 @@
-#ifndef __CURL_CURLBUILD_H
+﻿#ifndef __CURL_CURLBUILD_H
 #define __CURL_CURLBUILD_H
 /***************************************************************************
  *                                  _   _ ____  _

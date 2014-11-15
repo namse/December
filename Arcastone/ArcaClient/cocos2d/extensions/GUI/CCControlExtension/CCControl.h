@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Copyright (c) 2012 cocos2d-x.org
  * http://www.cocos2d-x.org
  *
@@ -83,7 +83,7 @@ public:
     /** The possible state for a control.  */
     enum class State
     {
-        NORMAL         = 1 << 0, // The normal, or default state of a control¡ªthat is, enabled but neither selected nor highlighted.
+        NORMAL         = 1 << 0, // The normal, or default state of a controlâ€•that is, enabled but neither selected nor highlighted.
         HIGH_LIGHTED   = 1 << 1, // Highlighted state of a control. A control enters this state when a touch down, drag inside or drag enter is performed. You can retrieve and set this value through the highlighted property.
         DISABLED       = 1 << 2, // Disabled state of a control. This state indicates that the control is currently disabled. You can retrieve and set this value through the enabled property.
         SELECTED       = 1 << 3  // Selected state of a control. This state indicates that the control is currently selected. You can retrieve and set this value through the selected property.
@@ -137,7 +137,7 @@ public:
      * Removes a target and action for a particular event (or events) from an
      * internal dispatch table.
      *
-     * @param target The target object—that is, the object to which the action
+     * @param target The target objectÂ—that is, the object to which the action
      * message is sent. Pass nil to remove all targets paired with action and the
      * specified control events.
      * @param action A selector identifying an action message. Pass NULL to remove
@@ -220,7 +220,7 @@ protected:
      * parameters, in that order.
      * When you call this method, target is not retained.
      *
-     * @param target The target object¡ªthat is, the object to which the action 
+     * @param target The target objectâ€•that is, the object to which the action 
      * message is sent. It cannot be nil. The target is not retained.
      * @param action A selector identifying an action message. It cannot be NULL.
      * @param controlEvent A control event for which the action message is sent.
@@ -232,7 +232,7 @@ protected:
      * Removes a target and action for a particular event from an internal dispatch
      * table.
      *
-     * @param target The target object¡ªthat is, the object to which the action 
+     * @param target The target objectâ€•that is, the object to which the action 
      * message is sent. Pass nil to remove all targets paired with action and the
      * specified control events.
      * @param action A selector identifying an action message. Pass NULL to remove

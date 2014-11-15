@@ -1,4 +1,4 @@
-#ifndef RAPIDJSON_DOCUMENT_H_
+﻿#ifndef RAPIDJSON_DOCUMENT_H_
 #define RAPIDJSON_DOCUMENT_H_
 
 #include "reader.h"

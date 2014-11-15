@@ -1,4 +1,4 @@
-#ifndef __CCMATHBASE_H__
+﻿#ifndef __CCMATHBASE_H__
 #define __CCMATHBASE_H__
 
 #include <memory>

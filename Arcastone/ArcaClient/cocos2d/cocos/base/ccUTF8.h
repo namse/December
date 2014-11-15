@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
  Copyright (c) 2014 cocos2d-x.org
  Copyright (c) 2014 Chukong Technologies Inc.
 
@@ -43,7 +43,7 @@ namespace StringUtils {
  *  e.g.
  *  @code
  *    std::u16string utf16;
- *    bool ret = StringUtils::UTF8ToUTF16("你好hello", utf16);
+ *    bool ret = StringUtils::UTF8ToUTF16("鵝也?ello", utf16);
  *    if (ret) {
  *        do_some_thing_with_utf16(utf16);
  *    }

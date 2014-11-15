@@ -1,4 +1,4 @@
-
+﻿
 
 #include "SliderReader.h"
 #include "ui/UISlider.h"

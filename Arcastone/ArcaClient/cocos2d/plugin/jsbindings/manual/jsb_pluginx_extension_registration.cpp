@@ -1,4 +1,4 @@
-#include "jsb_pluginx_extension_registration.h"
+﻿#include "jsb_pluginx_extension_registration.h"
 #include "jsb_pluginx_manual_callback.h"
 #include "jsb_pluginx_manual_protocols.h"
 

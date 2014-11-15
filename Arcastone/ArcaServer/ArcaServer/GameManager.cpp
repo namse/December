@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "GameManager.h"
 
 GameManager* GGameManager = nullptr;

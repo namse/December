@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * edtaa3()
  *
  * Sweep-and-update Euclidean distance transform of an
@@ -25,7 +25,7 @@
  * Updated in 2009 to handle anti-aliased edges,
  * as published in the article "Anti-aliased Euclidean
  * distance transform" by Stefan Gustavson and Robin Strand,
- * Pattern Recognition Letters 32 (2011) 252¨C257.
+ * Pattern Recognition Letters 32 (2011) 252?257.
  *
  * Updated in 2011 to avoid a corner case causing an
  * infinite loop for some input data.

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "AutoMatcher.h"
 #include "GameManager.h"
 #include "ClientManager.h"
@@ -16,7 +16,7 @@ AutoMatcher::~AutoMatcher()
 
 void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 {
-	// ´Ü¼ø 2ÀÎ ¸ÅÄª
+	// ë‹¨ìˆœ 2ì¸ ë§¤ì¹­
 	if (0 < m_WaitPlayerList.size())
 	{
 		PlayerNumber matchPlayer = m_WaitPlayerList.front();

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ArcaServer.h"
 #include "ThreadLocal.h"
 #include "DatabaseJobContext.h"
@@ -8,7 +8,7 @@
 DatabaseJobManager* GDatabaseJobManager = nullptr ;
 
 
-/// ¾Æ·¡ ÇÔ¼ö´Â DB Ã³¸® ¾²·¹µå¿¡¼­ ºÒ·Á¾ß ÇÑ´Ù
+/// ì•„ë˜ í•¨ìˆ˜ëŠ” DB ì²˜ë¦¬ ì“°ë ˆë“œì—ì„œ ë¶ˆë ¤ì•¼ í•œë‹¤
 void DatabaseJobManager::ExecuteDatabaseJobs()
 {
 	assert( LThreadType == THREAD_DATABASE ) ;
@@ -18,26 +18,26 @@ void DatabaseJobManager::ExecuteDatabaseJobs()
 	{
 		mDbJobRequestQueue.Consume(jobContext) ;
 
-		/// ¿©±â¼­ DBÈ£ÃâÇØ¼­ Ã³¸®ÇÏ°í 
+		/// ì—¬ê¸°ì„œ DBí˜¸ì¶œí•´ì„œ ì²˜ë¦¬í•˜ê³  
 		jobContext->mSuccess = jobContext->OnExecute() ;
 
-		/// ±× °á°ú¸¦ result queue¿¡ ´ã¾Æ ³õÀ½
+		/// ê·¸ ê²°ê³¼ë¥¼ result queueì— ë‹´ì•„ ë†“ìŒ
 		mDbJobResultQueue.Produce(jobContext) ;
 	}
 }
 
-/// ¾Æ·¡ ÇÔ¼ö´Â Å¬¶óÀÌ¾ğÆ® Ã³¸® ¾²·¹µå¿¡¼­ ºÒ·Á¾ß ÇÑ´Ù
+/// ì•„ë˜ í•¨ìˆ˜ëŠ” í´ë¼ì´ì–¸íŠ¸ ì²˜ë¦¬ ì“°ë ˆë“œì—ì„œ ë¶ˆë ¤ì•¼ í•œë‹¤
 void DatabaseJobManager::PushDatabaseJobRequest(DatabaseJobContext* jobContext)
 {
 	assert( LThreadType == THREAD_CLIENT ) ;
 	mDbJobRequestQueue.Produce(jobContext) ;
 }
 
-/// ¾Æ·¡ ÇÔ¼ö´Â Å¬¶óÀÌ¾ğÆ® Ã³¸® ¾²·¹µå¿¡¼­ ºÒ·Á¾ß ÇÑ´Ù
+/// ì•„ë˜ í•¨ìˆ˜ëŠ” í´ë¼ì´ì–¸íŠ¸ ì²˜ë¦¬ ì“°ë ˆë“œì—ì„œ ë¶ˆë ¤ì•¼ í•œë‹¤
 bool DatabaseJobManager::PopDatabaseJobResult(DatabaseJobContext*& jobContext)
 {
 	assert( LThreadType == THREAD_CLIENT ) ;
 
-	/// DB ÀÛ¾÷ ¿Ï·á´Â ±â´Ù¸®Áö ¾Ê´Â´Ù
+	/// DB ì‘ì—… ì™„ë£ŒëŠ” ê¸°ë‹¤ë¦¬ì§€ ì•ŠëŠ”ë‹¤
 	return mDbJobResultQueue.Consume(jobContext, false) ;
 }

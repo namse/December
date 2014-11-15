@@ -1,4 +1,4 @@
-#ifndef _CCB_CCLAYERGRADIENTLOADER_H_
+﻿#ifndef _CCB_CCLAYERGRADIENTLOADER_H_
 #define _CCB_CCLAYERGRADIENTLOADER_H_
 
 #include "CCLayerLoader.h"

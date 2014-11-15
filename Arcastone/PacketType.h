@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #define MAX_CHAT_LEN		256
 
@@ -75,13 +75,13 @@ enum UnitStatusType{
 	UST_NONE = 0,
 	UST_DEAD = 1,
 	UST_CASTING = 2,
-	// ±× ¿Ü »óÅÂÀÌ»óµé
+	// ê·¸ ì™¸ ìƒíƒœì´ìƒë“¤
 };
 
 enum HexaDirection{
 	HD_NONE = 0,
 
-	// ½Ã°è ¹İ´ë¹æÇâ
+	// ì‹œê³„ ë°˜ëŒ€ë°©í–¥
 	HD_NORTHEAST = 1,
 	HD_NORTH = 2,
 	HD_NORTHWEST = 3,
@@ -115,7 +115,7 @@ enum WhosWinner
 	WW_NONE = 0,
 	WW_PLAYER1 = 1,
 	WW_PLAYER2 = 2,
-	WW_DRAW = 3,	// ¹«½ÂºÎ
+	WW_DRAW = 3,	// ë¬´ìŠ¹ë¶€
 };
 
 enum UnitActionType{
@@ -139,7 +139,7 @@ struct Coord{
 	{
 		x = _x, y = _y;
 	}
-	// ¿¬»êÀÚ ¿À¹ö·Îµù
+	// ì—°ì‚°ì ì˜¤ë²„ë¡œë”©
 	bool operator < (const Coord& right) const
 	{
 		if ((x < right.x) || (x == right.x && y < right.y))
@@ -291,7 +291,7 @@ namespace Packet
 		UnitAction mUnitActionQueue[MXX_UNIT_ACTION_QUEUE];
 	};
 
-	struct WrongAttackResult : public PacketHeader // ³Ê °ø°İ(½ºÅ³) ÀÌ»óÇÏ°ÔÇß¾î ÀÓ¸¶
+	struct WrongAttackResult : public PacketHeader // ë„ˆ ê³µê²©(ìŠ¤í‚¬) ì´ìƒí•˜ê²Œí–ˆì–´ ì„ë§ˆ
 	{
 		WrongAttackResult(){
 			mSize = sizeof(WrongAttackResult);

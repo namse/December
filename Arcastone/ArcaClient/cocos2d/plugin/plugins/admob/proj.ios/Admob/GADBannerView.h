@@ -1,4 +1,4 @@
-//
+﻿//
 //  GADBannerView.h
 //  Google AdMob Ads SDK
 //

@@ -1,4 +1,4 @@
-//
+﻿//
 // Book:      OpenGL(R) ES 2.0 Programming Guide
 // Authors:   Aaftab Munshi, Dan Ginsburg, Dave Shreiner
 // ISBN-10:   0321502795

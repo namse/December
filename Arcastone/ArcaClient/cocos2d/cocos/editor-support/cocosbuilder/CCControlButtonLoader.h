@@ -1,4 +1,4 @@
-#ifndef _CCB_CCCONTROLBUTTONLOADER_H_
+﻿#ifndef _CCB_CCCONTROLBUTTONLOADER_H_
 #define _CCB_CCCONTROLBUTTONLOADER_H_
 
 #include "CCControlLoader.h"

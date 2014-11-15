@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ParsingData.h"
 
 ParsingData* GParsingData = nullptr;
@@ -6,15 +6,15 @@ ParsingData* GParsingData = nullptr;
 ParsingData::ParsingData()
 {
 	Json::Value unit;
-	// °¢ À¯´Ö µ¥ÀÌÅÍ¸¦ ¹è¿­¿¡ ´ã´Â´Ù
+	// ê° ìœ ë‹› ë°ì´í„°ë¥¼ ë°°ì—´ì— ë‹´ëŠ”ë‹¤
 	Json::Value unitList(Json::arrayValue);
 
-	// À¯´Ö Á¾·ùÀÇ ¼ö ¼¼±â
+	// ìœ ë‹› ì¢…ë¥˜ì˜ ìˆ˜ ì„¸ê¸°
 	int m_UnitTypeCount = 0;
 
 #pragma region ParseData
 	{
-		// json ÆÄÀÏÀÌ ¾øÀ¸¹Ç·Î ÀÏ´Ü ¿ì°Ü³ÖÀ½ .
+		// json íŒŒì¼ì´ ì—†ìœ¼ë¯€ë¡œ ì¼ë‹¨ ìš°ê²¨ë„£ìŒ .
 		unit["name"] = UT_ARCASTONE;
 		unit["MoveType"] = UMT_NONE;
 		unit["MoveRange"] = 0;
@@ -83,7 +83,7 @@ UnitData ParsingData::GetUnitData(UnitType unitType)
 
 	std::map<UnitType, UnitData >::iterator findIter = m_UnitList.find(unitType);
 
-	// Ã£¾Ò´Ù¸é ¸®ÅÏ
+	// ì°¾ì•˜ë‹¤ë©´ ë¦¬í„´
 	if (findIter != m_UnitList.end())
 	{
 		retUnitData = findIter->second;

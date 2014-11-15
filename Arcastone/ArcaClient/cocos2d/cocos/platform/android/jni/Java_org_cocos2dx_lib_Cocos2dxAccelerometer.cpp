@@ -1,4 +1,4 @@
-#include "JniHelper.h"
+﻿#include "JniHelper.h"
 #include <jni.h>
 #include "base/CCDirector.h"
 #include "base/CCEventDispatcher.h"

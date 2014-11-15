@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "Exception.h"
 
@@ -18,13 +18,13 @@ public:
 
 			for (int i=0 ; i<ALLOC_COUNT-1 ; ++i)
 			{
-				/// OBJECTÀÇ Å©±â°¡ ¹Ýµå½Ã Æ÷ÀÎÅÍ Å©±âº¸´Ù Ä¿¾ß ÇÑ´Ù
+				/// OBJECTì˜ í¬ê¸°ê°€ ë°˜ë“œì‹œ í¬ì¸í„° í¬ê¸°ë³´ë‹¤ ì»¤ì•¼ í•œë‹¤
 				pNext += sizeof(TOBJECT) ;
 				*ppCurr = pNext ;
 				ppCurr = reinterpret_cast<uint8_t**>(pNext) ;
 			}
 			
-			*ppCurr = 0 ; ///< ¸¶Áö¸·Àº 0À¸·Î Ç¥½Ã
+			*ppCurr = 0 ; ///< ë§ˆì§€ë§‰ì€ 0ìœ¼ë¡œ í‘œì‹œ
 			mTotalAllocCount += ALLOC_COUNT ;
 		}
 

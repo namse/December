@@ -1,4 +1,4 @@
-#ifndef __DPIJNI_H__
+﻿#ifndef __DPIJNI_H__
 #define __DPIJNI_H__
 
 extern "C" {

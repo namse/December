@@ -1,4 +1,4 @@
-
+﻿
 
 #include "LoadingBarReader.h"
 #include "ui/UILoadingBar.h"

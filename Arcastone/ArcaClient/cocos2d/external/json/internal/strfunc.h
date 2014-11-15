@@ -1,4 +1,4 @@
-#ifndef RAPIDJSON_INTERNAL_STRFUNC_H_
+﻿#ifndef RAPIDJSON_INTERNAL_STRFUNC_H_
 #define RAPIDJSON_INTERNAL_STRFUNC_H_
 
 namespace rapidjson {

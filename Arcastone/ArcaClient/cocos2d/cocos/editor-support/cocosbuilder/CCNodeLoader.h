@@ -1,4 +1,4 @@
-#ifndef _CCB_CCNODELOADER_H_
+﻿#ifndef _CCB_CCNODELOADER_H_
 #define _CCB_CCNODELOADER_H_
 
 #include "extensions/GUI/CCControlExtension/CCInvocation.h"

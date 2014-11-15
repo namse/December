@@ -1,4 +1,4 @@
-//
+﻿//
 //  SinaWeiboRequest.h
 //  sinaweibo_ios_sdk
 //  Based on OAuth 2.0
@@ -22,7 +22,7 @@
 
 
 /**
- * @description 第三方应用访问微博API时实现此此协议，当sdk完成api的访问后通过传入的此类对象完成接口访问结果的回调，应用在协议实现的相应方法中接收访问结果并做对应处理。
+ * @description 寧т??밧??②욥孃?API?뜹?경ㅶㅵ溫竊壤sdk若?api?溫욥??瓦鴉?η閭ㅷ굳野배괌若??εｈ욥瀯???瘟竊佯?ⓨⓨ溫若?곁?멨??방?訝?ζ띈욥瀯?亮뜹野밧?鸚??
  */
 @protocol SinaWeiboRequestDelegate <NSObject>
 @optional

@@ -1,4 +1,4 @@
-#ifndef RAPIDJSON_WRITER_H_
+﻿#ifndef RAPIDJSON_WRITER_H_
 #define RAPIDJSON_WRITER_H_
 
 #include "rapidjson.h"

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 template<typename TElem, int QSize>
 class ProducerConsumerQueue
@@ -22,7 +22,7 @@ public:
 		{
 			if (waitUntilConsume)
 			{
-				/// Å¥¿¡ ³ÖÀ» °ø°£ »ı±æ¶§±îÁö ÀÜ´Ù.
+				/// íì— ë„£ì„ ê³µê°„ ìƒê¸¸ë•Œê¹Œì§€ ì”ë‹¤.
 				SleepConditionVariableSRW(&mNotFull, &mSRWLock, INFINITE, 0);
 			}
 			else
@@ -52,7 +52,7 @@ public:
 		{
 			if (waitUntilProduce)
 			{
-				/// Å¥¿¡ ¾ÆÀÌÅÛ µé¾î¿Ã¶§±îÁö ÀÜ´Ù
+				/// íì— ì•„ì´í…œ ë“¤ì–´ì˜¬ë•Œê¹Œì§€ ì”ë‹¤
 				SleepConditionVariableSRW(&mNotEmpty, &mSRWLock, INFINITE, 0);
 			}
 			else

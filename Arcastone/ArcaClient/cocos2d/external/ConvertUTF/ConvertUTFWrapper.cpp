@@ -1,4 +1,4 @@
-//===-- ConvertUTFWrapper.cpp - Wrap ConvertUTF.h with clang data types -----===
+﻿//===-- ConvertUTFWrapper.cpp - Wrap ConvertUTF.h with clang data types -----===
 //
 //                     The LLVM Compiler Infrastructure
 //

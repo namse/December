@@ -1,4 +1,4 @@
-#ifndef __JS_MANUAL_PROTOCOLS_H__
+﻿#ifndef __JS_MANUAL_PROTOCOLS_H__
 #define __JS_MANUAL_PROTOCOLS_H__
 
 #include "jsapi.h"

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "Field.h"
 
 
@@ -14,8 +14,8 @@ Field::~Field()
 
 void Field::InitField(int fieldWidth, int fieldHeight)
 {
-	// TODO : ¸ÊÀÇ ÇüÅÂ ºÒ·¯¿Í¼­ ±×°Å´ë·Î FieldBlock ©¾î³»±â
-	// ÀÏ´ÜÀº À°°¢Çü ÇüÅÂ·Î Àß¶ó³¿..
+	// TODO : ë§µì˜ í˜•íƒœ ë¶ˆëŸ¬ì™€ì„œ ê·¸ê±°ëŒ€ë¡œ FieldBlock ?ì–´ë‚´ê¸°
+	// ì¼ë‹¨ì€ ìœ¡ê°í˜• í˜•íƒœë¡œ ì˜ë¼ëƒ„..
 
 	int i = 0;
 

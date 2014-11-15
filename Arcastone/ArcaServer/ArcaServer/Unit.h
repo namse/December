@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "UnitData.h"
 class Unit
 {
@@ -30,7 +30,7 @@ protected:
 	PlayerNumber			m_OwnerPlayerNum;
 
 	UnitType				m_UnitType;
-	UnitStatusType			m_UnitStatus;	// ÇÑ¹ø¿¡ ÇÏ³ªÀÇ »óÅÂ¸¸ °¡Áú ¼ö ÀÖ´Ù
+	UnitStatusType			m_UnitStatus;	// í•œë²ˆì— í•˜ë‚˜ì˜ ìƒíƒœë§Œ ê°€ì§ˆ ìˆ˜ ìˆë‹¤
 	UnitMoveType			m_UnitMoveType;
 	int						m_HP;
 	int						m_Attack;

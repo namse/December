@@ -1,4 +1,4 @@
-#include "Unit.h"
+ï»¿#include "Unit.h"
 #include "Soldier.h"
 #include "Rider.h"
 #include "Knight.h"
@@ -88,7 +88,7 @@ void Unit::initSprite()
 {
 	m_Sprite = Sprite::create();
  
-	// Ã¼·Â/°ø°İ·Â ÇÁ·¹ÀÓ Ç¥½Ã
+	// ì²´ë ¥/ê³µê²©ë ¥ í”„ë ˆì„ í‘œì‹œ
 	auto frameHP = Sprite::create("frame_hp.png");
 	auto frameAtk = Sprite::create("frame_atk.png");
 
@@ -106,7 +106,7 @@ void Unit::initSprite()
 	m_Sprite->addChild(frameHP, zIdx, "frame_hp");
 	m_Sprite->addChild(frameAtk, zIdx, "frame_atk");
 
-	// Ã¼·Â°ú °ø°İ·Â ¼ıÀÚ Ç¥½Ã
+	// ì²´ë ¥ê³¼ ê³µê²©ë ¥ ìˆ«ì í‘œì‹œ
 	char buff[5];
 	itoa(m_HP, buff, 10);
 	auto labelHP = LabelTTF::create(buff, "Helvetica", 15);
@@ -129,7 +129,7 @@ void Unit::SetHP(int hp)
 {
 	m_HP = hp;
 
-	// ½ºÇÁ¶óÀÌÆ®ÀÇ Ã¼·Â ¼öÁ¤
+	// ìŠ¤í”„ë¼ì´íŠ¸ì˜ ì²´ë ¥ ìˆ˜ì •
 	char buff[5];
 	itoa(m_HP, buff, 10);
 

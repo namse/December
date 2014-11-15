@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <map>
 #include <WinSock2.h>
@@ -62,7 +62,7 @@ public:
 
 	void	Disconnect() ;
 
-	bool	SendFlush(); ///< Send¿äÃ» ÁßÀÎ°Íµé ¸ð¾Æ¼­ º¸³¿
+	bool	SendFlush(); ///< Sendìš”ì²­ ì¤‘ì¸ê²ƒë“¤ ëª¨ì•„ì„œ ë³´ëƒ„
 	void	DatabaseJobDone(DatabaseJobContext* result);
 
 private:

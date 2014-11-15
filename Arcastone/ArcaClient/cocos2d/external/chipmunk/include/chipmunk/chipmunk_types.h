@@ -1,4 +1,4 @@
-#include <stdint.h>
+﻿#include <stdint.h>
 #include <float.h>
 
 #ifdef __APPLE__

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "PlayerManager.h"
 #include "AutoMatcher.h"
 #include "GameManager.h"

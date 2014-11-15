@@ -1,4 +1,4 @@
-/* ftconfig.h.  Generated from ftconfig.in by configure.  */
+﻿/* ftconfig.h.  Generated from ftconfig.in by configure.  */
 /***************************************************************************/
 /*                                                                         */
 /*  ftconfig.in                                                            */

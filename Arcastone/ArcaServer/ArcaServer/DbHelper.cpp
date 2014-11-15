@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "DbHelper.h"
 #include "sqlite3.h"
 #include "Exception.h"
@@ -62,8 +62,8 @@ bool DbHelper::Execute(const char* format, ...)
 	
 	char* errMsg = NULL ;
 	
-	///FYI: »ç½Ç ½Ç¹«¿¡¼­´Â (SQL Injection ¶§¹®¿¡) ÀÌ·¸°Ô Äõ¸®¸¦ Á÷Á¢ ³ÖÁö ¾Ê°í
-	///ÆÄ¶ó¹ÌÅÍº°·Î ÀÏÀÏÀÌ BINDÇÑ´Ù. (BindParamXXX ¸â¹öÇÔ¼ö Âü°í)
+	///FYI: ì‚¬ì‹¤ ì‹¤ë¬´ì—ì„œëŠ” (SQL Injection ë•Œë¬¸ì—) ì´ë ‡ê²Œ ì¿¼ë¦¬ë¥¼ ì§ì ‘ ë„£ì§€ ì•Šê³ 
+	///íŒŒë¼ë¯¸í„°ë³„ë¡œ ì¼ì¼ì´ BINDí•œë‹¤. (BindParamXXX ë©¤ë²„í•¨ìˆ˜ ì°¸ê³ )
 	if (sqlite3_exec(mSqlite, sqlQuery, NULL, NULL, &errMsg) != SQLITE_OK)
 	{
 		printf("SQL [%s] ERROR [%s] \n", sqlQuery, errMsg) ;
@@ -118,7 +118,7 @@ RESULT_TYPE DbHelper::FetchRow()
 		return RESULT_ERROR ;
 	}
 
-	/// °á°ú¼ÂÀ¸·Î ¾ò¾î¿Ã µ¥ÀÌÅÍ°¡ ¾ø´Ù. (±×³É Äõ¸® ½ÇÇà¸¸ µÈ °Í)
+	/// ê²°ê³¼ì…‹ìœ¼ë¡œ ì–»ì–´ì˜¬ ë°ì´í„°ê°€ ì—†ë‹¤. (ê·¸ëƒ¥ ì¿¼ë¦¬ ì‹¤í–‰ë§Œ ëœ ê²ƒ)
 	if ( result == SQLITE_DONE )
 		return RESULT_DONE ;
 

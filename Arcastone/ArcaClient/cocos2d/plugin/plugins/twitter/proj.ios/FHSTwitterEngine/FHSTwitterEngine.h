@@ -1,4 +1,4 @@
-//
+﻿//
 //  FHSTwitterEngine.h
 //  FHSTwitterEngine
 //
@@ -33,7 +33,7 @@
 
 //
 // FHSTwitterEngine
-// The synchronous Twitter engine that doesn’t suck!!
+// The synchronous Twitter engine that doesn?t suck!!
 //
 
 // FHSTwitterEngine is Synchronous

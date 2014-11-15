@@ -1,4 +1,4 @@
-#ifndef _CCB_CCSCROLLVIEWLOADER_H_
+﻿#ifndef _CCB_CCSCROLLVIEWLOADER_H_
 #define _CCB_CCSCROLLVIEWLOADER_H_
 
 #include "CCNodeLoader.h"

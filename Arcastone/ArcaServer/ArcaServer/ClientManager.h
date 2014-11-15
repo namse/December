@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include <map>
 #include <WinSock2.h>
@@ -19,7 +19,7 @@ public:
 
 	void OnPeriodWork() ;
 
-	/// DB¿¡ ÇÃ·¹ÀÌ¾î Á¤º¸¸¦ »ı¼ºÇÏ°Å³ª »èÁ¦ÇÏ´Â ÇÔ¼ö
+	/// DBì— í”Œë ˆì´ì–´ ì •ë³´ë¥¼ ìƒì„±í•˜ê±°ë‚˜ ì‚­ì œí•˜ëŠ” í•¨ìˆ˜
 	void CreatePlayer(int pid, double x, double y, double z, const char* name, const char* comment) ;
 	void DeletePlayer(int pid) ;
 

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 1996-2001  Internet Software Consortium.
  *
  * Permission to use, copy, modify, and distribute this software for any

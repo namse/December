@@ -1,4 +1,4 @@
-#ifndef _CCB_CCBREADER_H_
+﻿#ifndef _CCB_CCBREADER_H_
 #define _CCB_CCBREADER_H_
 
 #include <string>

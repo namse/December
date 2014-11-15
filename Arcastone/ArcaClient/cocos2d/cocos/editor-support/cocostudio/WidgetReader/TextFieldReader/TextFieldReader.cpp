@@ -1,4 +1,4 @@
-
+﻿
 
 #include "TextFieldReader.h"
 #include "ui/UITextField.h"
@@ -101,7 +101,7 @@ namespace cocostudio
         textField->setFontSize(DICTOOL->getIntValue_json(options, P_FontSize,20));
     
        
-        textField->setFontName(DICTOOL->getStringValue_json(options, P_FontName,"微软雅黑"));
+        textField->setFontName(DICTOOL->getStringValue_json(options, P_FontName,"孃饔?容"));
         
         bool tsw = DICTOOL->checkObjectExist_json(options, P_TouchSizeWidth);
         bool tsh = DICTOOL->checkObjectExist_json(options, P_TouchSizeHeight);

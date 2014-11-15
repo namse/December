@@ -1,4 +1,4 @@
-#ifndef RAPIDJSON_INTERNAL_STACK_H_
+﻿#ifndef RAPIDJSON_INTERNAL_STACK_H_
 #define RAPIDJSON_INTERNAL_STACK_H_
 
 namespace rapidjson {

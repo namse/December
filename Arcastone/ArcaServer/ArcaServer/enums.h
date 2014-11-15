@@ -1,12 +1,12 @@
-#pragma once
+ï»¿#pragma once
 #include "../../PacketType.h"
 #define PLAYER_UNIT_MAX 6
 #define MAP_FIELD_WIDTH 7
 #define MAP_FIELD_HEIGHT 11
 #define PLAYER_NUMBER_NPC INT_MAX
-#define MAX_TURN	 2							// ±âº»ÀûÀÎ ÇÃ·¹ÀÌ¾îÀÇ ÃÖ´ë ÅÏ ¼ö
-#define COLLET_GARBAGESESSIONS_TICK 1000		// °¡ºñÁöÄİ·ºÆÃÇÏ´Â ÁÖ±â
-#define USE_DRAW true							// µå·Î¿ì(¹«½ÂºÎ) ÀÖ°Ô ÇÒ°Å¾ß?
+#define MAX_TURN	 2							// ê¸°ë³¸ì ì¸ í”Œë ˆì´ì–´ì˜ ìµœëŒ€ í„´ ìˆ˜
+#define COLLET_GARBAGESESSIONS_TICK 1000		// ê°€ë¹„ì§€ì½œë ‰íŒ…í•˜ëŠ” ì£¼ê¸°
+#define USE_DRAW true							// ë“œë¡œìš°(ë¬´ìŠ¹ë¶€) ìˆê²Œ í• ê±°ì•¼?
 #define USE_ARCA true
 #define USE_ROCK true
 

@@ -1,4 +1,4 @@
-//
+﻿//
 //  FlurryAds.h
 //  Flurry iOS Analytics Agent
 //

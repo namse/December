@@ -1,4 +1,4 @@
-//
+﻿//
 //  GADInAppPurchase.h
 //  Google Mobile Ads SDK
 //

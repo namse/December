@@ -1,4 +1,4 @@
-/* ========================================================================================== */
+﻿/* ========================================================================================== */
 /* FMOD Ex - DSP header file. Copyright (c), Firelight Technologies Pty, Ltd. 2004-2011.      */
 /*                                                                                            */
 /* Use this header if you are interested in delving deeper into the FMOD software mixing /    */

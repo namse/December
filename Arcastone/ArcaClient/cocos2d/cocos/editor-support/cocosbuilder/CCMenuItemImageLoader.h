@@ -1,4 +1,4 @@
-#ifndef _CCB_CCMENUITEMIMAGELOADER_H_
+﻿#ifndef _CCB_CCMENUITEMIMAGELOADER_H_
 #define _CCB_CCMENUITEMIMAGELOADER_H_
 
 #include "CCMenuItemLoader.h"

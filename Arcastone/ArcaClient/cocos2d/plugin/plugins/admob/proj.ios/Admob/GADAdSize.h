@@ -1,4 +1,4 @@
-//
+﻿//
 //  GADAdSize.h
 //  Google Ads iOS SDK
 //

@@ -1,4 +1,4 @@
-#ifndef __gl2ext_h_
+﻿#ifndef __gl2ext_h_
 #define __gl2ext_h_
 
 /* $Revision: 16482 $ on $Date:: 2012-01-04 13:44:55 -0500 #$ */

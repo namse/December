@@ -1,4 +1,4 @@
-#ifndef _CCB_CCMENUITEMLOADER_H_
+﻿#ifndef _CCB_CCMENUITEMLOADER_H_
 #define _CCB_CCMENUITEMLOADER_H_
 
 #include "base/CCRef.h"

@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  sha1.cpp
  *
  *  Copyright (C) The Internet Society (2001).  All Rights Reserved. 

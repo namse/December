@@ -1,4 +1,4 @@
-#ifndef _CCB_CCSPRITELOADER_H_
+﻿#ifndef _CCB_CCSPRITELOADER_H_
 #define _CCB_CCSPRITELOADER_H_
 
 #include "CCNodeLoader.h"

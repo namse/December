@@ -1,4 +1,4 @@
-#ifndef _CCB_CCSCALE9SPRITELOADER_H_
+﻿#ifndef _CCB_CCSCALE9SPRITELOADER_H_
 #define _CCB_CCSCALE9SPRITELOADER_H_
 
 #include "CCNodeLoader.h"

@@ -1,4 +1,4 @@
-#ifndef _MCI_PLAYER_WIN32_H_
+ï»¿#ifndef _MCI_PLAYER_WIN32_H_
 #define _MCI_PLAYER_WIN32_H_
 
 #include "CCStdC.h"
@@ -20,7 +20,7 @@ public:
     /**
     @brief  Play sound file
     @param pFileName    Sound's file name,include the file path.
-    @param nTimes    Play mode£¬default value is 1,paly once
+    @param nTimes    Play modeï¼Œdefault value is 1,paly once
     */
     void Open(const char* pFileName, UINT uId);
 

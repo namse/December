@@ -1,4 +1,4 @@
-#ifndef RAPIDJSON_RAPIDJSON_H_
+﻿#ifndef RAPIDJSON_RAPIDJSON_H_
 #define RAPIDJSON_RAPIDJSON_H_
 
 // Copyright (c) 2011-2012 Milo Yip (miloyip@gmail.com)

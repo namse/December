@@ -1,4 +1,4 @@
-//
+﻿//
 //  JSONKit.h
 //  http://github.com/johnezang/JSONKit
 //  Dual licensed under either the terms of the BSD License, or alternatively

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "ClientSession.h"
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"
@@ -50,17 +50,17 @@ void CALLBACK RecvCompletion(DWORD dwError, DWORD cbTransferred, LPWSAOVERLAPPED
 	if (!fromClient->IsConnected())
 		return;
 
-	/// ¿¡·¯ ¹ß»ı½Ã ÇØ´ç ¼¼¼Ç Á¾·á
+	/// ì—ëŸ¬ ë°œìƒì‹œ í•´ë‹¹ ì„¸ì…˜ ì¢…ë£Œ
 	if (dwError || cbTransferred == 0)
 	{
 		fromClient->Disconnect();
 		return;
 	}
 
-	/// ¹ŞÀº µ¥ÀÌÅÍ Ã³¸®
+	/// ë°›ì€ ë°ì´í„° ì²˜ë¦¬
 	fromClient->OnRead(cbTransferred);
 
-	/// ´Ù½Ã ¹Ş±â
+	/// ë‹¤ì‹œ ë°›ê¸°
 	if (false == fromClient->PostRecv())
 	{
 		fromClient->Disconnect();
@@ -78,7 +78,7 @@ void CALLBACK SendCompletion(DWORD dwError, DWORD cbTransferred, LPWSAOVERLAPPED
 	if (!fromClient->IsConnected())
 		return;
 
-	/// ¿¡·¯ ¹ß»ı½Ã ÇØ´ç ¼¼¼Ç Á¾·á
+	/// ì—ëŸ¬ ë°œìƒì‹œ í•´ë‹¹ ì„¸ì…˜ ì¢…ë£Œ
 	if (dwError || cbTransferred == 0)
 	{
 		fromClient->Disconnect();
@@ -95,15 +95,15 @@ void ClientSession::OnRead(size_t len)
 {
 	mRecvBuffer.Commit(len);
 
-	/// ÆĞÅ¶ ÆÄ½ÌÇÏ°í Ã³¸®
+	/// íŒ¨í‚· íŒŒì‹±í•˜ê³  ì²˜ë¦¬
 	while (true)
 	{
-		/// ÆĞÅ¶ Çì´õ Å©±â ¸¸Å­ ÀĞ¾î¿Íº¸±â
+		/// íŒ¨í‚· í—¤ë” í¬ê¸° ë§Œí¼ ì½ì–´ì™€ë³´ê¸°
 		PacketHeader header;
 		if (false == mRecvBuffer.Peek((char*)&header, sizeof(PacketHeader)))
 			return;
 
-		/// ÆĞÅ¶ ¿Ï¼ºÀÌ µÇ´Â°¡? 
+		/// íŒ¨í‚· ì™„ì„±ì´ ë˜ëŠ”ê°€? 
 		if (mRecvBuffer.GetStoredSize() < (size_t) header.mSize)
 			return;
 

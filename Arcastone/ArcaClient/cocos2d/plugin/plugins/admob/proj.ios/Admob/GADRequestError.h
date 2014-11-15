@@ -1,4 +1,4 @@
-//
+﻿//
 //  GADRequestError.h
 //  Google AdMob Ads SDK
 //

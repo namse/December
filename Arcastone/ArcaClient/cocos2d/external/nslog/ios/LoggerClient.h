@@ -1,4 +1,4 @@
-/*
+﻿/*
  * LoggerClient.h
  *
  * version 1.5-RC2 22-NOV-2013

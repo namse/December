@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 struct sqlite3 ;
 struct sqlite3_stmt ;
@@ -21,7 +21,7 @@ public:
 
 	static bool Execute(const char* format, ...) ;
 	
-	/// ¾Æ·¡´Â DbHelper °´Ã¼¸¦ ¼±¾ğÇÏ°í »ç¿ëÇØ¾ß ÇÔ
+	/// ì•„ë˜ëŠ” DbHelper ê°ì²´ë¥¼ ì„ ì–¸í•˜ê³  ì‚¬ìš©í•´ì•¼ í•¨
 
 	bool BindParamInt(int param) ;
 	bool BindParamDouble(double param) ;
@@ -29,7 +29,7 @@ public:
 
 	RESULT_TYPE FetchRow() ;
 
-	/// FetchRow½Ã µ¥ÀÌÅÍ°¡ ÀÖ´Ù¸é ¹İµå½Ã Â÷·Ê´ë·Î È£ÃâÇØ¾ßÇÔ
+	/// FetchRowì‹œ ë°ì´í„°ê°€ ìˆë‹¤ë©´ ë°˜ë“œì‹œ ì°¨ë¡€ëŒ€ë¡œ í˜¸ì¶œí•´ì•¼í•¨
 	int GetResultParamInt() ;
 	double GetResultParamDouble() ;
 	const unsigned char* GetResultParamText() ;
@@ -39,7 +39,7 @@ private:
 
 	static sqlite3* mSqlite ;
 
-	/// ÇöÀç ¼öÇàÁßÀÎ SQL¹®¿¡ ´ëÇÑ Á¤º¸
+	/// í˜„ì¬ ìˆ˜í–‰ì¤‘ì¸ SQLë¬¸ì— ëŒ€í•œ ì •ë³´
 	sqlite3_stmt*	mResult ;
 	int				mResultColCount ;
 

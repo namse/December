@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2010      Stuart Carnie
 Copyright (c) 2010-2012 cocos2d-x.org
 Copyright (c) 2013-2014 Chukong Technologies Inc.
@@ -122,7 +122,7 @@ std::string ProfilingTimer::getDescription() const
 {
     static char s_desciption[512] = {0};
 
-    sprintf(s_desciption, "%s ::\tavg1: %ldµ,\tavg2: %ldµ,\tmin: %ldµ,\tmax: %ldµ,\ttotal: %.2fs,\tnr calls: %ld", _nameStr.c_str(), _averageTime1, _averageTime2, minTime, maxTime, totalTime/1000000., numberOfCalls);
+    sprintf(s_desciption, "%s ::\tavg1: %ld쨉,\tavg2: %ld쨉,\tmin: %ld쨉,\tmax: %ld쨉,\ttotal: %.2fs,\tnr calls: %ld", _nameStr.c_str(), _averageTime1, _averageTime2, minTime, maxTime, totalTime/1000000., numberOfCalls);
     return s_desciption;
 }
 

@@ -1,4 +1,4 @@
-/* jconfig.vc --- jconfig.h for Microsoft Visual C++ on Windows 95 or NT. */
+﻿/* jconfig.vc --- jconfig.h for Microsoft Visual C++ on Windows 95 or NT. */
 /* see jconfig.txt for explanations */
 #ifndef __JCONFIG_WIN_H__
 #define __JCONFIG_WIN_H__

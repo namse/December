@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Unit.h"
 #include "Soldier.h"
 #include "Magician.h"

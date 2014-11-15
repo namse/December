@@ -1,4 +1,4 @@
-#include "jsb_pluginx_basic_conversions.h"
+﻿#include "jsb_pluginx_basic_conversions.h"
 #include <math.h>
 
 #include "jsb_pluginx_spidermonkey_specifics.h"

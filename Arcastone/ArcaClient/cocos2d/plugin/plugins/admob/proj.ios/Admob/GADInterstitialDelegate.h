@@ -1,4 +1,4 @@
-//
+﻿//
 //  GADInterstitialDelegate.h
 //  Google AdMob Ads SDK
 //

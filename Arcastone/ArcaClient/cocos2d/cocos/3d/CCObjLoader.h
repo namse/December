@@ -1,4 +1,4 @@
-//
+﻿//
 // Copyright 2012-2013, Syoyo Fujita.
 //
 // Licensed under 2-clause BSD liecense.

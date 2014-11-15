@@ -1,4 +1,4 @@
-
+﻿
 
 #include "TextBMFontReader.h"
 #include "ui/UITextBMFont.h"

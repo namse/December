@@ -1,4 +1,4 @@
-
+﻿
 
 #include "TextReader.h"
 #include "ui/UIText.h"
@@ -105,7 +105,7 @@ namespace cocostudio
       
         label->setFontSize(DICTOOL->getIntValue_json(options, P_FontSize,20));
        
-        std::string fontName = DICTOOL->getStringValue_json(options, P_FontName, "微软雅黑");
+        std::string fontName = DICTOOL->getStringValue_json(options, P_FontName, "孃饔?容");
         
         std::string fontFilePath = jsonPath.append(fontName);
 		if (FileUtils::getInstance()->isFileExist(fontFilePath))

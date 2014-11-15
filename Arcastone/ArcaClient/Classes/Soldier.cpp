@@ -1,4 +1,4 @@
-#include "Soldier.h"
+﻿#include "Soldier.h"
 
 Soldier::Soldier()
 {

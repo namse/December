@@ -1,4 +1,4 @@
-#ifndef __EDITOR_SUPPORT_COCOSBUILDER_H__
+﻿#ifndef __EDITOR_SUPPORT_COCOSBUILDER_H__
 #define __EDITOR_SUPPORT_COCOSBUILDER_H__
 
 #include "cocosbuilder/CCBAnimationManager.h"

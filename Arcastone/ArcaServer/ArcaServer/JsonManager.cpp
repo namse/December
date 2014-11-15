@@ -1,11 +1,11 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "JsonManager.h"
 
 JsonManager* GJsonManager = nullptr;
 
 JsonManager::JsonManager()
 {
-	// unit.jsonÆÄÀÏ¿¡¼­ À¯´Ö Á¤º¸¸¦ ÀĞ¾î¿É´Ï´Ù
+	// unit.jsoníŒŒì¼ì—ì„œ ìœ ë‹› ì •ë³´ë¥¼ ì½ì–´ì˜µë‹ˆë‹¤
 	std::ifstream pJsonData;
 	pJsonData.open("unit.json");
 
@@ -16,7 +16,7 @@ JsonManager::JsonManager()
 		std::istreambuf_iterator<char>());
 	pJsonData.close();
 
-	// ÀĞÀº Á¤º¸¸¦ Json °´Ã¼¿¡ ÆÄ½ÌÇÕ´Ï´Ù
+	// ì½ì€ ì •ë³´ë¥¼ Json ê°ì²´ì— íŒŒì‹±í•©ë‹ˆë‹¤
 	Json::Value root;
 	Json::Reader reader;
 	Json::Value dataList;

@@ -1,4 +1,4 @@
-#include "jsb_pluginx_manual_callback.h"
+﻿#include "jsb_pluginx_manual_callback.h"
 #include "jsb_pluginx_basic_conversions.h"
 #include "jsb_pluginx_spidermonkey_specifics.h"
 #include "ProtocolAds.h"
@@ -13,7 +13,7 @@ public:
     virtual void onPayResult(cocos2d::plugin::PayResultCode ret, const char* msg, cocos2d::plugin::TProductInfo info)
     {
         char goodInfo[1024] = { 0 };
-        sprintf(goodInfo, "商品名称:%s\n商品价格:%s\n商品描述:%s",
+        sprintf(goodInfo, "???燁?%s\n??餓룡?%s\n???瓦?%s",
                 info.find("productName")->second.c_str(),
                 info.find("productPrice")->second.c_str(),
                 info.find("productDesc")->second.c_str());

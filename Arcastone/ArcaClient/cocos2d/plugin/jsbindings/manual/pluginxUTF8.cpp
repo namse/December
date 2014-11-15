@@ -1,4 +1,4 @@
-/* 
+﻿/* 
  * This file uses some implementations of gutf8.c in glib.
  *
  * gutf8.c - Operations on UTF-8 strings.

@@ -1,4 +1,4 @@
-/* libtiff/tiffconf.h.  Generated from tiffconf.h.in by configure.  */
+﻿/* libtiff/tiffconf.h.  Generated from tiffconf.h.in by configure.  */
 /*
   Configuration defines for installed libtiff.
   This file maintained for backward compatibility. Do not use definitions

@@ -1,4 +1,4 @@
-#ifndef __CC_MATH_H__
+﻿#ifndef __CC_MATH_H__
 #define __CC_MATH_H__
 
 #include "Vec2.h"

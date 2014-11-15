@@ -1,4 +1,4 @@
-/*
+﻿/*
  * NSLogger.h
  *
  * version 1.5-RC2 22-NOV-2013
@@ -39,9 +39,9 @@
 
 // Log level usual usage:
 // Level 0: errors only!
-// Level 1: important informations, app states…
-// Level 2: less important logs, network requests…
-// Level 3: network responses, datas and images…
+// Level 1: important informations, app states??
+// Level 2: less important logs, network requests??
+// Level 3: network responses, datas and images??
 // Level 4: really not important stuff.
 
 

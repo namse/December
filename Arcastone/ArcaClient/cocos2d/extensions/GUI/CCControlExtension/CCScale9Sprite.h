@@ -1,4 +1,4 @@
-/****************************************************************************
+﻿/****************************************************************************
 Copyright (c) 2012 cocos2d-x.org
 
 http://www.cocos2d-x.org
@@ -79,7 +79,7 @@ public:
 
     /**
      * Creates a 9-slice sprite with a texture file. The whole texture will be
-     * broken down into a 3×3 grid of equal blocks.
+     * broken down into a 3?3 grid of equal blocks.
      *
      * @see initWithFile(const Rect& capInsets, const char *file)
      */
@@ -87,7 +87,7 @@ public:
 
     /**
      * Creates a 9-slice sprite with a texture file and a delimitation zone. The
-     * texture will be broken down into a 3×3 grid of equal blocks.
+     * texture will be broken down into a 3?3 grid of equal blocks.
      *
      * @see initWithFile(const char *file, const Rect& rect)
      */
@@ -95,7 +95,7 @@ public:
 
     /**
      * Creates a 9-slice sprite with a texture file. The whole texture will be
-     * broken down into a 3×3 grid of equal blocks.
+     * broken down into a 3?3 grid of equal blocks.
      *
      * @see initWithFile(const char *file)
      */
@@ -159,7 +159,7 @@ public:
     
     /**
      * Initializes a 9-slice sprite with a texture file and a delimitation zone. The
-     * texture will be broken down into a 3×3 grid of equal blocks.
+     * texture will be broken down into a 3?3 grid of equal blocks.
      * Once the sprite is created, you can then call its "setContentSize:" method
      * to resize the sprite will all it's 9-slice goodness intract.
      * It respects the anchorPoint too.
@@ -185,7 +185,7 @@ public:
     
     /**
      * Initializes a 9-slice sprite with a texture file. The whole texture will be
-     * broken down into a 3×3 grid of equal blocks.
+     * broken down into a 3?3 grid of equal blocks.
      * Once the sprite is created, you can then call its "setContentSize:" method
      * to resize the sprite will all it's 9-slice goodness intract.
      * It respects the anchorPoint too.

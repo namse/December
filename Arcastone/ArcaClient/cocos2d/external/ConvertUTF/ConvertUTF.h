@@ -1,4 +1,4 @@
-/*===--- ConvertUTF.h - Universal Character Names conversions ---------------===
+﻿/*===--- ConvertUTF.h - Universal Character Names conversions ---------------===
  *
  *                     The LLVM Compiler Infrastructure
  *

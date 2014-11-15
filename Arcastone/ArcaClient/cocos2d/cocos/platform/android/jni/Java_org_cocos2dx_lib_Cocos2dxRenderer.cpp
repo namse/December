@@ -1,4 +1,4 @@
-#include "base/CCIMEDispatcher.h"
+﻿#include "base/CCIMEDispatcher.h"
 #include "base/CCDirector.h"
 #include "base/CCEventType.h"
 #include "base/CCEventCustom.h"

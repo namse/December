@@ -1,4 +1,4 @@
-
+﻿
 
 #include "TextAtlasReader.h"
 #include "ui/UITextAtlas.h"

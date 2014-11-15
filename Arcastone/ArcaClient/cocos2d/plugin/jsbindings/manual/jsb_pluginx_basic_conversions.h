@@ -1,4 +1,4 @@
-#ifndef __JS_BASIC_CONVERSIONS_H__
+﻿#ifndef __JS_BASIC_CONVERSIONS_H__
 #define __JS_BASIC_CONVERSIONS_H__
 
 #include "jsapi.h"

@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "ThreadLocal.h"
 
 __declspec(thread) int LThreadType = -1;

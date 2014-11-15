@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  Base64Transcoder.h
  *  Base64Test
  *

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "Field.h"
 #include "Unit.h"
 
@@ -48,14 +48,14 @@ private:
 	GameNumber					m_GameNum;
 	Field						m_GameField;
 	PlayerNumber				m_Attacker;
-	int							m_CanCommand;	// ÇÃ·¹ÀÌ¾îÀÇ ³²Àº ¸í·É È½¼ö
-	bool						m_IsNearArca[2];	// ¾Æ¸£Ä«½ºÅæÀÌ ¿·¿¡ ÀÖ´ÂÁö¿¡ ´ëÇÑ »óÅÂº¯¼ö
+	int							m_CanCommand;	// í”Œë ˆì´ì–´ì˜ ë‚¨ì€ ëª…ë ¹ íšŸìˆ˜
+	bool						m_IsNearArca[2];	// ì•„ë¥´ì¹´ìŠ¤í†¤ì´ ì˜†ì— ìˆëŠ”ì§€ì— ëŒ€í•œ ìƒíƒœë³€ìˆ˜
 	int							m_MaxTurn[2];
-	int							m_PlayTurn;	// °æ°úÇÑ ÅÏ
+	int							m_PlayTurn;	// ê²½ê³¼í•œ í„´
 	bool						m_IsFirstTurn;
 	bool						m_IsGameOver;
-	int							m_UnitCount[3];	// ÇÃ·¹ÀÌ¾î1, ÇÃ·¹ÀÌ¾î2, NPC
-	int							m_LivingUnitCount[3]; // ÀÌ º¯¼öµéÀº »ç¿ëÇÏ±â Àü¿¡ UnitCounting() ÇØ¼­ ÃÊ±âÈ­ÇØÁÖ¼¼¿ä~
+	int							m_UnitCount[3];	// í”Œë ˆì´ì–´1, í”Œë ˆì´ì–´2, NPC
+	int							m_LivingUnitCount[3]; // ì´ ë³€ìˆ˜ë“¤ì€ ì‚¬ìš©í•˜ê¸° ì „ì— UnitCounting() í•´ì„œ ì´ˆê¸°í™”í•´ì£¼ì„¸ìš”~
 	WhosWinner					m_Winner;
 
 	std::vector<Unit*>			m_UnitList;

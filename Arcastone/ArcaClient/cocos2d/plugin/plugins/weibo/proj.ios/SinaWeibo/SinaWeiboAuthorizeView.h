@@ -1,4 +1,4 @@
-//
+﻿//
 //  SinaWeiboAuthorizeView.h
 //  sinaweibo_ios_sdk
 //

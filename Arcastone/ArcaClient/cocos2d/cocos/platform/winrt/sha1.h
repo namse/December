@@ -1,4 +1,4 @@
-/*
+﻿/*
  *  sha1.h
  *  Copyright (C) The Internet Society (2001).  All Rights Reserved. 
  *  This document and translations of it may be copied and furnished to others, 

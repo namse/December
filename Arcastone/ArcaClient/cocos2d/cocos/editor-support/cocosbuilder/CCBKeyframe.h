@@ -1,4 +1,4 @@
-#ifndef __CCB_KEYFRAME_H__
+﻿#ifndef __CCB_KEYFRAME_H__
 #define __CCB_KEYFRAME_H__
 
 #include "base/CCRef.h"

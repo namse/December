@@ -1,4 +1,4 @@
-//
+﻿//
 //  GADInAppPurchaseDelegate.h
 //  Google AdMob Ads SDK
 //
