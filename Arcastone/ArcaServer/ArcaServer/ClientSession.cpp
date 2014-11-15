@@ -5,7 +5,7 @@
 #include "ClientManager.h"
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"
-
+#include "PlayerManager.h"
 
 bool ClientSession::OnConnect(SOCKADDR_IN* addr)
 {
@@ -56,6 +56,8 @@ void ClientSession::Disconnect()
 {
 	if ( !IsConnected() )
 		return ;
+
+	GPlayerManager->DeletePlayer(m_PlayerId);
 
 	printf("[DEBUG] Client Disconnected: IP=%s, PORT=%d\n", inet_ntoa(mClientAddr.sin_addr), ntohs(mClientAddr.sin_port)) ;
 

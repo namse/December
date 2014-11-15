@@ -6,6 +6,7 @@
 #include "ClientManager.h"
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"
+#include "PlayerManager.h"
 
 ClientManager* GClientManager = nullptr ;
 
@@ -144,7 +145,7 @@ void ClientManager::CreatePlayer(int pid, double x, double y, double z, const ch
 void ClientManager::DeletePlayer(int pid)
 {
 	DeletePlayerDataContext* delPlayerJob = new DeletePlayerDataContext(pid) ;
-	GDatabaseJobManager->PushDatabaseJobRequest(delPlayerJob) ;
+	GDatabaseJobManager->PushDatabaseJobRequest(delPlayerJob);
 }
 
 void ClientManager::CreatePlayerDone(DatabaseJobContext* dbJob)

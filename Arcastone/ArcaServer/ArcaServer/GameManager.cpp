@@ -23,3 +23,19 @@ GameNumber GameManager::CreateGame(PlayerNumber player1, PlayerNumber player2)
 	
 	return GameId;
 }
+
+Game* GameManager::GetGameWithPlayerNumber(PlayerNumber playerNumber) {
+	for (auto gameIt : m_GameList)
+	if (gameIt.second->IsPlayerInThisGame(playerNumber) == true)
+		return gameIt.second;
+	return nullptr;
+}
+
+bool GameManager::CloseGameByPlayerNumber(PlayerNumber playerNumber)
+{
+	Game* game = GetGameWithPlayerNumber(playerNumber);
+	if (game == nullptr) return false;
+
+	game->GameOverForSurrender(playerNumber);
+	m_GameList.erase(game->GetGameNumber());
+}

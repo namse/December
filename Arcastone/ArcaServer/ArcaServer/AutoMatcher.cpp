@@ -20,7 +20,7 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 	if (0 < m_WaitPlayerList.size())
 	{
 		PlayerNumber matchPlayer = m_WaitPlayerList.front();
-		m_WaitPlayerList.pop();
+		m_WaitPlayerList.erase(m_WaitPlayerList.begin());
 
 		auto gameID = GGameManager->CreateGame(playerId, matchPlayer);
 
@@ -106,7 +106,21 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 	}
 	else
 	{
-		m_WaitPlayerList.push(playerId);
+		m_WaitPlayerList.push_back(playerId);
 	}
 
+}
+
+bool AutoMatcher::DeleteWaitPlayer(PlayerNumber plyaerId)
+{
+	std::vector <PlayerNumber>::iterator it;
+	for (it = m_WaitPlayerList.begin(); it != m_WaitPlayerList.end(); ++it)
+	{
+		if (plyaerId == *it)
+		{
+			m_WaitPlayerList.erase(it);
+			return true;
+		}
+	}
+	return false;
 }

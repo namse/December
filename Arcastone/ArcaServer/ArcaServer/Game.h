@@ -19,6 +19,7 @@ public:
 	Unit*						GetUnitInPosition(Coord position);
 	int							GetPlayerIndexByPlayerNumber(PlayerNumber playerNumber);
 	bool						IsPlayerInThisGame(PlayerNumber playerNumber);
+	GameNumber					GetGameNumber(){ return m_GameNum; }
 
 	void						HandleAttack(PlayerNumber attacker, AttackData attackData);
 	void						GameOverForSurrender(PlayerNumber srrender);

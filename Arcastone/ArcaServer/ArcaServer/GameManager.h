@@ -10,12 +10,9 @@ public:
 
 	GameNumber		CreateGame(PlayerNumber player1, PlayerNumber player2);
 	Game*			GetGame(GameNumber GameID){ return m_GameList.find(GameID)->second;  }
-	Game*			GetGameWithPlayerNumber(PlayerNumber playerNumber) {
-		for (auto gameIt : m_GameList)
-			if (gameIt.second->IsPlayerInThisGame(playerNumber) == true)
-				return gameIt.second;
-		return nullptr;
-	}
+	Game*			GetGameWithPlayerNumber(PlayerNumber playerNumber);
+	bool			CloseGameByPlayerNumber(PlayerNumber playerNumber);
+
 private:
 	typedef std::map<GameNumber, Game*> GameList;
 	GameList		m_GameList;

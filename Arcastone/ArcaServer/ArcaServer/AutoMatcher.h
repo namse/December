@@ -5,10 +5,11 @@ public:
 	AutoMatcher();
 	~AutoMatcher();
 	
-	void		AddWaitPlayer(PlayerNumber playerId);
+	void						AddWaitPlayer(PlayerNumber playerId);
+	bool						DeleteWaitPlayer(PlayerNumber plyaerId);
 
 private:
-	std::queue <PlayerNumber>	m_WaitPlayerList;
+	std::vector <PlayerNumber>	m_WaitPlayerList;
 
 };
 
