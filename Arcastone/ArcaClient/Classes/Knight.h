@@ -9,7 +9,7 @@ public:
 	Knight();
 	virtual ~Knight();
 
-	void						initSprite();
+	void	initSprite();
 
 private:
 

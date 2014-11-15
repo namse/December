@@ -1,11 +1,11 @@
 #pragma once
-#include "C:\Users\CCA-COMPANY\Documents\GitHub\december\Arcastone\ArcaClient\Classes\Unit.h"
+#include "Unit.h"
 class Princess :
 	public Unit
 {
 public:
 	Princess();
-	~Princess();
+	virtual ~Princess();
 
 	void initSprite();
 };

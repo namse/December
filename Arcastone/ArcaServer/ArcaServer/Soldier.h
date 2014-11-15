@@ -6,6 +6,6 @@ class Soldier : public Unit
 {
 public:
 	Soldier();
-	~Soldier();
+	virtual ~Soldier();
 };
 

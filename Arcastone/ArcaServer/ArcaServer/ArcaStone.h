@@ -6,6 +6,6 @@ class ArcaStone :
 {
 public:
 	ArcaStone();
-	~ArcaStone();
+	virtual ~ArcaStone();
 };
 

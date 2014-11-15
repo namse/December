@@ -7,7 +7,7 @@ class NPC : public Unit
 {
 public:
 	NPC();
-	~NPC();
+	virtual ~NPC();
 
 	void initSprite();
 };

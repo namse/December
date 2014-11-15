@@ -5,6 +5,6 @@ class Magician :
 {
 public:
 	Magician();
-	~Magician();
+	virtual ~Magician();
 };
 

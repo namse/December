@@ -5,6 +5,6 @@ class Prince :
 {
 public:
 	Prince();
-	~Prince();
+	virtual ~Prince();
 };
 

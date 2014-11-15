@@ -6,6 +6,6 @@ class Rock :
 {
 public:
 	Rock();
-	~Rock();
+	virtual ~Rock();
 };
 
