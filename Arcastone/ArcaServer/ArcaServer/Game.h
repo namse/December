@@ -26,7 +26,7 @@ public:
 
 private:
 	UnitIdentityNumber			GenerateUnitIdentityNumber();
-	void						SetUpArca();
+	void						SetUpNPC(UnitType unitType, Coord unitPos);
 
 	// For Attack Handling
 	void						UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush);

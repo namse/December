@@ -2,7 +2,11 @@
 #include "Soldier.h"
 #include "Rider.h"
 #include "Knight.h"
-#include "Bishop.h"
+#include "Magician.h"
+#include "Prince.h"
+#include "Princess.h"
+#include "ArcaStone.h"
+#include "Rock.h"
 #include "NPC.h"
 
 Unit::Unit()
@@ -21,7 +25,7 @@ Unit* Unit::create(UnitData unitData)
 	{
 		case UT_SOLDIER:
 		{
-						newUnit = new Soldier();
+							newUnit = new Soldier();
 		}break;
 		case UT_RIDER:
 		{
@@ -31,13 +35,25 @@ Unit* Unit::create(UnitData unitData)
 		{
 						   newUnit = new Knight();
 		}break;
-		case UT_BISHOP:
+		case UT_PRINCE:
 		{
-						   newUnit = new Bishop();
+							newUnit = new Prince();
+		}break;
+		case UT_PRINCESS:
+		{
+							newUnit = new Princess();
+		}break;
+		case UT_ROCK:
+		{
+							newUnit = new Rock();
+		}break;
+		case UT_MAGICIAN:
+		{
+						   newUnit = new Magician();
 		}break;
 		case UT_ARCASTONE:
 		{
-							 newUnit = new NPC();
+							 newUnit = new ArcaStone();
 		}break;
 		default:
 			assert(false && "Unit::create - Non defined new unitType");

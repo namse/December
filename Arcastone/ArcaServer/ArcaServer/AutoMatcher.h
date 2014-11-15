@@ -9,7 +9,7 @@ public:
 	bool						DeleteWaitPlayer(PlayerNumber plyaerId);
 
 private:
-	std::vector <PlayerNumber>	m_WaitPlayerList;
+	std::list <PlayerNumber>	m_WaitPlayerList;
 
 };
 

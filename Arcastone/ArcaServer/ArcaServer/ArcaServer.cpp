@@ -34,7 +34,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	GGameManager = new GameManager();
 	GAutoMatcher = new AutoMatcher();
 	GJsonManager = new JsonManager();
-
+	
 	/// DB Helper √ ±‚»≠
 	if ( false == DbHelper::Initialize(DB_CONN_STR) )
 		return -1 ;

@@ -158,7 +158,6 @@
     <ClInclude Include="..\..\PacketType.h" />
     <ClInclude Include="ArcaStone.h" />
     <ClInclude Include="AutoMatcher.h" />
-    <ClInclude Include="Bishop.h" />
     <ClInclude Include="CircularBuffer.h" />
     <ClInclude Include="ClientManager.h" />
     <ClInclude Include="ClientSession.h" />
@@ -175,8 +174,12 @@
     <ClInclude Include="Field.h" />
     <ClInclude Include="JsonManager.h" />
     <ClInclude Include="Knight.h" />
+    <ClInclude Include="Magician.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="Prince.h" />
+    <ClInclude Include="Princess.h" />
     <ClInclude Include="Rider.h" />
+    <ClInclude Include="Rock.h" />
     <ClInclude Include="Soldier.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerManager.h" />
@@ -196,7 +199,6 @@
   <ItemGroup>
     <ClCompile Include="ArcaStone.cpp" />
     <ClCompile Include="AutoMatcher.cpp" />
-    <ClCompile Include="Bishop.cpp" />
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="ClientManager.cpp" />
     <ClCompile Include="ClientSession.cpp" />
@@ -210,8 +212,12 @@
     <ClCompile Include="Field.cpp" />
     <ClCompile Include="JsonManager.cpp" />
     <ClCompile Include="Knight.cpp" />
+    <ClCompile Include="Magician.cpp" />
     <ClCompile Include="PacketHandling.cpp" />
+    <ClCompile Include="Prince.cpp" />
+    <ClCompile Include="Princess.cpp" />
     <ClCompile Include="Rider.cpp" />
+    <ClCompile Include="Rock.cpp" />
     <ClCompile Include="Soldier.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="PlayerManager.cpp" />

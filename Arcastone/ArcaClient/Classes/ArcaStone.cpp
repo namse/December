@@ -1,20 +1,22 @@
-#include "Rider.h"
+#include "ArcaStone.h"
 
-Rider::Rider()
+
+ArcaStone::ArcaStone()
 {
 }
 
-Rider::~Rider()
+
+ArcaStone::~ArcaStone()
 {
 }
 
-void Rider::initSprite()
+void ArcaStone::initSprite()
 {
 	Unit::initSprite();
-	assert(m_Owner != UO_NONE && "unknown unit owner");
+	assert(m_Owner == UO_NPC);
 
 	Sprite* unitSprite;
-	unitSprite = Sprite::create("character.png");
+	unitSprite = Sprite::create("frame_atk.png");
 
 	unitSprite->setScale(HEXAGON_LENGTH*1.5 / unitSprite->getContentSize().width);
 	unitSprite->setAnchorPoint(Vec2(0.5f, 0.3f));

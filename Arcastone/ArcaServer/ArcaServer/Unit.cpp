@@ -1,5 +1,14 @@
 #include "stdafx.h"
 #include "Unit.h"
+#include "Soldier.h"
+#include "Magician.h"
+#include "Knight.h"
+#include "Prince.h"
+#include "Princess.h"
+#include "ArcaStone.h"
+#include "Rider.h"
+#include "Rock.h"
+#include "JsonManager.h"
 
 
 Unit::Unit()
@@ -14,16 +23,63 @@ Unit::~Unit()
 {
 }
 
-void Unit::InitUnit(UnitData unitData, PlayerNumber ownerPlayerNum, UnitIdentityNumber id)
+
+Unit* Unit::CreateUnit(UnitType unitType)
 {
-	m_UnitType = unitData.m_UnitType;
+	Unit* newUnit;
+
+	switch (unitType)
+	{
+	case UT_SOLDIER:
+	{
+		newUnit = new Soldier();
+	}break;
+	case UT_MAGICIAN:
+	{
+		newUnit = new Magician();
+	}break;
+	case UT_KNIGHT:
+	{
+		newUnit = new Knight();
+	}break;
+	case UT_PRINCE:
+	{
+		newUnit = new Prince();
+	}break;
+	case UT_PRINCESS:
+	{
+		newUnit = new Princess();
+	}break;
+	case UT_ARCASTONE:
+	{
+		newUnit = new ArcaStone();
+	}break;
+	case UT_RIDER:
+	{
+		newUnit = new Rider();
+	}break;
+	case UT_ROCK:
+	{
+		newUnit = new Rock();
+	}break;
+	default:
+		assert(false && "Unit::create - Non defined new unitType");
+	}
+
+	if(newUnit != nullptr) newUnit->InitUnit(unitType);
+
+	return newUnit;
+}
+
+
+void Unit::InitUnit(UnitType unitType)
+{
+	UnitData unitData = GJsonManager->GetUnitData(unitType);
+	
+	m_UnitType = unitType;
 	m_UnitMoveType = unitData.m_UnitMoveType;
 	m_HP = unitData.m_HP;
 	m_Attack = unitData.m_Attack;
 	m_Weight = unitData.m_Weight;
 	m_MoveRange = unitData.m_MoveRange;
-
-	SetOwner(ownerPlayerNum);
-
-	m_ID = id;
 }

@@ -23,6 +23,7 @@
 #include <hash_map>
 #include <json.h>
 #include "enums.h"
+#include <fstream>
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 

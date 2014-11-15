@@ -5,11 +5,6 @@
 #include "ClientManager.h"
 #include "ClientSession.h"
 
-#include "Soldier.h"
-#include "Knight.h"
-#include "Rider.h"
-#include "Bishop.h"
-
 #define START_POINT_PLAYER1 Coord(3,5)
 #define START_POINT_PLAYER2 Coord(3,1)
 #define DEBUG_PRINT			true
@@ -48,34 +43,15 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 		// get unit data from group
 		for (auto it = group.m_UnitDataList.begin(); it != group.m_UnitDataList.end(); it++)
 		{
-			auto unitData = it->second;
+			auto unitType = it->second;
 			auto originPosition = it->first;
-			Unit* unit = nullptr;
 
-			switch (unitData.m_UnitType)
-			{
-			case UT_SOLDIER:
-			{
-				unit = new Soldier();
-
-			}break;
-			case UT_KNIGHT:
-			{
-							  unit = new Knight();
-			}break;
-			case UT_RIDER:
-			{
-							 unit = new Rider();
-			}break;
-			case UT_BISHOP:
-			{
-							  unit = new Bishop();
-			}break;
-			}
+			Unit* unit = Unit::CreateUnit(unitType);
 			assert(unit != nullptr);
 
-			// init by copying unitData
-			unit->InitUnit(unitData, playerNumber, GenerateUnitIdentityNumber());
+			unit->SetOwner(playerNumber);
+			unit->SetId(GenerateUnitIdentityNumber());
+
 			Coord position;
 
 			if (playerNumber == player1)
@@ -92,7 +68,10 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	}
 
 	// 아르카스톤 설치
-	if (USE_ARCA) SetUpArca();
+	if (USE_ARCA) SetUpNPC(UT_ARCASTONE, Coord(3,5));
+
+	// 장애물 설치
+	if (USE_ROCK) SetUpNPC(UT_ROCK, Coord(3,6));
 
 	// 유닛 수 초기화
 	UnitCounting();
@@ -667,14 +646,16 @@ void Game::GameOver()
 	}
 }
 
-void Game::SetUpArca()
+void Game::SetUpNPC(UnitType unitType, Coord unitPos)
 {
 	// create arcastone(npc)
-	ArcaStone* arcaStone = new ArcaStone();
+	Unit* npc = Unit::CreateUnit(unitType);
 
-	arcaStone->SetOwner(PLAYER_NUMBER_NPC);
-	arcaStone->SetPosition(Coord(3, 5)); // Center of Map
-	m_UnitList.push_back(arcaStone);
+	npc->SetOwner(PLAYER_NUMBER_NPC);
+	npc->SetId(GenerateUnitIdentityNumber());
+	npc->SetPosition(unitPos); // Center of Map
+	m_UnitList.push_back(npc);
+
 }
 
 void Game::UnitCounting()

@@ -113,7 +113,7 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 
 bool AutoMatcher::DeleteWaitPlayer(PlayerNumber plyaerId)
 {
-	std::vector <PlayerNumber>::iterator it;
+	std::list <PlayerNumber>::iterator it;
 	for (it = m_WaitPlayerList.begin(); it != m_WaitPlayerList.end(); ++it)
 	{
 		if (plyaerId == *it)

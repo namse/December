@@ -66,9 +66,6 @@
     <ClCompile Include="..\Classes\Player.cpp">
       <Filter>GameObject\player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\Bishop.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\Knight.cpp">
       <Filter>GameObject\Unit\PC</Filter>
     </ClCompile>
@@ -77,6 +74,21 @@
     </ClCompile>
     <ClCompile Include="..\Classes\Soldier.cpp">
       <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Magician.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Prince.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Princess.cpp">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\ArcaStone.cpp">
+      <Filter>GameObject\Unit\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Rock.cpp">
+      <Filter>GameObject\Unit\NPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -122,14 +134,26 @@
     <ClInclude Include="..\Classes\Soldier.h">
       <Filter>GameObject\Unit\PC</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Bishop.h">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\Knight.h">
       <Filter>GameObject\Unit\PC</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\Rider.h">
       <Filter>GameObject\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Magician.h">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Prince.h">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Princess.h">
+      <Filter>GameObject\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\ArcaStone.h">
+      <Filter>GameObject\Unit\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Rock.h">
+      <Filter>GameObject\Unit\NPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

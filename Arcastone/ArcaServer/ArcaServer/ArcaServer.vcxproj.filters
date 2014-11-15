@@ -159,11 +159,20 @@
     <ClInclude Include="Rider.h">
       <Filter>GameLogic\Unit\PC</Filter>
     </ClInclude>
-    <ClInclude Include="Bishop.h">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClInclude>
     <ClInclude Include="JsonManager.h">
       <Filter>GameLogic\UnitData</Filter>
+    </ClInclude>
+    <ClInclude Include="Rock.h">
+      <Filter>GameLogic\Unit\NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="Princess.h">
+      <Filter>GameLogic\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="Magician.h">
+      <Filter>GameLogic\Unit\PC</Filter>
+    </ClInclude>
+    <ClInclude Include="Prince.h">
+      <Filter>GameLogic\Unit\PC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -242,11 +251,20 @@
     <ClCompile Include="Rider.cpp">
       <Filter>GameLogic\Unit\PC</Filter>
     </ClCompile>
-    <ClCompile Include="Bishop.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClCompile>
     <ClCompile Include="JsonManager.cpp">
       <Filter>GameLogic\UnitData</Filter>
+    </ClCompile>
+    <ClCompile Include="Rock.cpp">
+      <Filter>GameLogic\Unit\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Magician.cpp">
+      <Filter>GameLogic\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="Prince.cpp">
+      <Filter>GameLogic\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="Princess.cpp">
+      <Filter>GameLogic\Unit\PC</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -51,11 +51,13 @@ enum UnitType{
 
 	UT_SOLDIER = 1,
 	UT_KNIGHT = 2,
-	UT_BISHOP = 3,
+	UT_MAGICIAN = 3,
 	UT_ROOK = 4,
-	UT_KING = 5,
-	UT_ARCASTONE = 6,
-	UT_RIDER = 7,
+	UT_PRINCESS = 5,
+	UT_PRINCE = 6,
+	UT_ARCASTONE = 7,
+	UT_RIDER = 8,
+	UT_ROCK = 9,
 
 	UT_MAX = 1024,
 };

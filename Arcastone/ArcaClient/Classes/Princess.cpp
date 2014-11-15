@@ -1,14 +1,16 @@
-#include "Rider.h"
+#include "Princess.h"
 
-Rider::Rider()
+
+Princess::Princess()
 {
 }
 
-Rider::~Rider()
+
+Princess::~Princess()
 {
 }
 
-void Rider::initSprite()
+void Princess::initSprite()
 {
 	Unit::initSprite();
 	assert(m_Owner != UO_NONE && "unknown unit owner");
