@@ -216,20 +216,6 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	}
 	
 	IsGameOver();
-	if (m_IsGameOver)
-	{
-		// 게임이 끝났으면 승자 알려줌
-		Packet::GameOverResult outPacket;
-		for (auto playerNumber : m_PlayerList)
-		{
-			outPacket.mWhoIsWinner = m_Winner;
-
-			auto session = GClientManager->GetClient(playerNumber);
-			if (session != nullptr)
-				session->SendRequest(&outPacket);
-		}
-		return;
-	}
 
 	IsNearArca();	// 아르카스톤에 대한 턴 처리 해주고..
 
@@ -608,6 +594,7 @@ void Game::IsGameOver()
 		// 그럼 게임을 종료시켜야지!
 		m_IsGameOver = true;
 		m_Winner = WW_PLAYER1;
+		GameOver();
 	}
 
 	// 플레이어2 전멸이요~
@@ -638,6 +625,45 @@ void Game::IsGameOver()
 			}
 		}
 		m_IsGameOver = true;
+		GameOver();
+	}
+}
+
+
+void Game::GameOverForSurrender(PlayerNumber srrender)
+{
+	if (m_PlayerList.at(0) == srrender)
+	{
+		m_Winner = WW_PLAYER2;
+	}
+	else if (m_PlayerList.at(1) == srrender)
+	{
+		m_Winner == WW_PLAYER1;
+	}
+	else
+	{
+		// 에러상황
+		m_Winner == WW_DRAW;
+	}
+
+	GameOver();
+}
+
+void Game::GameOver()
+{
+	if (m_IsGameOver)
+	{
+		// 게임이 끝났으면 승자 알려줌
+		Packet::GameOverResult outPacket;
+		for (auto playerNumber : m_PlayerList)
+		{
+			outPacket.mWhoIsWinner = m_Winner;
+
+			auto session = GClientManager->GetClient(playerNumber);
+			if (session != nullptr)
+				session->SendRequest(&outPacket);
+		}
+		return;
 	}
 }
 
@@ -834,4 +860,30 @@ int Game::GetPlayerIndexByPlayerNumber(PlayerNumber playerNumber)
 	if (playerNumber == m_PlayerList.at(0))
 		return 0;
 	else return 1;
+}
+
+
+Unit* Game::GetUnit(UnitIdentityNumber id) {
+	for (auto unit : m_UnitList)
+	if (unit->GetID() == id)
+		return unit;
+	return nullptr;
+}
+
+bool Game::IsPlayerInThisGame(PlayerNumber playerNumber) {
+	for (auto playerNumber_ : m_PlayerList)
+	if (playerNumber == playerNumber_)
+		return true;
+	return false;
+}
+
+Unit* Game::GetUnitInPosition(Coord position){
+	for (auto unit : m_UnitList)
+	if (unit->GetPos() == position)
+		return unit;
+	return nullptr;
+}
+
+UnitIdentityNumber Game::GenerateUnitIdentityNumber() {
+	return m_UnitIdentityNumberCounter++;
 }
