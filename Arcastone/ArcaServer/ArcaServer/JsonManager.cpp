@@ -9,7 +9,7 @@ JsonManager::JsonManager()
 	std::ifstream pJsonData;
 	pJsonData.open("unit.json");
 
-	assert(!pJsonData.bad() && "failed to open unit.json"));
+	assert(!pJsonData.bad() && "failed to open unit.json");
 
 	std::string jsonDataString(
 		std::istreambuf_iterator<char>(pJsonData.rdbuf()),
