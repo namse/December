@@ -539,13 +539,17 @@ void GameScene::drawUnitMove()
 
 void GameScene::KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direction, int range)
 {
+	HexaPoint targetPoint = target->GetPosition();
+	// 충돌 대상 표시
+	drawMoveSign(targetPoint, COLOR_OF_CRASHED);
+
+	if (!DRAW_KNOCKBACK) return;
+
 	int targetWeight = target->GetWeight();
 	int realMoveRange = range - targetWeight;
 	if (realMoveRange <= 0) return;
-	HexaPoint targetPoint = target->GetPosition();
 
 
-	drawMoveSign(targetPoint, COLOR_OF_CRASHED);
 	// 가해자는?
 	if (attacker->GetOwner() != target->GetOwner())
 	{

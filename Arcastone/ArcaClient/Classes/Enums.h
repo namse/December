@@ -39,6 +39,8 @@
 
 #define MOVE_DURATION 0.3f
 
+#define DRAW_KNOCKBACK				false
+
 // enum
 enum PlayerWho
 {
