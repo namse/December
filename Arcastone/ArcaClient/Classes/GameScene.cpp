@@ -136,7 +136,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 
 	// TODO : 요거 이렇게 가면 너무 자주 지우고 그리고 하니까 어떻게 좀 해주세요
 	// 이 안에서 유닛 이동 스택 쌓는데, 그게 attackData 에도 사용되니까 주의
-	drawUnitMove(unit, HD_NONE, 0, true);
+	drawUnitMove();
 }
 
 void GameScene::onTouchEnded(Touch* touch, Event* event)
@@ -154,42 +154,23 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
-	HexaDirection direction = HD_NONE;
-	int distance = 0;
-
 	AttackData attackData;
 
 	switch (unit->GetMoveType())
 	{
 	case UMT_STRAIGHT:{
 		attackData.attackType = UMT_STRAIGHT;
-		// 스트레이트와 점프는 방향과 거리를 입력
-		direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetDirection();
-		distance = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
-
-		if (distance > unit->GetMoveRange()) distance = unit->GetMoveRange();
-
-		// 공격을 취소하는 경우
-		if (distance == 0)
-			return;
+		if (m_Direction == HD_NONE || m_Range <= 0) return;
 	}break;
 
 	case UMT_JUMP:{
 		attackData.attackType = UMT_JUMP;
-		// 스트레이트와 점프는 방향과 거리를 입력
-		direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetDirection();
-		distance = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
-
-		if (distance > unit->GetMoveRange()) distance = unit->GetMoveRange();
-
-		// 공격을 취소하는 경우
-		if (distance == 0)
-			return;
+		if (m_Direction == HD_NONE || m_Range <= 0) return;
 	}break;
 
 	case UMT_DASH:{
 		attackData.attackType = UMT_DASH;
-		distance = m_CourseStack.size();
+		m_Range = m_CourseStack.size();
 		for (int i = 0; i < m_CourseStack.size(); ++i)
 		{
 			// 대쉬는 이동 스택을 입력
@@ -200,7 +181,6 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	case UMT_TELEPORT:{
 		attackData.attackType = UMT_TELEPORT;
 		// 텔포는 이동 칸 하나 입력
-
 		if (m_CourseStack.size() == 1)
 		{
 			// 유닛이 없는 칸만 이동가능
@@ -221,8 +201,11 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	m_CourseStack.clear();
 
 	attackData.id = unit->GetID();
-	attackData.direction = direction;
-	attackData.range = distance;
+	attackData.direction = m_Direction;
+	attackData.range = m_Range;
+
+	m_Range = 0;
+	m_Direction = HD_NONE;
 
 	TcpClient::getInstance()->attackRequest(attackData);
 
@@ -287,291 +270,297 @@ void GameScene::releaseExpectMoveSign()
 	m_ExpectSignNode.clear();
 }
 
-// 재귀함수로 그려준다. 마지막 인자는 마우스무브로 호출된건지, 충돌로 호출된건지 확인
-void GameScene::drawUnitMove(Unit* unit, HexaDirection direction, int range, bool isFirstCall)
+// 선택한 유닛의 이동 타입을 확인해서
+// 타입에 따라 방향과 거리. 혹은 좌표들을 저장하고
+// 화면에 그려주는 함수
+void GameScene::drawUnitMove()
 {
-	// 인자로 들어온 unit 은 어떻게 이동하는지 현재 확인할 유닛
-	Unit*			atkUnit = getUnitByID(m_SelectedUnit);
-	// atkUnit 은 처음에 이동한 유닛임
+	// 어떤 유닛의 이동범위를 그릴지 확인
+	Unit* attacker = getUnitByID(m_SelectedUnit);
+	UnitMoveType unitAtkType = attacker->GetMoveType();
+	int unitRange = attacker->GetMoveRange();
+	int unitAtk = attacker->GetAttack();
+	HexaPoint unitPos = attacker->GetPosition();
 
-	UnitMoveType	atkType = atkUnit->GetMoveType();
-	int				unitAtk = atkUnit->GetAttack();
-	// 밀려나는 유닛은 STRAIGHT 로 이동
-	if (!isFirstCall)
+	// 선택중인 헥사포인트 저장
+	HexaPoint cursoredHexa = ScreenToHexa(m_CursoredPoint);
+	HexaPoint startHexa = ScreenToHexa(m_StartPoint);
+
+	#pragma region 마우스의 이동과 공격 방식에 따라 가능한지 체크하고, 가능하면 입력
+
+	switch (unitAtkType)
 	{
-		atkType = UMT_STRAIGHT;
-		unitAtk = range;
-	}
+	case UMT_STRAIGHT:
+	case UMT_JUMP:{
+					  // 선택한 공격자 유닛의 위치로 커서를 이동했다면 초기화
+					  if (cursoredHexa == unitPos)
+					  {
+						  m_Range = 0;
+						  m_Direction = HD_NONE;
+						  releaseMoveSign();
+						  return;
+					  }
 
-	HexaPoint		unitPos = unit->GetPosition();
-	int				unitRange = unit->GetMoveRange();
-	Color4F			signcolor = (unit == atkUnit) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
+					  // 직선이동은 공격유닛의 위치와 현재 마우스의 위치로 방향, 사거리 정함
+					  {
+						  // TODO : 당긴 량에 비례해서 증가하도록 수정
+						  HexaPoint pullRange = ScreenToHexa(m_CursoredPoint);
 
-	// 유닛 패스를 처음부터 그리는 경우
-	#pragma region If First Call
-	if (isFirstCall)
-	{
-		// 처음부터 다시 그려줌
-		releaseMoveSign();
+						  m_Range = startHexa.getDistance(pullRange);
 
-		switch (atkType)
-		{
-		case UMT_STRAIGHT:
-		case UMT_JUMP:{
-
-						  direction = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetDirection();
-						  range = ((ScreenPoint)(m_StartPoint - m_CursoredPoint)).GetRange();
-						  if (range > unit->GetMoveRange()) range = unit->GetMoveRange();
-		}break;
-
-		case UMT_DASH:{
-						  // 커서가 가리키는 위치 검색
-						  HexaPoint cursor;
-						  bool isHexaGrid = false;
-						  for (auto hexaPos : m_HexagonPoint)
+						  // 반대방향
+						  m_Direction = startHexa.GetInverseDirection(cursoredHexa);
+						  if (m_Range > unitRange) m_Range = unitRange;
+						  // 0 칸이나 이상한 방향은 이동할 수 없어..
+						  if (m_Range == 0 || m_Direction == HD_NONE)
 						  {
-							  ScreenPoint tempPos = HexaPoint(hexaPos).HexaToScreen();
-							  if (isInHexagon(m_CursoredPoint, tempPos))
+							  m_Range = 0;
+							  m_Direction = HD_NONE;
+							  return;
+						  }
+					  }
+	}break;
+
+	case UMT_DASH:{
+					  // 커서가 가리키는 위치가 그리드 내에 없으면 ( -1, -1 ) 을 리턴하는 것을 이용하여,
+					  // 맵 밖으론 못가
+					  if (cursoredHexa.x == -1) return;
+
+					  // 제자리로도 못가
+					  if (cursoredHexa == unitPos)
+					  {
+						  releaseMoveSign();
+						  m_CourseStack.clear();
+						  return;
+					  }
+
+					  // 공격 코스 없음
+					  if (m_CourseStack.empty())
+					  {
+						  // 1칸 이내만 공격 가능하지
+						  if (!unitPos.isAround(cursoredHexa, 1)) return;
+
+						  // 이 방향으로 밀거야. 충돌할때만 알아둬
+						  m_Direction = unitPos.GetDirection(cursoredHexa);
+					  }
+					  // 공격 코스는 있는데
+					  else
+					  {
+						  if (m_CourseStack.back() == cursoredHexa) return;	// 가리키는 위치에 변경이 없으면 OUT!
+
+						  // 스택에 저장된 마지막 요소 기준으로 1칸 범위에 없으면 OUT!
+						  if (!m_CourseStack.back().isAround(cursoredHexa, 1)) return;
+
+						  // 지금 선택된 좌표가 이미 스택에 저장돼있습니까?
+						  vector<HexaPoint>::iterator i;
+						  for (i = m_CourseStack.begin(); i != m_CourseStack.end(); ++i)
+						  {
+							  if (*i == cursoredHexa)
 							  {
-								  cursor = HexaPoint(hexaPos);
-								  isHexaGrid = true;
+								  // 저장돼있다면 거기 다음부터 마지막 요소까지 삭제해버리세요
+								  vector<HexaPoint>::iterator j;
+								  for (j = i; j != m_CourseStack.end();)
+								  {
+									  j = m_CourseStack.erase(j);
+								  }
+								  // 덤으로 다 지우고
+								  releaseMoveSign();
+								  // 다 다시그려줘요
+								  for (int k = 0; k < m_CourseStack.size(); ++k)
+								  {
+									  drawMoveSign(m_CourseStack.at(k), COLOR_OF_PLAYER);
+								  }
 								  break;
 							  }
 						  }
 
-						  if (!isHexaGrid) return;	// 헥사그리드 범위가 아니면 OUT!
-
-						  if (cursor == atkUnit->GetPosition())
+						  // 아직도 공격코스가 남았어?
+						  if (!m_CourseStack.empty())
 						  {
-							  // 공격 유닛을 가리키면 스택 초기화
-							  releaseMoveSign();
-							  m_CourseStack.clear();
-							  return;
-						  }
+							  // 공격 대상이 코스에 있다면, 새로운 코스를 추가할수는 없다..
+							  if (getUnitByPos(m_CourseStack.back()) != nullptr) return;
 
-						  // 스택이 비었나요?
-						  if (m_CourseStack.empty())
-						  {
-							  // 공격 유닛 기준으로 1칸 범위에 없으면 OUT!
-							  if (!atkUnit->GetPosition().isAround(cursor, 1)) return;
+							  // 이미 사거리만큼 차있는 경우도 새로운 코스를 추가할수는 없어
+							  if (m_CourseStack.size() == unitRange) return;
+
+							  // 이 방향으로 밀거야. 충돌할때만 알아둬
+							  m_Direction = m_CourseStack.back().GetDirection(cursoredHexa);
 						  }
+						  // 이제 공격 코스가 없구나?
 						  else
 						  {
-							  if (m_CourseStack.back() == cursor) return;	// 가리키는 위치에 변경이 없으면 OUT!
-
-							  if (getUnitByPos(m_CourseStack.back()) != nullptr)
-							  {
-								  // 마지막 위치에서 충돌했으면
-								  if (m_CourseStack.size() == 1)	return;
-								  m_CourseStack.pop_back();
-							  }
-
-							  // 스택에 저장된 마지막 요소 기준으로 1칸 범위에 없으면 OUT!
-							  if (!m_CourseStack.back().isAround(cursor, 1)) return;
-
-							  // 지금 선택된 좌표가 이미 스택에 저장돼있습니까?
-							  vector<HexaPoint>::iterator i;
-							  for (i = m_CourseStack.begin(); i != m_CourseStack.end(); ++i)
-							  {
-								  if (*i == cursor)
-								  {
-									  // 저장돼있다면 거기 다음부터 마지막 요소까지 삭제해버리세요
-									  vector<HexaPoint>::iterator j;
-									  for (j = i; j != m_CourseStack.end();)
-									  {
-										  j = m_CourseStack.erase(j);
-									  }
-									  break;
-								  }
-							  }
-
-							  if (m_CourseStack.size() == unitRange)
-							  {
-								  return;	// 설마 스택이 꽉 찼어요? OUT!
-							  }
-
+							  // 그럼 이제 방향 알려줄게
+							  m_Direction = unitPos.GetDirection(cursoredHexa);
 						  }
+					  }
 
-						  m_CourseStack.push_back(cursor);
-						  range = m_CourseStack.size();
-						  if (range >= 2)
-						  {
-							  // 뒤에서 두번째에 있는 요소와 비교
-							  HexaPoint prevPos = m_CourseStack.at(range - 2);
-							  direction = prevPos.GetDirection(cursor);
-						  }
-						  else if (m_CourseStack.size() == 1)
-						  {
-							  direction = atkUnit->GetPosition().GetDirection(cursor);
-						  }
-		}break;
 
-		case UMT_TELEPORT:{
-							  // 커서가 가리키는 위치 검색
-							  HexaPoint cursor;
-							  bool isHexaGrid = false;
-							  for (auto hexaPos : m_HexagonPoint)
-							  {
-								  ScreenPoint tempPos = HexaPoint(hexaPos).HexaToScreen();
-								  if (isInHexagon(m_CursoredPoint, tempPos))
-								  {
-									  cursor = HexaPoint(hexaPos);
-									  isHexaGrid = true;
-									  break;
-								  }
-							  }
+					  // 조건에 부합하므로 푸쉬
+					  m_CourseStack.push_back(cursoredHexa);
+					  // 하고, 이동가능한 곳 그려줌
+					  drawMoveSign(cursoredHexa, COLOR_OF_PLAYER);
 
-							  // 가리키는 위치에 변경이 없으면 OUT!
-							  if (!m_CourseStack.empty() && m_CourseStack.back() == cursor) return;
+					  Unit* crashUnit = getUnitByPos(cursoredHexa);
+					  // 근데 여기에 다른 유닛이 있넹??
+					  if (crashUnit != nullptr)
+					  {
+						  // 그럼 밀어버려!
+						  KnockBackDraw(attacker, crashUnit, m_Direction, unitAtk);
+					  }
 
-							  // 이동범위 벗어나면 OUT!
-							  if (!unitPos.isAround(cursor, unitRange)) return;
 
-							  if (cursor == atkUnit->GetPosition())
-							  {
+	}break;
 
-								  // 공격 유닛을 가리키면 스택 초기화
-								  releaseMoveSign();
-								  m_CourseStack.clear();
-								  return;
-							  }
+	case UMT_TELEPORT:{
+						  // 커서가 가리키는 위치가 그리드 내에 없으면 ( -1, -1 ) 을 리턴하는 것을 이용하여,
+						  // 그리드 밖으로 커서가 나간 경우 그냥 리턴
+						  if (cursoredHexa.x == -1) return;
 
-							  releaseMoveSign();
-							  m_CourseStack.clear();
-							  m_CourseStack.push_back(cursor);
-		}break;
-		default:
-			assert(false && "drawUnitMove -> not defined New attackType !");
-		}
+						  // 선택한 공격자 유닛의 위치로 커서 이동한 경우 무시
+						  if (cursoredHexa == unitPos) return;
+
+						  // 이동범위 벗어나면 OUT!
+						  if (!unitPos.isAround(cursoredHexa, unitRange)) return;
+
+						  // 조건에 부합하니까 푸시
+						  m_CourseStack.clear(); // 혹시 모르니까 다 비우고 푸시
+						  m_CourseStack.push_back(cursoredHexa);
+	}break;
+	default:
+		assert(false && "drawUnitMove -> not defined New attackType !");
 	}
 #pragma endregion
 
-	// 본격적으로 유닛이 이동할 수 있는 곳들을 그려줍니다
-	#pragma region Attack Unit Move Draw
-	switch (atkType)
+	// 유닛이 이동할 수 있는 곳들을 그려줍니다
+	#pragma region 가능한 곳만 입력된 상태니까, 화면에 그려줌
+
+	switch (unitAtkType)
 	{
 	case UMT_STRAIGHT:{
-		// 이동경로 표시
-		for (int i = 1; i <= range; ++i)
+		// 이 전의 패스는 지우고
+		releaseMoveSign();
+		for (int i = 1; i <= m_Range; ++i)
 		{
-			HexaPoint atkCourse = unitPos.GetMovePoint(direction, i);
+			HexaPoint atkCourse = unitPos.GetMovePoint(m_Direction, i);
+			Unit* crashUnit = getUnitByPos(atkCourse);
 
-			// 바닥에 예상 이동 위치를 그려준다
-			drawMoveSign(atkCourse, signcolor);
-
-			// 이동경로에 다른 유닛이 존재하는가?
-			if (Unit* crashUnit = getUnitByPos(atkCourse))
+			// 아 근데, 여기 다른유닛 있어?
+			if (crashUnit == nullptr)
 			{
-				// 그럼 거기서부터 다른 유닛의 이동경로를 그리도록 하시오
-				// 첫 충돌이면 현재 유닛의 공격력 - 충동 유닛의 무게만큼
-				int atkRange = unitAtk - crashUnit->GetWeight() - 1;
-
-				// 움직이자
-				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
-					break;
+				// 없으면 한칸씩 그림
+				drawMoveSign(atkCourse, COLOR_OF_PLAYER);
+			}
+			else // 있으면
+			{
+				// 거기서부터 그 유닛의 이동경로를 그리도록 하시오
+				// 난 너를 이 방향으로 밀어버리겠다!
+				KnockBackDraw(attacker, crashUnit, m_Direction, unitAtk);
+				return;
 			}
 		}
 	}break;
 
 	case UMT_JUMP:{
-		// 이동경로 표시
-		for (int i = 1; i <= range; ++i)
+		// 이 전의 패스는 지우고
+		releaseMoveSign();
+
+		// 점프 이동은 사거리 끝만을 공격하지!
+		HexaPoint atkPoint = unitPos.GetMovePoint(m_Direction, m_Range);
+		Unit* crashUnit = getUnitByPos(atkPoint);
+
+		// 사거리 끝에 아무도 없거나
+		// 1칸만 이동할거라면
+		if (crashUnit == nullptr || m_Range == 1)
 		{
-			HexaPoint atkCourse = unitPos.GetMovePoint(direction, i);
+			// 무조건 이동할 수 있어!
+			drawMoveSign(atkPoint, COLOR_OF_PLAYER);
+			return;
+		}
+		else // 어 누구 있네?
+		{
+			HexaPoint preAtkPoint = unitPos.GetMovePoint(m_Direction, m_Range - 1);
+			Unit* preCrashUnit = getUnitByPos(preAtkPoint);
 
-			drawMoveSign(atkCourse, signcolor);
-
-			// 이동경로에 다른 유닛이 존재하는가?
-			if (Unit* crashUnit = getUnitByPos(atkCourse))
+			// 그럼 혹시 전칸에도 누가 있어?
+			if (preCrashUnit != nullptr)
 			{
-				// 혹시 네 주인이... E.N.E.M.Y 니?
-				// 아님 혹시 여기가... range의 끝..?
-				if ((crashUnit->GetOwner() == UO_ENEMY) || (i == range))
-				{
-					// 그런데.. 이 길목에 우리편이 있으면... 걔랑 겹쳐버리잖니?
-					// 자.. 시간을 거슬러 올라가보자꾸나..
-					// 그나저나 얘.. 방향은 반대쪽이란다.. 
-					HexaPoint beforePosition = atkCourse.GetMovePoint(direction, -1);
-
-					// 거기 혹시 우리집 유닛 있습니까?
-					if (nullptr == getUnitByPos(beforePosition) || range == 1)
-					{
-						// 없음? 님아 충돌여ㅋㅋㅋㅋㅋㅋㅋ
-						int atkRange = unitAtk - crashUnit->GetWeight() - 1;
-						drawUnitMove(crashUnit, direction, atkRange, false);
-						break;
-					}
-					else
-					{
-						// g헐 얘 여기서 뭘 하고 있는 거니ㅠ;
-						// 어쩔 수 없지 얘 뒤까지만 가야겠다
-						releaseMoveSign();
-						if (range - 1 > 0) drawUnitMove(atkUnit, direction, range - 1, false);
-						break;
-					}
-				}
+				// 에이.. 그럼 못가겠네
+				releaseMoveSign();
+				m_CourseStack.clear();
+				drawMoveSign(atkPoint, COLOR_OF_CANTMOVE);
+				drawMoveSign(preAtkPoint, COLOR_OF_CANTMOVE);
+				m_Range = 0;
+				m_Direction = HD_NONE;
+				return;
+			}
+			// 오 없음? ㅋㅋ 그럼 고고
+			else
+			{
+				KnockBackDraw(attacker, crashUnit, m_Direction, unitAtk);
+				return;
 			}
 		}
 	}break;
 
 	case UMT_DASH:{
-		if (m_CourseStack.empty()) return;
-		// 스택에 들어가있는대로 그려주세요!
-		for (int i = 0; i < m_CourseStack.size(); ++i)
-		{
-			drawMoveSign(m_CourseStack.at(i), signcolor);
-
-			// 그리던 중 충돌 시
-			Unit* crashUnit = getUnitByPos(m_CourseStack.at(i));
-			if (crashUnit != nullptr)
-			{
-				// 이 뒤의 코스들을 제거
-				for (int j = m_CourseStack.size() - 1; j != i; --j)
-				{
-					m_CourseStack.pop_back();
-				}
-				int atkRange = unitAtk - crashUnit->GetWeight() - 1;
-				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
-			}
-		}
+		// 대쉬는 여기서 안그립니다~ 위로 가세요
 	}break;
 
 	case UMT_TELEPORT:{
+		releaseMoveSign();
+
 		if (m_CourseStack.empty()) return;
 		HexaPoint movePoint = m_CourseStack.at(0);
+		Unit* crashUnit = getUnitByPos(movePoint);
+		Color4F signColor = COLOR_OF_PLAYER;
 
-		// 다른 유닛이 존재해 이동할 수 없는 곳은 빨간색으로
-		signcolor = (getUnitByPos(movePoint) == nullptr) ? COLOR_OF_PLAYER : COLOR_OF_ENEMY;
-		drawMoveSign(movePoint, signcolor);
+		// 다른 유닛이 존재해 이동할 수 없는 곳은 다른색으로
+		if (crashUnit != nullptr)
+		{
+			m_CourseStack.clear();
+			signColor = COLOR_OF_CANTMOVE;
+		}
+		drawMoveSign(movePoint, signColor);
+
 	}break;
 
 	default:
 		assert(false && "drawUnitMove -> not defined New attackType2 !");
 	}
 #pragma endregion
+}
 
-	// 공격에 의해 날라가는 유닛을 그려줌
-	if (unit != atkUnit)
+void GameScene::KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direction, int range)
+{
+	int targetWeight = target->GetWeight();
+	int realMoveRange = range - targetWeight;
+	if (realMoveRange <= 0) return;
+	HexaPoint targetPoint = target->GetPosition();
+
+
+	drawMoveSign(targetPoint, COLOR_OF_CRASHED);
+	// 가해자는?
+	if (attacker->GetOwner() != target->GetOwner())
 	{
-		// 이동경로 표시
-		for (int i = 1; i <= range; ++i)
+		// 적팀이면 피해를 입지요~
+		// TODO : 피해를 입는다는 것 알려줄 필요 있음
+	}
+
+	for (int i = 1; i <= realMoveRange; ++i)
+	{
+		HexaPoint atkCourse = targetPoint.GetMovePoint(direction, i);
+		Unit* crashUnit = getUnitByPos(atkCourse);
+
+		// 한칸씩 그림
+		drawMoveSign(atkCourse, COLOR_OF_ENEMY);
+
+		// 아 근데, 여기 다른 유닛이 있니?
+		if (crashUnit != nullptr) // 응
 		{
-			HexaPoint atkCourse = unitPos.GetMovePoint(direction, i);
-
-			// 바닥에 예상 이동 위치를 그려준다
-			drawMoveSign(atkCourse, signcolor);
-
-			// 이동경로에 다른 유닛이 존재하는가?
-			if (Unit* crashUnit = getUnitByPos(atkCourse))
-			{
-				// 그럼 거기서부터 다른 유닛의 이동경로를 그리도록 하시오
-				// 두번째 이후에는 (예상 이동 위치 - 현재까지 그려준 거리) 만큼
-				int atkRange = (range - i + 1);
-
-				// 움직이자
-				if (atkRange > 0) drawUnitMove(crashUnit, direction, atkRange, false);
-					break;
-			}
+			// 거기서부터 그 유닛의 이동경로를 그리도록 하시오
+			// 난 너를 이 방향으로 밀어버리겠다!
+			KnockBackDraw(target, crashUnit, direction, realMoveRange);
+			return;
 		}
 	}
 }
@@ -883,14 +872,21 @@ void GameScene::HighlightHexagon(ScreenPoint position)
 
 HexaPoint GameScene::ScreenToHexa(ScreenPoint point)
 {
+	// 입력한 점이 주어진 범위를 벗어나면 -1, -1 을 리턴
 	HexaPoint retPoint(-1, -1);
 
-	for (int i = 0; i < m_HexagonPoint.size(); ++i)
+	// -맵크기의 3배 ~ 맵크기의 3배까지 검사한다
+	for (int x = -MAP_SIZEX * 3; x < MAP_SIZEX * 3; ++x)
 	{
-		if (isInHexagon(point, m_HexagonPoint.at(i).HexaToScreen()))
+		for (int y = -MAP_SIZEY * 3; y < MAP_SIZEY * 3; ++y)
 		{
-			retPoint = m_HexagonPoint.at(i);
-			break;
+			// 그 임의의 점들 중에서 입력한 ScreenPoint를 포함하는 육각형의 중점을 찾는다
+			ScreenPoint anchor = (HexaPoint(x, y)).HexaToScreen();
+			if (isInHexagon(point, anchor))
+			{
+				retPoint = HexaPoint(x, y);
+				break;
+			}
 		}
 	}
 	

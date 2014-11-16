@@ -39,11 +39,12 @@ public:
 	void					drawText(int i, int j, Hexagon* hexa);
 
 	void					DrawExpectUnitMove(Unit* unit);
-	void					drawUnitMove(Unit* unit, HexaDirection direction, int range, bool isFirstCall);
+	void					drawUnitMove();
 	void					drawMoveSign(HexaPoint point, Color4F signColor);
 	void					HighlightHexagon(ScreenPoint position);
 	void					releaseExpectMoveSign();
 	void					releaseMoveSign();
+	void					KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direction, int range);
 	
 	void					onUnitAction(CCNode* sender = NULL);
 	
@@ -80,6 +81,8 @@ private:
 	vector<DrawNode*>		m_CourseSignNode;
 	vector<DrawNode*>		m_ExpectSignNode;
 	vector<HexaPoint>		m_CourseStack;
+	HexaDirection			m_Direction;
+	int						m_Range;
 
 	vector<HexaPoint>		m_HexagonPoint;
 

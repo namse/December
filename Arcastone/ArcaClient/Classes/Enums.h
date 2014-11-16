@@ -31,6 +31,8 @@
 
 #define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.3f)
 #define COLOR_OF_ENEMY				ccc4f(1.0f, 0.0f, 0.2f, 0.5f)
+#define COLOR_OF_CRASHED			ccc4f(1.0f, 0.0f, 0.0f, 0.8f)
+#define COLOR_OF_CANTMOVE			ccc4f(0.8f, 0.2f, 0.2f, 0.5f)
 #define COLOR_OF_EXPECT				ccc4f(0.0f, 0.6f, 1.0f, 0.2f)
 
 #define NON_SELECT_UNIT INT_MAX
@@ -177,6 +179,42 @@ struct HexaPoint : public cocos2d::Vec2
 		return HD_NONE;
 	}
 
+	HexaDirection GetInverseDirection(HexaPoint point)
+	{
+		HexaPoint vec;
+		vec.x = point.x - x;
+		vec.y = point.y - y;
+
+		if (vec.y < 0 && vec.x == 0)
+		{
+			return HD_SOUTH;
+		}
+		else if (vec.x > 0 && vec.y < 0)
+		{
+			if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+			return HD_SOUTHWEST;
+		}
+		else if (vec.x < 0 && vec.y == 0)
+		{
+			return HD_SOUTHEAST;
+		}
+		else if (vec.y > 0 && vec.x == 0)
+		{
+			return HD_NORTH;
+		}
+		else if (vec.x > 0 && vec.y == 0)
+		{
+			return HD_NORTHWEST;
+		}
+		else if (vec.x < 0 && vec.y > 0)
+		{
+			if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+			return HD_NORTHEAST;
+		}
+
+		return HD_NONE;
+	}
+
 	bool isAround(HexaPoint point, int range)
 	{
 		HexaPoint vec;
@@ -228,5 +266,4 @@ struct HexaPoint : public cocos2d::Vec2
 
 		return retPoint;
 	}
-
 };
