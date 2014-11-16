@@ -123,6 +123,25 @@ void Unit::initSprite()
 	zIdx = 10;
 	m_Sprite->addChild(labelHP, zIdx, "hp");
 	m_Sprite->addChild(labelAtk, zIdx, "atk");
+
+	// 자신 유닛인지, 상대 유닛인지 표시 
+	assert(m_Owner != UO_NONE && "undefined unit owner");
+	if (m_Owner != UO_NPC)
+	{
+		Sprite* ownerMark;
+		if (m_Owner == UO_ME)
+		{
+			ownerMark = Sprite::create("myunit.png");
+		}
+		else if (m_Owner == UO_ENEMY)
+		{
+			ownerMark = Sprite::create("enemyunit.png");
+		}
+		float scale = (HEXAGON_LENGTH) / ownerMark->getContentSize().width;
+		ownerMark->setScale(scale);
+		ownerMark->setPositionY(ownerMark->getContentSize().height*scale*1.5);
+		m_Sprite->addChild(ownerMark, zIdx, "ownerMark");
+	}
 }
 
 void Unit::SetHP(int hp)
