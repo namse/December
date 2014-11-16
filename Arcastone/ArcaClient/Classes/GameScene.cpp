@@ -49,6 +49,14 @@ void GameScene::gameLogic(float dt)
 		{
 			TcpClient::getInstance()->loginRequest();
 			m_GameState = GS_WAIT_GAME;
+
+			m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 30);
+
+			m_TurnLabel->setPosition(Point(50, 15));
+
+			m_TurnLabel->setColor(Color3B(100, 100, 100));
+
+			this->addChild(m_TurnLabel, 999);
 		}
 	}break;
 
@@ -59,7 +67,6 @@ void GameScene::gameLogic(float dt)
 
 	case GS_GAME_START:			// GameStartResult 를 받은 상태
 	{
-
 		//if (m_IsAction && m_IsMyTurn) TcpClient::getInstance()->TurnEndRequest();
 	}break;
 	}
@@ -304,10 +311,8 @@ void GameScene::drawUnitMove()
 					  // 직선이동은 공격유닛의 위치와 현재 마우스의 위치로 방향, 사거리 정함
 					  {
 						  // TODO : 당긴 량에 비례해서 증가하도록 수정
-						  HexaPoint pullRange = ScreenToHexa(m_CursoredPoint);
 
-						  m_Range = startHexa.getDistance(pullRange);
-
+						  m_Range = HexaPoint(startHexa - cursoredHexa).GetRange();
 						  // 반대방향
 						  m_Direction = startHexa.GetInverseDirection(cursoredHexa);
 						  if (m_Range > unitRange) m_Range = unitRange;
@@ -468,7 +473,7 @@ void GameScene::drawUnitMove()
 		HexaPoint atkPoint = unitPos.GetMovePoint(m_Direction, m_Range);
 		Unit* crashUnit = getUnitByPos(atkPoint);
 
-		// 사거리 끝에 아무도 없거나
+		// 사거리 끝에 아무도 없으면
 		if (crashUnit == nullptr)
 		{
 			// 무조건 이동할 수 있어!
@@ -477,9 +482,6 @@ void GameScene::drawUnitMove()
 		}
 		else // 어 누구 있네?
 		{
-			HexaPoint preAtkPoint = unitPos.GetMovePoint(m_Direction, m_Range - 1);
-			Unit* preCrashUnit = getUnitByPos(preAtkPoint);
-
 			// 근데 한칸만 움직일거라고?
 			if (m_Range == 1)
 			{
@@ -488,6 +490,8 @@ void GameScene::drawUnitMove()
 				return;
 			}
 
+			HexaPoint preAtkPoint = unitPos.GetMovePoint(m_Direction, m_Range - 1);
+			Unit* preCrashUnit = getUnitByPos(preAtkPoint);
 			// 그럼 혹시 전칸에도 누가 있어?
 			if (preCrashUnit != nullptr)
 			{
@@ -971,4 +975,5 @@ UnitDie:
 void GameScene::ReadRestCost(Packet::CostRenewalResult recvData)
 {
 	printf("Rest Cost : %d\nMax Cost : %d", recvData.mCost, recvData.mMaxCost);
+
 }

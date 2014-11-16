@@ -75,6 +75,7 @@ private:
 	Player					m_Player[2];
 	vector<Unit*>			m_UnitList;
 
+	LabelTTF*				m_TurnLabel;
 	ScreenPoint				m_StartPoint;
 	ScreenPoint				m_CursoredPoint;
 	int						m_SelectedUnit;

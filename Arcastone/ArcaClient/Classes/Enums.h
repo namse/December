@@ -67,6 +67,7 @@ struct Hexagon
 	std::vector<cocos2d::Point> vertex;
 };
 
+
 struct ScreenPoint : public cocos2d::Vec2
 {
 	ScreenPoint(){}
@@ -181,6 +182,13 @@ struct HexaPoint : public cocos2d::Vec2
 		return HD_NONE;
 	}
 
+	int GetRange()
+	{
+		if (x == 0) return abs(y);
+		if (y == 0) return abs(x);
+		if (abs(x) == abs(y)) return abs(x);
+	}
+
 	HexaDirection GetInverseDirection(HexaPoint point)
 	{
 		HexaPoint vec;
@@ -240,29 +248,29 @@ struct HexaPoint : public cocos2d::Vec2
 		{
 		case HD_NORTH:
 		{
-			retPoint.y -= range;
+						 retPoint.y -= range;
 		}break;
 		case HD_NORTHEAST:
 		{
-			retPoint.x += range;
-			retPoint.y -= range;
+							 retPoint.x += range;
+							 retPoint.y -= range;
 		}break;
 		case HD_NORTHWEST:
 		{
-			retPoint.x -= range;
+							 retPoint.x -= range;
 		}break;
 		case HD_SOUTH:
 		{
-			retPoint.y += range;
+						 retPoint.y += range;
 		}break;
 		case HD_SOUTHEAST:
 		{
-			retPoint.x += range;
+							 retPoint.x += range;
 		}break;
 		case HD_SOUTHWEST:
 		{
-			retPoint.y += range;
-			retPoint.x -= range;
+							 retPoint.y += range;
+							 retPoint.x -= range;
 		}break;
 		}
 
