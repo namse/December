@@ -32,6 +32,26 @@ bool GameScene::init()
 	// 마우스 이벤트를 사용하기 위해 초기화
 	touchEventInit();
 
+	m_MaxCosst = 2;
+
+	for (int i = 0; i < 3; ++i)
+	{
+		m_CostLabel[i] = LabelTTF::create("", "Hevetica", 20);
+
+		m_CostLabel[i]->setPosition(Point(120 + i * 28, 675));
+
+		m_CostLabel[i]->setColor(Color3B(100, 100, 100));
+
+		this->addChild(m_CostLabel[i], 999);
+	}
+
+	m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 20);
+
+	m_TurnLabel->setPosition(Point(55, 675));
+
+	m_TurnLabel->setColor(Color3B(100, 100, 100));
+
+	this->addChild(m_TurnLabel, 999);
 
 	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
 
@@ -49,14 +69,6 @@ void GameScene::gameLogic(float dt)
 		{
 			TcpClient::getInstance()->loginRequest();
 			m_GameState = GS_WAIT_GAME;
-
-			m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 30);
-
-			m_TurnLabel->setPosition(Point(50, 15));
-
-			m_TurnLabel->setColor(Color3B(100, 100, 100));
-
-			this->addChild(m_TurnLabel, 999);
 		}
 	}break;
 
@@ -962,18 +974,51 @@ UnitCollision:
 	printf("Attacker ID : %d\n", (int)attackData.mUnitId);
 	printf("Target ID : %d\n", (int)attackData.mCollisionData.mTarget);
 	printf("Attacker HP : %d\n", attackData.mCollisionData.mMyHP);
-	printf("Target HP : %d\n", attackData.mCollisionData.mTargetHP);
+	printf("Target HP : %d\n\n", attackData.mCollisionData.mTargetHP);
 
 	return;
 
 UnitDie:
-	printf("Die Unit ID : %d\n", (int)attackData.mUnitId);
+	printf("Die Unit ID : %d\n\n", (int)attackData.mUnitId);
 
 	return;
 }
 
 void GameScene::ReadRestCost(Packet::CostRenewalResult recvData)
 {
-	printf("Rest Cost : %d\nMax Cost : %d", recvData.mCost, recvData.mMaxCost);
+	printf("Rest Cost : %d\nMax Cost : %d\n\n", recvData.mCost, recvData.mMaxCost);
 
+	for (int i = 0; i < recvData.mMaxCost; ++i)
+	{
+		m_CostLabel[i]->setString(" ");
+	}
+
+	for (int i = 0; i < recvData.mCost; ++i)
+	{
+		m_CostLabel[i]->setString("O");
+	}
+
+	for (int i = recvData.mCost; i < recvData.mMaxCost; ++i)
+	{
+		m_CostLabel[i]->setString("X");
+	}
+
+	m_MaxCosst = recvData.mMaxCost;
+}
+
+void GameScene::SetTurn(bool isMyTurn)
+{
+	m_IsMyTurn = isMyTurn;
+
+
+	if (isMyTurn)
+	{
+		m_TurnLabel->setString("Your Turn");
+		for (int i = 0; i < m_MaxCosst; ++i)
+		{
+			m_CostLabel[i]->setString("O");
+		}
+	}
+	else
+		m_TurnLabel->setString("Enemy Turn");
 }

@@ -58,7 +58,7 @@ public:
 	void					onGameStart(Packet::GameStartResult inPacket);
 	void					ReadFieldBlock(FieldBlock fieldBlock[], int length);
 	void					ReadUnitData(UnitData unitData[], int length);
-	void					SetTurn(bool isMyTurn){ m_IsMyTurn = isMyTurn; }
+	void					SetTurn(bool isMyTurn);
 	void					ReadActionQueue(Packet::AttackResult attackResult);
 	void					ReadRestCost(Packet::CostRenewalResult recvData);
 
@@ -76,6 +76,8 @@ private:
 	vector<Unit*>			m_UnitList;
 
 	LabelTTF*				m_TurnLabel;
+	LabelTTF*				m_CostLabel[3];
+
 	ScreenPoint				m_StartPoint;
 	ScreenPoint				m_CursoredPoint;
 	int						m_SelectedUnit;
@@ -84,6 +86,7 @@ private:
 	vector<HexaPoint>		m_CourseStack;
 	HexaDirection			m_Direction;
 	int						m_Range;
+	int						m_MaxCosst;
 
 	vector<HexaPoint>		m_HexagonPoint;
 
