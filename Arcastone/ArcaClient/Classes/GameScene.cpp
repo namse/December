@@ -469,8 +469,7 @@ void GameScene::drawUnitMove()
 		Unit* crashUnit = getUnitByPos(atkPoint);
 
 		// 사거리 끝에 아무도 없거나
-		// 1칸만 이동할거라면
-		if (crashUnit == nullptr || m_Range == 1)
+		if (crashUnit == nullptr)
 		{
 			// 무조건 이동할 수 있어!
 			drawMoveSign(atkPoint, COLOR_OF_PLAYER);
@@ -480,6 +479,14 @@ void GameScene::drawUnitMove()
 		{
 			HexaPoint preAtkPoint = unitPos.GetMovePoint(m_Direction, m_Range - 1);
 			Unit* preCrashUnit = getUnitByPos(preAtkPoint);
+
+			// 근데 한칸만 움직일거라고?
+			if (m_Range == 1)
+			{
+				// 그럼 그놈 밀어버려 ㅋㅋ
+				KnockBackDraw(attacker, crashUnit, m_Direction, unitAtk);
+				return;
+			}
 
 			// 그럼 혹시 전칸에도 누가 있어?
 			if (preCrashUnit != nullptr)
