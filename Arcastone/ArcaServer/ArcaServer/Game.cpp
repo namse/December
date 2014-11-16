@@ -357,7 +357,7 @@ void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
 		Coord attackPositionBefore = Coord(attackPosition - GetUnitVector(direction));
 		Unit* standUnitBefore = GetUnitInPosition(attackPositionBefore);
 
-		if (standUnitBefore == nullptr) // 없네요?
+		if (standUnitBefore == nullptr || range == 1) // 없네요? or 1한칸 이동할거거든요?
 		{
 			// 그럼 쩜프해도 되겠군!
 			unit->SetPosition(attackPositionBefore);
