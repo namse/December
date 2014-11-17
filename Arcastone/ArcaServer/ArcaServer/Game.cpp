@@ -91,6 +91,10 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	// 공격 조건이 올바르지 않다면!!
 	if (!IsCorrectAttack(attacker, attackData))
 	{
+		// TODO : 원래는 잘못된 공격이 들어오면 무시했는데,
+		// 이번에 커밋한 코드 보니까 WrongAttack이란걸 보내시던데요.
+		// 둘 중 어떤걸로 할지 정하고 변경해주세요.
+
 		// 무시!
 		return;
 	}
@@ -198,7 +202,9 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 	{
 
 		// TODO : 뭉쳐있을 경우 맨 마지막의 애만 첫번째 공격한 애의 밀려남 계수로 날라가도록.
-		// 다른 공격스타일도 같도록.
+		// 다른 공격스타일도.
+		// 그럴려면 기본적으로 이동, 밀려남 등이 추상화가 되어 있어야 함.
+
 		actionType = UAT_MOVE;
 		for (int l = 1; l <= range; l++)
 		{
@@ -327,11 +333,6 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 	}
 
 
-	// TODO : 바깥에 떨어졌는지 확인해서 죽이셈.
-	// 어차피 바깥에 떨어진 경우는 크래쉬한 애 없을테니까 죽이고
-	// 아래 if문쪽은 실행 안되게 하셈.
-
-
 	// 충돌유닛이 있으면
 	if (nullptr != crashGuy)
 	{
@@ -417,6 +418,8 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 
 	m_UnitActionQueue.push_back(action);
 
+
+	// TODO :: #ifdef 를 사용하세요
 	if (DEBUG_PRINT) PrintUnitActionQueue(action);
 
 	// 충돌유닛이 있으면
