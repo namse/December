@@ -22,11 +22,13 @@ public:
 	GameNumber					GetGameNumber(){ return m_GameNum; }
 
 	void						HandleAttack(PlayerNumber attacker, AttackData attackData);
+	void						HandleSkill(PlayerNumber attacker, SkillData skillData);
 	void						GameOverForSurrender(PlayerNumber srrender);
 
 private:
 	UnitIdentityNumber			GenerateUnitIdentityNumber();
 	void						SetUpNPC(UnitType unitType, Coord unitPos);
+	HexaDirection				GetDirection(Coord point1, Coord point2);
 
 	// For Attack Handling
 	void						UnitPush(Unit* unit, int power , HexaDirection direction);

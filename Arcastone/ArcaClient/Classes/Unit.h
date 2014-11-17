@@ -26,12 +26,14 @@ public:
 	UnitOwner					GetOwner(){ return m_Owner; }
 	UnitMoveType				GetMoveType(){ return m_MoveType; }
 	UnitStatusType				GetStatusType(){ return m_StatusType; }
+	Skill						GetSkill(){ return m_Skill; }
 	
 protected:
 	UnitType					m_UnitType;
 	UnitMoveType				m_MoveType;
 	UnitOwner					m_Owner;
 	UnitStatusType				m_StatusType;
+	Skill						m_Skill;
 
 	int							m_ID;
 	int							m_HP;

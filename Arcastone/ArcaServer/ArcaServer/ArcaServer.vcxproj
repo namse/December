@@ -155,6 +155,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\CommonDefinitions.h" />
     <ClInclude Include="..\..\PacketType.h" />
     <ClInclude Include="ArcaStone.h" />
     <ClInclude Include="AutoMatcher.h" />
@@ -164,7 +165,6 @@
     <ClInclude Include="Config.h" />
     <ClInclude Include="DatabaseJobContext.h" />
     <ClInclude Include="DatabaseJobManager.h" />
-    <ClInclude Include="DbHelper.h" />
     <ClInclude Include="ArcaServer.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="Exception.h" />
@@ -187,9 +187,6 @@
     <ClInclude Include="RefCountable.h" />
     <ClInclude Include="Scheduler.h" />
     <ClInclude Include="Shop.h" />
-    <ClInclude Include="sqlite3.h" />
-    <ClInclude Include="sqlite3ext.h" />
-    <ClInclude Include="SQLStatement.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ThreadLocal.h" />
@@ -204,7 +201,6 @@
     <ClCompile Include="ClientSession.cpp" />
     <ClCompile Include="DatabaseJobContext.cpp" />
     <ClCompile Include="DatabaseJobManager.cpp" />
-    <ClCompile Include="DbHelper.cpp" />
     <ClCompile Include="ArcaServer.cpp" />
     <ClCompile Include="Exception.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -223,12 +219,6 @@
     <ClCompile Include="PlayerManager.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="Shop.cpp" />
-    <ClCompile Include="sqlite3.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

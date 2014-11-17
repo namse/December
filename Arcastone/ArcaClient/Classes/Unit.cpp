@@ -78,6 +78,15 @@ void Unit::init(UnitData unitData)
 	m_MoveRange = unitData.moveRange;
 	m_Weight = unitData.weight;
 
+	m_Skill = Skill();
+	// TODO : Json 에서 스킬 데이터 읽어오도록
+
+	if (m_UnitType == UT_MAGICIAN) // 비숍
+	{
+		m_Skill = Skill(USK_FIREBALL);
+		// 랭크1 파이어볼!
+	}
+
 	m_Sprite = nullptr;
 
 	initSprite();
@@ -108,7 +117,7 @@ void Unit::initSprite()
 
 	// 체력과 공격력 숫자 표시
 	char buff[5];
-	itoa(m_HP, buff, 10);
+	itoa(m_Weight, buff, 10);
 	auto labelHP = LabelTTF::create(buff, "Helvetica", 15);
 
 	itoa(m_Attack, buff, 10);

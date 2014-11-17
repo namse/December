@@ -26,6 +26,7 @@ public:
 	void fieldRequest();
 	void attackRequest(AttackData attackData);
 	void gameStartResult();
+	void skillRequest(SkillData skillData);
 
 	
 private:

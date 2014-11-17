@@ -155,6 +155,9 @@
     <ClInclude Include="..\Classes\Rock.h">
       <Filter>GameObject\Unit\NPC</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\CommonDefinitions.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="game.rc">
