@@ -188,6 +188,10 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 	int				moveRange = 0;
 	UnitActionType	actionType;
 
+	// TODO : 이 함수는 어떤 공격이 들어와도 핸들링 할 수 있게 추상화하고,
+	// 각 공격 타입에 맞는 이동들을 따로 함수로 만들어서 처리할 것.
+	// 안그러면 새로운 이동방법, 공격방법 나올때마다 난리남
+
 	switch (unitMoveType)
 	{
 	case UMT_STRAIGHT:
@@ -266,6 +270,16 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 			else
 			{
 				unit->SetPosition(attackData.position[move]);
+
+				// TODO : mMoveData는 Move용 데이터임. Dash용이 아님.
+				// 현재는 UnitAction에 Move, Colide, Die 모든 데이터가 다 들어있어서
+				// 메모리 비효율적인데,
+
+				// 지금 이런식으로 통째로 되어있는 것을
+				// 잘게 나뉘어 한 곳에 쌓아서, 하나의 패킷으로 보내보셈.
+				// Ex) 무브가 3바이트, die가 2바이트, 충돌이 1바이트면
+				// 무브|무브|다이|무브|충돌
+				// 이래서 총 12바이트만 가도록. 현재는 무브든 다이든 모두다 6바이트라서 6 * 5바이트가 날라감.
 
 				UnitAction dashAction;
 				dashAction.mActionType = UAT_DASH;
