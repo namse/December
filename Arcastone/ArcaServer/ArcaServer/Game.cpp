@@ -99,81 +99,8 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	UnitMoveType unitMoveType = attackUnit->GetUnitMoveType();
 
 	m_UnitActionQueue.clear();
-	switch (unitMoveType)
-	{
-		case UMT_STRAIGHT:
-		{
-							 // 유닛 이동 시작!
-						UnitMove(attackData.direction, attackData.range, attackUnit, true);	// 함수 내에서 유닛들 데굴데굴 구루는중~
-		}break;
-
-		case UMT_JUMP:
-		{
-						 UnitJump(attackData.direction, attackData.range, attackUnit);
-
-		}break;
-
-		case UMT_DASH:
-		{
-						 // 대쉬방향을 알기 위해 BeforePosition 을 사용해보아요
-						 Coord beforePosition = attackUnit->GetPos();
-
-						 // 입력한 range 만큼 '한칸씩' 이동하겠어요~
-						 for (int move = 0; move < attackData.range; ++move)
-						 {
-							 Unit* target = GetUnitInPosition(attackData.position[move]);
-							 // 아! 물론 이동하려는 위치에 유닛이 있으면
-							 if (target != nullptr)
-							 {
-								 HexaDirection direction = GetHexaDirection(beforePosition, attackData.position[move]);
-								 // 만난 유닛을 밀어버려요!
-								 UnitPush(attackUnit, target, 0, true);
-								 break;
-							 }
-							 // 유닛을 만나지 않으면 계속 질주하세욧!
-							 else
-							 {
-								 HexaDirection direction = GetHexaDirection(beforePosition, attackData.position[move]);
-
-								 attackUnit->SetPosition(attackData.position[move]);
-
-								 UnitAction action;
-								 action.mActionType = UAT_DASH;
-								 action.mUnitId = attackUnit->GetID();
-								 action.mMoveData.mRange = 1;
-								 action.mMoveData.mDirection = direction;
-								 action.mMoveData.mFinalX = attackData.position[move].x;
-								 action.mMoveData.mFinalY = attackData.position[move].y;
-
-								 m_UnitActionQueue.push_back(action);
-								 if (DEBUG_PRINT) PrintUnitActionQueue(action);
-
-								 Coord beforePosition = attackData.position[move];
-							 }
-						 }
-
-		}break;
-
-		case UMT_TELEPORT:
-		{
-							 attackUnit->SetPosition(attackData.position[0]);
-
-							 UnitAction action;
-							 action.mActionType = UAT_TELEPORT;
-							 action.mUnitId = attackUnit->GetID();
-							 action.mMoveData.mRange = 0;
-							 action.mMoveData.mDirection = HexaDirection();
-							 action.mMoveData.mFinalX = attackData.position[0].x;
-							 action.mMoveData.mFinalY = attackData.position[0].y;
-
-							 m_UnitActionQueue.push_back(action);
-							 if (DEBUG_PRINT) PrintUnitActionQueue(action);
-		}break;
-
-	default:
-		assert(false && "HandleAttack In UnitMoveType Wrong");
-	}
-
+	// 유닛 공격 시작
+	UnitMove(attackUnit, attackData);
 
 	// 이동했으니까 이동 가능 횟수 - 1
 	m_CanCommand--;
@@ -249,199 +176,244 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	}
 }
 
-void Game::UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirstMove)
+void Game::UnitMove(Unit* unit, AttackData attackData)
 {
-	if (range <= 0)
+	UnitMoveType	unitMoveType = unit->GetUnitMoveType();
+	Coord			unitPos = unit->GetPos();
+	int				unitAtk = unit->GetAttack();
+	int				range = attackData.range;
+	HexaDirection	direction = attackData.direction;
+	Unit*			crashGuy = nullptr; // 충돌한 유닛을 찾는다
+	Coord			movePos = unitPos;
+	int				moveRange = 0;
+	UnitActionType	actionType;
+
+	switch (unitMoveType)
 	{
-		// finish Move
-		return;
+	case UMT_STRAIGHT:
+	{
+						 actionType = UAT_MOVE;
+						  for (int l = 1; l <= range; l++)
+						  {
+							  // unit의 direction 방향으로 l만큼 거리에 서있는 유닛
+							  Unit* standUnit = GetUnitInPosition(movePos + GetUnitVector(direction));
+							  if (nullptr != standUnit) // 서있을 시 충돌
+							  {
+								  crashGuy = standUnit;
+								  break;
+							  }
+							  movePos = movePos + GetUnitVector(direction);
+							  moveRange++;
+						  }
+	}break;
+
+	case UMT_JUMP:
+	{
+					 actionType = UAT_JUMP;
+
+					 // 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
+					 movePos = Coord(unit->GetPos() + (GetUnitVector(direction) * range));
+					 moveRange = range;
+					 Unit* standUnit = GetUnitInPosition(movePos);
+					 if (nullptr != standUnit)
+					 {
+						 // 그럼 호..혹시 그 전칸에도 유닛이 있니?
+						 movePos = Coord(movePos - GetUnitVector(direction));
+						 moveRange = range - 1;
+						 Unit* standUnitBefore = GetUnitInPosition(movePos);
+
+						 if (standUnitBefore == nullptr || range == 1) // 없네요? or 1한칸 이동할거거든요?
+						 {
+							 crashGuy = standUnit;
+							 break;
+						 }
+						 else // 있어요!
+						 {
+							 // 에잉.. 그럼 못가겠네
+							 // 거긴 못가요 클라님아~
+							 if (DEBUG_PRINT) printf("Send Wrong Attack Type Packet : WAT_CANT_JUMP_THERE\n");
+
+							 Packet::WrongAttackResult outPacket;
+							 outPacket.mWrongType = WAT_CANT_JUMP_THERE;
+							 auto session = GClientManager->GetClient(m_Attacker);
+							 if (session != nullptr)
+								 session->SendRequest(&outPacket);
+							 return;
+						 }
+					 }
+
+	}break;
+
+	case UMT_DASH:
+	{
+					 // 대쉬방향을 알기 위해 BeforePosition 을 사용해보아요
+
+					 // 입력한 range 만큼 '한칸씩' 이동하겠어요~
+					 for (int move = 0; move < attackData.range; ++move)
+					 {
+						 HexaDirection direction = GetHexaDirection(movePos, attackData.position[move]);
+						 // 아! 물론 이동하려는 위치에 유닛이 있으면
+						 Unit* standUnit = GetUnitInPosition(attackData.position[move]);
+						 if (nullptr != standUnit)
+						 {
+							 crashGuy = standUnit;
+							 break;
+						 }
+						 // 유닛을 만나지 않으면 계속 질주하세욧!
+						 else
+						 {
+							 unit->SetPosition(attackData.position[move]);
+
+							 UnitAction dashAction;
+							 dashAction.mActionType = UAT_DASH;
+							 dashAction.mUnitId = unit->GetID();
+							 dashAction.mMoveData.mRange = 1;
+							 dashAction.mMoveData.mDirection = direction;
+							 dashAction.mMoveData.mFinalX = attackData.position[move].x;
+							 dashAction.mMoveData.mFinalY = attackData.position[move].y;
+
+							 m_UnitActionQueue.push_back(dashAction);
+							 if (DEBUG_PRINT) PrintUnitActionQueue(dashAction);
+						 }
+						 movePos = attackData.position[move];
+					 }
+
+	}break;
+
+	case UMT_TELEPORT:
+	{
+						 actionType = UAT_TELEPORT;
+						 movePos = attackData.position[0];
+	}break;
+
+	default:
+		assert(false && "HandleAttack In UnitMoveType Wrong");
 	}
 
-	// 처음 부딪힌 유닛과, 그 라인에서 마지막으로 연계되어 부딪힐 유닛을 찾는다.
-	Unit* firstGuy = nullptr;
-	Unit* lastGuy = nullptr;
-	int costLength = -1;
-	for (int l = 1; l <= range; l++)
+
+	// 액션큐에 이동 위치를 담아줍니다. 대쉬 유닛의 경우 패스
+	if (unitMoveType != UMT_DASH)
+	{
+		unit->SetPosition(movePos);
+
+		UnitAction action;
+		action.mActionType = actionType;
+		action.mUnitId = unit->GetID();
+		action.mMoveData.mRange = moveRange;
+		action.mMoveData.mDirection = direction;
+		action.mMoveData.mFinalX = movePos.x;
+		action.mMoveData.mFinalY = movePos.y;
+
+		m_UnitActionQueue.push_back(action);
+		if (DEBUG_PRINT) PrintUnitActionQueue(action);
+	}
+
+	// 충돌유닛이 있으면
+	if (nullptr != crashGuy)
+	{
+		if (unit->GetOwner() != crashGuy->GetOwner())
+		{
+			// 적이면 서로 데미지 먹임
+			crashGuy->SetHP(crashGuy->GetHP() - unit->GetAttack());
+			unit->SetHP(unit->GetHP() - crashGuy->GetAttack());
+		}
+
+		if (unit->GetHP() <= 0)
+			KillThisUnit(crashGuy);
+
+		UnitAction collisionAct;
+		collisionAct.mActionType = UAT_COLLISION;
+		collisionAct.mUnitId = unit->GetID();
+		collisionAct.mCollisionData.mTarget = crashGuy->GetID();
+		collisionAct.mCollisionData.mMyHP = crashGuy->GetHP();
+		collisionAct.mCollisionData.mTargetHP = crashGuy->GetHP();
+		m_UnitActionQueue.push_back(collisionAct);
+		if (DEBUG_PRINT) PrintUnitActionQueue(collisionAct);
+
+		// 얻어맞은 유닛은 죽은 후에도 밀려난 다음에 사망
+		if (crashGuy->GetHP() <= 0)
+			KillThisUnit(crashGuy);
+
+		// 유닛이 맞아죽지 않았으면 밀려나게 합니다
+		if (crashGuy->GetUnitStatus() != UST_DEAD)
+		{
+			if (unitAtk > 0) UnitPush(crashGuy, unitAtk, direction);
+		}
+	}
+	return;
+
+}
+
+void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
+{
+	Coord			unitPos = unit->GetPos();
+	int				unitWeight = unit->GetWeight();
+	Unit*			crashGuy = nullptr; // 충돌한 유닛을 찾는다
+	Coord			movePos = unitPos;
+	int				moveRange = 0;
+
+	power -= unitWeight;
+	for (int l = 1; l <= power; l++)
 	{
 		// unit의 direction 방향으로 l만큼 거리에 서있는 유닛
-		Unit* standUnit = GetUnitInPosition(unit->GetPos() + GetUnitVector(direction) * l);
-		if (standUnit == nullptr) // 게 서있는가? - 아뇨
+		Unit* standUnit = GetUnitInPosition(movePos + GetUnitVector(direction));
+		if (nullptr != standUnit) // 서있을 시 충돌
 		{
-			if (firstGuy == nullptr) // 처음으로 만난 놈이 아직 없는가?
-				continue;
-			else // 이제껏 충돌은 하긴 했는가? 그럼 충돌을 멈춰야겠구려
-				break;
+			crashGuy = standUnit;
+			break;
 		}
-		else{ // 네놈, 거기 서있었구나!
-			if (firstGuy == nullptr) // 아직 아무도 만나지 못했는가?
-			{
-				costLength = l;
-				firstGuy = standUnit;
-			}
-			lastGuy = standUnit;
-		}
+		movePos = movePos + GetUnitVector(direction);
+		moveRange++;
 	}
 
-	if (firstGuy != nullptr) // 누군가와 (입술)박치기를 했습니까?
-	{
-		// 가장 가까이에서 만난 애의 한칸 뒤에 유닛을 배치하고
-		unit->SetPosition(unit->GetPos() + GetUnitVector(direction) * (costLength - 1));
-
-		UnitAction action;
-		action.mActionType = UAT_MOVE;
-		action.mUnitId = unit->GetID();
-		action.mMoveData.mRange = costLength - 1;
-		action.mMoveData.mDirection = direction;
-		action.mMoveData.mFinalX = unit->GetPos().x;
-		action.mMoveData.mFinalY = unit->GetPos().y;
-
-		m_UnitActionQueue.push_back(action);
-		if (DEBUG_PRINT) PrintUnitActionQueue(action);
-
-
-		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // 거 유닛 바깥에 나갔슴까?
-			KillThisUnit(unit); //그럼 젠뷰X쓰!
-
-		UnitPush(unit, lastGuy, range - costLength, isFirstMove); // 맨 마지막에 있는 놈만 밀어버리세요.
-	}
-	else // 당신 앞에 아무도 없다면.. 크큭 솔로군
-	{
-		unit->SetPosition(unit->GetPos() + GetUnitVector(direction) * range); // 쭉 앞으로 가시어요
-
-		UnitAction action;
-		action.mActionType = UAT_MOVE;
-		action.mUnitId = unit->GetID();
-		action.mMoveData.mRange = range;
-		action.mMoveData.mDirection = direction;
-		action.mMoveData.mFinalX = unit->GetPos().x;
-		action.mMoveData.mFinalY = unit->GetPos().y;
-
-		m_UnitActionQueue.push_back(action);
-		if (DEBUG_PRINT) PrintUnitActionQueue(action);
-
-		if (m_GameField.isInsideOfField(unit->GetPos()) == false) // 거 유닛 바깥에 나갔슴까?
-			KillThisUnit(unit); //그럼 젠뷰X쓰!.. 안그래도 혼잔데 낙사라니 ㅠㅠ
-	}
-}
-
-void Game::UnitJump(HexaDirection direction, int range, Unit* unit)
-{
-	// 난 지금 여기로 이동할건데
-	Coord moveVector = Coord(GetUnitVector(direction) * range);
-	Coord attackPosition = Coord(unit->GetPos() + moveVector);
-
-	// 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
-	Unit* standUnit = GetUnitInPosition(attackPosition);
-
-	if (standUnit == nullptr) // 없는디요?
-	{
-		// 그럼 그냥 가세욧
-		unit->SetPosition(attackPosition);
-
-		UnitAction action;
-		action.mActionType = UAT_JUMP;
-		action.mUnitId = unit->GetID();
-		action.mMoveData.mRange = range;
-		action.mMoveData.mDirection = direction;
-		action.mMoveData.mFinalX = attackPosition.x;
-		action.mMoveData.mFinalY = attackPosition.y;
-
-		m_UnitActionQueue.push_back(action);
-		if (DEBUG_PRINT) PrintUnitActionQueue(action);
-		return;
-	}
-
-	else	// 있네요?
-	{
-		// 그럼 호..혹시 그 전칸에도 유닛이 있니?
-		Coord attackPositionBefore = Coord(attackPosition - GetUnitVector(direction));
-		Unit* standUnitBefore = GetUnitInPosition(attackPositionBefore);
-
-		if (standUnitBefore == nullptr || range == 1) // 없네요? or 1한칸 이동할거거든요?
-		{
-			// 그럼 쩜프해도 되겠군!
-			unit->SetPosition(attackPositionBefore);
-
-			UnitAction action;
-			action.mActionType = UAT_JUMP;
-			action.mUnitId = unit->GetID();
-			action.mMoveData.mRange = range - 1;
-			action.mMoveData.mDirection = direction;
-			action.mMoveData.mFinalX = attackPositionBefore.x;
-			action.mMoveData.mFinalY = attackPositionBefore.y;
-
-			m_UnitActionQueue.push_back(action);
-			if (DEBUG_PRINT) PrintUnitActionQueue(action);
-
-			UnitPush(unit, standUnit, 0, true);
-			return;
-		}
-
-		else // 있어요!
-		{
-			// 에잉.. 그럼 못가겠네
-			// 거긴 못가요 클라님아~
-			if (DEBUG_PRINT) printf("Send Wrong Attack Type Packet : WAT_CANT_JUMP_THERE\n");
-
-			Packet::WrongAttackResult outPacket;
-			outPacket.mWrongType = WAT_CANT_JUMP_THERE;
-			auto session = GClientManager->GetClient(m_Attacker);
-			if (session != nullptr)
-				session->SendRequest(&outPacket);
-			return;
-		}
-	}
-}
-
-void Game::UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush)
-{
-	// TODO : 순서 잘못榮쨉? 클라가 읽는 부분도 잘못되서 이상하게 돌아가고는 있음 .
-	// 하지만 애니메이션이라던가 추가하려면, 고칠 필요 있는 부분임 
-
-	if (isFirstPush) // 첫 충돌이면 공격력에 비례해서 밀고
-		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), pusher->GetAttack() - target->GetWeight(), target, false);
-	else // 두번째 이상의 충돌이면 이제까지의 밀린 정도를 감안해서 밀고
-		UnitMove(GetHexaDirection(pusher->GetPos(), target->GetPos()), power - target->GetWeight(), target, false);
-
-	if (pusher->GetOwner() != target->GetOwner())
-	{
-		// 적이면 데미지 먹이고 밀고
-		UnitApplyDamageWithCollision(target, pusher);
-	}
-	else
-	{
-		// 아군이면 그냥 민다
-		UnitAction action;
-		action.mActionType = UAT_COLLISION;
-		action.mUnitId = pusher->GetID();
-		action.mCollisionData.mTarget = target->GetID();
-		action.mCollisionData.mMyHP = pusher->GetHP();
-		action.mCollisionData.mTargetHP = target->GetHP();
-
-		m_UnitActionQueue.push_back(action);
-		if (DEBUG_PRINT) PrintUnitActionQueue(action);
-	}
-}
-
-void Game::UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy)
-{
-	thisGuy->SetHP(thisGuy->GetHP() - thatGuy->GetAttack());
-	thatGuy->SetHP(thatGuy->GetHP() - thisGuy->GetAttack());
+	// 액션큐에 이동 위치를 담아줍니다
+	unit->SetPosition(movePos);
 
 	UnitAction action;
-	action.mActionType = UAT_COLLISION;
-	action.mUnitId = thisGuy->GetID();
-	action.mCollisionData.mTarget = thatGuy->GetID();
-	action.mCollisionData.mMyHP = thisGuy->GetHP();
-	action.mCollisionData.mTargetHP = thatGuy->GetHP();
+	action.mActionType = UAT_MOVE;
+	action.mUnitId = unit->GetID();
+	action.mMoveData.mRange = moveRange;
+	action.mMoveData.mDirection = direction;
+	action.mMoveData.mFinalX = movePos.x;
+	action.mMoveData.mFinalY = movePos.y;
 
 	m_UnitActionQueue.push_back(action);
+
 	if (DEBUG_PRINT) PrintUnitActionQueue(action);
 
-	if (thisGuy->GetHP() <= 0)
-		KillThisUnit(thisGuy);
-	if (thatGuy->GetHP() <= 0)
-		KillThisUnit(thatGuy);
+	// 충돌유닛이 있으면
+	if (nullptr != crashGuy)
+	{
+		if (unit->GetOwner() != crashGuy->GetOwner())
+		{
+			// 적이면 서로 데미지 먹임
+			crashGuy->SetHP(crashGuy->GetHP() - unit->GetAttack());
+			unit->SetHP(unit->GetHP() - crashGuy->GetAttack());
+		}
+
+		if (unit->GetHP() <= 0)
+			KillThisUnit(crashGuy);
+
+		UnitAction collisionAct;
+		collisionAct.mActionType = UAT_COLLISION;
+		collisionAct.mUnitId = unit->GetID();
+		collisionAct.mCollisionData.mTarget = crashGuy->GetID();
+		collisionAct.mCollisionData.mMyHP = crashGuy->GetHP();
+		collisionAct.mCollisionData.mTargetHP = crashGuy->GetHP();
+		m_UnitActionQueue.push_back(collisionAct);
+		if (DEBUG_PRINT) PrintUnitActionQueue(collisionAct);
+
+		if (crashGuy->GetHP() <= 0)
+			KillThisUnit(crashGuy);
+
+		// 유닛이 맞아죽지 않았으면 밀려나게 합니다
+		if (crashGuy->GetUnitStatus() != UST_DEAD)
+		{
+			int pushPower = power - moveRange;
+			if (pushPower > 0) UnitPush(crashGuy, pushPower, direction);
+		}
+	}
+	return;
 }
 
 void Game::KillThisUnit(Unit* unit)
