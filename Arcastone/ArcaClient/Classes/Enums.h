@@ -38,6 +38,14 @@
 
 #define DRAW_KNOCKBACK				false
 
+#define MAX_HAVE_COST				5
+
+#define ZORDER_BLOCK				200
+#define ZORDER_CHARACTER			300
+#define ZORDER_STAT					400
+#define ZORDER_UI					500
+
+
 // static
 static int mapSizeX;
 static int mapSizeY;

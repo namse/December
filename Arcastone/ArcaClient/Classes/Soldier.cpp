@@ -19,5 +19,5 @@ void Soldier::initSprite()
 	unitSprite->setScale(HEXAGON_LENGTH*1.5 / unitSprite->getContentSize().width);
 	unitSprite->setAnchorPoint(Vec2(0.5f, 0.3f));
 
-	m_Sprite->addChild(unitSprite);
+	m_Sprite->addChild(unitSprite, ZORDER_CHARACTER);
 }

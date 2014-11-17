@@ -104,16 +104,14 @@ void Unit::initSprite()
 	float scale = (HEXAGON_LENGTH * 3 / 4) / frameHP->getContentSize().width;
 	float position = HEXAGON_LENGTH * 3 / 4;
 
-	int zIdx = 5;
-
 	frameHP->setScale(scale);
 	frameAtk->setScale(scale);
 	
 	frameHP->setPosition(position, 0);
 	frameAtk->setPosition(-position, 0);
 
-	m_Sprite->addChild(frameHP, zIdx, "frame_hp");
-	m_Sprite->addChild(frameAtk, zIdx, "frame_atk");
+	m_Sprite->addChild(frameHP, 10 + ZORDER_STAT, "frame_hp");
+	m_Sprite->addChild(frameAtk, 10 + ZORDER_STAT, "frame_atk");
 
 	// 체력과 공격력 숫자 표시
 	char buff[5];
@@ -129,9 +127,8 @@ void Unit::initSprite()
 	labelHP->setColor(Color3B(255, 255, 255));
 	labelAtk->setColor(Color3B(255, 255, 255));
 	
-	zIdx = 10;
-	m_Sprite->addChild(labelHP, zIdx, "hp");
-	m_Sprite->addChild(labelAtk, zIdx, "atk");
+	m_Sprite->addChild(labelHP, 20 + ZORDER_STAT, "hp");
+	m_Sprite->addChild(labelAtk, 20 + ZORDER_STAT, "atk");
 
 	// 자신 유닛인지, 상대 유닛인지 표시 
 	assert(m_Owner != UO_NONE && "undefined unit owner");
@@ -149,7 +146,7 @@ void Unit::initSprite()
 		float scale = (HEXAGON_LENGTH) / ownerMark->getContentSize().width;
 		ownerMark->setScale(scale);
 		ownerMark->setPositionY(ownerMark->getContentSize().height*scale*1.5);
-		m_Sprite->addChild(ownerMark, zIdx, "ownerMark");
+		m_Sprite->addChild(ownerMark, 30 + ZORDER_STAT, "ownerMark");
 	}
 }
 

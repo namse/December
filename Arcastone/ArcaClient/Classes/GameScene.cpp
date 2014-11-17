@@ -38,7 +38,7 @@ bool GameScene::init()
 
 	m_IsCastSkill = false;
 
-	for (int i = 0; i < 3; ++i)
+	for (int i = 0; i < MAX_HAVE_COST; ++i)
 	{
 		m_CostLabel[i] = LabelTTF::create("", "Hevetica", 20);
 
@@ -46,7 +46,7 @@ bool GameScene::init()
 
 		m_CostLabel[i]->setColor(Color3B(100, 100, 100));
 
-		this->addChild(m_CostLabel[i], 999);
+		this->addChild(m_CostLabel[i], 0 + ZORDER_UI);
 	}
 
 	m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 20);
@@ -55,7 +55,7 @@ bool GameScene::init()
 
 	m_TurnLabel->setColor(Color3B(100, 100, 100));
 
-	this->addChild(m_TurnLabel, 999);
+	this->addChild(m_TurnLabel, 0 + ZORDER_UI);
 
 	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
 
@@ -292,6 +292,8 @@ void GameScene::UsingSkill(Unit* unit)
 	{
 	case USK_FIREBALL:{
 						  if(DEBUG_PRINT_PACKET) printf("Using FireBall!!\n\n");
+
+						  skillData.position[0] = Coord(-1, -1);
 
 						  // 파이어 볼은 유효한 범위 중 내가 선택한 좌표로 스킬 시전
 						  for (int i = 0; i < m_CourseStack.size(); ++i)
@@ -1118,7 +1120,7 @@ void GameScene::ReadRestCost(Packet::CostRenewalResult recvData)
 {
 	printf("Rest Cost : %d\nMax Cost : %d\n\n", recvData.mCost, recvData.mMaxCost);
 
-	for (int i = 0; i < recvData.mMaxCost; ++i)
+	for (int i = 0; i < MAX_HAVE_COST; ++i)
 	{
 		m_CostLabel[i]->setString(" ");
 	}

@@ -72,7 +72,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	if (USE_ARCA) SetUpNPC(UT_ARCASTONE, Coord(3, 5));
 
 	// 장애물 설치
-	if (USE_ROCK) SetUpNPC(UT_ROCK, Coord(3, 6));
+	if (USE_ROCK) SetUpNPC(UT_ROCK, Coord(5, 8));
 
 	// 유닛 수 초기화
 	UnitCounting();
@@ -223,38 +223,12 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 
 	case UMT_JUMP:
 	{
-					 actionType = UAT_JUMP;
-
-					 // 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
-					 movePos = Coord(unit->GetPos() + (GetUnitVector(direction) * range));
-					 moveRange = range;
-					 Unit* standUnit = GetUnitInPosition(movePos);
-					 if (nullptr != standUnit)
-					 {
-						 // 그럼 호..혹시 그 전칸에도 유닛이 있니?
-						 movePos = Coord(movePos - GetUnitVector(direction));
-						 moveRange = range - 1;
-						 Unit* standUnitBefore = GetUnitInPosition(movePos);
-
-						 if (standUnitBefore == nullptr || range == 1) // 없네요? or 1한칸 이동할거거든요?
-						 {
-							 crashGuy = standUnit;
-							 break;
-						 }
-						 else // 있어요!
-						 {
-							 // 에잉.. 그럼 못가겠네
-							 return;
-						 }
-					 }
-
 		actionType = UAT_JUMP;
 
 		// 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
 		movePos = Coord(unit->GetPos() + (GetUnitVector(direction) * range));
 		moveRange = range;
-		standUnit = GetUnitInPosition(movePos);
-		standUnit = GetUnitInPosition(movePos);
+		Unit* standUnit = GetUnitInPosition(movePos);
 		if (nullptr != standUnit)
 		{
 			// 그럼 호..혹시 그 전칸에도 유닛이 있니?
@@ -397,7 +371,6 @@ void Game::HandleSkill(PlayerNumber attacker, SkillData skillData)
 	// TODO : 합당한 스킬 사용인지 판별할 것.
 
 	Unit* castUnit = GetUnit(skillData.id);
-	Unit* target = GetUnitInPosition(skillData.position[0]);
 
 	m_UnitActionQueue.clear();
 
@@ -405,6 +378,9 @@ void Game::HandleSkill(PlayerNumber attacker, SkillData skillData)
 	{
 	case USK_FIREBALL:{
 						  // 나중에 이런 스킬 스탯 하드코딩들 고쳐야될듯
+						  if (skillData.position[0].x == -1) return;
+
+						  Unit* target = GetUnitInPosition(skillData.position[0]);
 
 						  // 캐스트 유닛에서 스킬 대상위치까지의 방향은?
 						  HexaDirection direction = GetDirection(castUnit->GetPos(), target->GetPos());

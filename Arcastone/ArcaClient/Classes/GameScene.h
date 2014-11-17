@@ -82,7 +82,7 @@ private:
 
 
 	LabelTTF*				m_TurnLabel;
-	LabelTTF*				m_CostLabel[3];
+	LabelTTF*				m_CostLabel[MAX_HAVE_COST];
 
 	ScreenPoint				m_StartPoint;
 	ScreenPoint				m_CursoredPoint;
