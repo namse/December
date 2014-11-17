@@ -4,15 +4,11 @@
 #include "ScreenPoint.h"
 
 // define
-
 #define LOGIN_IPADDR				"127.0.0.1"
 #define DEBUG_PRINT_PACKET			true
 
 #define DISPLAY_SIZEX				480
 #define DISPLAY_SIZEY				690
-
-#define MAP_SIZEX					7
-#define MAP_SIZEY					11
 
 #define MAP_XSTART					DISPLAY_SIZEX/2
 #define MAP_YSTART					DISPLAY_SIZEY/2
@@ -40,6 +36,10 @@
 #define MOVE_DURATION 0.3f
 
 #define DRAW_KNOCKBACK				false
+
+// static
+static int mapSizeX = 7;
+static int mapSizeY = 11;
 
 // enum
 enum PlayerWho
@@ -132,8 +132,8 @@ struct HexaPoint : public cocos2d::Vec2
 		ScreenPoint retPoint;
 
 		// MAP_START 를 중앙에 위치하도록 그려주기 위한 수식들 .
-		retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (x - (MAP_SIZEX - 1)*0.5);
-		retPoint.y = MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (y * 2 - MAP_SIZEY + x - (MAP_SIZEX - 3)*0.5);
+		retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (x - (mapSizeX - 1)*0.5);
+		retPoint.y = MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (y * 2 - mapSizeY + x - (mapSizeY - 3)*0.5);
 
 		return retPoint;
 	}
@@ -187,42 +187,6 @@ struct HexaPoint : public cocos2d::Vec2
 		if (x == 0) return abs(y);
 		if (y == 0) return abs(x);
 		if (abs(x) == abs(y)) return abs(x);
-	}
-
-	HexaDirection GetInverseDirection(HexaPoint point)
-	{
-		HexaPoint vec;
-		vec.x = point.x - x;
-		vec.y = point.y - y;
-
-		if (vec.y < 0 && vec.x == 0)
-		{
-			return HD_SOUTH;
-		}
-		else if (vec.x > 0 && vec.y < 0)
-		{
-			if (abs(vec.x) != abs(vec.y)) return HD_NONE;
-			return HD_SOUTHWEST;
-		}
-		else if (vec.x < 0 && vec.y == 0)
-		{
-			return HD_SOUTHEAST;
-		}
-		else if (vec.y > 0 && vec.x == 0)
-		{
-			return HD_NORTH;
-		}
-		else if (vec.x > 0 && vec.y == 0)
-		{
-			return HD_NORTHWEST;
-		}
-		else if (vec.x < 0 && vec.y > 0)
-		{
-			if (abs(vec.x) != abs(vec.y)) return HD_NONE;
-			return HD_NORTHEAST;
-		}
-
-		return HD_NONE;
 	}
 
 	bool isAround(HexaPoint point, int range)
