@@ -47,7 +47,7 @@ bool GameScene::init()
 
 	m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 20);
 
-	m_TurnLabel->setPosition(Point(55, 675));
+	m_TurnLabel->setPosition(Point(55, 500));
 
 	m_TurnLabel->setColor(Color3B(100, 100, 100));
 
@@ -1033,4 +1033,24 @@ void GameScene::SetTurn(bool isMyTurn)
 	}
 	else
 		m_TurnLabel->setString("Enemy Turn");
+}
+
+void GameScene::gameOver(Packet::GameOverResult recvData)
+{
+	// 무승부
+	if (recvData.mIsDraw == true)
+	{
+		m_TurnLabel->setString("draw!");
+	}
+	// 승리
+	else if (recvData.mIsMyWin == true)
+	{
+		m_TurnLabel->setString("you win!");
+	}
+	// 패배
+	else if (recvData.mIsMyWin == false)
+	{
+		m_TurnLabel->setString("you lose!");
+	}
+
 }

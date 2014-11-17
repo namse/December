@@ -605,7 +605,7 @@ void Game::GameOverForSurrender(PlayerNumber srrender)
 		// 에러상황
 		m_Winner = WW_DRAW;
 	}
-
+	m_IsGameOver = true;
 	GameOver();
 }
 
@@ -614,15 +614,38 @@ void Game::GameOver()
 	if (m_IsGameOver)
 	{
 		// 게임이 끝났으면 승자 알려줌
-		Packet::GameOverResult outPacket;
-		for (auto playerNumber : m_PlayerList)
-		{
-			outPacket.mWhoIsWinner = m_Winner;
+		auto session1 = GClientManager->GetClient(m_PlayerList[0]);
+		auto session2 = GClientManager->GetClient(m_PlayerList[1]);
 
-			auto session = GClientManager->GetClient(playerNumber);
-			if (session != nullptr)
-				session->SendRequest(&outPacket);
+		if (session1 == nullptr && session2 == nullptr) return;
+
+		Packet::GameOverResult outPacket1;
+		Packet::GameOverResult outPacket2;
+
+
+		switch (m_Winner)
+		{
+		case WW_PLAYER1:
+		{
+			outPacket1.mIsMyWin = true;
+			outPacket2.mIsMyWin = false;
+		}break;
+		case WW_PLAYER2:
+		{
+			outPacket1.mIsMyWin = false;
+			outPacket2.mIsMyWin = true;
+		}break;
+		case WW_DRAW:
+		{
+			outPacket1.mIsDraw = true;
+			outPacket2.mIsDraw = true;
+		}break;
+		default:
+			assert(m_Winner != WW_NONE && "invalid winner player number");
 		}
+
+		session1->SendRequest(&outPacket1);
+		session2->SendRequest(&outPacket2);
 		return;
 	}
 }

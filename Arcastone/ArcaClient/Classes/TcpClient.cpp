@@ -214,6 +214,13 @@ void TcpClient::processPacket()
 			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
 			//scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::PrintWrongAttackPacket, dynamic_cast<GameScene*>(layer), recvData));
 		}
+		case PKT_SC_GAME_OVER:
+		{
+			Packet::GameOverResult recvData;
+			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
+			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::gameOver, dynamic_cast<GameScene*>(layer), recvData));
+		}
 
 		default:
 			//assert(false);

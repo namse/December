@@ -131,9 +131,11 @@ namespace Packet
 		GameOverResult(){
 			mSize = sizeof(GameOverResult);
 			mType = PKT_SC_GAME_OVER;
-			mWhoIsWinner = WW_NONE;
+			mIsDraw = false;
+			mIsMyWin = false;
 		}
-		WhosWinner mWhoIsWinner;
+		bool mIsDraw;
+		bool mIsMyWin;
 	};
 
 	struct CostRenewalResult : public PacketHeader
