@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ArcaStone.h"
@@ -340,10 +340,15 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 			if (unitAtk > 0) UnitPush(crashGuy, unitAtk, direction);
 		}
 	}
+	else if (!m_GameField.IsInsideOfField(movePos))
+	{
+		KillThisUnit(unit);
+	}
 	return;
 
 }
 
+// 연쇄충돌 처리
 void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 {
 	Coord			unitPos = unit->GetPos();
@@ -412,6 +417,10 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 			int pushPower = power - moveRange;
 			if (pushPower > 0) UnitPush(crashGuy, pushPower, direction);
 		}
+	}
+	else if (!m_GameField.IsInsideOfField(movePos))
+	{
+		KillThisUnit(unit);
 	}
 	return;
 }
@@ -589,12 +598,12 @@ void Game::GameOverForSurrender(PlayerNumber srrender)
 	}
 	else if (m_PlayerList.at(1) == srrender)
 	{
-		m_Winner == WW_PLAYER1;
+		m_Winner = WW_PLAYER1;
 	}
 	else
 	{
 		// 에러상황
-		m_Winner == WW_DRAW;
+		m_Winner = WW_DRAW;
 	}
 
 	GameOver();

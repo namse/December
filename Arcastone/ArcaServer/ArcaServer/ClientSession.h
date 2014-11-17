@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include <map>
 #include <WinSock2.h>
@@ -26,23 +26,18 @@ class ClientSession : public RefCountable, public ObjectPool<ClientSession>
 public:
 	ClientSession(SOCKET sock)
 		: mConnected(false), mLogon(false), mSocket(sock), mSendBuffer(BUFSIZE), mRecvBuffer(BUFSIZE)
-		, mPosX(0), mPosY(0)
 	{
 		memset(&mClientAddr, 0, sizeof(SOCKADDR_IN)) ;
-		memset(mPlayerName, 0, sizeof(mPlayerName)) ;
 	}
 	virtual ~ClientSession() {}
 
 public:
 	int	GetPlayerId() const	{ return m_PlayerId; }
-	const char* GetPlayerName() const { return mPlayerName;  }
 	SOCKET GetSocketKey() const { return mSocket;  }
-	void SetPosition(float x, float y) { mPosX = x; mPosY = y; }
 	void SetPlayerId(PlayerNumber playerId) { m_PlayerId = playerId; }
 
 public: 
 	bool	IsConnected() const { return mConnected; }
-	void	OnTick();
 
 	template <class PKT_TYPE>
 	bool ParsePacket(PKT_TYPE& pkt)
@@ -63,12 +58,7 @@ public:
 	void	Disconnect() ;
 
 	bool	SendFlush(); ///< Send요청 중인것들 모아서 보냄
-	void	DatabaseJobDone(DatabaseJobContext* result);
-
-private:
-	float			mPosX ;
-	float			mPosY ;
-	char			mPlayerName[MAX_NAME_LEN] ;
+	
 
 private:
 	bool			mConnected ;
