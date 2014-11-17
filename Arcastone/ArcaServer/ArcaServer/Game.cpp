@@ -223,6 +223,7 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 
 	case UMT_JUMP:
 	{
+<<<<<<< HEAD
 					 actionType = UAT_JUMP;
 
 					 // 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
@@ -247,12 +248,18 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 							 return;
 						 }
 					 }
+=======
+>>>>>>> b14ce2695e4cd4541555c1c3d6bf7fa740d9137c
 		actionType = UAT_JUMP;
 
 		// 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
 		movePos = Coord(unit->GetPos() + (GetUnitVector(direction) * range));
 		moveRange = range;
+<<<<<<< HEAD
 		standUnit = GetUnitInPosition(movePos);
+=======
+		Unit* standUnit = GetUnitInPosition(movePos);
+>>>>>>> b14ce2695e4cd4541555c1c3d6bf7fa740d9137c
 		if (nullptr != standUnit)
 		{
 			// 그럼 호..혹시 그 전칸에도 유닛이 있니?
@@ -268,6 +275,17 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 			else // 있어요!
 			{
 				// 에잉.. 그럼 못가겠네
+<<<<<<< HEAD
+=======
+				// 거긴 못가요 클라님아~
+				if (DEBUG_PRINT) printf("Send Wrong Attack Type Packet : WAT_CANT_JUMP_THERE\n");
+
+				Packet::WrongAttackResult outPacket;
+				outPacket.mWrongType = WAT_CANT_JUMP_THERE;
+				auto session = GClientManager->GetClient(m_Attacker);
+				if (session != nullptr)
+					session->SendRequest(&outPacket);
+>>>>>>> b14ce2695e4cd4541555c1c3d6bf7fa740d9137c
 				return;
 			}
 		}
@@ -390,6 +408,7 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 
 }
 
+<<<<<<< HEAD
 void Game::HandleSkill(PlayerNumber attacker, SkillData skillData)
 {
 	// TODO : 합당한 스킬 사용인지 판별할 것.
@@ -524,6 +543,8 @@ HexaDirection Game::GetDirection(Coord point1, Coord point2)
 	return HD_NONE;
 }
 
+=======
+>>>>>>> b14ce2695e4cd4541555c1c3d6bf7fa740d9137c
 // 연쇄충돌 처리
 void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 {
@@ -792,7 +813,7 @@ void Game::GameOverForSurrender(PlayerNumber srrender)
 		// 에러상황
 		m_Winner = WW_DRAW;
 	}
-
+	m_IsGameOver = true;
 	GameOver();
 }
 
@@ -801,15 +822,38 @@ void Game::GameOver()
 	if (m_IsGameOver)
 	{
 		// 게임이 끝났으면 승자 알려줌
-		Packet::GameOverResult outPacket;
-		for (auto playerNumber : m_PlayerList)
-		{
-			outPacket.mWhoIsWinner = m_Winner;
+		auto session1 = GClientManager->GetClient(m_PlayerList[0]);
+		auto session2 = GClientManager->GetClient(m_PlayerList[1]);
 
-			auto session = GClientManager->GetClient(playerNumber);
-			if (session != nullptr)
-				session->SendRequest(&outPacket);
+		if (session1 == nullptr && session2 == nullptr) return;
+
+		Packet::GameOverResult outPacket1;
+		Packet::GameOverResult outPacket2;
+
+
+		switch (m_Winner)
+		{
+		case WW_PLAYER1:
+		{
+			outPacket1.mIsMyWin = true;
+			outPacket2.mIsMyWin = false;
+		}break;
+		case WW_PLAYER2:
+		{
+			outPacket1.mIsMyWin = false;
+			outPacket2.mIsMyWin = true;
+		}break;
+		case WW_DRAW:
+		{
+			outPacket1.mIsDraw = true;
+			outPacket2.mIsDraw = true;
+		}break;
+		default:
+			assert(m_Winner != WW_NONE && "invalid winner player number");
 		}
+
+		session1->SendRequest(&outPacket1);
+		session2->SendRequest(&outPacket2);
 		return;
 	}
 }

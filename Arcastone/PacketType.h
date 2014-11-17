@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 
 #define MAX_CHAT_LEN		256
 
@@ -14,6 +15,10 @@ typedef int UnitIdentityNumber;
 #pragma once
 #include "CommonDefinitions.h";
 #include "../../CommonDefinitions.h";
+=======
+#pragma once
+#include "CommonDefinitions.h";
+>>>>>>> b14ce2695e4cd4541555c1c3d6bf7fa740d9137c
 #pragma pack(push, 1)
 
 enum PacketTypes
@@ -36,10 +41,15 @@ enum PacketTypes
 
 	PKT_CS_SKILL = 9,
 
+<<<<<<< HEAD
 	PKT_MAX	= 1024,
 } ;
 
 #pragma pack(push, 1)
+=======
+	PKT_MAX = 1024
+};
+>>>>>>> b14ce2695e4cd4541555c1c3d6bf7fa740d9137c
 
 struct PacketHeader
 {
@@ -146,9 +156,11 @@ namespace Packet
 		GameOverResult(){
 			mSize = sizeof(GameOverResult);
 			mType = PKT_SC_GAME_OVER;
-			mWhoIsWinner = WW_NONE;
+			mIsDraw = false;
+			mIsMyWin = false;
 		}
-		WhosWinner mWhoIsWinner;
+		bool mIsDraw;
+		bool mIsMyWin;
 	};
 
 	struct CostRenewalResult : public PacketHeader
