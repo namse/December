@@ -298,7 +298,10 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 
 	case UMT_TELEPORT:
 	{
-		//TODO : 여기 이동가능한건지 아닌지 어케암?
+						 if (GetUnitInPosition(attackData.position[0]) != nullptr) return;
+
+						 if (m_GameField.IsInsideOfField(attackData.position[0]) == false) return;
+
 		actionType = UAT_TELEPORT;
 		movePos = attackData.position[0];
 	}break;
