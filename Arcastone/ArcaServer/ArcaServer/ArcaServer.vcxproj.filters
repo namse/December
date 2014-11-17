@@ -10,9 +10,6 @@
     <Filter Include="Main">
       <UniqueIdentifier>{25fda20e-051c-4cae-8314-1442428c9b70}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils\SQLite3">
-      <UniqueIdentifier>{70ad0489-0679-4018-996a-e52df58bf401}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameLogic">
       <UniqueIdentifier>{78c230ec-d9f0-4931-8789-f40d6529f4da}</UniqueIdentifier>
     </Filter>
@@ -63,9 +60,6 @@
     <ClInclude Include="Exception.h">
       <Filter>Utils</Filter>
     </ClInclude>
-    <ClInclude Include="DbHelper.h">
-      <Filter>Utils</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectPool.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -104,12 +98,6 @@
     </ClInclude>
     <ClInclude Include="ThreadLocal.h">
       <Filter>Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="sqlite3ext.h">
-      <Filter>Utils\SQLite3</Filter>
-    </ClInclude>
-    <ClInclude Include="sqlite3.h">
-      <Filter>Utils\SQLite3</Filter>
     </ClInclude>
     <ClInclude Include="Shop.h">
       <Filter>GameLogic</Filter>
@@ -185,9 +173,6 @@
     <ClCompile Include="Exception.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
-    <ClCompile Include="DbHelper.cpp">
-      <Filter>Utils</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>Main</Filter>
     </ClCompile>
@@ -211,9 +196,6 @@
     </ClCompile>
     <ClCompile Include="ThreadLocal.cpp">
       <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="sqlite3.c">
-      <Filter>Utils\SQLite3</Filter>
     </ClCompile>
     <ClCompile Include="Shop.cpp">
       <Filter>GameLogic</Filter>

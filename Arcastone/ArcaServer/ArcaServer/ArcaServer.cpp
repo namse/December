@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "ArcaServer.h"
 
 #include "Config.h"
@@ -10,7 +10,6 @@
 #include "ClientSession.h"
 #include "ClientManager.h"
 #include "DatabaseJobManager.h"
-#include "DbHelper.h"
 #include "PlayerManager.h"
 #include "GameManager.h"
 #include "AutoMatcher.h"
@@ -35,10 +34,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	GAutoMatcher = new AutoMatcher();
 	GJsonManager = new JsonManager();
 	
-	/// DB Helper 초기화
-	if ( false == DbHelper::Initialize(DB_CONN_STR) )
-		return -1 ;
-	//utf-8 test
+
+
 	/// 윈속 초기화
 	WSADATA wsa ;
 	if (WSAStartup(MAKEWORD(2,2), &wsa) != 0)
@@ -100,8 +97,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	// 윈속 종료
 	WSACleanup() ;
-
-	DbHelper::Finalize() ;
 
 	delete GClientManager ;
 	delete GDatabaseJobManager ;
