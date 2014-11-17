@@ -8,7 +8,7 @@
 #define DEBUG_PRINT_PACKET			true
 
 #define DISPLAY_SIZEX				480
-#define DISPLAY_SIZEY				690
+#define DISPLAY_SIZEY				640
 
 #define MAP_XSTART					DISPLAY_SIZEX/2
 #define MAP_YSTART					DISPLAY_SIZEY/2

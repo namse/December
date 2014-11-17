@@ -721,12 +721,13 @@ void GameScene::ReadActionQueue(Packet::AttackResult attackResult)
 	if (unitAction) onUnitAction();
 }
 
-void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length, int mapSizeX, int mapSizeY)
+void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length, int _mapSizeX, int _mapSizeY)
 {
 	CCDrawNode* node = CCDrawNode::create();
 	this->addChild(node, 100);
 
-	// static mapsize 조절
+	mapSizeX = _mapSizeX;
+	mapSizeY = _mapSizeY;
 
 	for (int i = 0; i < length; i++)
 	{
