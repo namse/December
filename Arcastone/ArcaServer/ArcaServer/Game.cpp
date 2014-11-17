@@ -4,6 +4,7 @@
 #include "ArcaStone.h"
 #include "ClientManager.h"
 #include "ClientSession.h"
+#include "../../CommonDefinitions.h"
 
 #define START_POINT_PLAYER1 Coord(3,5)
 #define START_POINT_PLAYER2 Coord(3,1)
@@ -222,7 +223,6 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 
 	case UMT_JUMP:
 	{
-<<<<<<< HEAD
 					 actionType = UAT_JUMP;
 
 					 // 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
@@ -247,13 +247,12 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 							 return;
 						 }
 					 }
-=======
 		actionType = UAT_JUMP;
 
 		// 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
 		movePos = Coord(unit->GetPos() + (GetUnitVector(direction) * range));
 		moveRange = range;
-		Unit* standUnit = GetUnitInPosition(movePos);
+		standUnit = GetUnitInPosition(movePos);
 		if (nullptr != standUnit)
 		{
 			// 그럼 호..혹시 그 전칸에도 유닛이 있니?
@@ -269,18 +268,9 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 			else // 있어요!
 			{
 				// 에잉.. 그럼 못가겠네
-				// 거긴 못가요 클라님아~
-				if (DEBUG_PRINT) printf("Send Wrong Attack Type Packet : WAT_CANT_JUMP_THERE\n");
-
-				Packet::WrongAttackResult outPacket;
-				outPacket.mWrongType = WAT_CANT_JUMP_THERE;
-				auto session = GClientManager->GetClient(m_Attacker);
-				if (session != nullptr)
-					session->SendRequest(&outPacket);
 				return;
 			}
 		}
->>>>>>> 95044f29a7c85a789317c6d81a87aca2ff08a1ab
 
 	}break;
 
@@ -534,9 +524,7 @@ HexaDirection Game::GetDirection(Coord point1, Coord point2)
 	return HD_NONE;
 }
 
-=======
 // 연쇄충돌 처리
->>>>>>> 95044f29a7c85a789317c6d81a87aca2ff08a1ab
 void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 {
 	Coord			unitPos = unit->GetPos();

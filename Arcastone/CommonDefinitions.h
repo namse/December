@@ -87,9 +87,9 @@ enum UnitOwner
 
 enum WhosWinner
 {
-	WhosWinner::WW_NONE = 0,
-	WhosWinner::WW_PLAYER1 = 1,
-	WhosWinner::WW_PLAYER2 = 2,
+	WW_NONE = 0,
+	WW_PLAYER1 = 1,
+	WW_PLAYER2 = 2,
 	WW_DRAW = 3,	// ¹«½ÂºÎ
 };
 
@@ -102,6 +102,18 @@ enum UnitActionType{
 	UAT_TELEPORT = 5,
 	UAT_DIE = 6,
 	UAT_COLLISION = 7,
+};
+
+enum UnitSkillType{
+	USK_NONE = 0,
+	USK_FIREBALL = 1,
+};
+
+enum UnitSkillRank{
+	USR_NONE = 0,
+	USR_RANKONE = 1,
+	USR_RANKTWO = 2,
+	USR_RANKTHREE = 3,
 };
 
 struct Coord{
@@ -183,6 +195,14 @@ struct AttackData{
 	Coord				position[MAX_MOVE_RANGE];
 };
 
+struct SkillData{
+	UnitIdentityNumber	id;
+	UnitSkillType		skillType;
+	UnitSkillRank		skillRank;
+	int					range;
+	HexaDirection		direction;
+	Coord				position[MAX_SKILL_RANGE];
+};
 
 
 struct FieldBlock{
