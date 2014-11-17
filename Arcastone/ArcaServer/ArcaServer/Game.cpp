@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ArcaStone.h"
@@ -589,12 +589,12 @@ void Game::GameOverForSurrender(PlayerNumber srrender)
 	}
 	else if (m_PlayerList.at(1) == srrender)
 	{
-		m_Winner == WW_PLAYER1;
+		m_Winner = WW_PLAYER1;
 	}
 	else
 	{
 		// 에러상황
-		m_Winner == WW_DRAW;
+		m_Winner = WW_DRAW;
 	}
 
 	GameOver();
