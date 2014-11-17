@@ -38,7 +38,6 @@ public:
 
 public: 
 	bool	IsConnected() const { return mConnected; }
-	void	OnTick();
 
 	template <class PKT_TYPE>
 	bool ParsePacket(PKT_TYPE& pkt)

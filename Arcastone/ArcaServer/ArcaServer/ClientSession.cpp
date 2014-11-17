@@ -148,15 +148,3 @@ bool ClientSession::Broadcast(PacketHeader* pkt)
 
 	return true ;
 }
-
-void ClientSession::OnTick()
-{
-	if (!IsConnected())
-		return;
-
-	/// 클라별로 주기적으로 해야될 일은 여기에
-
-
-	
-	CallFuncAfter(PLAYER_HEART_BEAT, this, &ClientSession::OnTick);
-}

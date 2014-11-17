@@ -87,9 +87,6 @@
     <ClInclude Include="DatabaseJobManager.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="SQLStatement.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="RefCountable.h">
       <Filter>Utils</Filter>
     </ClInclude>
