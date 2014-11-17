@@ -155,6 +155,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\CommonDefinitions.h" />
     <ClInclude Include="..\..\PacketType.h" />
     <ClInclude Include="ArcaStone.h" />
     <ClInclude Include="AutoMatcher.h" />
