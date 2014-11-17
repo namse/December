@@ -73,6 +73,7 @@ void GameScene::gameLogic(float dt)
 		{
 			TcpClient::getInstance()->loginRequest();
 			m_GameState = GS_WAIT_GAME;
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("bgm.mp3",true);
 		}
 	}break;
 
@@ -892,6 +893,7 @@ void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length, int _mapSize
 
 void GameScene::onGameStart(Packet::GameStartResult inPacket)
 {
+	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("start.mp3");
 	ReadFieldBlock(inPacket.mFieldList, inPacket.mFieldLength, inPacket.mFieldSizeX, inPacket.mFieldSizeY);
 	ReadUnitData(inPacket.mUnit, inPacket.mUnitLength);
 }
@@ -930,6 +932,7 @@ void GameScene::onUnitAction(CCNode* sender)
 
 						  sprite->runAction(CCSequence::create(actionMove,
 							  actionMoveDone, NULL));
+						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
 		}break;
 		case UAT_STRAIGHT:{
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
@@ -949,6 +952,7 @@ void GameScene::onUnitAction(CCNode* sender)
 
 						  sprite->runAction(CCSequence::create(actionMove,
 							  actionMoveDone, NULL));
+						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
 		}break;
 
 		case UAT_JUMP:{
@@ -966,6 +970,7 @@ void GameScene::onUnitAction(CCNode* sender)
 							  callfuncN_selector(GameScene::onUnitAction));
 						  sprite->runAction(CCSequence::create(actionMove,
 							  actionMoveDone, NULL));
+						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
 		}break;
 
 		case UAT_DASH:{
@@ -989,6 +994,7 @@ void GameScene::onUnitAction(CCNode* sender)
 							  callfuncN_selector(GameScene::onUnitAction));
 						  sprite->runAction(CCSequence::create(actionMove,
 							  actionMoveDone, NULL));
+						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
 		}break;
 
 		case UAT_TELEPORT:{
@@ -1002,15 +1008,20 @@ void GameScene::onUnitAction(CCNode* sender)
 							  CCFiniteTimeAction* actionMove =
 								  CCMoveTo::create(0, sMovePoint);
 							  sprite->runAction(actionMove);
+							  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
 
 		}break;
 		case UAT_COLLISION:{
 							   runAction(CCCallFuncN::create(this,
 								   callfuncN_selector(GameScene::onUnitAction)));
+
+							   CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("collision.mp3");
 		}break;
 		case UAT_DIE: {
 						  unit->GetSprite()->setVisible(false);
 						  unit->SetStatus(UST_DEAD);
+
+						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("die.mp3");
 		}
 		}
 	}
@@ -1143,6 +1154,7 @@ void GameScene::SetTurn(bool isMyTurn)
 
 	if (isMyTurn)
 	{
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("myturn.mp3");
 		m_TurnLabel->setString("Your Turn");
 		for (int i = 0; i < m_MaxCosst; ++i)
 		{
