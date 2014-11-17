@@ -70,7 +70,7 @@ void Unit::init(UnitData unitData)
 	m_MoveType = unitData.unitMoveType;
 	//m_MoveType = UMT_TELEPORT;
 	m_Owner = unitData.unitOwner;
-	m_State = US_NORMAL;
+	m_StatusType = UST_NONE;
 
 	m_HP = unitData.hp;
 	m_ID = unitData.id;

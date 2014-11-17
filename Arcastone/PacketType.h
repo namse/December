@@ -93,13 +93,15 @@ enum HexaDirection{
 enum FieldBlockType
 {
 	FBT_NONE = 0,
-	//FBT_FROZEN = 1,
+	FBT_NORMAL = 1,
+	FBT_HOLE = 2,
 };
 
 enum FieldBlockStatus
 {
 	FBS_NONE = 0,
-	//FBS_BURNIG = 1,
+	
+
 };
 
 enum UnitOwner
@@ -249,6 +251,8 @@ namespace Packet
 			mType = PKT_SC_GAME_START;
 			mUnitLength = 0;
 			mFieldLength = 0;
+			mFieldSizeX = 0;
+			mFieldSizeY = 0;
 			memset(mUnit, 0, sizeof(mUnit));
 			memset(mFieldList, 0, sizeof(mFieldList));
 		}
@@ -266,6 +270,7 @@ namespace Packet
 		};
 		int						mUnitLength;
 		int						mFieldLength;
+		int						mFieldSizeX, mFieldSizeY;
 		UnitData				mUnit[MAX_UNIT_ON_GAME];
 		FieldBlock				mFieldList[MAX_FIELD_BLOCK];
 	};

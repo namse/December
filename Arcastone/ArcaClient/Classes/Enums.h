@@ -48,14 +48,6 @@ enum PlayerWho
 	PW_PLAYERTWO = 1,
 };
 
-enum UnitState
-{
-	US_NONE = 0,
-
-	US_NORMAL = 1,
-	US_DIE = 2,
-};
-
 // typedef 
 typedef Packet::GameStartResult::UnitData UnitData;
 

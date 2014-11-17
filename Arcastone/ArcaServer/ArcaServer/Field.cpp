@@ -29,11 +29,13 @@ void Field::InitField(int fieldWidth, int fieldHeight)
 				printf("%d / %d\n", x, y);
 				m_FieldBlockList[i].m_Position = Coord(x, y);
 				m_FieldBlockList[i].m_Status = FBS_NONE;
-				m_FieldBlockList[i].m_Type = FBT_NONE;
+				m_FieldBlockList[i].m_Type = FBT_NORMAL;
 				i++;
 			}
 		}
 	}
+	m_FieldSizeX = MAP_FIELD_WIDTH;
+	m_FieldSizeY = MAP_FIELD_HEIGHT;
 	m_FieldBlockListSize = i;
 }
 
