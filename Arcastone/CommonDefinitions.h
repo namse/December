@@ -104,7 +104,6 @@ enum UnitActionType{
 	UAT_COLLISION = 7,
 };
 
-<<<<<<< HEAD
 enum UnitSkillType{
 	USK_NONE = 0,
 	USK_FIREBALL = 1,
@@ -117,8 +116,6 @@ enum UnitSkillRank{
 	USR_RANKTHREE = 3,
 };
 
-=======
->>>>>>> b14ce2695e4cd4541555c1c3d6bf7fa740d9137c
 struct Coord{
 	int x, y;
 	Coord()
@@ -198,7 +195,6 @@ struct AttackData{
 	Coord				position[MAX_MOVE_RANGE];
 };
 
-<<<<<<< HEAD
 struct SkillData{
 	UnitIdentityNumber	id;
 	UnitSkillType		skillType;
@@ -207,8 +203,6 @@ struct SkillData{
 	HexaDirection		direction;
 	Coord				position[MAX_SKILL_RANGE];
 };
-=======
->>>>>>> b14ce2695e4cd4541555c1c3d6bf7fa740d9137c
 
 
 struct FieldBlock{

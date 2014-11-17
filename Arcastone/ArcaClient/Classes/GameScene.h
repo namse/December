@@ -62,12 +62,9 @@ public:
 	void					SetTurn(bool isMyTurn);
 	void					ReadActionQueue(Packet::AttackResult attackResult);
 	void					ReadRestCost(Packet::CostRenewalResult recvData);
-<<<<<<< HEAD
 	void					UsingSkill(Unit* unit);
 
-=======
 	void					gameOver(Packet::GameOverResult recvData);
->>>>>>> b14ce2695e4cd4541555c1c3d6bf7fa740d9137c
 
 private:
 	HexaPoint				ScreenToHexa(ScreenPoint point);
