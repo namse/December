@@ -68,14 +68,14 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	}
 
 	// 아르카스톤 설치
-	if (USE_ARCA) SetUpNPC(UT_ARCASTONE, Coord(3,5));
+	if (USE_ARCA) SetUpNPC(UT_ARCASTONE, Coord(3, 5));
 
 	// 장애물 설치
-	if (USE_ROCK) SetUpNPC(UT_ROCK, Coord(3,6));
+	if (USE_ROCK) SetUpNPC(UT_ROCK, Coord(3, 6));
 
 	// 유닛 수 초기화
 	UnitCounting();
-	
+
 	// play turn and first attacker setting
 	m_Attacker = m_PlayerList.at(rand() % m_PlayerList.size());
 	m_CanCommand = MAX_TURN;
@@ -120,7 +120,7 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 				session->SendRequest(&outPacket);
 		}
 	}
-	
+
 	IsGameOver();
 
 	IsNearArca();	// 아르카스톤에 대한 턴 처리 해주고..
@@ -192,98 +192,102 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 	{
 	case UMT_STRAIGHT:
 	{
-						 actionType = UAT_MOVE;
-						  for (int l = 1; l <= range; l++)
-						  {
-							  // unit의 direction 방향으로 l만큼 거리에 서있는 유닛
-							  Unit* standUnit = GetUnitInPosition(movePos + GetUnitVector(direction));
-							  if (nullptr != standUnit) // 서있을 시 충돌
-							  {
-								  crashGuy = standUnit;
-								  break;
-							  }
-							  movePos = movePos + GetUnitVector(direction);
-							  moveRange++;
-						  }
+
+		// TODO : 뭉쳐있을 경우 맨 마지막의 애만 첫번째 공격한 애의 밀려남 계수로 날라가도록.
+		// 다른 공격스타일도 같도록.
+		actionType = UAT_MOVE;
+		for (int l = 1; l <= range; l++)
+		{
+			// unit의 direction 방향으로 l만큼 거리에 서있는 유닛
+			Unit* standUnit = GetUnitInPosition(movePos + GetUnitVector(direction));
+			if (nullptr != standUnit) // 서있을 시 충돌
+			{
+				crashGuy = standUnit;
+				break;
+			}
+			movePos = movePos + GetUnitVector(direction);
+			moveRange++;
+		}
 	}break;
 
 	case UMT_JUMP:
 	{
-					 actionType = UAT_JUMP;
+		actionType = UAT_JUMP;
 
-					 // 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
-					 movePos = Coord(unit->GetPos() + (GetUnitVector(direction) * range));
-					 moveRange = range;
-					 Unit* standUnit = GetUnitInPosition(movePos);
-					 if (nullptr != standUnit)
-					 {
-						 // 그럼 호..혹시 그 전칸에도 유닛이 있니?
-						 movePos = Coord(movePos - GetUnitVector(direction));
-						 moveRange = range - 1;
-						 Unit* standUnitBefore = GetUnitInPosition(movePos);
+		// 공격유닛이 이동하는 위치에 이미 유닛이 잇니?
+		movePos = Coord(unit->GetPos() + (GetUnitVector(direction) * range));
+		moveRange = range;
+		Unit* standUnit = GetUnitInPosition(movePos);
+		if (nullptr != standUnit)
+		{
+			// 그럼 호..혹시 그 전칸에도 유닛이 있니?
+			movePos = Coord(movePos - GetUnitVector(direction));
+			moveRange = range - 1;
+			Unit* standUnitBefore = GetUnitInPosition(movePos);
 
-						 if (standUnitBefore == nullptr || range == 1) // 없네요? or 1한칸 이동할거거든요?
-						 {
-							 crashGuy = standUnit;
-							 break;
-						 }
-						 else // 있어요!
-						 {
-							 // 에잉.. 그럼 못가겠네
-							 // 거긴 못가요 클라님아~
-							 if (DEBUG_PRINT) printf("Send Wrong Attack Type Packet : WAT_CANT_JUMP_THERE\n");
+			if (standUnitBefore == nullptr || range == 1) // 없네요? or 1한칸 이동할거거든요?
+			{
+				crashGuy = standUnit;
+				break;
+			}
+			else // 있어요!
+			{
+				// 에잉.. 그럼 못가겠네
+				// 거긴 못가요 클라님아~
+				if (DEBUG_PRINT) printf("Send Wrong Attack Type Packet : WAT_CANT_JUMP_THERE\n");
 
-							 Packet::WrongAttackResult outPacket;
-							 outPacket.mWrongType = WAT_CANT_JUMP_THERE;
-							 auto session = GClientManager->GetClient(m_Attacker);
-							 if (session != nullptr)
-								 session->SendRequest(&outPacket);
-							 return;
-						 }
-					 }
+				Packet::WrongAttackResult outPacket;
+				outPacket.mWrongType = WAT_CANT_JUMP_THERE;
+				auto session = GClientManager->GetClient(m_Attacker);
+				if (session != nullptr)
+					session->SendRequest(&outPacket);
+				return;
+			}
+		}
 
 	}break;
 
 	case UMT_DASH:
 	{
-					 // 대쉬방향을 알기 위해 BeforePosition 을 사용해보아요
+		// 대쉬방향을 알기 위해 BeforePosition 을 사용해보아요
 
-					 // 입력한 range 만큼 '한칸씩' 이동하겠어요~
-					 for (int move = 0; move < attackData.range; ++move)
-					 {
-						 HexaDirection direction = GetHexaDirection(movePos, attackData.position[move]);
-						 // 아! 물론 이동하려는 위치에 유닛이 있으면
-						 Unit* standUnit = GetUnitInPosition(attackData.position[move]);
-						 if (nullptr != standUnit)
-						 {
-							 crashGuy = standUnit;
-							 break;
-						 }
-						 // 유닛을 만나지 않으면 계속 질주하세욧!
-						 else
-						 {
-							 unit->SetPosition(attackData.position[move]);
+		// 입력한 range 만큼 '한칸씩' 이동하겠어요~
+		for (int move = 0; move < attackData.range; ++move)
+		{
+			HexaDirection direction = GetHexaDirection(movePos, attackData.position[move]);
+			// 아! 물론 이동하려는 위치에 유닛이 있으면
+			Unit* standUnit = GetUnitInPosition(attackData.position[move]);
+			if (nullptr != standUnit)
+			{
+				crashGuy = standUnit;
+				break;
+			}
+			// 유닛을 만나지 않으면 계속 질주하세욧!
+			else
+			{
+				unit->SetPosition(attackData.position[move]);
 
-							 UnitAction dashAction;
-							 dashAction.mActionType = UAT_DASH;
-							 dashAction.mUnitId = unit->GetID();
-							 dashAction.mMoveData.mRange = 1;
-							 dashAction.mMoveData.mDirection = direction;
-							 dashAction.mMoveData.mFinalX = attackData.position[move].x;
-							 dashAction.mMoveData.mFinalY = attackData.position[move].y;
+				UnitAction dashAction;
+				dashAction.mActionType = UAT_DASH;
+				dashAction.mUnitId = unit->GetID();
+				dashAction.mMoveData.mRange = 1;
+				dashAction.mMoveData.mDirection = direction;
+				dashAction.mMoveData.mFinalX = attackData.position[move].x;
+				dashAction.mMoveData.mFinalY = attackData.position[move].y;
 
-							 m_UnitActionQueue.push_back(dashAction);
-							 if (DEBUG_PRINT) PrintUnitActionQueue(dashAction);
-						 }
-						 movePos = attackData.position[move];
-					 }
+				m_UnitActionQueue.push_back(dashAction);
+				if (DEBUG_PRINT) PrintUnitActionQueue(dashAction);
+			}
+			movePos = attackData.position[move];
+		}
 
 	}break;
 
 	case UMT_TELEPORT:
 	{
-						 actionType = UAT_TELEPORT;
-						 movePos = attackData.position[0];
+		//TODO : 여기 이동가능한건지 아닌지 어케암?
+		actionType = UAT_TELEPORT;
+		movePos = attackData.position[0];
 	}break;
 
 	default:
@@ -307,6 +311,12 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 		m_UnitActionQueue.push_back(action);
 		if (DEBUG_PRINT) PrintUnitActionQueue(action);
 	}
+
+
+	// TODO : 바깥에 떨어졌는지 확인해서 죽이셈.
+	// 어차피 바깥에 떨어진 경우는 크래쉬한 애 없을테니까 죽이고
+	// 아래 if문쪽은 실행 안되게 하셈.
+
 
 	// 충돌유닛이 있으면
 	if (nullptr != crashGuy)
@@ -351,6 +361,15 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 	Unit*			crashGuy = nullptr; // 충돌한 유닛을 찾는다
 	Coord			movePos = unitPos;
 	int				moveRange = 0;
+
+	// TODO : 아래의 코드는 직선이동하는 캐릭터의 이동과 같음.
+	// 전에 내가 짜놓은 UnitPush에서는 첫번째 충돌인지 아닌지만 확인해서
+	// 직선이동의 코드를 재사용하려고 만든 것임.
+
+	// 아래 이동하는 부분은 직선이동 재사용 하시고,
+	// 전에 내가 짜놓은 코드를 리팩토링할거면, 거기에서 필요한 부분들은 다 가지고 그림을 칠판에 그려보시고 짜세요,
+	// 핵심 코드들 빠진게 너무 많음.
+
 
 	power -= unitWeight;
 	for (int l = 1; l <= power; l++)
@@ -432,7 +451,7 @@ void Game::StartGame()
 {
 	int random = rand() % m_PlayerList.size();
 	m_Attacker = m_PlayerList[random];
-	
+
 	Packet::YourTurnResult outPacket;
 	for (auto playerNumber : m_PlayerList)
 	{
@@ -454,7 +473,7 @@ void Game::IsNearArca()
 	// 첫번? 턴이면 알카스톤적용X
 	if (m_IsFirstTurn)
 		return;
-	
+
 	if (!USE_ARCA)
 		return;
 
@@ -728,7 +747,7 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 	}
 
 	// 게임이 끝났는데 무슨 공격이야!
-	if (m_IsGameOver)		
+	if (m_IsGameOver)
 	{
 		return false; // 무시!
 	}
@@ -818,22 +837,22 @@ int Game::GetPlayerIndexByPlayerNumber(PlayerNumber playerNumber)
 
 Unit* Game::GetUnit(UnitIdentityNumber id) {
 	for (auto unit : m_UnitList)
-	if (unit->GetID() == id)
-		return unit;
+		if (unit->GetID() == id)
+			return unit;
 	return nullptr;
 }
 
 bool Game::IsPlayerInThisGame(PlayerNumber playerNumber) {
 	for (auto playerNumber_ : m_PlayerList)
-	if (playerNumber == playerNumber_)
-		return true;
+		if (playerNumber == playerNumber_)
+			return true;
 	return false;
 }
 
 Unit* Game::GetUnitInPosition(Coord position){
 	for (auto unit : m_UnitList)
-	if (unit->GetPos() == position)
-		return unit;
+		if (unit->GetPos() == position)
+			return unit;
 	return nullptr;
 }
 
