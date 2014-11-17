@@ -51,7 +51,7 @@ bool GameScene::init()
 
 	m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 20);
 
-	m_TurnLabel->setPosition(Point(55, 500));
+	m_TurnLabel->setPosition(Point(55, 675));
 
 	m_TurnLabel->setColor(Color3B(100, 100, 100));
 
