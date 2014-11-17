@@ -1,9 +1,8 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "ArcaServer.h"
 #include "ThreadLocal.h"
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"
-#include "DbHelper.h"
 
 DatabaseJobManager* GDatabaseJobManager = nullptr ;
 

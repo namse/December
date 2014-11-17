@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "Scheduler.h"
 #include "ClientSession.h"
 #include "..\..\PacketType.h"
@@ -159,29 +159,4 @@ void ClientSession::OnTick()
 
 	
 	CallFuncAfter(PLAYER_HEART_BEAT, this, &ClientSession::OnTick);
-}
-
-void ClientSession::DatabaseJobDone(DatabaseJobContext* result)
-{
-	CRASH_ASSERT( mSocket == result->mSockKey ) ;
-	
-
-	const type_info& typeInfo = typeid(*result) ;
-
-	if ( typeInfo == typeid(LoadPlayerDataContext) )
-	{
-		LoadPlayerDataContext* login = dynamic_cast<LoadPlayerDataContext*>(result) ;
-
-		//LoginDone(login->mPlayerId, (float)login->mPosX, (float)login->mPosY, login->mPlayerName) ;
-	
-	}
-	else if ( typeInfo == typeid(UpdatePlayerDataContext) )
-	{
-		//UpdateDone() ;
-	}
-	else
-	{
-		CRASH_ASSERT(false) ;
-	}
-
 }
