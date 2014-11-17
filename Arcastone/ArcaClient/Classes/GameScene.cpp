@@ -34,6 +34,10 @@ bool GameScene::init()
 
 	m_MaxCosst = 2;
 
+	m_IsCursorMoved = false;
+
+	m_IsCastSkill = false;
+
 	for (int i = 0; i < 3; ++i)
 	{
 		m_CostLabel[i] = LabelTTF::create("", "Hevetica", 20);
@@ -106,6 +110,12 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 	m_StartPoint = ScreenPoint(touch->getLocation());
 	m_CursoredPoint = ScreenPoint(touch->getLocation());
 
+	// 스킬 사용 범위 선택중이라면 return true~
+	if (m_IsCastSkill) return true;
+
+	// 커서 안움직임요
+	m_IsCursorMoved = false;
+
 	m_SelectedUnit = NON_SELECT_UNIT;
 
 	for (int i = 0; i < m_UnitList.size(); ++i)
@@ -137,6 +147,9 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 {
 	if (!m_IsMyTurn) return;
 
+	// 스킬 범위 선택중이라면 일단 리턴~
+	if (m_IsCastSkill) return;
+
 	Unit* unit = getUnitByID(m_SelectedUnit);
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
@@ -153,8 +166,9 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 
 	m_CursoredPoint = ScreenPoint(touch->getLocation());
 
-	// TODO : 요거 이렇게 가면 너무 자주 지우고 그리고 하니까 어떻게 좀 해주세요
-	// 이 안에서 유닛 이동 스택 쌓는데, 그게 attackData 에도 사용되니까 주의
+	// 커서 움직임요
+	m_IsCursorMoved = true;
+
 	drawUnitMove();
 }
 
@@ -170,65 +184,162 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	if (!m_IsMyTurn) return;
 
 	Unit* unit = getUnitByID(m_SelectedUnit);
+
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
-	AttackData attackData;
 
-	switch (unit->GetMoveType())
+
+	// 스킬 장전! 목표설정 상태!
+	if (m_IsCastSkill)
 	{
-	case UMT_STRAIGHT:{
-		attackData.attackType = UMT_STRAIGHT;
-		if (m_Direction == HD_NONE || m_Range <= 0) return;
-	}break;
+		UsingSkill(unit);
 
-	case UMT_JUMP:{
-		attackData.attackType = UMT_JUMP;
-		if (m_Direction == HD_NONE || m_Range <= 0) return;
-	}break;
+		m_IsCastSkill = false;
 
-	case UMT_DASH:{
-		attackData.attackType = UMT_DASH;
-		m_Range = m_CourseStack.size();
-		for (int i = 0; i < m_CourseStack.size(); ++i)
+		return;
+	}
+
+	// 커서 안움직이고 유닛만 눌렀다 뗐는데요? && 스킬 준비 상태도 아니에요
+	if (m_IsCursorMoved == false && m_IsCastSkill == false)
+	{
+		// 그럼 스킬을 쓰려는 거구나!
+		m_IsCastSkill = true;
+		
+		// 스킬 쓸 수 있는 범위 그려줄게~
+		drawSkillEffect(getUnitByID(m_SelectedUnit)->GetSkill());
+
+		// 아니 근데 너 스킬 못쓰잖아?
+		if (m_CourseStack.empty())
 		{
-			// 대쉬는 이동 스택을 입력
-			attackData.position[i] = m_CourseStack.at(i).HexaToCoord();
+			m_IsCastSkill = false;
 		}
-	}break;
 
-	case UMT_TELEPORT:{
-		attackData.attackType = UMT_TELEPORT;
-		// 텔포는 이동 칸 하나 입력
-		if (m_CourseStack.size() == 1)
+		return;
+	}
+
+	// 유닛을 드래그 했으므로 공격 패킷 발싸!
+	{
+		AttackData attackData;
+
+		switch (unit->GetMoveType())
 		{
-			// 유닛이 없는 칸만 이동가능
-			if (getUnitByPos(m_CourseStack.at(0)) == nullptr)
-			{
+		case UMT_STRAIGHT:{
+							  attackData.attackType = UMT_STRAIGHT;
+							  if (m_Direction == HD_NONE || m_Range <= 0) return;
+		}break;
 
-				attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
-			}
-			else return;
+		case UMT_JUMP:{
+						  attackData.attackType = UMT_JUMP;
+						  if (m_Direction == HD_NONE || m_Range <= 0) return;
+		}break;
+
+		case UMT_DASH:{
+						  attackData.attackType = UMT_DASH;
+						  m_Range = m_CourseStack.size();
+						  for (int i = 0; i < m_CourseStack.size(); ++i)
+						  {
+							  // 대쉬는 이동 스택을 입력
+							  attackData.position[i] = m_CourseStack.at(i).HexaToCoord();
+						  }
+		}break;
+
+		case UMT_TELEPORT:{
+							  attackData.attackType = UMT_TELEPORT;
+							  // 텔포는 이동 칸 하나 입력
+							  if (m_CourseStack.size() == 1)
+							  {
+								  // 유닛이 없는 칸만 이동가능
+								  if (getUnitByPos(m_CourseStack.at(0)) == nullptr)
+								  {
+
+									  attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
+								  }
+								  else return;
+							  }
+							  else return;
+		}break;
+
+		default:
+			assert(false && "drawUnitMove -> not defined New attackType !");
 		}
-		else return;
+
+		m_CourseStack.clear();
+
+		attackData.id = unit->GetID();
+		attackData.direction = m_Direction;
+		attackData.range = m_Range;
+
+		m_Range = 0;
+		m_Direction = HD_NONE;
+
+		TcpClient::getInstance()->attackRequest(attackData);
+	}
+
+	m_SelectedUnit = NON_SELECT_UNIT;
+}
+
+void GameScene::UsingSkill(Unit* unit)
+{
+	SkillData skillData;
+	Skill skill = unit->GetSkill();
+
+	skillData.id = unit->GetID();
+	skillData.skillType = skill.type;
+	skillData.skillRank = skill.rank;
+
+	switch (skill.type)
+	{
+	case USK_FIREBALL:{
+						  if(DEBUG_PRINT_PACKET) printf("Using FireBall!!\n\n");
+
+						  // 파이어 볼은 유효한 범위 중 내가 선택한 좌표로 스킬 시전
+						  for (int i = 0; i < m_CourseStack.size(); ++i)
+						  {
+							  if (ScreenToHexa(m_CursoredPoint) == m_CourseStack.at(i))
+							  {
+								  skillData.position[0] = m_CourseStack.at(i).HexaToCoord();
+								  break;
+							  }
+						  }
 	}break;
 
 	default:
-		assert(false && "drawUnitMove -> not defined New attackType !");
+		break;
 	}
 
-	m_CourseStack.clear();
 
-	attackData.id = unit->GetID();
-	attackData.direction = m_Direction;
-	attackData.range = m_Range;
+	// 스킬패킷 발사!
+	TcpClient::getInstance()->skillRequest(skillData);
+}
 
-	m_Range = 0;
-	m_Direction = HD_NONE;
+void GameScene::drawSkillEffect(Skill skill)
+{
+	switch (skill.type)
+	{
+	case USK_FIREBALL:{
+						  Unit* pCaster = getUnitByID(m_SelectedUnit);
+						  HexaPoint castPoint = pCaster->GetPosition();
 
-	TcpClient::getInstance()->attackRequest(attackData);
-
-	m_SelectedUnit = NON_SELECT_UNIT;
+						  for (int d = 0; d < 6; ++d)
+						  {
+							  for (int l = 1; l < skill.rank + 2; ++l)
+							  {
+								  HexaPoint effectPoint = castPoint.GetMovePoint(HexaDirection(d + 1), l);
+								  if (getUnitByPos(effectPoint) != nullptr)
+								  {
+									  // 유닛이 있는 곳에만 사용 가능한 스킬임!
+									  drawMoveSign(effectPoint, COLOR_OF_CRASHED);
+									  m_CourseStack.push_back(effectPoint);
+									  break;
+								  }
+								  drawMoveSign(effectPoint, COLOR_OF_SKILL);
+							  }
+						  }
+	}break;
+	default:
+		break;
+	}
 }
 
 void GameScene::DrawExpectUnitMove(Unit* unit)
@@ -484,9 +595,16 @@ void GameScene::drawUnitMove()
 	}break;
 
 	case UMT_TELEPORT:{
-						  // 커서가 가리키는 위치가 그리드 내에 없으면 ( -1, -1 ) 을 리턴하는 것을 이용하여,
-						  // 그리드 밖으로 커서가 나간 경우 그냥 리턴
+						  // 맵 밖으론 못가
 						  if (cursoredHexa.x == -1) return;
+
+						  // 제자리로도 못가
+						  if (cursoredHexa == unitPos)
+						  {
+							  releaseMoveSign();
+							  m_CourseStack.clear();
+							  return;
+						  }
 
 						  // 선택한 공격자 유닛의 위치로 커서 이동한 경우 무시
 						  if (cursoredHexa == unitPos) return;

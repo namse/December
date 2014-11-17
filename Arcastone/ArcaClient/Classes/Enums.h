@@ -8,10 +8,10 @@
 #define DEBUG_PRINT_PACKET			true
 
 #define DISPLAY_SIZEX				480
-#define DISPLAY_SIZEY				640
+#define DISPLAY_SIZEY				690
 
 #define MAP_XSTART					DISPLAY_SIZEX/2
-#define MAP_YSTART					DISPLAY_SIZEY/2
+#define MAP_YSTART					DISPLAY_SIZEY/2 - 40
 #define HEXAGON_LENGTH				35
 
 #define PIXEL_TO_RANGE_MULT			0.03
@@ -27,9 +27,10 @@
 
 #define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.3f)
 #define COLOR_OF_ENEMY				ccc4f(1.0f, 0.0f, 0.2f, 0.5f)
-#define COLOR_OF_CRASHED			ccc4f(1.0f, 0.0f, 0.0f, 0.8f)
+#define COLOR_OF_CRASHED			ccc4f(1.0f, 0.0f, 0.0f, 0.65f)
 #define COLOR_OF_CANTMOVE			ccc4f(0.8f, 0.2f, 0.2f, 0.5f)
 #define COLOR_OF_EXPECT				ccc4f(0.0f, 0.6f, 1.0f, 0.2f)
+#define COLOR_OF_SKILL				ccc4f(0.5f, 1.0f, 1.0f, 0.4f)
 
 #define NON_SELECT_UNIT INT_MAX
 
@@ -38,8 +39,8 @@
 #define DRAW_KNOCKBACK				false
 
 // static
-static int mapSizeX = 7;
-static int mapSizeY = 11;
+static int mapSizeX;
+static int mapSizeY;
 
 // enum
 enum PlayerWho
@@ -59,6 +60,24 @@ struct Hexagon
 	std::vector<cocos2d::Point> vertex;
 };
 
+struct Skill
+{
+	Skill(){
+		type = USK_NONE;
+		rank = USR_NONE;
+	}
+	Skill(UnitSkillType _type){
+		type = _type;
+		rank = USR_RANKONE;
+	}
+	Skill(UnitSkillType _type, UnitSkillRank _rank){
+		type = _type;
+		rank = _rank;
+	}
+
+	UnitSkillType type;
+	UnitSkillRank rank;
+};
 
 struct ScreenPoint : public cocos2d::Vec2
 {

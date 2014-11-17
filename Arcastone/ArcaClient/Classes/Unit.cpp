@@ -78,6 +78,15 @@ void Unit::init(UnitData unitData)
 	m_MoveRange = unitData.moveRange;
 	m_Weight = unitData.weight;
 
+	m_Skill = Skill();
+	// TODO : Json 에서 스킬 데이터 읽어오도록
+
+	if (m_UnitType == UT_MAGICIAN) // 비숍
+	{
+		m_Skill = Skill(USK_FIREBALL);
+		// 랭크1 파이어볼!
+	}
+
 	m_Sprite = nullptr;
 
 	initSprite();

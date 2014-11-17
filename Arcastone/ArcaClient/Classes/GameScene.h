@@ -47,6 +47,7 @@ public:
 	void					KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direction, int range);
 	
 	void					onUnitAction(CCNode* sender = NULL);
+	void					drawSkillEffect(Skill skill);
 	
 
 	/* 멤버 검색 함수 */
@@ -61,6 +62,8 @@ public:
 	void					SetTurn(bool isMyTurn);
 	void					ReadActionQueue(Packet::AttackResult attackResult);
 	void					ReadRestCost(Packet::CostRenewalResult recvData);
+	void					UsingSkill(Unit* unit);
+
 
 private:
 	HexaPoint				ScreenToHexa(ScreenPoint point);
@@ -71,9 +74,11 @@ private:
 	Game					m_Game;
 	GameState				m_GameState;
 	bool					m_IsMyTurn;
+	bool					m_IsCursorMoved;
+	bool					m_IsCastSkill;
 
 	Player					m_Player[2];
-	vector<Unit*>			m_UnitList;
+
 
 	LabelTTF*				m_TurnLabel;
 	LabelTTF*				m_CostLabel[3];
@@ -81,18 +86,19 @@ private:
 	ScreenPoint				m_StartPoint;
 	ScreenPoint				m_CursoredPoint;
 	int						m_SelectedUnit;
-	vector<DrawNode*>		m_CourseSignNode;
-	vector<DrawNode*>		m_ExpectSignNode;
-	vector<HexaPoint>		m_CourseStack;
+
 	HexaDirection			m_Direction;
 	int						m_Range;
 	int						m_MaxCosst;
 
 	vector<HexaPoint>		m_HexagonPoint;
 
+	vector<Unit*>			m_UnitList;
 	vector<Unit*>			m_UnitData;
 
-
+	vector<DrawNode*>		m_CourseSignNode;
+	vector<DrawNode*>		m_ExpectSignNode;
+	vector<HexaPoint>		m_CourseStack;
 	queue<UnitAction>		m_UnitActionQueue;
 };
 

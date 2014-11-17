@@ -154,3 +154,19 @@ REGISTER_HANDLER(PKT_CS_ATTACK)
 	game->HandleAttack(game->GetAttacker(), inPacket.mAttack);
 
 }
+
+REGISTER_HANDLER(PKT_CS_SKILL)
+{
+	Packet::SkillRequest inPacket;
+	if (false == session->ParsePacket(inPacket))
+	{
+		printf("[DEBUG] packet parsing error", inPacket.mType);
+		return;
+	}
+
+	auto game = GGameManager->GetGameWithPlayerNumber(session->GetPlayerId());
+	assert(game != nullptr);
+
+	game->HandleSkill(game->GetAttacker(), inPacket.mSkill);
+
+}

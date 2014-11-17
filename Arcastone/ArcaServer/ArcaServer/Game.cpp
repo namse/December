@@ -230,14 +230,6 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 						 else // 있어요!
 						 {
 							 // 에잉.. 그럼 못가겠네
-							 // 거긴 못가요 클라님아~
-							 if (DEBUG_PRINT) printf("Send Wrong Attack Type Packet : WAT_CANT_JUMP_THERE\n");
-
-							 Packet::WrongAttackResult outPacket;
-							 outPacket.mWrongType = WAT_CANT_JUMP_THERE;
-							 auto session = GClientManager->GetClient(m_Attacker);
-							 if (session != nullptr)
-								 session->SendRequest(&outPacket);
 							 return;
 						 }
 					 }
@@ -342,6 +334,140 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 	}
 	return;
 
+}
+
+void Game::HandleSkill(PlayerNumber attacker, SkillData skillData)
+{
+	// TODO : 합당한 스킬 사용인지 판별할 것.
+
+	Unit* castUnit = GetUnit(skillData.id);
+	Unit* target = GetUnitInPosition(skillData.position[0]);
+
+	m_UnitActionQueue.clear();
+
+	switch (skillData.skillType)
+	{
+	case USK_FIREBALL:{
+						  // 나중에 이런 스킬 스탯 하드코딩들 고쳐야될듯
+
+						  // 캐스트 유닛에서 스킬 대상위치까지의 방향은?
+						  HexaDirection direction = GetDirection(castUnit->GetPos(), target->GetPos());
+						  int power = skillData.skillRank + 1;
+
+						  // 마나1 소모
+						  m_CanCommand--;
+
+						  UnitPush(target, power, direction);
+	}break;
+
+	default:
+		break;
+	}
+
+	// 유닛이 어떻게 어떻게 이동했는지 통째로 알려준다!
+	{
+		Packet::AttackResult outPacket;
+		outPacket.mQueueLength = m_UnitActionQueue.size();
+		for (unsigned int i = 0; i < m_UnitActionQueue.size(); i++)
+		{
+			memcpy(&outPacket.mUnitActionQueue[i], &m_UnitActionQueue[i], sizeof(UnitAction));
+		}
+		for (auto playerNumber : m_PlayerList)
+		{
+			auto session = GClientManager->GetClient(playerNumber);
+			if (session != nullptr)
+				session->SendRequest(&outPacket);
+		}
+	}
+
+	IsGameOver();
+
+	IsNearArca();	// 아르카스톤에 대한 턴 처리 해주고..
+
+	m_PlayTurn++;	// 턴 경과요~
+
+	{
+		// 너 마나 이만큼 남았어~
+		Packet::CostRenewalResult outPacket;
+		outPacket.mCost = m_CanCommand;
+
+		int attackerIndex = GetPlayerIndexByPlayerNumber(m_Attacker);
+		outPacket.mMaxCost = m_MaxTurn[attackerIndex];
+		auto session = GClientManager->GetClient(m_Attacker);
+		if (session != nullptr)
+			session->SendRequest(&outPacket);
+	}
+
+	// 남은 턴 횟수가 없다면
+	if (m_CanCommand <= 0)
+	{
+		m_IsFirstTurn = false;
+
+		if (m_Attacker == m_PlayerList[0])
+		{
+			// 공격자를 바꾸고
+			m_Attacker = m_PlayerList[1];
+			// 얼마나 움직일 수 있는지 알려준다.
+			m_CanCommand = m_MaxTurn[1];
+			// 플레이어의 마나량을 재밍하는 스킬을 넣고싶다면 이 값에 일정값을 빼주면 된다.
+		}
+		else
+		{
+			m_Attacker = m_PlayerList[0];
+			m_CanCommand = m_MaxTurn[0];
+		}
+
+		// 공격하라는 신호를 보낸다!
+		{
+			Packet::YourTurnResult outPacket;
+			for (auto playerNumber : m_PlayerList)
+			{
+				if (m_Attacker == playerNumber)
+					outPacket.mIsReallyMyTurn = true;
+				else
+					outPacket.mIsReallyMyTurn = false;
+
+				auto session = GClientManager->GetClient(playerNumber);
+				if (session != nullptr)
+					session->SendRequest(&outPacket);
+			}
+		}
+	}
+	
+}
+
+HexaDirection Game::GetDirection(Coord point1, Coord point2)
+{
+	Coord vec = point2 - point1;
+
+	if (vec.y < 0 && vec.x == 0)
+	{
+		return HD_NORTH;
+	}
+	else if (vec.x > 0 && vec.y < 0)
+	{
+		if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+		return HD_NORTHEAST;
+	}
+	else if (vec.x < 0 && vec.y == 0)
+	{
+		return HD_NORTHWEST;
+	}
+	else if (vec.y > 0 && vec.x == 0)
+	{
+		return HD_SOUTH;
+	}
+	else if (vec.x > 0 && vec.y == 0)
+	{
+		return HD_SOUTHEAST;
+	}
+	else if (vec.x < 0 && vec.y > 0)
+	{
+		if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+		return HD_SOUTHWEST;
+	}
+
+	return HD_NONE;
 }
 
 void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
@@ -703,12 +829,6 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 		if (GetUnitInPosition(attackData.position[0]) != nullptr)
 		{
 			// 하면 안되지!
-			Packet::WrongAttackResult outPacket;
-			outPacket.mWrongType = WAT_CANT_TELEPORT_THERE;
-			auto session = GClientManager->GetClient(attacker);
-			if (session != nullptr)
-				session->SendRequest(&outPacket);
-
 			return false;
 		}
 		break;
@@ -718,12 +838,6 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 	if (m_Attacker != attacker)
 	{
 		// 클라야.. 아직 너차례 아니란다..
-		Packet::WrongAttackResult outPacket;
-		outPacket.mWrongType = WAT_NOT_YOUR_TURN;
-		auto session = GClientManager->GetClient(attacker);
-		if (session != nullptr)
-			session->SendRequest(&outPacket);
-
 		return false;
 	}
 

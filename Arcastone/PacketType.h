@@ -8,6 +8,7 @@
 #define MAX_UNIT_ACTION		50
 #define MAX_FIELD_BLOCK		7*11
 #define MAX_MOVE_RANGE		20
+#define MAX_SKILL_RANGE		20
 #define MXX_UNIT_ACTION_QUEUE 64
 
 typedef int UnitIdentityNumber;
@@ -28,23 +29,14 @@ enum PacketTypes
 
 	PKT_SC_GAME_OVER = 7,
 
-	PKT_SC_WRONG_ATTACK = 8,
+	PKT_SC_COST_RENEWAL = 8,
 
-	PKT_SC_COST_RENEWAL = 9,
+	PKT_CS_SKILL = 9,
 
 	PKT_MAX	= 1024
 } ;
 
 #pragma pack(push, 1)
-
-enum WrongAttackType
-{
-	WAT_NONE = 0,
-	WAT_NOT_YOUR_TURN = 1,
-	WAT_NO_ENOUGH_COST = 2,
-	WAT_CANT_TELEPORT_THERE = 3,
-	WAT_CANT_JUMP_THERE = 4,
-};
 
 enum UnitType{
 	UT_NONE = 0,
@@ -76,6 +68,18 @@ enum UnitStatusType{
 	UST_DEAD = 1,
 	UST_CASTING = 2,
 	// 그 외 상태이상들
+};
+
+enum UnitSkillType{
+	USK_NONE = 0,
+	USK_FIREBALL = 1,
+};
+
+enum UnitSkillRank{
+	USR_NONE = 0,
+	USR_RANKONE = 1,
+	USR_RANKTWO = 2,
+	USR_RANKTHREE = 3,
 };
 
 enum HexaDirection{
@@ -203,11 +207,20 @@ struct UnitAction{
 };
 
 struct AttackData{
-	UnitIdentityNumber id;
+	UnitIdentityNumber	id;
 	UnitMoveType		attackType;
 	int					range;
 	HexaDirection		direction;
 	Coord				position[MAX_MOVE_RANGE];
+};
+
+struct SkillData{
+	UnitIdentityNumber	id;
+	UnitSkillType		skillType;
+	UnitSkillRank		skillRank;
+	int					range;
+	HexaDirection		direction;
+	Coord				position[MAX_SKILL_RANGE];
 };
 
 struct PacketHeader
@@ -284,6 +297,15 @@ namespace Packet
 		AttackData				mAttack;
 	};
 
+	struct SkillRequest : public PacketHeader
+	{
+		SkillRequest(){
+			mSize = sizeof(SkillRequest);
+			mType = PKT_CS_SKILL;
+		}
+		SkillData			mSkill;
+	};
+
 	struct AttackResult : public PacketHeader
 	{
 		AttackResult(){
@@ -294,16 +316,6 @@ namespace Packet
 		}
 		int mQueueLength;
 		UnitAction mUnitActionQueue[MXX_UNIT_ACTION_QUEUE];
-	};
-
-	struct WrongAttackResult : public PacketHeader // 너 공격(스킬) 이상하게했어 임마
-	{
-		WrongAttackResult(){
-			mSize = sizeof(WrongAttackResult);
-			mType = PKT_SC_WRONG_ATTACK;
-			mWrongType = WAT_NONE;
-		}
-		WrongAttackType mWrongType;
 	};
 
 	struct YourTurnResult : public PacketHeader
