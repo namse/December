@@ -649,6 +649,7 @@ void GameScene::drawText(int i, int j, Hexagon* hexa)
 	vLabelx->setColor(Color3B(255, 255, 255));
 	vLabely->setColor(Color3B(255, 0, 0));
 
+	// zorder
 	this->addChild(vLabelx);
 	this->addChild(vLabely);
 }
@@ -702,27 +703,37 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 
 void GameScene::ReadActionQueue(Packet::AttackResult attackResult)
 {
+	/*
 	while (!m_UnitActionQueue.empty()) 
 		m_UnitActionQueue.pop();
-	
+	*/
+	bool unitAction = false;
+	if (m_UnitActionQueue.empty())
+	{
+		// 큐가 비어있다면, 유닛 액션이 돌아가고 있지 않고 있다는 것이므로
+		unitAction = true;
+	}
+
 	for (int i = 0; i < attackResult.mQueueLength; ++i)
 	{
 		m_UnitActionQueue.push(attackResult.mUnitActionQueue[i]);
 	}
-
-	onUnitAction();
+	if (unitAction) onUnitAction();
 }
 
-void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length)
+void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length, int _mapSizeX, int _mapSizeY)
 {
 	CCDrawNode* node = CCDrawNode::create();
 	this->addChild(node, 100);
+
+	mapSizeX = _mapSizeX;
+	mapSizeY = _mapSizeY;
 
 	for (int i = 0; i < length; i++)
 	{
 		int x = fieldBlock[i].m_Position.x;
 		int y = fieldBlock[i].m_Position.y;
-		CCLOG("%d, %d", x, y);
+		// CCLOG("%d, %d", x, y);
 		ScreenPoint point = HexaPoint(x, y).HexaToScreen();
 
 		m_HexagonPoint.push_back(HexaPoint(x, y));	// m_HexagonPoint 에 화면에 그려지는 좌표(0~x, 0~y)들을 저장
@@ -730,28 +741,40 @@ void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length)
 		Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
 		node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, COLOR_OF_GRID);
 
-		// 임시로 블록 이미지 그려줌
-		Sprite* fieldBlock;
-		switch (rand() % 3)
+		switch (fieldBlock[i].m_Type)
 		{
-			case 0: fieldBlock = Sprite::create("block1.png");  break;
-			case 1: fieldBlock = Sprite::create("block2.png");  break;
-			case 2: fieldBlock = Sprite::create("block3.png");  break;
+		case FBT_NORMAL:
+		{
+						   // 임시로 블록 이미지 그려줌
+						   Sprite* fieldBlock;
+						   switch (rand() % 3)
+						   {
+						   case 0: fieldBlock = Sprite::create("block1.png");  break;
+						   case 1: fieldBlock = Sprite::create("block2.png");  break;
+						   case 2: fieldBlock = Sprite::create("block3.png");  break;
+						   }
+
+						   float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
+						   fieldBlock->setScale(scale);
+						   fieldBlock->setAnchorPoint(Vec2(0.5f, 0.67f));
+						   fieldBlock->setPosition(point);
+						   this->addChild(fieldBlock, y);
+
+						   if (DRAW_HEXA_NUMBER) drawText(x, y, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
+		}break;
+		case FBT_HOLE:
+		{
+						 if (DRAW_HEXA_NUMBER) drawText(x, y, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
+		}break;
+		default:
+			break;
 		}
-
-		float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
-		fieldBlock->setScale(scale);
-		fieldBlock->setAnchorPoint(Vec2(0.5f, 0.67f));
-		fieldBlock->setPosition(point);
-		this->addChild(fieldBlock, y);
-
-		if (DRAW_HEXA_NUMBER) drawText(x, y, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
 	}
 }
 
 void GameScene::onGameStart(Packet::GameStartResult inPacket)
 {
-	ReadFieldBlock(inPacket.mFieldList, inPacket.mFieldLength);
+	ReadFieldBlock(inPacket.mFieldList, inPacket.mFieldLength, inPacket.mFieldSizeX, inPacket.mFieldSizeY);
 	ReadUnitData(inPacket.mUnit, inPacket.mUnitLength);
 }
 
@@ -784,8 +807,28 @@ void GameScene::onUnitAction(CCNode* sender)
 							  CCMoveTo::create(MOVE_DURATION,
 							  sMovePoint);
 						  CCFiniteTimeAction* actionMoveDone =
-							  CCCallFuncN::create(this,
-							  callfuncN_selector(GameScene::onUnitAction));
+							  CCCallFuncN::create(this, callfuncN_selector(GameScene::onUnitAction));
+
+
+						  sprite->runAction(CCSequence::create(actionMove,
+							  actionMoveDone, NULL));
+		}break;
+		case UAT_STRAIGHT:{
+						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
+						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+
+						  // 유닛은 인덱스로 이동
+						  unit->setPosition(hMovePoint);
+
+						  // 스프라이트는 좌표로 이동
+						  auto sprite = unit->GetSprite();
+						  CCFiniteTimeAction* actionMove =
+							  CCMoveTo::create(MOVE_DURATION,
+							  sMovePoint);
+						  CCFiniteTimeAction* actionMoveDone =
+							  CCCallFuncN::create(this, callfuncN_selector(GameScene::onUnitAction));
+
+
 						  sprite->runAction(CCSequence::create(actionMove,
 							  actionMoveDone, NULL));
 		}break;
@@ -844,10 +887,12 @@ void GameScene::onUnitAction(CCNode* sender)
 
 		}break;
 		case UAT_COLLISION:{
-
+							   runAction(CCCallFuncN::create(this,
+								   callfuncN_selector(GameScene::onUnitAction)));
 		}break;
 		case UAT_DIE: {
 						  unit->GetSprite()->setVisible(false);
+						  unit->SetStatus(UST_DEAD);
 		}
 		}
 	}

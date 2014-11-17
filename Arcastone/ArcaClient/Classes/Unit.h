@@ -14,6 +14,7 @@ public:
 
 	void						setPosition(HexaPoint setPos){ m_Position = setPos; }
 	void						SetHP(int hp);
+	void						SetStatus(UnitStatusType status){ m_StatusType = status; }
 
 	Sprite*						GetSprite(){ return m_Sprite; }
 	int							GetHP(){ return m_HP; }
@@ -24,12 +25,13 @@ public:
 	HexaPoint					GetPosition(){ return m_Position; }
 	UnitOwner					GetOwner(){ return m_Owner; }
 	UnitMoveType				GetMoveType(){ return m_MoveType; }
+	UnitStatusType				GetStatusType(){ return m_StatusType; }
 	
 protected:
 	UnitType					m_UnitType;
 	UnitMoveType				m_MoveType;
 	UnitOwner					m_Owner;
-	UnitState					m_State;
+	UnitStatusType				m_StatusType;
 
 	int							m_ID;
 	int							m_HP;

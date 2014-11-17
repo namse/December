@@ -56,7 +56,7 @@ public:
 
 	/* 네트워크 관련 함수 */
 	void					onGameStart(Packet::GameStartResult inPacket);
-	void					ReadFieldBlock(FieldBlock fieldBlock[], int length);
+	void					ReadFieldBlock(FieldBlock fieldBlock[], int length, int mapSizeX, int mapSizeY);
 	void					ReadUnitData(UnitData unitData[], int length);
 	void					SetTurn(bool isMyTurn);
 	void					ReadActionQueue(Packet::AttackResult attackResult);

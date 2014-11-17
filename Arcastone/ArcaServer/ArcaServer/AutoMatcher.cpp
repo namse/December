@@ -43,6 +43,10 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 			}
 			outPacket[0].mFieldLength = blockCount;
 			outPacket[1].mFieldLength = blockCount;
+			outPacket[0].mFieldSizeX = pField->GetFieldSizeX();
+			outPacket[0].mFieldSizeY = pField->GetFieldSizeY();
+			outPacket[1].mFieldSizeX = pField->GetFieldSizeX();
+			outPacket[1].mFieldSizeY = pField->GetFieldSizeY();
 		}
 
 		{

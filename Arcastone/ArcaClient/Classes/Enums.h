@@ -8,7 +8,7 @@
 #define DEBUG_PRINT_PACKET			true
 
 #define DISPLAY_SIZEX				480
-#define DISPLAY_SIZEY				690
+#define DISPLAY_SIZEY				640
 
 #define MAP_XSTART					DISPLAY_SIZEX/2
 #define MAP_YSTART					DISPLAY_SIZEY/2
@@ -46,14 +46,6 @@ enum PlayerWho
 {
 	PW_PLAYERONE = 0,
 	PW_PLAYERTWO = 1,
-};
-
-enum UnitState
-{
-	US_NONE = 0,
-
-	US_NORMAL = 1,
-	US_DIE = 2,
 };
 
 // typedef 
