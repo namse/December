@@ -29,9 +29,8 @@ private:
 	void						SetUpNPC(UnitType unitType, Coord unitPos);
 
 	// For Attack Handling
-	void						UnitPush(Unit* pusher, Unit* target, int power, bool isFirstPush);
-	void						UnitMove(HexaDirection direction, int range, Unit* unit, bool isFirstMove);
-	void						UnitJump(HexaDirection direction, int range, Unit* unit);
+	void						UnitPush(Unit* unit, int power , HexaDirection direction);
+	void						UnitMove(Unit* unit, AttackData attackData);
 	void						UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy);
 	void						PrintUnitActionQueue(UnitAction attackData);
 	void						KillThisUnit(Unit* unit);
