@@ -1,4 +1,3 @@
-﻿#pragma once
 
 #define MAX_CHAT_LEN		256
 
@@ -12,10 +11,13 @@
 #define MXX_UNIT_ACTION_QUEUE 64
 
 typedef int UnitIdentityNumber;
+#pragma once
+#include "CommonDefinitions.h";
+#pragma pack(push, 1)
 
 enum PacketTypes
 {
-	PKT_NONE	= 0,
+	PKT_NONE = 0,
 
 	PKT_CS_LOGIN = 1,
 	PKT_SC_LOGIN = 2,
@@ -33,7 +35,7 @@ enum PacketTypes
 
 	PKT_CS_SKILL = 9,
 
-	PKT_MAX	= 1024
+	PKT_MAX	= 1024,
 } ;
 
 #pragma pack(push, 1)
@@ -230,11 +232,6 @@ struct PacketHeader
 	short mType;
 };
 
-struct FieldBlock{
-	FieldBlockType	m_Type;
-	FieldBlockStatus m_Status;
-	Coord m_Position;
-};
 
 namespace Packet
 {

@@ -117,7 +117,7 @@ void Unit::initSprite()
 
 	// 체력과 공격력 숫자 표시
 	char buff[5];
-	itoa(m_HP, buff, 10);
+	itoa(m_Weight, buff, 10);
 	auto labelHP = LabelTTF::create(buff, "Helvetica", 15);
 
 	itoa(m_Attack, buff, 10);

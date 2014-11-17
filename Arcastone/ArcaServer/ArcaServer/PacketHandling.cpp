@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "ClientSession.h"
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"
@@ -149,6 +149,8 @@ REGISTER_HANDLER(PKT_CS_ATTACK)
 	}
 
 	auto game = GGameManager->GetGameWithPlayerNumber(session->GetPlayerId());
+
+	// TODO : 이러면 해커가 공격하면 바로 서버 터지겠네요
 	assert(game != nullptr);
 	
 	game->HandleAttack(game->GetAttacker(), inPacket.mAttack);
