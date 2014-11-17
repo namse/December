@@ -364,10 +364,15 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 			if (unitAtk > 0) UnitPush(crashGuy, unitAtk, direction);
 		}
 	}
+	else if (!m_GameField.IsInsideOfField(movePos))
+	{
+		KillThisUnit(unit);
+	}
 	return;
 
 }
 
+// 연쇄충돌 처리
 void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 {
 	Coord			unitPos = unit->GetPos();
@@ -445,6 +450,10 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 			int pushPower = power - moveRange;
 			if (pushPower > 0) UnitPush(crashGuy, pushPower, direction);
 		}
+	}
+	else if (!m_GameField.IsInsideOfField(movePos))
+	{
+		KillThisUnit(unit);
 	}
 	return;
 }

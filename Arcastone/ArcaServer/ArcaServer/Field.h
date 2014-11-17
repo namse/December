@@ -6,7 +6,7 @@ public:
 	~Field();
 
 	void		InitField(int fieldWidth, int fieldHeight);
-	bool isInsideOfField(Coord position);
+	bool IsInsideOfField(Coord position);
 
 	FieldBlock GetFieldBlock(int i){ return m_FieldBlockList[i]; }
 	int GetFieldBlockListSize(){ return m_FieldBlockListSize; }
