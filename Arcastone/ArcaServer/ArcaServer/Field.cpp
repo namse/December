@@ -37,7 +37,7 @@ void Field::InitField(int fieldWidth, int fieldHeight)
 	m_FieldBlockListSize = i;
 }
 
-bool Field::isInsideOfField(Coord position)
+bool Field::IsInsideOfField(Coord position)
 {
 	for (int i = 0; i < m_FieldBlockListSize; ++i)
 	{
