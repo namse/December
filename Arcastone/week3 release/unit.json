@@ -1,0 +1,77 @@
+{
+   "data_list" : [
+      {
+         "unit_attack" : "2",
+         "unit_hp" : "40",
+         "unit_move_range" : "4",
+         "unit_move_type" : "1",
+         "unit_name" : "공주",
+         "unit_type" : "5",
+         "unit_weight" : "2"
+      },
+      {
+         "unit_attack" : "3",
+         "unit_hp" : "40",
+         "unit_move_range" : "4",
+         "unit_move_type" : "1",
+         "unit_name" : "왕자",
+         "unit_type" : "6",
+         "unit_weight" : "0"
+      },
+      {
+         "unit_attack" : "3",
+         "unit_hp" : "20",
+         "unit_move_range" : "2",
+         "unit_move_type" : "1",
+         "unit_name" : "병사",
+         "unit_type" : "1",
+         "unit_weight" : "0"
+      },
+      {
+         "unit_attack" : "2",
+         "unit_hp" : "30",
+         "unit_move_range" : "4",
+         "unit_move_type" : "3",
+         "unit_name" : "기마병",
+         "unit_type" : "8",
+         "unit_weight" : "1"
+      },
+      {
+         "unit_attack" : "0",
+         "unit_hp" : "20",
+         "unit_move_range" : "4",
+         "unit_move_type" : "4",
+         "unit_name" : "마법사",
+         "unit_type" : "3",
+         "unit_weight" : "0"
+      },
+      {
+         "unit_attack" : "2",
+         "unit_hp" : "30",
+         "unit_move_range" : "4",
+         "unit_move_type" : "2",
+         "unit_name" : "기사",
+         "unit_type" : "2",
+         "unit_weight" : "0"
+      },
+      {
+         "unit_attack" : "6",
+         "unit_hp" : "30",
+         "unit_move_range" : "0",
+         "unit_move_type" : "0",
+         "unit_name" : "아르카스톤",
+         "unit_type" : "7",
+         "unit_weight" : "0"
+      },
+      {
+         "unit_attack" : "1",
+         "unit_hp" : "300",
+         "unit_move_range" : "0",
+         "unit_move_type" : "0",
+         "unit_name" : "바위",
+         "unit_type" : "9",
+         "unit_weight" : "300"
+      }
+   ],
+   "data_num" : 8
+}

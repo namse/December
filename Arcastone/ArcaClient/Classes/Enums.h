@@ -5,7 +5,7 @@
 
 // define
 #define LOGIN_IPADDR				"127.0.0.1"
-#define DEBUG_PRINT_PACKET			true
+#define DEBUG_PRINT_PACKET			false
 
 #define DISPLAY_SIZEX				480
 #define DISPLAY_SIZEY				690
