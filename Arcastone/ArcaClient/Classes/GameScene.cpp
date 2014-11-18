@@ -893,8 +893,9 @@ void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length, int _mapSize
 	}
 }
 
-void GameScene::onGameStart(Packet::GameStartResult inPacket)
+void GameScene::onGameStart(Packet::GameStartResult inPacket) ///< 여전히 큰 패킷을 복사로 넘기다니... const ref 사용할 것...
 {
+
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("start.mp3");
 	ReadFieldBlock(inPacket.mFieldList, inPacket.mFieldLength, inPacket.mFieldSizeX, inPacket.mFieldSizeY);
 	ReadUnitData(inPacket.mUnit, inPacket.mUnitLength);
