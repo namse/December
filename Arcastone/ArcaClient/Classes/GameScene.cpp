@@ -127,10 +127,10 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 		if (unit->GetOwner() != UO_ME) continue;
 
 		// 자신 유닛의 좌표인덱스를 화면상 위치로 변환하여
-		ScreenPoint screenPoint = unit->GetPosition().HexaToScreen();
+		ScreenPoint screenPoint = m_Field.HexaToScreen(unit->GetPosition());
 
 		// 자신의 유닛을 클릭했는지 판정한다.
-		if (isInHexagon(m_StartPoint, screenPoint))
+		if (m_Field.IsInHexagon(m_StartPoint, screenPoint))
 		{
 			// 그 유닛을 선택했다는 것을 지정하기 위해 id 를 멤버변수에 저장한다.
 			m_SelectedUnit = unit->GetID();
@@ -157,10 +157,10 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 
 	// 어딜 터치했는지 찾아서
 	HexaPoint touchIndex;
-	touchIndex = ScreenToHexa(ScreenPoint(touch->getLocation().x, touch->getLocation().y));
+	touchIndex = m_Field.ScreenToHexa((ScreenPoint)touch->getLocation());
 	
 	HexaPoint cursoredPoint;
-	cursoredPoint = ScreenToHexa(m_CursoredPoint);
+	cursoredPoint = m_Field.ScreenToHexa(m_CursoredPoint);
 
 	// 터치한 위치가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 그냥 return;
 	if (touchIndex == cursoredPoint) return;
@@ -299,7 +299,7 @@ void GameScene::UsingSkill(Unit* unit)
 						  // 파이어 볼은 유효한 범위 중 내가 선택한 좌표로 스킬 시전
 						  for (int i = 0; i < m_CourseStack.size(); ++i)
 						  {
-							  if (ScreenToHexa(m_CursoredPoint) == m_CourseStack.at(i))
+							  if (m_Field.ScreenToHexa(m_CursoredPoint) == m_CourseStack.at(i))
 							  {
 								  skillData.position[0] = m_CourseStack.at(i).HexaToCoord();
 								  break;
@@ -361,7 +361,7 @@ void GameScene::DrawExpectUnitMove(Unit* unit)
 				for (int j = 1; j <= unitMoveRange; ++j)
 				{
 					HexaPoint movePoint = unitPos.GetMovePoint(direction, j);
-					ScreenPoint realMovePoint = movePoint.HexaToScreen();
+					ScreenPoint realMovePoint = m_Field.HexaToScreen(movePoint);
 
 					HighlightHexagon(realMovePoint);
 				}
@@ -379,7 +379,7 @@ void GameScene::DrawExpectUnitMove(Unit* unit)
 
 					HexaPoint movePoint(unitPos.x + x, unitPos.y + y);
 
-					Hexagon* expectSignHexagon = createHexagon(movePoint.HexaToScreen(), HEXAGON_LENGTH);
+					Hexagon* expectSignHexagon = new Hexagon(m_Field.HexaToScreen(movePoint));
 					DrawNode* expectSignNode = DrawNode::create();
 
 					expectSignNode->drawPolygon(&expectSignHexagon->vertex[0], 6, COLOR_OF_EXPECT, 1, COLOR_OF_EXPECT);
@@ -413,8 +413,8 @@ void GameScene::drawUnitMove()
 	int					unitRange = attacker->GetMoveRange();
 	int					unitAtk = attacker->GetAttack();
 	HexaPoint			unitPos = attacker->GetPosition();
-	HexaPoint			cursoredHexa = ScreenToHexa(m_CursoredPoint);
-	HexaPoint			startHexa = ScreenToHexa(m_StartPoint);
+	HexaPoint			cursoredHexa = m_Field.ScreenToHexa(m_CursoredPoint);
+	HexaPoint			startHexa = m_Field.ScreenToHexa(m_StartPoint);
 	
 	//	#pragma region 마우스의 이동과 공격 방식에 따라 가능한지 체크하고, 가능하면 입력
 	switch (unitAtkType)
@@ -682,7 +682,7 @@ void GameScene::KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direct
 // 이동경로를 그리는 함수
 void GameScene::drawMoveSign(HexaPoint point, Color4F signColor)
 {
-	Hexagon* courseSignHexagon = createHexagon(point.HexaToScreen(), HEXAGON_LENGTH);
+	Hexagon* courseSignHexagon = new Hexagon(m_Field.HexaToScreen(point));
 	DrawNode* courseSignNode = DrawNode::create();
 
 	courseSignNode->drawPolygon(&courseSignHexagon->vertex[0], 6, signColor, 1, signColor);
@@ -698,28 +698,6 @@ void GameScene::releaseMoveSign()
 		this->removeChild(node);
 	}
 	m_CourseSignNode.clear();
-}
-
-// 클릭한 좌표가 특정 육각형 안에 들어있는지 확인하는 함수
-bool GameScene::isInHexagon(ScreenPoint touch, ScreenPoint anchor)
-{
-	float msin = sin(RADIANS_60);
-
-	// 클릭한 좌표가 육각형의 x 범위에 속하는지 확인
-	if (touch.y > anchor.y - HEXAGON_LENGTH * msin &&
-		touch.y < anchor.y + HEXAGON_LENGTH * msin)
-	{
-
-		float yHowFarToAnchor = abs(touch.y - anchor.y);
-
-		// 육각형의 중심에서 y 거리로 멀어질수록 x 판정이 좁아지는 것을 구현하는 코드
-		float yTuningValue = yHowFarToAnchor / (HEXAGON_LENGTH * msin) * 0.5;
-
-		if (touch.x > anchor.x - HEXAGON_LENGTH * (1 - yTuningValue) &&
-			touch.x < anchor.x + HEXAGON_LENGTH * (1 - yTuningValue))
-			return true;
-	}
-	return false;
 }
 
 // 유닛을 찾습니다
@@ -744,57 +722,6 @@ Unit* GameScene::getUnitByPos(HexaPoint unitPos)
 }
 
 
-
-// 육각형 안에 정수형 인덱스 값을 보여주는 함수 .
-// DRAW_HEXA_POSITION 이 true면 인덱스 값이 아닌 위치 값을 보여줌
-void GameScene::drawText(int i, int j, Hexagon* hexa)
-{
-	int f = i;
-	if (DRAW_HEXA_POSITION) f = hexa->anchor.x;
-	char szBuf1[8];
-	itoa(f, szBuf1, 10);
-
-	f = j;
-	if (DRAW_HEXA_POSITION) f = hexa->anchor.y;
-	char szBuf2[8];
-	itoa(f, szBuf2, 10);
-
-	LabelTTF* vLabelx;
-	LabelTTF* vLabely;
-	vLabelx = LabelTTF::create(szBuf1, "Hevetica", 12);
-	vLabely = LabelTTF::create(szBuf2, "Hevetica", 12);
-
-	vLabelx->setPosition(Point(hexa->anchor.x - 7, hexa->anchor.y + 5));
-	vLabely->setPosition(Point(hexa->anchor.x + 7, hexa->anchor.y - 5));
-
-	vLabelx->setColor(Color3B(255, 255, 255));
-	vLabely->setColor(Color3B(255, 0, 0));
-
-	// zorder
-	this->addChild(vLabelx);
-	this->addChild(vLabely);
-}
-
-
-// 중심점과 크기를 넣으면, 그에 대한 육각형의 각 꼭짓점을 벡터에 넣어서 리턴하는 함수 .
-Hexagon* GameScene::createHexagon(ScreenPoint anchor, int size)
-{
-	Hexagon* newHexa = new Hexagon;
-	newHexa->anchor = Point(anchor.x, anchor.y);
-
-	float param_rad, param_cos, param_sin;
-	for (int i = 0; i < 6; ++i)
-	{
-		param_rad = CC_DEGREES_TO_RADIANS(360 / 6 * i);
-		param_cos = cos(param_rad);
-		param_sin = sin(param_rad);
-
-		Point vertexPoint = Point(anchor.x + (size * param_cos), anchor.y + (size * param_sin));
-		newHexa->vertex.push_back(vertexPoint);
-	}
-	return newHexa;
-}
-
 // 서버로부터 받은 유닛 데이터를 field와 unit 에 저장하는 함수
 // 유닛을 저장한 후, 화면에 유닛을 그린다. 그리고 게임 시작 상태로 전환한다.
 void GameScene::ReadUnitData(UnitData unitData[], int length)
@@ -809,13 +736,13 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 
 		// 유닛의 위치를 화면상의 좌표로 변환하고 screenPoint 에 저장
 		Sprite* unitSprite = unit->GetSprite();
-		ScreenPoint unitRealPoint = unit->GetPosition().HexaToScreen();
+		ScreenPoint unitRealPoint = m_Field.HexaToScreen(unit->GetPosition());
 
 		// 화면상의 좌표에 유닛을 배치
 		assert(unitSprite != nullptr);
 
-		unitSprite->setPosition(Point(unitRealPoint.x, unitRealPoint.y));
-		this->addChild(unitSprite, 100);
+		unit->setScreenPos(unitRealPoint);
+		this->addChild(unitSprite);
 	}
 
 	m_GameState = GS_GAME_START;
@@ -842,61 +769,10 @@ void GameScene::ReadActionQueue(Packet::AttackResult attackResult)
 	if (unitAction) onUnitAction();
 }
 
-void GameScene::ReadFieldBlock(FieldBlock fieldBlock[], int length, int _mapSizeX, int _mapSizeY)
-{
-	CCDrawNode* node = CCDrawNode::create();
-	this->addChild(node, 100);
-
-	mapSizeX = _mapSizeX;
-	mapSizeY = _mapSizeY;
-
-	for (int i = 0; i < length; i++)
-	{
-		int x = fieldBlock[i].m_Position.x;
-		int y = fieldBlock[i].m_Position.y;
-		// CCLOG("%d, %d", x, y);
-		ScreenPoint point = HexaPoint(x, y).HexaToScreen();
-
-		m_HexagonPoint.push_back(HexaPoint(x, y));	// m_HexagonPoint 에 화면에 그려지는 좌표(0~x, 0~y)들을 저장
-
-		Hexagon* hexa = createHexagon(point, HEXAGON_LENGTH);
-		node->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, COLOR_OF_GRID);
-
-		switch (fieldBlock[i].m_Type)
-		{
-		case FBT_NORMAL:
-		{
-						   // 임시로 블록 이미지 그려줌
-						   Sprite* fieldBlock;
-						   switch (rand() % 3)
-						   {
-						   case 0: fieldBlock = Sprite::create("block1.png");  break;
-						   case 1: fieldBlock = Sprite::create("block2.png");  break;
-						   case 2: fieldBlock = Sprite::create("block3.png");  break;
-						   }
-
-						   float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
-						   fieldBlock->setScale(scale);
-						   fieldBlock->setAnchorPoint(Vec2(0.5f, 0.67f));
-						   fieldBlock->setPosition(point);
-						   this->addChild(fieldBlock, y);
-
-						   if (DRAW_HEXA_NUMBER) drawText(x, y, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
-		}break;
-		case FBT_HOLE:
-		{
-						 if (DRAW_HEXA_NUMBER) drawText(x, y, hexa);	// 헥사곤 안에 정수형 인덱스 값을 보여줄 것인가?
-		}break;
-		default:
-			break;
-		}
-	}
-}
-
 void GameScene::onGameStart(Packet::GameStartResult inPacket)
 {
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("start.mp3");
-	ReadFieldBlock(inPacket.mFieldList, inPacket.mFieldLength, inPacket.mFieldSizeX, inPacket.mFieldSizeY);
+	m_Field.Init(this, inPacket.mFieldList, inPacket.mFieldLength, inPacket.mFieldSizeX, inPacket.mFieldSizeY, inPacket.mReverseMap);
 	ReadUnitData(inPacket.mUnit, inPacket.mUnitLength);
 }
 
@@ -918,7 +794,7 @@ void GameScene::onUnitAction(CCNode* sender)
 		{
 		case UAT_MOVE:{
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+						  ScreenPoint sMovePoint = m_Field.HexaToScreen(hMovePoint);
 
 						  // 유닛은 인덱스로 이동
 						  unit->setPosition(hMovePoint);
@@ -938,7 +814,7 @@ void GameScene::onUnitAction(CCNode* sender)
 		}break;
 		case UAT_STRAIGHT:{
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+						  ScreenPoint sMovePoint = m_Field.HexaToScreen(hMovePoint);
 
 						  // 유닛은 인덱스로 이동
 						  unit->setPosition(hMovePoint);
@@ -959,7 +835,7 @@ void GameScene::onUnitAction(CCNode* sender)
 
 		case UAT_JUMP:{
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+						  ScreenPoint sMovePoint = m_Field.HexaToScreen(hMovePoint);
 
 						  unit->setPosition(hMovePoint);
 
@@ -979,7 +855,7 @@ void GameScene::onUnitAction(CCNode* sender)
 						  // 적용할 액션의 이동타입이 대쉬면?
 						  // 다른 타입의 액션이 들어올때까지 반복
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-						  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+						  ScreenPoint sMovePoint = m_Field.HexaToScreen(hMovePoint);
 
 						  // 유닛은 인덱스로 이동
 						  unit->setPosition(hMovePoint);
@@ -1001,7 +877,7 @@ void GameScene::onUnitAction(CCNode* sender)
 
 		case UAT_TELEPORT:{
 							  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
-							  ScreenPoint sMovePoint = hMovePoint.HexaToScreen();
+							  ScreenPoint sMovePoint = m_Field.HexaToScreen(hMovePoint);
 
 							  unit->setPosition(hMovePoint);
 
@@ -1031,36 +907,12 @@ void GameScene::onUnitAction(CCNode* sender)
 
 void GameScene::HighlightHexagon(ScreenPoint position)
 {
-	Hexagon* expectSignHexagon = createHexagon(position, HEXAGON_LENGTH);
+	Hexagon* expectSignHexagon = new Hexagon(position);
 	DrawNode* expectSignNode = DrawNode::create();
 
 	expectSignNode->drawPolygon(&expectSignHexagon->vertex[0], 6, COLOR_OF_EXPECT, 1, COLOR_OF_EXPECT);
 	this->addChild(expectSignNode, 98);
 	m_ExpectSignNode.push_back(expectSignNode);
-}
-
-HexaPoint GameScene::ScreenToHexa(ScreenPoint point)
-{
-	// TODO : 헥사그리드 내에 있을 때만 검사하도록 수정
-	// 입력한 점이 주어진 범위를 벗어나면 -1, -1 을 리턴
-	HexaPoint retPoint(-1, -1);
-
-	// -맵크기의 3배 ~ 맵크기의 3배까지 검사한다
-	for (int x = -mapSizeX * 3; x < mapSizeX * 3; ++x)
-	{
-		for (int y = -mapSizeY * 3; y < mapSizeY * 3; ++y)
-		{
-			// 그 임의의 점들 중에서 입력한 ScreenPoint를 포함하는 육각형의 중점을 찾는다
-			ScreenPoint anchor = (HexaPoint(x, y)).HexaToScreen();
-			if (isInHexagon(point, anchor))
-			{
-				retPoint = HexaPoint(x, y);
-				break;
-			}
-		}
-	}
-	
-	return retPoint;
 }
 
 void GameScene::PrintUnitAction(UnitAction attackData)

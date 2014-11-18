@@ -11,7 +11,6 @@
 
 Unit::Unit()
 {
-
 }
 
 Unit::~Unit()
@@ -96,7 +95,7 @@ void Unit::init(UnitData unitData)
 void Unit::initSprite()
 {
 	m_Sprite = Sprite::create();
- 
+
 	// 체력/공격력 프레임 표시
 	auto frameHP = Sprite::create("frame_hp.png");
 	auto frameAtk = Sprite::create("frame_atk.png");
@@ -110,8 +109,8 @@ void Unit::initSprite()
 	frameHP->setPosition(position, 0);
 	frameAtk->setPosition(-position, 0);
 
-	m_Sprite->addChild(frameHP, 10 + ZORDER_STAT, "frame_hp");
-	m_Sprite->addChild(frameAtk, 10 + ZORDER_STAT, "frame_atk");
+	m_Sprite->addChild(frameHP, 10, "frame_hp");
+	m_Sprite->addChild(frameAtk, 10, "frame_atk");
 
 	// 체력과 공격력 숫자 표시
 	char buff[5];
@@ -127,8 +126,8 @@ void Unit::initSprite()
 	labelHP->setColor(Color3B(255, 255, 255));
 	labelAtk->setColor(Color3B(255, 255, 255));
 	
-	m_Sprite->addChild(labelHP, 20 + ZORDER_STAT, "hp");
-	m_Sprite->addChild(labelAtk, 20 + ZORDER_STAT, "atk");
+	m_Sprite->addChild(labelHP, 20, "hp");
+	m_Sprite->addChild(labelAtk, 20, "atk");
 
 	// 자신 유닛인지, 상대 유닛인지 표시 
 	assert(m_Owner != UO_NONE && "undefined unit owner");
@@ -162,3 +161,10 @@ void Unit::SetHP(int hp)
 	labelHP->setString(buff);
 }
 
+void Unit::setScreenPos(ScreenPoint setPos)
+{
+	assert(m_Sprite != nullptr && "unit sprite not created!");
+	int zOder = ZORDER_CHARACTER + ((DISPLAY_SIZEY - setPos.y) / 5) + ((DISPLAY_SIZEX - setPos.x) / 10);
+	m_Sprite->setZOrder(zOder);
+	m_Sprite->setPosition(setPos);
+}

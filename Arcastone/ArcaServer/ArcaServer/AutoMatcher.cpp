@@ -47,6 +47,8 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 			outPacket[0].mFieldSizeY = pField->GetFieldSizeY();
 			outPacket[1].mFieldSizeX = pField->GetFieldSizeX();
 			outPacket[1].mFieldSizeY = pField->GetFieldSizeY();
+			outPacket[0].mReverseMap = true;
+			outPacket[1].mReverseMap = false;
 		}
 
 		{

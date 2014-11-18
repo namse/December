@@ -13,6 +13,7 @@ public:
 	virtual void				initSprite();
 
 	void						setPosition(HexaPoint setPos){ m_Position = setPos; }
+	void						setScreenPos(ScreenPoint setPos);
 	void						SetHP(int hp);
 	void						SetStatus(UnitStatusType status){ m_StatusType = status; }
 

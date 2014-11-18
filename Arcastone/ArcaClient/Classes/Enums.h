@@ -11,12 +11,12 @@
 #define DISPLAY_SIZEY				690
 
 #define MAP_XSTART					DISPLAY_SIZEX/2
-#define MAP_YSTART					DISPLAY_SIZEY/2 - 40
+#define MAP_YSTART					DISPLAY_SIZEY/2
 #define HEXAGON_LENGTH				35
 
 #define PIXEL_TO_RANGE_MULT			0.03
 
-#define DRAW_HEXA_NUMBER			true
+#define DRAW_HEXA_NUMBER			false
 #define DRAW_HEXA_POSITION			false
 
 #define RADIANS_60					CC_DEGREES_TO_RADIANS(60)
@@ -45,11 +45,6 @@
 #define ZORDER_STAT					400
 #define ZORDER_UI					500
 
-
-// static
-static int mapSizeX;
-static int mapSizeY;
-
 // enum
 enum PlayerWho
 {
@@ -61,9 +56,25 @@ enum PlayerWho
 typedef Packet::GameStartResult::UnitData UnitData;
 
 // struct
-
 struct Hexagon
 {
+	Hexagon();
+	Hexagon(cocos2d::Point point)
+	{
+		vertex.reserve(6);
+		anchor = point;
+
+		float param_rad, param_cos, param_sin;
+		for (int i = 0; i < 6; ++i)
+		{
+			param_rad = CC_DEGREES_TO_RADIANS(60 * i);
+			param_cos = cos(param_rad);
+			param_sin = sin(param_rad);
+
+			cocos2d::Point vertexPoint = cocos2d::Point(anchor.x + (HEXAGON_LENGTH * param_cos), anchor.y + (HEXAGON_LENGTH * param_sin));
+			vertex.push_back(vertexPoint);
+		}
+	}
 	cocos2d::Point anchor;
 	std::vector<cocos2d::Point> vertex;
 };
@@ -145,16 +156,6 @@ struct HexaPoint : public cocos2d::Vec2
 	HexaPoint(int _x, int _y){
 		x = _x;
 		y = _y;
-	}
-	ScreenPoint HexaToScreen()
-	{
-		ScreenPoint retPoint;
-
-		// MAP_START 를 중앙에 위치하도록 그려주기 위한 수식들 .
-		retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (x - (mapSizeX - 1)*0.5);
-		retPoint.y = MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (y * 2 - mapSizeY + x - (mapSizeY - 3)*0.5);
-
-		return retPoint;
 	}
 	Coord HexaToCoord()
 	{

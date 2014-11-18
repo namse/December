@@ -2,10 +2,15 @@
 
 #pragma pack(push, 1)
 
+#define MAX_CHAT_LEN		256
+
+#define MAX_NAME_LEN		30
+#define MAX_COMMENT_LEN		40
 #define MAX_UNIT_ON_GAME	30
 #define MAX_UNIT_ACTION		50
 #define MAX_FIELD_BLOCK		7*11
 #define MAX_MOVE_RANGE		20
+#define MAX_SKILL_RANGE		20
 #define MXX_UNIT_ACTION_QUEUE 64
 
 typedef int UnitIdentityNumber;

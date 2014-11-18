@@ -22,7 +22,6 @@ public:
 
     // a selector callback
     void					menuCloseCallback(Ref* pSender);
-
 	void					gameLogic(float dt);
 
 	/* touch 함수 */
@@ -32,12 +31,8 @@ public:
 	virtual void			onTouchMoved(Touch* touch, Event* event);
 	virtual void			onTouchCancelled(Touch* touch, Event* unused_event){}
 	virtual void			onTouchEnded(Touch* touch, Event *event);
-	bool					isInHexagon(ScreenPoint touch, ScreenPoint anchor);
 
 	/* draw 함수 */
-	Hexagon*				createHexagon(ScreenPoint anchor, int size);
-	void					drawText(int i, int j, Hexagon* hexa);
-
 	void					DrawExpectUnitMove(Unit* unit);
 	void					drawUnitMove();
 	void					drawMoveSign(HexaPoint point, Color4F signColor);
@@ -57,17 +52,14 @@ public:
 
 	/* 네트워크 관련 함수 */
 	void					onGameStart(Packet::GameStartResult inPacket);
-	void					ReadFieldBlock(FieldBlock fieldBlock[], int length, int mapSizeX, int mapSizeY);
 	void					ReadUnitData(UnitData unitData[], int length);
 	void					SetTurn(bool isMyTurn);
 	void					ReadActionQueue(Packet::AttackResult attackResult);
 	void					ReadRestCost(Packet::CostRenewalResult recvData);
 	void					UsingSkill(Unit* unit);
-
 	void					gameOver(Packet::GameOverResult recvData);
 
 private:
-	HexaPoint				ScreenToHexa(ScreenPoint point);
 
 	void					PrintUnitAction(UnitAction unitAction);
 
@@ -77,9 +69,9 @@ private:
 	bool					m_IsMyTurn;
 	bool					m_IsCursorMoved;
 	bool					m_IsCastSkill;
+	Field					m_Field;
 
 	Player					m_Player[2];
-
 
 	LabelTTF*				m_TurnLabel;
 	LabelTTF*				m_CostLabel[MAX_HAVE_COST];
@@ -91,8 +83,6 @@ private:
 	HexaDirection			m_Direction;
 	int						m_Range;
 	int						m_MaxCosst;
-
-	vector<HexaPoint>		m_HexagonPoint;
 
 	vector<Unit*>			m_UnitList;
 	vector<Unit*>			m_UnitData;
