@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Scheduler.h"
 #include "ClientSession.h"
 #include "..\..\PacketType.h"

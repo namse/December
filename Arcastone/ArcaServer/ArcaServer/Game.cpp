@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "Game.h"
 #include "PlayerManager.h"
 #include "ArcaStone.h"
@@ -65,7 +65,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 			}
 			unit->SetPosition(position);
 			m_UnitList.push_back(unit);
-		};
+		}
 	}
 
 	// 아르카스톤 설치
@@ -87,7 +87,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	m_IsFirstTurn = true;
 }
 
-void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
+void Game::HandleAttack(PlayerNumber attacker, AttackData attackData) ///# 이 큰 객체를 copy by value로 넘기네? 맞을래?
 {
 	// 공격 조건이 올바르지 않다면!!
 	if (!IsCorrectAttack(attacker, attackData))
@@ -369,7 +369,7 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 
 }
 
-void Game::HandleSkill(PlayerNumber attacker, SkillData skillData)
+void Game::HandleSkill(PlayerNumber attacker, SkillData skillData) ///# 큰 객체를 복사로 넘기다니..
 {
 	// TODO : 합당한 스킬 사용인지 판별할 것.
 

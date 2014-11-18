@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "ArcaServer.h"
 #include "..\..\PacketType.h"
 #include "ThreadLocal.h"

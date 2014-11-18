@@ -92,7 +92,7 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 				}
 				else
 				{
-					assert(false);
+					assert(false); ///# 어써트는 이런데 쓰면 안됨.. 유저가 잘못 보낸 정보때문에 서버를 죽임??
 				}
 			}
 			outPacket[0].mUnitLength = unitList.size();

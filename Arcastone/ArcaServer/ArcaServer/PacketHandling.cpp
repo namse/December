@@ -1,4 +1,4 @@
-#include "stdafx.h"
+﻿#include "stdafx.h"
 #include "ClientSession.h"
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"

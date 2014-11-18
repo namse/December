@@ -46,6 +46,9 @@ private:
 
 
 private:
+
+	///# 아래 멤버 변수들  나중에 Init같은데서 초기화 하더라도, 디폴트 값으로 미리 생성자에서 초기화를 꼭 하삼...
+
 	GameNumber					m_GameNum;
 	Field						m_GameField;
 	PlayerNumber				m_Attacker;
