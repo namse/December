@@ -21,8 +21,8 @@ public:
 	bool						IsPlayerInThisGame(PlayerNumber playerNumber);
 	GameNumber					GetGameNumber(){ return m_GameNum; }
 
-	void						HandleAttack(PlayerNumber attacker, AttackData attackData);
-	void						HandleSkill(PlayerNumber attacker, SkillData skillData);
+	void						HandleAttack(PlayerNumber attacker, AttackData* attackData);
+	void						HandleSkill(PlayerNumber attacker, SkillData* skillData);
 	void						GameOverForSurrender(PlayerNumber srrender);
 
 private:
@@ -32,12 +32,12 @@ private:
 
 	// For Attack Handling
 	void						UnitPush(Unit* unit, int power , HexaDirection direction);
-	void						UnitMove(Unit* unit, AttackData attackData);
+	void						UnitMove(Unit* unit, AttackData* attackData);
 	void						KillThisUnit(Unit* unit);
 	void						UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy);
 	void						PrintUnitActionQueue(UnitAction attackData);
 
-	bool						IsCorrectAttack(PlayerNumber attacker, AttackData attackData);
+	bool						IsCorrectAttack(PlayerNumber attacker, AttackData* attackData);
 	void						IsNearArca();
 	void						IsGameOver();
 	void						UnitCounting();

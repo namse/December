@@ -87,7 +87,7 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	m_IsFirstTurn = true;
 }
 
-void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
+void Game::HandleAttack(PlayerNumber attacker, AttackData* attackData)
 {
 	// 공격 조건이 올바르지 않다면!!
 	if (!IsCorrectAttack(attacker, attackData))
@@ -100,7 +100,7 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 		return;
 	}
 
-	Unit* attackUnit = GetUnit(attackData.id);
+	Unit* attackUnit = GetUnit(attackData->id);
 	UnitMoveType unitMoveType = attackUnit->GetUnitMoveType();
 
 	m_UnitActionQueue.clear();
@@ -181,13 +181,13 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData attackData)
 	}
 }
 
-void Game::UnitMove(Unit* unit, AttackData attackData)
+void Game::UnitMove(Unit* unit, AttackData* attackData)
 {
 	UnitMoveType	unitMoveType = unit->GetUnitMoveType();
 	Coord			unitPos = unit->GetPos();
 	int				unitAtk = unit->GetAttack();
-	int				range = attackData.range;
-	HexaDirection	direction = attackData.direction;
+	int				range = attackData->range;
+	HexaDirection	direction = attackData->direction;
 	Unit*			crashGuy = nullptr; // 충돌한 유닛을 찾는다
 	Coord			movePos = unitPos;
 	int				moveRange = 0;
@@ -255,11 +255,11 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 		// 대쉬방향을 알기 위해 BeforePosition 을 사용해보아요
 
 		// 입력한 range 만큼 '한칸씩' 이동하겠어요~
-		for (int move = 0; move < attackData.range; ++move)
+		for (int move = 0; move < range; ++move)
 		{
-			HexaDirection direction = GetHexaDirection(movePos, attackData.position[move]);
+			HexaDirection direction = GetHexaDirection(movePos, attackData->position[move]);
 			// 아! 물론 이동하려는 위치에 유닛이 있으면
-			Unit* standUnit = GetUnitInPosition(attackData.position[move]);
+			Unit* standUnit = GetUnitInPosition(attackData->position[move]);
 			if (nullptr != standUnit)
 			{
 				crashGuy = standUnit;
@@ -268,7 +268,7 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 			// 유닛을 만나지 않으면 계속 질주하세욧!
 			else
 			{
-				unit->SetPosition(attackData.position[move]);
+				unit->SetPosition(attackData->position[move]);
 
 				// TODO : mMoveData는 Move용 데이터임. Dash용이 아님.
 				// 현재는 UnitAction에 Move, Colide, Die 모든 데이터가 다 들어있어서
@@ -285,27 +285,27 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 				dashAction.mUnitId = unit->GetID();
 				dashAction.mMoveData.mRange = 1;
 				dashAction.mMoveData.mDirection = direction;
-				dashAction.mMoveData.mFinalX = attackData.position[move].x;
-				dashAction.mMoveData.mFinalY = attackData.position[move].y;
+				dashAction.mMoveData.mFinalX = attackData->position[move].x;
+				dashAction.mMoveData.mFinalY = attackData->position[move].y;
 
 				m_UnitActionQueue.push_back(dashAction);
 #ifdef DEBUG_PRINT
 				PrintUnitActionQueue(dashAction);
 #endif
 			}
-			movePos = attackData.position[move];
+			movePos = attackData->position[move];
 		}
 
 	}break;
 
 	case UMT_TELEPORT:
 	{
-						 if (GetUnitInPosition(attackData.position[0]) != nullptr) return;
+						 if (GetUnitInPosition(attackData->position[0]) != nullptr) return;
 
-						 if (m_GameField.IsInsideOfField(attackData.position[0]) == false) return;
+						 if (m_GameField.IsInsideOfField(attackData->position[0]) == false) return;
 
 		actionType = UAT_TELEPORT;
-		movePos = attackData.position[0];
+		movePos = attackData->position[0];
 	}break;
 
 	default:
@@ -375,25 +375,25 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 
 }
 
-void Game::HandleSkill(PlayerNumber attacker, SkillData skillData)
+void Game::HandleSkill(PlayerNumber attacker, SkillData* skillData)
 {
 	// TODO : 합당한 스킬 사용인지 판별할 것.
 
-	Unit* castUnit = GetUnit(skillData.id);
+	Unit* castUnit = GetUnit(skillData->id);
 
 	m_UnitActionQueue.clear();
 
-	switch (skillData.skillType)
+	switch (skillData->skillType)
 	{
 	case USK_FIREBALL:{
 						  // 나중에 이런 스킬 스탯 하드코딩들 고쳐야될듯
-						  if (skillData.position[0].x == -1) return;
+						  if (skillData->position[0].x == -1) return;
 
-						  Unit* target = GetUnitInPosition(skillData.position[0]);
+						  Unit* target = GetUnitInPosition(skillData->position[0]);
 
 						  // 캐스트 유닛에서 스킬 대상위치까지의 방향은?
 						  HexaDirection direction = GetDirection(castUnit->GetPos(), target->GetPos());
-						  int power = skillData.skillRank + 1;
+						  int power = skillData->skillRank + 1;
 
 						  // 마나1 소모
 						  m_CanCommand--;
@@ -891,26 +891,26 @@ void Game::UnitCounting()
 	}
 }
 
-bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
+bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData* attackData)
 {
-	switch (attackData.attackType)
+	switch (attackData->attackType)
 	{
 	case UMT_STRAIGHT:
 		// 공격을 취소하는 경우
-		if (attackData.range == 0)
+		if (attackData->range == 0)
 			return false;
 		break;
 	case UMT_JUMP:
-		if (attackData.range == 0)
+		if (attackData->range == 0)
 			return false;
 		break;
 	case UMT_DASH:
-		if (attackData.range == 0)
+		if (attackData->range == 0)
 			return false;
 		break;
 	case UMT_TELEPORT:
 		// 텔포하려는 위치에 유닛이 있는 경우 -> 합!체!
-		if (GetUnitInPosition(attackData.position[0]) != nullptr)
+		if (GetUnitInPosition(attackData->position[0]) != nullptr)
 		{
 			// 하면 안되지!
 			return false;
@@ -932,7 +932,7 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData attackData)
 	}
 
 	// 잘못된 유닛으로 공격하려고 햇으니까
-	if (GetUnit(attackData.id) == nullptr)
+	if (GetUnit(attackData->id) == nullptr)
 	{
 		//무시해!
 		return false;

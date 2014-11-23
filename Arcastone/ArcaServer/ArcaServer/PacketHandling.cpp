@@ -153,7 +153,7 @@ REGISTER_HANDLER(PKT_CS_ATTACK)
 	// TODO : 이러면 해커가 공격하면 바로 서버 터지겠네요
 	assert(game != nullptr);
 	
-	game->HandleAttack(game->GetAttacker(), inPacket.mAttack);
+	game->HandleAttack(game->GetAttacker(), &inPacket.mAttack);
 
 }
 
@@ -169,6 +169,6 @@ REGISTER_HANDLER(PKT_CS_SKILL)
 	auto game = GGameManager->GetGameWithPlayerNumber(session->GetPlayerId());
 	assert(game != nullptr);
 
-	game->HandleSkill(game->GetAttacker(), inPacket.mSkill);
+	game->HandleSkill(game->GetAttacker(), &inPacket.mSkill);
 
 }
