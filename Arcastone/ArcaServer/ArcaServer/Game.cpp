@@ -8,7 +8,7 @@
 
 #define START_POINT_PLAYER1 Coord(3,5)
 #define START_POINT_PLAYER2 Coord(3,1)
-#define DEBUG_PRINT			true
+#define DEBUG_PRINT
 
 Game::Game(GameNumber gameNum) : m_GameNum(gameNum)
 {
