@@ -289,7 +289,9 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 				dashAction.mMoveData.mFinalY = attackData.position[move].y;
 
 				m_UnitActionQueue.push_back(dashAction);
-				if (DEBUG_PRINT) PrintUnitActionQueue(dashAction);
+#ifdef DEBUG_PRINT
+				PrintUnitActionQueue(dashAction);
+#endif
 			}
 			movePos = attackData.position[move];
 		}
@@ -325,7 +327,9 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 		action.mMoveData.mFinalY = movePos.y;
 
 		m_UnitActionQueue.push_back(action);
-		if (DEBUG_PRINT) PrintUnitActionQueue(action);
+#ifdef DEBUG_PRINT
+		PrintUnitActionQueue(action);
+#endif
 	}
 
 
@@ -349,7 +353,9 @@ void Game::UnitMove(Unit* unit, AttackData attackData)
 		collisionAct.mCollisionData.mMyHP = crashGuy->GetHP();
 		collisionAct.mCollisionData.mTargetHP = crashGuy->GetHP();
 		m_UnitActionQueue.push_back(collisionAct);
-		if (DEBUG_PRINT) PrintUnitActionQueue(collisionAct);
+#ifdef DEBUG_PRINT
+		PrintUnitActionQueue(collisionAct);
+#endif
 
 		// 얻어맞은 유닛은 죽은 후에도 밀려난 다음에 사망
 		if (crashGuy->GetHP() <= 0)
@@ -550,9 +556,9 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 
 	m_UnitActionQueue.push_back(action);
 
-
-	// TODO :: #ifdef 를 사용하세요
-	if (DEBUG_PRINT) PrintUnitActionQueue(action);
+#ifdef DEBUG_PRINT
+	PrintUnitActionQueue(action);
+#endif
 
 	// 충돌유닛이 있으면
 	if (nullptr != crashGuy)
@@ -574,7 +580,9 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 		collisionAct.mCollisionData.mMyHP = crashGuy->GetHP();
 		collisionAct.mCollisionData.mTargetHP = crashGuy->GetHP();
 		m_UnitActionQueue.push_back(collisionAct);
-		if (DEBUG_PRINT) PrintUnitActionQueue(collisionAct);
+#ifdef DEBUG_PRINT
+		PrintUnitActionQueue(collisionAct);
+#endif
 
 		if (crashGuy->GetHP() <= 0)
 			KillThisUnit(crashGuy);
@@ -602,7 +610,9 @@ void Game::KillThisUnit(Unit* unit)
 	action.mUnitId = unit->GetID();
 
 	m_UnitActionQueue.push_back(action);
-	if (DEBUG_PRINT) PrintUnitActionQueue(action);
+#ifdef DEBUG_PRINT
+	PrintUnitActionQueue(action);
+#endif
 }
 
 void Game::StartGame()

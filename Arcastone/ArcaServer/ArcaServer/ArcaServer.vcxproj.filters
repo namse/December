@@ -19,12 +19,6 @@
     <Filter Include="GameLogic\Field">
       <UniqueIdentifier>{f500a09b-3510-4b5e-94ad-701e470a537f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameLogic\Game">
-      <UniqueIdentifier>{1bbe26df-cff7-41e0-a5e9-8026ba09f0b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameLogic\Game\GameMamanger">
-      <UniqueIdentifier>{1c435fd7-bb27-41e1-a5aa-1760126d0aad}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameLogic\Player">
       <UniqueIdentifier>{4d0ed041-1a65-4af4-8207-7f66272015b7}</UniqueIdentifier>
     </Filter>
@@ -45,6 +39,12 @@
     </Filter>
     <Filter Include="GameLogic\Unit\PC">
       <UniqueIdentifier>{52c1919c-78d6-4570-8d3b-0b8db93e262e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameLogic\Game">
+      <UniqueIdentifier>{1bbe26df-cff7-41e0-a5e9-8026ba09f0b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameLogic\Game\GameMamanger">
+      <UniqueIdentifier>{1c435fd7-bb27-41e1-a5aa-1760126d0aad}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

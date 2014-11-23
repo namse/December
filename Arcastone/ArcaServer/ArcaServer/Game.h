@@ -33,9 +33,9 @@ private:
 	// For Attack Handling
 	void						UnitPush(Unit* unit, int power , HexaDirection direction);
 	void						UnitMove(Unit* unit, AttackData attackData);
+	void						KillThisUnit(Unit* unit);
 	void						UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy);
 	void						PrintUnitActionQueue(UnitAction attackData);
-	void						KillThisUnit(Unit* unit);
 
 	bool						IsCorrectAttack(PlayerNumber attacker, AttackData attackData);
 	void						IsNearArca();

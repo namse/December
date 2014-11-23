@@ -26,6 +26,8 @@ public:
 	Coord					GetPos(){ return m_Position; }
 	UnitIdentityNumber		GetID(){ return m_ID; }
 
+	
+
 protected:
 	PlayerNumber			m_OwnerPlayerNum;
 

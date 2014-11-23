@@ -19,6 +19,9 @@
 
 typedef ProducerConsumerQueue<SOCKET, 100> PendingAcceptList;
 
+/// INADDR_ANY 선언 안되어있다고 에러
+#define INADDR_ANY              (u_long)0x00000000
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	/// crash 발생시 dump 남기기 위해서

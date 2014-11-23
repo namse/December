@@ -83,3 +83,4 @@ void Unit::InitUnit(UnitType unitType)
 	m_Weight = unitData.m_Weight;
 	m_MoveRange = unitData.m_MoveRange;
 }
+
