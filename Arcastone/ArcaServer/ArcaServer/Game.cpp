@@ -446,6 +446,7 @@ void Game::HandleSkill(PlayerNumber attacker, SkillData* skillData)
 	if (m_CurrentCost <= 0)
 	{
 		m_IsFirstTurn = false;
+		m_PlayTurn++;	// 턴 경과요~
 
 		if (m_Attacker == m_PlayerList[0])
 		{
@@ -1047,15 +1048,31 @@ void Game::StartBreakDown()
 {
 	if (m_BreakDownTurn > m_PlayTurn) return;
 	
+	// TODO : 어디부터 몇 개의 블록이 추락할지 기획 상의 후 코딩
 }
 
 void Game::MakeFieldHole(Coord fieldCoord)
 {
 	m_GameField.SetFieldType(fieldCoord, FBT_HOLE);
+
+	// 패킷 발송
+	Packet::ChangeFieldTypeResult outPacket;
+	outPacket.mFieldPos = fieldCoord;
+	outPacket.mFieldType = FBT_HOLE;
+
+	for (auto playerNumber : m_PlayerList)
+	{
+		auto session = GClientManager->GetClient(playerNumber);
+		if (session != nullptr)
+			session->SendRequest(&outPacket);
+	}
+
+	// 낙하 유닛 처리
 	Unit* fallUnit = GetUnitInPosition(fieldCoord);
 	if (fallUnit != nullptr)
 	{
 		KillThisUnit(fallUnit);
 		IsGameOver();
 	}
+
 }

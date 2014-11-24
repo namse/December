@@ -24,6 +24,8 @@ enum PacketTypes
 
 	PKT_CS_SKILL = 9,
 
+	PKT_SC_CHANGE_FIELD_TYPE = 10,
+
 	PKT_MAX	= 1024,
 } ;
 
@@ -152,6 +154,16 @@ namespace Packet
 			mMaxCost = -1;
 		}
 		int mCost, mMaxCost;
+	};
+
+	struct ChangeFieldTypeResult : public PacketHeader
+	{
+		ChangeFieldTypeResult(){
+			mSize = sizeof(ChangeFieldTypeResult);
+			mType = PKT_SC_CHANGE_FIELD_TYPE;
+		}
+		Coord mFieldPos;
+		FieldBlockType mFieldType;
 	};
 }
 
