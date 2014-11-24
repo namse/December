@@ -890,6 +890,10 @@ void GameScene::onUnitAction(CCNode* sender)
 
 		}break;
 		case UAT_COLLISION:{
+							   // 부딪힌 놈들 체력설정
+							   getUnitByID(action.mUnitId)->SetHP(action.mCollisionData.mMyHP);
+							   getUnitByID(action.mCollisionData.mTarget)->SetHP(action.mCollisionData.mTargetHP);
+
 							   runAction(CCCallFuncN::create(this,
 								   callfuncN_selector(GameScene::onUnitAction)));
 

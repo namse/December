@@ -114,20 +114,20 @@ void Unit::initSprite()
 
 	// 체력과 공격력 숫자 표시
 	char buff[5];
-	itoa(m_Weight, buff, 10);
-	auto labelHP = LabelTTF::create(buff, "Helvetica", 15);
+	itoa(m_HP, buff, 10);
+	m_HpLabel = LabelTTF::create(buff, "Helvetica", 15);
 
 	itoa(m_Attack, buff, 10);
-	auto labelAtk = LabelTTF::create(buff, "Helvetica", 15);
+	m_AtkLabel = LabelTTF::create(buff, "Helvetica", 15);
 
-	labelHP->setPosition(position, 0);
-	labelAtk->setPosition(-position, 0);
+	m_HpLabel->setPosition(position, 0);
+	m_AtkLabel->setPosition(-position, 0);
 
-	labelHP->setColor(Color3B(255, 255, 255));
-	labelAtk->setColor(Color3B(255, 255, 255));
+	m_HpLabel->setColor(Color3B(255, 255, 255));
+	m_AtkLabel->setColor(Color3B(255, 255, 255));
 	
-	m_Sprite->addChild(labelHP, 20, "hp");
-	m_Sprite->addChild(labelAtk, 20, "atk");
+	m_Sprite->addChild(m_HpLabel, 20, "hp");
+	m_Sprite->addChild(m_AtkLabel, 20, "atk");
 
 	// 자신 유닛인지, 상대 유닛인지 표시 
 	assert(m_Owner != UO_NONE && "undefined unit owner");
@@ -157,8 +157,7 @@ void Unit::SetHP(int hp)
 	char buff[5];
 	itoa(m_HP, buff, 10);
 
-	auto labelHP = LabelTTF::create(buff, "Helvetica", 12);
-	labelHP->setString(buff);
+	m_HpLabel->setString(buff);
 }
 
 void Unit::setScreenPos(ScreenPoint setPos)
