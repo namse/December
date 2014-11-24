@@ -63,3 +63,25 @@ void Field::GetFieldBlockList(OUT FieldBlock fieldBlockArr[])
 		++i;
 	}
 }
+
+Coord Field::GetRandomBlock()
+{
+	srand(time(NULL));
+
+	while (true)
+	{
+		int randNum = rand() % m_FieldBlockList.size();
+		int i = 0;
+		for (auto field : m_FieldBlockList)
+		{
+			if (i == randNum)
+			{
+				if (field.second.m_Status != FBS_HOLE)
+					return field.second.m_Position;
+				else
+					break;
+			}
+			++i;
+		}
+	}
+}

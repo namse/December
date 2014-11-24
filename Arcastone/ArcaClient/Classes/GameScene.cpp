@@ -898,6 +898,7 @@ void GameScene::onUnitAction(CCNode* sender)
 		case UAT_DIE: {
 						  unit->GetSprite()->setVisible(false);
 						  unit->SetStatus(UST_DEAD);
+						  unit->setPosition(HexaPoint(100, 100));
 
 						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("die.mp3");
 		}

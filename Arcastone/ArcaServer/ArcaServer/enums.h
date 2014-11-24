@@ -11,7 +11,7 @@
 #define USE_DRAW true							// 드로우(무승부) 있게 할거야?
 #define USE_ARCA true
 #define USE_ROCK true
-#define BREAK_DOWN_TURN 20
+#define BREAK_DOWN_TURN 10
 
 typedef int PlayerNumber;
 typedef int GameNumber;

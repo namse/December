@@ -8,9 +8,12 @@ public:
 	void			InitField(int fieldWidth, int fieldHeight);
 	bool			IsInsideOfField(Coord position);
 
-	void			SetFieldType(Coord fieldCoord, FieldBlockType fieldType){ m_FieldBlockList.find(fieldCoord)->second.m_Type = fieldType;}
-	void			SetFieldStatus(Coord fieldCoord, FieldBlockStatus fieldStatus){ m_FieldBlockList.find(fieldCoord)->second.m_Status = fieldStatus; }
 
+	// TODO : 요 함수 두개 에러처리
+	void			SetFieldType(Coord fieldCoord, FieldBlockType fieldType){ m_FieldBlockList.at(fieldCoord).m_Type = fieldType;}
+	void			SetFieldStatus(Coord fieldCoord, FieldBlockStatus fieldStatus){ m_FieldBlockList.at(fieldCoord).m_Status = fieldStatus; }
+
+	Coord			GetRandomBlock();
 	void			GetFieldBlockList(OUT FieldBlock fieldBlockArr[]);
 	FieldBlock		GetFieldBlock(Coord fieldCoord){ return m_FieldBlockList.find(fieldCoord)->second; }
 	int				GetFieldBlockListSize(){ return m_FieldBlockList.size(); }

@@ -447,6 +447,7 @@ void Game::HandleSkill(PlayerNumber attacker, SkillData* skillData)
 	{
 		m_IsFirstTurn = false;
 		m_PlayTurn++;	// 턴 경과요~
+		StartBreakDown();
 
 		if (m_Attacker == m_PlayerList[0])
 		{
@@ -1049,6 +1050,13 @@ void Game::StartBreakDown()
 	if (m_BreakDownTurn > m_PlayTurn) return;
 	
 	// TODO : 어디부터 몇 개의 블록이 추락할지 기획 상의 후 코딩
+	// 임시로 순서대로 블록 두개씩 사라지게
+	Coord fallBlockCoord = m_GameField.GetRandomBlock();
+	MakeFieldHole(fallBlockCoord);
+	fallBlockCoord = m_GameField.GetRandomBlock();
+	MakeFieldHole(fallBlockCoord);
+	return;
+
 }
 
 void Game::MakeFieldHole(Coord fieldCoord)
@@ -1071,7 +1079,23 @@ void Game::MakeFieldHole(Coord fieldCoord)
 	Unit* fallUnit = GetUnitInPosition(fieldCoord);
 	if (fallUnit != nullptr)
 	{
+		m_UnitActionQueue.clear();
+
 		KillThisUnit(fallUnit);
+
+		Packet::AttackResult outPacketUnitDie;
+		outPacketUnitDie.mQueueLength = m_UnitActionQueue.size();
+		for (unsigned int i = 0; i < m_UnitActionQueue.size(); i++)
+		{
+			memcpy(&outPacketUnitDie.mUnitActionQueue[i], &m_UnitActionQueue[i], sizeof(UnitAction));
+		}
+		for (auto playerNumber : m_PlayerList)
+		{
+			auto session = GClientManager->GetClient(playerNumber);
+			if (session != nullptr)
+				session->SendRequest(&outPacketUnitDie);
+		}
+
 		IsGameOver();
 	}
 
