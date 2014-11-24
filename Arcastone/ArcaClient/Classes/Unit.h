@@ -30,6 +30,9 @@ public:
 	Skill						GetSkill(){ return m_Skill; }
 	
 protected:
+	LabelTTF*					m_HpLabel;
+	LabelTTF*					m_AtkLabel;
+
 	UnitType					m_UnitType;
 	UnitMoveType				m_MoveType;
 	UnitOwner					m_Owner;
