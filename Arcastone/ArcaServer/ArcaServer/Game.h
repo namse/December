@@ -42,6 +42,9 @@ private:
 	void						IsGameOver();
 	void						UnitCounting();
 
+	void						StartBreakDown();
+	void						MakeFieldHole(Coord fieldCoord);
+
 	void						GameOver();
 
 
@@ -49,10 +52,13 @@ private:
 	GameNumber					m_GameNum;
 	Field						m_GameField;
 	PlayerNumber				m_Attacker;
-	int							m_CanCommand;	// 플레이어의 남은 명령 횟수
+
 	bool						m_IsNearArca[2];	// 아르카스톤이 옆에 있는지에 대한 상태변수
-	int							m_MaxTurn[2];
+	int							m_CurrentCost;	// 남은 코스트
+	int							m_MaxCost[2];
 	int							m_PlayTurn;	// 경과한 턴
+	int							m_BreakDownTurn;
+
 	bool						m_IsFirstTurn;
 	bool						m_IsGameOver;
 	int							m_UnitCount[3];	// 플레이어1, 플레이어2, NPC

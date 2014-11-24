@@ -34,13 +34,8 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 			Field* pField = game->GetField();
 			int blockCount = pField->GetFieldBlockListSize();
 
-			for (int i = 0; i < blockCount; ++i)
-			{
-				FieldBlock fieldBlock = pField->GetFieldBlock(i);
-				outPacket[0].mFieldList[i] = fieldBlock;
-				outPacket[1].mFieldList[i] = fieldBlock;
-				printf("%d, %d\n", outPacket[0].mFieldList[i].m_Position.x, outPacket[0].mFieldList[i].m_Position.y);
-			}
+			pField->GetFieldBlockList(outPacket[0].mFieldList);
+			pField->GetFieldBlockList(outPacket[1].mFieldList);
 			outPacket[0].mFieldLength = blockCount;
 			outPacket[1].mFieldLength = blockCount;
 			outPacket[0].mFieldSizeX = pField->GetFieldSizeX();
@@ -59,7 +54,6 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 			for (unsigned int i = 0; i < unitList.size(); ++i)
 			{
 				Unit* unit = unitList[i];
-				assert(unit);
 
 				auto position = unit->GetPos();
 
@@ -91,10 +85,6 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 				{
 					outPacket[0].mUnit[i].unitOwner = UO_NPC;
 					outPacket[1].mUnit[i].unitOwner = UO_NPC;
-				}
-				else
-				{
-					assert(false);
 				}
 			}
 			outPacket[0].mUnitLength = unitList.size();

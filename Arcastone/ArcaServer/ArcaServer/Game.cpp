@@ -8,7 +8,6 @@
 
 #define START_POINT_PLAYER1 Coord(3,5)
 #define START_POINT_PLAYER2 Coord(3,1)
-#define DEBUG_PRINT
 
 Game::Game(GameNumber gameNum) : m_GameNum(gameNum)
 {
@@ -77,11 +76,14 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	// 유닛 수 초기화
 	UnitCounting();
 
+	// 필드 붕괴 시작 턴 설정
+	m_BreakDownTurn = BREAK_DOWN_TURN;
+
 	// play turn and first attacker setting
 	m_Attacker = m_PlayerList.at(rand() % m_PlayerList.size());
-	m_CanCommand = MAX_TURN;
-	m_MaxTurn[0] = MAX_TURN;
-	m_MaxTurn[1] = MAX_TURN;
+	m_CurrentCost = MAX_TURN;
+	m_MaxCost[0] = MAX_TURN;
+	m_MaxCost[1] = MAX_TURN;
 	m_PlayTurn = 0;
 	m_Winner = WW_NONE;
 	m_IsFirstTurn = true;
@@ -108,7 +110,7 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData* attackData)
 	UnitMove(attackUnit, attackData);
 
 	// 이동했으니까 이동 가능 횟수 - 1
-	m_CanCommand--;
+	m_CurrentCost--;
 
 	// 유닛이 어떻게 어떻게 이동했는지 통째로 알려준다!
 	{
@@ -130,37 +132,38 @@ void Game::HandleAttack(PlayerNumber attacker, AttackData* attackData)
 
 	IsNearArca();	// 아르카스톤에 대한 턴 처리 해주고..
 
-	m_PlayTurn++;	// 턴 경과요~
 
 	{
 		// 너 마나 이만큼 남았어~
 		Packet::CostRenewalResult outPacket;
-		outPacket.mCost = m_CanCommand;
+		outPacket.mCost = m_CurrentCost;
 
 		int attackerIndex = GetPlayerIndexByPlayerNumber(m_Attacker);
-		outPacket.mMaxCost = m_MaxTurn[attackerIndex];
+		outPacket.mMaxCost = m_MaxCost[attackerIndex];
 		auto session = GClientManager->GetClient(m_Attacker);
 		if (session != nullptr)
 			session->SendRequest(&outPacket);
 	}
 
 	// 남은 턴 횟수가 없다면
-	if (m_CanCommand <= 0)
+	if (m_CurrentCost <= 0)
 	{
 		m_IsFirstTurn = false;
+		m_PlayTurn++;	// 턴 경과요~
+		StartBreakDown();
 
 		if (m_Attacker == m_PlayerList[0])
 		{
 			// 공격자를 바꾸고
 			m_Attacker = m_PlayerList[1];
 			// 얼마나 움직일 수 있는지 알려준다.
-			m_CanCommand = m_MaxTurn[1];
+			m_CurrentCost = m_MaxCost[1];
 			// 플레이어의 마나량을 재밍하는 스킬을 넣고싶다면 이 값에 일정값을 빼주면 된다.
 		}
 		else
 		{
 			m_Attacker = m_PlayerList[0];
-			m_CanCommand = m_MaxTurn[0];
+			m_CurrentCost = m_MaxCost[0];
 		}
 
 		// 공격하라는 신호를 보낸다!
@@ -396,7 +399,7 @@ void Game::HandleSkill(PlayerNumber attacker, SkillData* skillData)
 						  int power = skillData->skillRank + 1;
 
 						  // 마나1 소모
-						  m_CanCommand--;
+						  m_CurrentCost--;
 
 						  UnitPush(target, power, direction);
 	}break;
@@ -430,17 +433,17 @@ void Game::HandleSkill(PlayerNumber attacker, SkillData* skillData)
 	{
 		// 너 마나 이만큼 남았어~
 		Packet::CostRenewalResult outPacket;
-		outPacket.mCost = m_CanCommand;
+		outPacket.mCost = m_CurrentCost;
 
 		int attackerIndex = GetPlayerIndexByPlayerNumber(m_Attacker);
-		outPacket.mMaxCost = m_MaxTurn[attackerIndex];
+		outPacket.mMaxCost = m_MaxCost[attackerIndex];
 		auto session = GClientManager->GetClient(m_Attacker);
 		if (session != nullptr)
 			session->SendRequest(&outPacket);
 	}
 
 	// 남은 턴 횟수가 없다면
-	if (m_CanCommand <= 0)
+	if (m_CurrentCost <= 0)
 	{
 		m_IsFirstTurn = false;
 
@@ -449,13 +452,13 @@ void Game::HandleSkill(PlayerNumber attacker, SkillData* skillData)
 			// 공격자를 바꾸고
 			m_Attacker = m_PlayerList[1];
 			// 얼마나 움직일 수 있는지 알려준다.
-			m_CanCommand = m_MaxTurn[1];
+			m_CurrentCost = m_MaxCost[1];
 			// 플레이어의 마나량을 재밍하는 스킬을 넣고싶다면 이 값에 일정값을 빼주면 된다.
 		}
 		else
 		{
 			m_Attacker = m_PlayerList[0];
-			m_CanCommand = m_MaxTurn[0];
+			m_CurrentCost = m_MaxCost[0];
 		}
 
 		// 공격하라는 신호를 보낸다!
@@ -697,9 +700,9 @@ finishFindUnitNearArcastone:
 		else				// 전 턴에는 옆에 없었다면
 		{
 			// 최대 이동가능 횟수를 1 증가시킨다.
-			m_MaxTurn[whosTurn]++;
+			m_MaxCost[whosTurn]++;
 			// 현재 이동가능 횟수도 1 증가시킨다.
-			m_CanCommand++;
+			m_CurrentCost++;
 			// 그대 곁에 아르카스톤이 있으라
 			m_IsNearArca[whosTurn] = true;
 		}
@@ -708,8 +711,8 @@ finishFindUnitNearArcastone:
 	{
 		if (m_IsNearArca[whosTurn])	// 전 턴에는 옆에 있었다면
 		{
-			m_MaxTurn[whosTurn]--;
-			m_CanCommand--;
+			m_MaxCost[whosTurn]--;
+			m_CurrentCost--;
 			m_IsNearArca[whosTurn] = false;
 		}
 		else				// 전 턴에도 옆에 없었다면
@@ -1037,4 +1040,22 @@ Unit* Game::GetUnitInPosition(Coord position){
 
 UnitIdentityNumber Game::GenerateUnitIdentityNumber() {
 	return m_UnitIdentityNumberCounter++;
+}
+
+// 일정 턴 이후 필드 붕괴 시작
+void Game::StartBreakDown()
+{
+	if (m_BreakDownTurn > m_PlayTurn) return;
+	
+}
+
+void Game::MakeFieldHole(Coord fieldCoord)
+{
+	m_GameField.SetFieldType(fieldCoord, FBT_HOLE);
+	Unit* fallUnit = GetUnitInPosition(fieldCoord);
+	if (fallUnit != nullptr)
+	{
+		KillThisUnit(fallUnit);
+		IsGameOver();
+	}
 }

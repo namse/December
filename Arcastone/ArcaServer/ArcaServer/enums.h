@@ -1,5 +1,7 @@
 ﻿#pragma once
 #include "../../PacketType.h"
+
+#define DEBUG_PRINT true
 #define PLAYER_UNIT_MAX 6
 #define MAP_FIELD_WIDTH 7
 #define MAP_FIELD_HEIGHT 11
@@ -9,6 +11,7 @@
 #define USE_DRAW true							// 드로우(무승부) 있게 할거야?
 #define USE_ARCA true
 #define USE_ROCK true
+#define BREAK_DOWN_TURN 20
 
 typedef int PlayerNumber;
 typedef int GameNumber;
