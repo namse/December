@@ -27,7 +27,7 @@ void Field::InitField(int fieldWidth, int fieldHeight)
 				FieldBlock newFieldBlock;
 				Coord Pos(x, y);
 				newFieldBlock.m_Position = Pos;
-				newFieldBlock.m_Status = FBS_NONE;
+				newFieldBlock.m_Status = FBS_NORMAL;
 				newFieldBlock.m_Type = FBT_NORMAL;
 
 				m_FieldBlockList.insert(FieldBlockList::value_type(Pos, newFieldBlock));
@@ -46,18 +46,12 @@ bool Field::IsInsideOfField(Coord position)
 	if (it != m_FieldBlockList.end())
 	{
 		// 구멍나지 않았으면
-		if (it->second.m_Type != FBT_HOLE)
+		if (it->second.m_Status != FBS_HOLE)
 		{
 			return true; // 생존!
 		}
 	}
 	return false;
-}
-
-void Field::SetFieldType(Coord fieldCoord, FieldBlockType fieldType)
-{
-	FieldBlockList::iterator it = m_FieldBlockList.find(fieldCoord);
-	it->second.m_Type = fieldType;
 }
 
 void Field::GetFieldBlockList(OUT FieldBlock fieldBlockArr[])

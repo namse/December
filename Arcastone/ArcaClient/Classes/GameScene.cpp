@@ -1038,3 +1038,9 @@ void GameScene::gameOver(Packet::GameOverResult recvData)
 	}
 
 }
+
+void GameScene::ChangeFieldType(Packet::ChangeFieldResult recvData)
+{
+	FieldBlock changeField = recvData.mFieldBlock;
+	m_Field.SetFieldSprite(changeField);
+}

@@ -29,7 +29,7 @@ void Field::Init(Layer* sceneLayer, FieldBlock fieldBlock[], int length, int map
 		m_FieldGrid->drawPolygon(&hexa->vertex[0], 6, ccc4f(0.0f, 0.0f, 0.0f, 0.0f), 1, COLOR_OF_GRID);
 		
 		// 블록 스프라이트 생성
-		auto blockSprite = CreateFieldSprite(hexaPoint, fieldBlock[i].m_Type);
+		auto blockSprite = Sprite::create("sprite_none.png");
 
 		// 맵 반전일 경우 x,y좌표가 낮을수록 z-index가 높음 
 		int blockSpriteZidx;
@@ -39,6 +39,9 @@ void Field::Init(Layer* sceneLayer, FieldBlock fieldBlock[], int length, int map
 			blockSpriteZidx = hexaPoint.y*2 + hexaPoint.x;
 		
 		sceneLayer->addChild(blockSprite, blockSpriteZidx);
+		m_FieldSpriteMap.insert(FieldSpriteMap::value_type(hexaPoint, blockSprite));
+
+		SetFieldSprite(fieldBlock[i]);
 
 		if (DRAW_HEXA_NUMBER)
 		{
@@ -94,33 +97,46 @@ ScreenPoint Field::HexaToScreen(HexaPoint point)
 	return retPoint;
 }
 
-Sprite* Field::CreateFieldSprite(HexaPoint anchor, FieldBlockType fieldType)
+void Field::SetFieldSprite(FieldBlock fieldBlockData)
 {
-	Sprite* fieldBlock;
+	HexaPoint anchor(fieldBlockData.m_Position);
+	Sprite* fieldBlock = m_FieldSpriteMap.find(anchor)->second;
 	char imgNameBuf[20];
+	FieldBlockType fieldType = fieldBlockData.m_Type;
+	FieldBlockStatus fieldStatus = fieldBlockData.m_Status;
 
-	switch (fieldType)
+	switch (fieldStatus)
 	{
-	case FBT_NORMAL:
+	case FBS_NONE:
+		break;
+	case FBS_NORMAL:
 	{
-		char* imgName = "block";
-		sprintf_s(imgNameBuf, "%s%d.png", imgName, rand() % 3 + 1);
-	}break;
-	case FBT_HOLE:
-	{
-	}break;
+		switch (fieldType)
+		{
+		case FBT_NORMAL:
+		{
+			char* imgName = "block";
+			sprintf_s(imgNameBuf, "%s%d.png", imgName, rand() % 3 + 1);
+		}break;
+		default:
+			break;
+		}
+	}
+		break;
+	case FBS_HOLE:
+		strcpy(imgNameBuf,"sprite_none.png");
+		break;
 	default:
 		break;
 	}
 	
-	fieldBlock = Sprite::create(imgNameBuf);
+	fieldBlock->setTexture(imgNameBuf);
 	float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
 	fieldBlock->setScale(scale);
 	fieldBlock->setAnchorPoint(Vec2(0.5f, 0.67f));
 	fieldBlock->setPosition(HexaToScreen(anchor));
 
-	m_FieldSpriteMap.insert(FieldSpriteMap::value_type(anchor, fieldBlock));
-	return fieldBlock;
+	return;
 }
 
 LabelTTF* Field::CreateText(HexaPoint point)
@@ -166,3 +182,4 @@ bool Field::IsInHexagon(ScreenPoint touch, ScreenPoint anchor)
 	}
 	return false;
 }
+

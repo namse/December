@@ -70,16 +70,18 @@ enum HexaDirection{
 
 enum FieldBlockType
 {
+	// 필드 블록의 종류 (ex-돌바닥, 흙바닥, 강, 눈길 등)
 	FBT_NONE = 0,
 	FBT_NORMAL = 1,
-	FBT_HOLE = 2,
+	FBT_PITCHING = 2,
 };
 
 enum FieldBlockStatus
 {
+	// 필드의 상태 (안개, 구멍, 불탐, 빙결, 물)
 	FBS_NONE = 0,
-
-
+	FBS_NORMAL = 1,
+	FBS_HOLE = 2,
 };
 
 enum UnitOwner

@@ -14,9 +14,10 @@ public:
 	ScreenPoint				HexaToScreen(HexaPoint point);
 	bool					IsInHexagon(ScreenPoint touch, ScreenPoint anchor);
 
+	void					SetFieldSprite(FieldBlock fieldBlockData);
+
 
 private:
-	Sprite*					CreateFieldSprite(HexaPoint anchor, FieldBlockType fieldType);
 	LabelTTF*				CreateText(HexaPoint point);
 
 private:

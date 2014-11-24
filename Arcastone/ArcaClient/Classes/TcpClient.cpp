@@ -213,6 +213,13 @@ void TcpClient::processPacket()
 			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
 			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::gameOver, dynamic_cast<GameScene*>(layer), recvData));
 		}
+		case PKT_SC_CHANGE_FIELD:
+		{
+			Packet::ChangeFieldResult recvData;
+			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
+			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
+			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::ChangeFieldType, dynamic_cast<GameScene*>(layer), recvData));
+		}
 
 		default:
 			//assert(false);

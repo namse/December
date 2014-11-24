@@ -1053,12 +1053,12 @@ void Game::StartBreakDown()
 
 void Game::MakeFieldHole(Coord fieldCoord)
 {
-	m_GameField.SetFieldType(fieldCoord, FBT_HOLE);
+	m_GameField.SetFieldStatus(fieldCoord, FBS_HOLE);
+	FieldBlock changeBlock = m_GameField.GetFieldBlock(fieldCoord);
 
 	// 패킷 발송
-	Packet::ChangeFieldTypeResult outPacket;
-	outPacket.mFieldPos = fieldCoord;
-	outPacket.mFieldType = FBT_HOLE;
+	Packet::ChangeFieldResult outPacket;
+	outPacket.mFieldBlock = changeBlock;
 
 	for (auto playerNumber : m_PlayerList)
 	{

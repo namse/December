@@ -58,6 +58,7 @@ public:
 	void					ReadRestCost(Packet::CostRenewalResult recvData);
 	void					UsingSkill(Unit* unit);
 	void					gameOver(Packet::GameOverResult recvData);
+	void					ChangeFieldType(Packet::ChangeFieldResult recvData);
 
 private:
 
