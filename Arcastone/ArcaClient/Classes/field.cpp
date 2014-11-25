@@ -115,8 +115,9 @@ void Field::SetFieldSprite(FieldBlock fieldBlockData)
 		{
 		case FBT_NORMAL:
 		{
-			char* imgName = "block";
-			sprintf_s(imgNameBuf, "%s%d.png", imgName, rand() % 3 + 1);
+			//strcpy(imgNameBuf, "block_water.png");
+			char* imgName = "block_grass";
+			sprintf_s(imgNameBuf, "%s%d.png", imgName, rand() % 6 + 1);
 		}break;
 		default:
 			break;
@@ -133,7 +134,7 @@ void Field::SetFieldSprite(FieldBlock fieldBlockData)
 	fieldBlock->setTexture(imgNameBuf);
 	float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
 	fieldBlock->setScale(scale);
-	fieldBlock->setAnchorPoint(Vec2(0.5f, 0.67f));
+	fieldBlock->setAnchorPoint(Vec2(0.5f, 0.65f));
 	fieldBlock->setPosition(HexaToScreen(anchor));
 
 	return;

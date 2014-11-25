@@ -7,12 +7,16 @@
 #define LOGIN_IPADDR				"127.0.0.1"
 #define DEBUG_PRINT_PACKET			true
 
-#define DISPLAY_SIZEX				480
-#define DISPLAY_SIZEY				690
+#define DISPLAY_SIZEX				720
+#define DISPLAY_SIZEY				960
+
+#define RESOLUTION_SIZEX			1536
+#define RESOLUTION_SIZEY			2048
+
 
 #define MAP_XSTART					DISPLAY_SIZEX/2
 #define MAP_YSTART					DISPLAY_SIZEY/2
-#define HEXAGON_LENGTH				35
+#define HEXAGON_LENGTH				45
 
 #define PIXEL_TO_RANGE_MULT			0.03
 
@@ -23,7 +27,8 @@
 
 #define MAX_PLAYER_HAVE_UNITS		10
 
-#define COLOR_OF_GRID				ccc4f(0.0f, 0.6f, 1.0f, 0.5f)
+#define WIDTH_OF_GRID				1
+#define COLOR_OF_GRID				ccc4f(0.0f, 0.0f, 0.0f, 0.2f)
 
 #define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.3f)
 #define COLOR_OF_ENEMY				ccc4f(1.0f, 0.0f, 0.2f, 0.5f)
