@@ -3,33 +3,35 @@
 #include "HexaPoint.h"
 #include "ScreenPoint.h"
 
-// define
 #define LOGIN_IPADDR				"127.0.0.1"
+
 #define DEBUG_PRINT_PACKET			true
 
-#define DISPLAY_SIZEX				720
-#define DISPLAY_SIZEY				960
+#define NON_SELECT_UNIT INT_MAX
+									/* In Game Value  */
+#define MAX_HAVE_COST				5
+#define MAX_PLAYER_HAVE_UNITS		10
+#define MOVE_DURATION 0.3f
 
+									/*  Screen  */
+#define WIDTH_OF_GRID				1
 #define RESOLUTION_SIZEX			1536
 #define RESOLUTION_SIZEY			2048
-
-
+#define DISPLAY_SIZEX				640
+#define DISPLAY_SIZEY				760
 #define MAP_XSTART					DISPLAY_SIZEX/2
 #define MAP_YSTART					DISPLAY_SIZEY/2
-#define HEXAGON_LENGTH				45
-
-#define PIXEL_TO_RANGE_MULT			0.03
-
-#define DRAW_HEXA_NUMBER			false
-#define DRAW_HEXA_POSITION			false
-
 #define RADIANS_60					CC_DEGREES_TO_RADIANS(60)
+#define PIXEL_TO_RANGE_MULT			0.03
+#define HEXAGON_LENGTH				38
 
-#define MAX_PLAYER_HAVE_UNITS		10
+									/*  Debug  */
+#define DRAW_KNOCKBACK				false
+#define DRAW_HEXA_NUMBER			true
+#define DRAW_HEXA_POSITION			true
 
-#define WIDTH_OF_GRID				1
+									/*  Colors  */
 #define COLOR_OF_GRID				ccc4f(0.0f, 0.0f, 0.0f, 0.2f)
-
 #define COLOR_OF_PLAYER				ccc4f(0.0f, 0.6f, 1.0f, 0.3f)
 #define COLOR_OF_ENEMY				ccc4f(1.0f, 0.0f, 0.2f, 0.5f)
 #define COLOR_OF_CRASHED			ccc4f(1.0f, 0.0f, 0.0f, 0.65f)
@@ -37,14 +39,7 @@
 #define COLOR_OF_EXPECT				ccc4f(0.0f, 0.6f, 1.0f, 0.2f)
 #define COLOR_OF_SKILL				ccc4f(0.5f, 1.0f, 1.0f, 0.4f)
 
-#define NON_SELECT_UNIT INT_MAX
-
-#define MOVE_DURATION 0.3f
-
-#define DRAW_KNOCKBACK				false
-
-#define MAX_HAVE_COST				5
-
+									/*  ZOrder  */
 #define ZORDER_BLOCK				200
 #define ZORDER_CHARACTER			300
 #define ZORDER_STAT					400

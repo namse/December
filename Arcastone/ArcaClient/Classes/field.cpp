@@ -46,8 +46,8 @@ void Field::Init(Layer* sceneLayer, FieldBlock fieldBlock[], int length, int map
 		if (DRAW_HEXA_NUMBER)
 		{
 			// 인덱스 라벨 생성
-			auto indexLabel = CreateText(hexaPoint);	
-			sceneLayer->addChild(indexLabel, 200);
+			auto indexLabel = CreateText(hexaPoint);
+			sceneLayer->addChild(indexLabel, 999);
 		}
 	}
 	sceneLayer->addChild(m_FieldGrid, 100);
@@ -57,6 +57,7 @@ HexaPoint Field::ScreenToHexa(ScreenPoint point)
 {
 	// TODO : 헥사그리드 내에 있을 때만 검사하도록 수정
 	// 입력한 점이 주어진 범위를 벗어나면 -1, -1 을 리턴
+	/// 
 	HexaPoint retPoint(-1, -1);
 
 	// -맵크기의 3배 ~ 맵크기의 3배까지 검사한다
@@ -68,8 +69,7 @@ HexaPoint Field::ScreenToHexa(ScreenPoint point)
 			ScreenPoint anchor = HexaToScreen(HexaPoint(x, y));
 			if (IsInHexagon(point, anchor))
 			{
-				retPoint = HexaPoint(x, y);
-				break;
+				return HexaPoint(x, y);
 			}
 		}
 	}
@@ -81,17 +81,19 @@ ScreenPoint Field::HexaToScreen(HexaPoint point)
 {
 	ScreenPoint retPoint;
 
+	int xMidPoint = point.x - (m_MapWidth - 1)*0.5;
+	int yMidPoint = point.y - (m_MapHeight - 1)*0.5;
+
 	// MAP_START 를 중앙에 위치하도록 그려주기 위한 수식들
 	if (m_ReverseMap)
 	{
-		retPoint.x = MAP_XSTART - HEXAGON_LENGTH * 1.5 * (point.x - (m_MapWidth - 1)*0.5);
-		retPoint.y = MAP_YSTART + HEXAGON_LENGTH * sin(RADIANS_60) * (point.y * 2 - m_MapHeight + point.x - (m_MapWidth - 3)*0.5);
+		retPoint.x = MAP_XSTART - HEXAGON_LENGTH * 1.5 * (xMidPoint);
+		retPoint.y = MAP_YSTART + HEXAGON_LENGTH * 2 * sin(RADIANS_60) * (yMidPoint + xMidPoint * 0.5);
 	}
 	else
 	{
-	
-		retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (point.x - (m_MapWidth - 1)*0.5);
-		retPoint.y = MAP_YSTART - HEXAGON_LENGTH * sin(RADIANS_60) * (point.y * 2 - m_MapHeight + point.x - (m_MapWidth - 3)*0.5);
+		retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (xMidPoint);
+		retPoint.y = MAP_YSTART - HEXAGON_LENGTH * 2 * sin(RADIANS_60) * (yMidPoint + xMidPoint * 0.5);
 	}
 
 	return retPoint;
@@ -135,7 +137,8 @@ void Field::SetFieldSprite(FieldBlock fieldBlockData)
 	float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
 	fieldBlock->setScale(scale);
 	fieldBlock->setAnchorPoint(Vec2(0.5f, 0.65f));
-	fieldBlock->setPosition(HexaToScreen(anchor));
+	ScreenPoint screenPoint = HexaToScreen(anchor);
+	fieldBlock->setPosition(screenPoint);
 
 	return;
 }
@@ -155,9 +158,10 @@ LabelTTF* Field::CreateText(HexaPoint point)
 		sprintf_s(szBuf, _countof(szBuf), "%d,%d", (int)point.x, (int)point.y);
 	}
 
-	vLabel = LabelTTF::create(szBuf, "Hevetica", 12);
+	vLabel = LabelTTF::create(szBuf, "Hevetica", 20);
 
-	vLabel->setPosition(HexaToScreen(point));
+	ScreenPoint screenPoint = HexaToScreen(point);
+	vLabel->setPosition(screenPoint);
 	vLabel->setColor(Color3B(0, 0, 0));
 
 	return vLabel;

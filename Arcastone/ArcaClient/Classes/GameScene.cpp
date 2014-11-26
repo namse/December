@@ -42,7 +42,7 @@ bool GameScene::init()
 	{
 		m_CostLabel[i] = LabelTTF::create("", "Hevetica", 20);
 
-		m_CostLabel[i]->setPosition(Point(120 + i * 28, 675));
+		m_CostLabel[i]->setPosition(Point(120 + i * 28, DISPLAY_SIZEY - 64));
 
 		m_CostLabel[i]->setColor(Color3B(100, 100, 100));
 
@@ -51,7 +51,7 @@ bool GameScene::init()
 
 	m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 20);
 
-	m_TurnLabel->setPosition(Point(55, 675));
+	m_TurnLabel->setPosition(Point(55, DISPLAY_SIZEY - 64));
 
 	m_TurnLabel->setColor(Color3B(100, 100, 100));
 
@@ -106,12 +106,12 @@ void GameScene::touchEventInit()
 
 bool GameScene::onTouchBegan(Touch* touch, Event* event)
 {
-	if (!m_IsMyTurn) return false;			// 자신의 턴인 경우에만 마우스 입력을 받는다.
+	if (!m_IsMyTurn) return false;
 
-	m_StartPoint = ScreenPoint(touch->getLocation());
-	m_CursoredPoint = ScreenPoint(touch->getLocation());
+	m_StartPoint = ScreenPoint(touch->getLocation().x, touch->getLocation().y);
+	m_CursoredPoint = m_StartPoint;
 
-	// 스킬 사용 범위 선택중이라면 return true~
+	// 스킬 사용 범위 선택중이라면 return true
 	if (m_IsCastSkill) return true;
 
 	// 커서 안움직임요
@@ -126,10 +126,13 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 		// 자신의 유닛인지 확인한다
 		if (unit->GetOwner() != UO_ME) continue;
 
-		// 자신 유닛의 좌표인덱스를 화면상 위치로 변환하여
+		// 유닛의 좌표인덱스를 화면상 위치로 변환하여
 		ScreenPoint screenPoint = m_Field.HexaToScreen(unit->GetPosition());
 
-		// 자신의 유닛을 클릭했는지 판정한다.
+		if (unit->GetPosition().x == 3 && unit->GetPosition().y == 7)
+			int a = 0;
+
+		// 어떤 유닛을 클릭했는지 판정한다.
 		if (m_Field.IsInHexagon(m_StartPoint, screenPoint))
 		{
 			// 그 유닛을 선택했다는 것을 지정하기 위해 id 를 멤버변수에 저장한다.

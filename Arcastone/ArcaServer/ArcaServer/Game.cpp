@@ -292,7 +292,7 @@ void Game::UnitMove(Unit* unit, AttackData* attackData)
 				dashAction.mMoveData.mFinalY = attackData->position[move].y;
 
 				m_UnitActionQueue.push_back(dashAction);
-#ifdef DEBUG_PRINT
+#ifdef _DEBUG
 				PrintUnitActionQueue(dashAction);
 #endif
 			}
@@ -330,7 +330,7 @@ void Game::UnitMove(Unit* unit, AttackData* attackData)
 		action.mMoveData.mFinalY = movePos.y;
 
 		m_UnitActionQueue.push_back(action);
-#ifdef DEBUG_PRINT
+#ifdef _DEBUG
 		PrintUnitActionQueue(action);
 #endif
 	}
@@ -356,7 +356,7 @@ void Game::UnitMove(Unit* unit, AttackData* attackData)
 		collisionAct.mCollisionData.mMyHP = crashGuy->GetHP();
 		collisionAct.mCollisionData.mTargetHP = crashGuy->GetHP();
 		m_UnitActionQueue.push_back(collisionAct);
-#ifdef DEBUG_PRINT
+#ifdef _DEBUG
 		PrintUnitActionQueue(collisionAct);
 #endif
 
@@ -561,7 +561,7 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 
 	m_UnitActionQueue.push_back(action);
 
-#ifdef DEBUG_PRINT
+#ifdef _DEBUG
 	PrintUnitActionQueue(action);
 #endif
 
@@ -585,7 +585,7 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 		collisionAct.mCollisionData.mMyHP = crashGuy->GetHP();
 		collisionAct.mCollisionData.mTargetHP = crashGuy->GetHP();
 		m_UnitActionQueue.push_back(collisionAct);
-#ifdef DEBUG_PRINT
+#ifdef _DEBUG
 		PrintUnitActionQueue(collisionAct);
 #endif
 
@@ -615,7 +615,7 @@ void Game::KillThisUnit(Unit* unit)
 	action.mUnitId = unit->GetID();
 
 	m_UnitActionQueue.push_back(action);
-#ifdef DEBUG_PRINT
+#ifdef _DEBUG
 	PrintUnitActionQueue(action);
 #endif
 }
