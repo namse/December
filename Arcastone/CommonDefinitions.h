@@ -112,6 +112,7 @@ enum UnitActionType{
 enum UnitSkillType{
 	USK_NONE = 0,
 	USK_FIREBALL = 1,
+	USK_STAMP = 2,
 };
 
 enum UnitSkillRank{

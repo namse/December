@@ -10,8 +10,8 @@ public:
 
 
 	// TODO : 요 함수 두개 에러처리
-	void			SetFieldType(Coord fieldCoord, FieldBlockType fieldType){ m_FieldBlockList.at(fieldCoord).m_Type = fieldType;}
-	void			SetFieldStatus(Coord fieldCoord, FieldBlockStatus fieldStatus){ m_FieldBlockList.at(fieldCoord).m_Status = fieldStatus; }
+	void			SetFieldType(Coord fieldCoord, FieldBlockType fieldType){ m_FieldBlockList.at(fieldCoord).type = fieldType;}
+	void			SetFieldStatus(Coord fieldCoord, FieldBlockStatus fieldStatus){ m_FieldBlockList.at(fieldCoord).status = fieldStatus; }
 
 	Coord			GetRandomBlock();
 	void			GetFieldBlockList(OUT FieldBlock fieldBlockArr[]);

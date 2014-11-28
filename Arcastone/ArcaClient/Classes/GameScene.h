@@ -34,30 +34,30 @@ public:
 
 	/* draw 함수 */
 	void					DrawExpectUnitMove(Unit* unit);
-	void					drawUnitMove();
+	void					DrawUnitMove();
 	void					drawMoveSign(HexaPoint point, Color4F signColor);
 	void					HighlightHexagon(ScreenPoint position);
 	void					releaseExpectMoveSign();
-	void					releaseMoveSign();
+	void					ReleaseMoveSign();
 	void					KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direction, int range);
 	
-	void					onUnitAction(CCNode* sender = NULL);
+	void					OnUnitAction(CCNode* sender = NULL);
 	void					drawSkillEffect(Skill skill);
 	
 
 	/* 멤버 검색 함수 */
-	Unit*					getUnitByID(int unitID);
-	Unit*					getUnitByPos(HexaPoint unitPos);
+	Unit*					GetUnitByID(int unitID);
+	Unit*					GetUnitByPos(HexaPoint unitPos);
 
 
 	/* 네트워크 관련 함수 */
-	void					onGameStart(Packet::GameStartResult inPacket);
+	void					OnGameStart(Packet::GameStartResult inPacket);
 	void					ReadUnitData(UnitData unitData[], int length);
 	void					SetTurn(bool isMyTurn);
 	void					ReadActionQueue(Packet::AttackResult attackResult);
 	void					ReadRestCost(Packet::CostRenewalResult recvData);
 	void					UsingSkill(Unit* unit);
-	void					gameOver(Packet::GameOverResult recvData);
+	void					GameOver(Packet::GameOverResult recvData);
 	void					ChangeFieldType(Packet::ChangeFieldResult recvData);
 
 private:

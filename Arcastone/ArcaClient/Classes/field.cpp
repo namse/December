@@ -55,12 +55,11 @@ void Field::Init(Layer* sceneLayer, FieldBlock fieldBlock[], int length, int map
 
 HexaPoint Field::ScreenToHexa(ScreenPoint point)
 {
-	// TODO : 헥사그리드 내에 있을 때만 검사하도록 수정
-	// 입력한 점이 주어진 범위를 벗어나면 -1, -1 을 리턴
-	/// 
+	// 헥사그리드 내에 있을 때만 검사하는 코드는 IsThisHexaField 로.
+	// 입력한 점이 일정 범위를 벗어나면 -1, -1 을 리턴.
 	HexaPoint retPoint(-1, -1);
 
-	// -맵크기의 3배 ~ 맵크기의 3배까지 검사한다
+	// 임시로 -맵크기의 3배 ~ 맵크기의 3배까지 검사한다
 	for (int x = -m_MapWidth * 3; x < m_MapWidth * 3; ++x)
 	{
 		for (int y = -m_MapHeight * 3; y < m_MapHeight * 3; ++y)
@@ -75,6 +74,17 @@ HexaPoint Field::ScreenToHexa(ScreenPoint point)
 	}
 
 	return retPoint;
+}
+
+bool Field::IsThisHexaInField(HexaPoint point)
+{
+	for (int i = 0; i < m_HexaPointList.size(); ++i)
+	{
+		if (point.x == m_HexaPointList.at(i).x &&
+			point.y == m_HexaPointList.at(i).y)
+			return true;
+	}
+	return false;
 }
 
 ScreenPoint Field::HexaToScreen(HexaPoint point)
