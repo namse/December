@@ -3,6 +3,7 @@
 
 Field::Field()
 {
+	
 }
 
 
@@ -12,11 +13,13 @@ Field::~Field()
 
 void Field::Init(Layer* sceneLayer, FieldBlock fieldBlock[], int length, int mapWidth, int mapHeight, bool ReverseMap)
 {
+	InitSpriteResource();
+
 	m_FieldGrid = DrawNode::create();
 	m_MapWidth = mapWidth;
 	m_MapHeight = mapHeight;
 	m_ReverseMap = ReverseMap;
-
+	
 	for (int i = 0; i < length; i++)
 	{
 		HexaPoint hexaPoint(fieldBlock[i].m_Position);
@@ -52,6 +55,38 @@ void Field::Init(Layer* sceneLayer, FieldBlock fieldBlock[], int length, int map
 	}
 	sceneLayer->addChild(m_FieldGrid, 100);
 }
+
+void Field::InitSpriteResource()
+{
+	// TODO : 하드코딩을 조져 너희를 이롭게 하리라 
+	m_SpriteFrame = SpriteFrameCache::sharedSpriteFrameCache();
+	m_SpriteFrame->addSpriteFramesWithFile("block_water.plist");
+	m_SpriteFrame->addSpriteFramesWithFile("block_grass.plist");
+	m_SpriteFrame->addSpriteFramesWithFile("block_cover_water.plist");
+
+	char blockType[30];
+	char spriteName[30];
+
+	auto waterAnimate = Animation::create();
+	strcpy(blockType, "block_water");
+	for (unsigned int i = 1; i < 12; ++i)
+	{
+		sprintf(spriteName, "%s%d.png", blockType, i);
+		waterAnimate->addSpriteFrame(m_SpriteFrame->getSpriteFrameByName(spriteName));
+	}
+	m_AnimationList.insert(AnimationList::value_type(FBT_WATER,waterAnimate));
+
+	auto coverwaterAnimate = Animation::create();
+	strcpy(blockType, "block_cover_water");
+	for (unsigned int i = 1; i < 12; ++i)
+	{
+		sprintf(spriteName, "%s%d.png", blockType, i);
+		coverwaterAnimate->addSpriteFrame(m_SpriteFrame->getSpriteFrameByName(spriteName));
+	}
+	m_AnimationList.insert(AnimationList::value_type(FBT_COVER_WATER, coverwaterAnimate));
+}
+
+
 
 HexaPoint Field::ScreenToHexa(ScreenPoint point)
 {
@@ -120,20 +155,36 @@ void Field::SetFieldSprite(FieldBlock fieldBlockData)
 			//strcpy(imgNameBuf, "block_water.png");
 			char* imgName = "block_grass";
 			sprintf_s(imgNameBuf, "%s%d.png", imgName, rand() % 6 + 1);
+			fieldBlock->setSpriteFrame(m_SpriteFrame->getSpriteFrameByName(imgNameBuf));
 		}break;
 		default:
 			break;
 		}
-	}
-		break;
+	}break;
+	
 	case FBS_HOLE:
-		strcpy(imgNameBuf,"sprite_none.png");
+	{
+		strcpy(imgNameBuf, "sprite_none.png");
+		fieldBlock->setTexture(imgNameBuf);
+	}break;
+
+	case FBS_WATER:
+	{
+		strcpy(imgNameBuf, "block_water1.png");
+		fieldBlock->setSpriteFrame(m_SpriteFrame->getSpriteFrameByName(imgNameBuf));
+		auto blockAnimation = m_AnimationList.at(FBT_WATER);
+		blockAnimation->setDelayPerUnit(0.15f);
+		fieldBlock->runAction(RepeatForever::create(Animate::create(blockAnimation)));
+	}break;
+	/*
+	case FBS_COVER_WATER:
+		fieldBlock->runAction(CCRepeatForever::create(CCAnimate::create(m_AnimationList.at(FBT_WATER))));
 		break;
+	*/
 	default:
 		break;
 	}
 	
-	fieldBlock->setTexture(imgNameBuf);
 	float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
 	fieldBlock->setScale(scale);
 	fieldBlock->setAnchorPoint(Vec2(0.5f, 0.65f));
@@ -187,4 +238,3 @@ bool Field::IsInHexagon(ScreenPoint touch, ScreenPoint anchor)
 	}
 	return false;
 }
-

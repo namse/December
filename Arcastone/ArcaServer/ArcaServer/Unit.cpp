@@ -8,6 +8,7 @@
 #include "ArcaStone.h"
 #include "Rider.h"
 #include "Rock.h"
+#include "Tree.h"
 #include "JsonManager.h"
 
 
@@ -61,6 +62,10 @@ Unit* Unit::CreateUnit(UnitType unitType)
 	case UT_ROCK:
 	{
 		newUnit = new Rock();
+	}break;
+	case UT_TREE:
+	{
+		newUnit = new Tree();
 	}break;
 	default:
 		assert(false && "Unit::create - Non defined new unitType");

@@ -1,0 +1,159 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+	<dict>
+		<key>frames</key>
+		<dict>
+			<key>block_water1.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,0},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water2.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{200,0},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water3.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{400,0},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water4.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,250},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water5.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{200,250},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water6.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{400,250},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water7.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,500},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water8.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{0,750},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water9.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{200,500},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water10.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{400,500},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water11.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{200,750},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+			<key>block_water12.png</key>
+			<dict>
+				<key>frame</key>
+				<string>{{400,750},{200,250}}</string>
+				<key>offset</key>
+				<string>{0,0}</string>
+				<key>rotated</key>
+				<false />
+				<key>sourceSize</key>
+				<string>{200,250}</string>
+			</dict>
+		</dict>
+		<key>metadata</key>
+		<dict>
+			<key>format</key>
+			<integer>2</integer>
+			<key>textureFileName</key>
+			<string>block_water.png</string>
+			<key>realTextureFileName</key>
+			<string>block_water.png</string>
+			<key>size</key>
+			<string>{600,1000}</string>
+		</dict>
+		<key>texture</key>
+		<dict>
+			<key>width</key>
+			<integer>600</integer>
+			<key>height</key>
+			<integer>1000</integer>
+		</dict>
+	</dict>
+</plist>

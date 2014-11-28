@@ -90,6 +90,9 @@
     <ClCompile Include="..\Classes\Rock.cpp">
       <Filter>GameObject\Unit\NPC</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Tree.cpp">
+      <Filter>GameObject\Unit\NPC</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\CircularBuffer.h">
@@ -157,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="..\..\CommonDefinitions.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Tree.h">
+      <Filter>GameObject\Unit\NPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -36,6 +36,7 @@ enum UnitType{
 	UT_ARCASTONE = 7,
 	UT_RIDER = 8,
 	UT_ROCK = 9,
+	UT_TREE = 10,
 
 	UT_MAX = 1024,
 };
@@ -74,6 +75,9 @@ enum FieldBlockType
 	FBT_NONE = 0,
 	FBT_NORMAL = 1,
 	FBT_PITCHING = 2,
+	FBT_GRASS = 3,
+	FBT_WATER = 4,
+	FBT_COVER_WATER = 5,
 };
 
 enum FieldBlockStatus
@@ -82,6 +86,7 @@ enum FieldBlockStatus
 	FBS_NONE = 0,
 	FBS_NORMAL = 1,
 	FBS_HOLE = 2,
+	FBS_WATER = 3,
 };
 
 enum UnitOwner

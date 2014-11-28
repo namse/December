@@ -28,7 +28,7 @@
 									/*  Debug  */
 #define DRAW_KNOCKBACK				false
 #define DRAW_HEXA_NUMBER			true
-#define DRAW_HEXA_POSITION			true
+#define DRAW_HEXA_POSITION			false
 
 									/*  Colors  */
 #define COLOR_OF_GRID				ccc4f(0.0f, 0.0f, 0.0f, 0.2f)

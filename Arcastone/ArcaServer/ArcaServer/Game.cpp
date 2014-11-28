@@ -71,7 +71,17 @@ void Game::InitGame(PlayerNumber player1, PlayerNumber player2)
 	if (USE_ARCA) SetUpNPC(UT_ARCASTONE, Coord(3, 5));
 
 	// 장애물 설치
-	if (USE_ROCK) SetUpNPC(UT_ROCK, Coord(5, 8));
+	if (USE_ROCK)
+	{
+		SetUpNPC(UT_ROCK, Coord(5, 8));
+		SetUpNPC(UT_ROCK, Coord(1, 2));
+		SetUpNPC(UT_TREE, Coord(0, 9));
+		SetUpNPC(UT_TREE, Coord(0, 10));
+		SetUpNPC(UT_TREE, Coord(1, 10));
+		SetUpNPC(UT_TREE, Coord(5, 0));
+		SetUpNPC(UT_TREE, Coord(6, 0));
+		SetUpNPC(UT_TREE, Coord(6, 1));
+	}
 
 	// 유닛 수 초기화
 	UnitCounting();

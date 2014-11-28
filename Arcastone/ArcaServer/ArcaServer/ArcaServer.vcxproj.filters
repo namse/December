@@ -162,6 +162,9 @@
     <ClInclude Include="..\..\CommonDefinitions.h">
       <Filter>Utils</Filter>
     </ClInclude>
+    <ClInclude Include="Tree.h">
+      <Filter>GameLogic\Unit\NPC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CircularBuffer.cpp">
@@ -247,6 +250,9 @@
     </ClCompile>
     <ClCompile Include="Princess.cpp">
       <Filter>GameLogic\Unit\PC</Filter>
+    </ClCompile>
+    <ClCompile Include="Tree.cpp">
+      <Filter>GameLogic\Unit\NPC</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

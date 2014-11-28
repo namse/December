@@ -8,6 +8,7 @@
 #include "ArcaStone.h"
 #include "Rock.h"
 #include "NPC.h"
+#include "Tree.h"
 
 Unit::Unit()
 {
@@ -53,6 +54,10 @@ Unit* Unit::create(UnitData unitData)
 		case UT_ARCASTONE:
 		{
 							 newUnit = new ArcaStone();
+		}break;
+		case UT_TREE:
+		{
+							newUnit = new Tree();
 		}break;
 		default:
 			assert(false && "Unit::create - Non defined new unitType");

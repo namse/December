@@ -9,7 +9,8 @@ public:
 	~Field();
 
 	void					Init(Layer* sceneLayer, FieldBlock fieldBlock[], int length, int mapWidth, int mapHeight, bool ReverseMap);
-	
+	void					InitSpriteResource();
+
 	HexaPoint				ScreenToHexa(ScreenPoint point);
 	ScreenPoint				HexaToScreen(HexaPoint point);
 	bool					IsInHexagon(ScreenPoint touch, ScreenPoint anchor);
@@ -30,5 +31,9 @@ private:
 	HexaPointList			m_HexaPointList;
 	FieldSpriteMap			m_FieldSpriteMap;
 	DrawNode*				m_FieldGrid;
+
+	typedef std::map<FieldBlockType, Animation*> AnimationList;
+	CCSpriteFrameCache*		m_SpriteFrame;
+	AnimationList			m_AnimationList;
 };
 

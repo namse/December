@@ -1,22 +1,23 @@
-﻿#include "Rock.h"
+#include "Tree.h"
 
 
-Rock::Rock()
+Tree::Tree()
 {
 }
 
 
-Rock::~Rock()
+Tree::~Tree()
 {
 }
 
-void Rock::initSprite()
+
+void Tree::initSprite()
 {
 	Unit::initSprite();
 	assert(m_Owner == UO_NPC);
 
 	Sprite* unitSprite;
-	unitSprite = Sprite::create("npc_rock.png");
+	unitSprite = Sprite::create("npc_tree.png");
 
 	unitSprite->setScale(HEXAGON_LENGTH*1.5 / unitSprite->getContentSize().width);
 	unitSprite->setAnchorPoint(Vec2(0.5f, 0.3f));

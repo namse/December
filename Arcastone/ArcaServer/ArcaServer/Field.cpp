@@ -35,6 +35,22 @@ void Field::InitField(int fieldWidth, int fieldHeight)
 		}
 	}
 
+	// 임시 설정
+	SetFieldStatus(Coord(4, 9), FBS_WATER);
+	SetFieldStatus(Coord(3, 10), FBS_WATER);
+	SetFieldStatus(Coord(2, 10), FBS_WATER);
+	SetFieldStatus(Coord(2, 1), FBS_WATER);
+	SetFieldStatus(Coord(3, 0), FBS_WATER);
+	SetFieldStatus(Coord(4, 0), FBS_WATER);
+
+	SetFieldType(Coord(4, 9), FBT_WATER);
+	SetFieldType(Coord(3, 10), FBT_WATER);
+	SetFieldType(Coord(2, 10), FBT_WATER);
+	SetFieldType(Coord(2, 1), FBT_WATER);
+	SetFieldType(Coord(3, 0), FBT_WATER);
+	SetFieldType(Coord(4, 0), FBT_WATER);
+	
+		
 	m_FieldSizeX = MAP_FIELD_WIDTH;
 	m_FieldSizeY = MAP_FIELD_HEIGHT;
 }
