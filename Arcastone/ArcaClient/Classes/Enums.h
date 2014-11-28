@@ -5,9 +5,13 @@
 
 #define LOGIN_IPADDR				"127.0.0.1"
 
-#define OPEN_DEBUG_CONSOLE			true
-
 #define NON_SELECT_UNIT INT_MAX
+
+/*  Debug  */
+#define OPEN_DEBUG_CONSOLE			false
+#define DRAW_KNOCKBACK				false
+#define DRAW_HEXA_NUMBER			true
+#define DRAW_HEXA_POSITION			false
 
 /* In Game Value  */
 #define MAX_HAVE_COST				5
@@ -26,17 +30,14 @@
 #define PIXEL_TO_RANGE_MULT			0.03
 #define HEXAGON_LENGTH				38
 
-/*  Debug  */
-#define DRAW_KNOCKBACK				false
-#define DRAW_HEXA_NUMBER			true
-#define DRAW_HEXA_POSITION			true
-
 /*  Sound  */
 #define USE_SOUND					false
 #define ARCA_SOUND_GAMESTART		"start.mp3"
 #define ARCA_SOUND_MOVE				"move.mp3"
 #define ARCA_SOUND_DIE				"die.mp3"
 #define ARCA_SOUND_COLLISION		"collision.mp3"
+#define ARCA_SOUND_BGM				"bgm.mp3"
+#define ARCA_SOUND_MYTURN			"myturn.mp3"
 
 /*  Colors  */
 #define COLOR_OF_GRID				ccc4f(0.0f, 0.0f, 0.0f, 0.2f)

@@ -9,7 +9,8 @@ Field::Field()
 
 
 Field::~Field()
-{	
+{
+
 }
 
 void Field::InitField(int fieldWidth, int fieldHeight)

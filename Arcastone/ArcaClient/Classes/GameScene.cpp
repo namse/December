@@ -32,12 +32,21 @@ bool GameScene::init()
 	// 마우스 이벤트를 사용하기 위해 초기화
 	touchEventInit();
 
-	m_MaxCosst = 2;
+	// 코스트 라벨 생성
+	InitCostLabel();
 
 	m_IsCursorMoved = false;
-
 	m_IsCastSkill = false;
+	m_MaxCosst = 2;
 
+	// 게임 시작!!
+	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
+
+	return true;
+}
+
+void GameScene::InitCostLabel()
+{
 	for (int i = 0; i < MAX_HAVE_COST; ++i)
 	{
 		m_CostLabel[i] = LabelTTF::create("", "Hevetica", 20);
@@ -56,10 +65,6 @@ bool GameScene::init()
 	m_TurnLabel->setColor(Color3B(100, 100, 100));
 
 	this->addChild(m_TurnLabel, 0 + ZORDER_UI);
-
-	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
-
-	return true;
 }
 
 void GameScene::gameLogic(float dt)
@@ -73,7 +78,10 @@ void GameScene::gameLogic(float dt)
 		{
 			TcpClient::getInstance()->loginRequest();
 			m_GameState = GS_WAIT_GAME;
-			CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic("bgm.mp3",true);
+			if (USE_SOUND)
+			{
+				CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(ARCA_SOUND_BGM, true);
+			}
 		}
 	}break;
 
@@ -129,14 +137,12 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 		// 유닛의 좌표인덱스를 화면상 위치로 변환하여
 		ScreenPoint screenPoint = m_Field.HexaToScreen(unit->GetPosition());
 
-		if (unit->GetPosition().x == 3 && unit->GetPosition().y == 7)
-			int a = 0;
-
 		// 어떤 유닛을 클릭했는지 판정한다.
 		if (m_Field.IsInHexagon(m_StartPoint, screenPoint))
 		{
 			// 그 유닛을 선택했다는 것을 지정하기 위해 id 를 멤버변수에 저장한다.
 			m_SelectedUnit = unit->GetID();
+			m_SelectedUnitPoint = GetUnitByID(m_SelectedUnit)->GetPosition();
 
 			// 유닛이 이동가능한 헥사곤을 하이라이트한다
 			DrawExpectUnitMove(unit);
@@ -165,10 +171,12 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	HexaPoint cursoredPoint;
 	cursoredPoint = m_Field.ScreenToHexa(m_CursoredPoint);
 
+	m_CursoredPoint = ScreenPoint(touch->getLocation());
+
+//	DrawCursorSign();
+
 	// 터치한 위치가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 그냥 return;
 	if (touchIndex == cursoredPoint) return;
-
-	m_CursoredPoint = ScreenPoint(touch->getLocation());
 
 	// 커서 움직임요
 	m_IsCursorMoved = true;
@@ -211,7 +219,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		m_IsCastSkill = true;
 		
 		// 스킬 쓸 수 있는 범위 그려줄게~
-		drawSkillEffect(GetUnitByID(m_SelectedUnit)->GetSkill());
+		DrawSkillEffect(GetUnitByID(m_SelectedUnit)->GetSkill());
 
 		// 아니 근데 너 스킬 못쓰잖아?
 		if (m_CourseStack.empty())
@@ -329,7 +337,21 @@ void GameScene::UsingSkill(Unit* unit)
 	TcpClient::getInstance()->skillRequest(&skillData);
 }
 
-void GameScene::drawSkillEffect(Skill skill)
+void GameScene::DrawCursorSign()
+{
+	this->removeChild(m_CursorSignNode);
+
+	m_CursorSignNode = DrawNode::create();
+
+	ScreenPoint drawToPoint(m_SelectedUnitPoint.x * 2 - m_CursoredPoint.x, m_SelectedUnitPoint.y * 2 - m_CursoredPoint.y);
+
+	m_CursorSignNode->drawSegment(m_SelectedUnitPoint, m_CursoredPoint, 5, Color4F(1.0f, 0.0f, 0.0f, 0.4f));
+	this->addChild(m_CursorSignNode, 10000);
+
+	return;
+}
+
+void GameScene::DrawSkillEffect(Skill skill)
 {
 	switch (skill.type)
 	{
@@ -345,11 +367,11 @@ void GameScene::drawSkillEffect(Skill skill)
 								  if (GetUnitByPos(effectPoint) != nullptr)
 								  {
 									  // 유닛이 있는 곳에만 사용 가능한 스킬임!
-									  drawMoveSign(effectPoint, COLOR_OF_CRASHED);
+									  DrawMoveSign(effectPoint, COLOR_OF_CRASHED);
 									  m_CourseStack.push_back(effectPoint);
 									  break;
 								  }
-								  drawMoveSign(effectPoint, COLOR_OF_SKILL);
+								  DrawMoveSign(effectPoint, COLOR_OF_SKILL);
 							  }
 						  }
 	}break;
@@ -434,19 +456,6 @@ void GameScene::DrawUnitMove()
 	{
 	case UMT_STRAIGHT:
 	case UMT_JUMP:{
-					  // TODO
-					  Point line[3] = 
-					  {
-							m_StartPoint,
-							m_CursoredPoint,
-							m_StartPoint
-					  };
-
-					  DrawNode* courseSignNode = DrawNode::create();
-
-					  courseSignNode->drawPolygon(line, 3, Color4F(1.0f, 1.0f, 1.0f, 0.5f), 1, Color4F(0.0f, 0.0f, 0.0f, 0.0f));
-
-
 
 					  // 선택한 공격자 유닛의 위치로 커서를 이동했다면 초기화
 					  if (cursoredHexa == unitPos)
@@ -485,7 +494,7 @@ void GameScene::DrawUnitMove()
 							  // 아 근데, 여기 다른유닛 있어?
 							  if (crashUnit == nullptr)
 							  {
-								  drawMoveSign(atkCourse, COLOR_OF_PLAYER);
+								  DrawMoveSign(atkCourse, COLOR_OF_PLAYER);
 							  }
 							  else
 							  {
@@ -505,7 +514,7 @@ void GameScene::DrawUnitMove()
 						  if (crashUnit == nullptr)
 						  {
 							  // 무조건 이동할 수 있어!
-							  drawMoveSign(atkPoint, COLOR_OF_PLAYER);
+							  DrawMoveSign(atkPoint, COLOR_OF_PLAYER);
 							  return;
 						  }
 						  else // 어 누구 있네?
@@ -526,8 +535,8 @@ void GameScene::DrawUnitMove()
 								  // 에이.. 그럼 못가겠네
 								  ReleaseMoveSign();
 								  m_CourseStack.clear();
-								  drawMoveSign(atkPoint, COLOR_OF_CANTMOVE);
-								  drawMoveSign(preAtkPoint, COLOR_OF_CANTMOVE);
+								  DrawMoveSign(atkPoint, COLOR_OF_CANTMOVE);
+								  DrawMoveSign(preAtkPoint, COLOR_OF_CANTMOVE);
 								  m_Range = 0;
 								  m_Direction = HD_NONE;
 								  return;
@@ -585,7 +594,7 @@ void GameScene::DrawUnitMove()
 								  // 다 다시그려줘요
 								  for (int k = 0; k < m_CourseStack.size(); ++k)
 								  {
-									  drawMoveSign(m_CourseStack.at(k), COLOR_OF_PLAYER);
+									  DrawMoveSign(m_CourseStack.at(k), COLOR_OF_PLAYER);
 								  }
 								  break;
 							  }
@@ -611,7 +620,7 @@ void GameScene::DrawUnitMove()
 
 					  // 조건에 부합하므로 푸쉬
 					  m_CourseStack.push_back(cursoredHexa);
-					  drawMoveSign(cursoredHexa, COLOR_OF_PLAYER);
+					  DrawMoveSign(cursoredHexa, COLOR_OF_PLAYER);
 
 					  // 충돌한 유닛 밀어줌
 					  Unit* crashUnit = GetUnitByPos(cursoredHexa);
@@ -658,7 +667,7 @@ void GameScene::DrawUnitMove()
 							  m_CourseStack.clear();
 							  signColor = COLOR_OF_CANTMOVE;
 						  }
-						  drawMoveSign(movePoint, signColor);
+						  DrawMoveSign(movePoint, signColor);
 
 	}break;
 	default:
@@ -670,7 +679,7 @@ void GameScene::KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direct
 {
 	HexaPoint targetPoint = target->GetPosition();
 	// 충돌 대상 표시
-	drawMoveSign(targetPoint, COLOR_OF_CRASHED);
+	DrawMoveSign(targetPoint, COLOR_OF_CRASHED);
 
 	if (!DRAW_KNOCKBACK) return;
 
@@ -692,7 +701,7 @@ void GameScene::KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direct
 		Unit* crashUnit = GetUnitByPos(atkCourse);
 
 		// 한칸씩 그림
-		drawMoveSign(atkCourse, COLOR_OF_ENEMY);
+		DrawMoveSign(atkCourse, COLOR_OF_ENEMY);
 
 		// 아 근데, 여기 다른 유닛이 있니?
 		if (crashUnit != nullptr) // 응
@@ -706,7 +715,7 @@ void GameScene::KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direct
 }
 
 // 이동경로를 그리는 함수
-void GameScene::drawMoveSign(HexaPoint point, Color4F signColor)
+void GameScene::DrawMoveSign(HexaPoint point, Color4F signColor)
 {
 	Hexagon* courseSignHexagon = new Hexagon(m_Field.HexaToScreen(point));
 	DrawNode* courseSignNode = DrawNode::create();
@@ -1067,7 +1076,10 @@ void GameScene::SetTurn(bool isMyTurn)
 
 	if (isMyTurn)
 	{
-		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("myturn.mp3");
+		if (USE_SOUND)
+		{
+			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_MYTURN);
+		}
 		m_TurnLabel->setString("Your Turn");
 		for (int i = 0; i < m_MaxCosst; ++i)
 		{

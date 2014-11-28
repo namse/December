@@ -207,6 +207,7 @@ struct SkillData{
 	UnitIdentityNumber	id;
 	UnitSkillType		skillType;
 	UnitSkillRank		skillRank;
+	// TODO : 가변길이로
 	int					range;
 	HexaDirection		direction;
 	Coord				position[MAX_SKILL_RANGE];
@@ -218,6 +219,5 @@ struct FieldBlock{
 	FieldBlockStatus status;
 	Coord position;
 };
-
 
 #pragma pack(pop)

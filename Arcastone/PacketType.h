@@ -165,5 +165,4 @@ namespace Packet
 	};
 }
 
-
 #pragma pack(pop)

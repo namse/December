@@ -292,9 +292,8 @@ void Game::UnitMove(Unit* unit, AttackData* attackData)
 				dashAction.mMoveData.mFinalY = attackData->position[move].y;
 
 				m_UnitActionQueue.push_back(dashAction);
-#ifdef _DEBUG
+
 				PrintUnitActionQueue(dashAction);
-#endif
 			}
 			movePos = attackData->position[move];
 		}
@@ -356,9 +355,8 @@ void Game::UnitMove(Unit* unit, AttackData* attackData)
 		collisionAct.mCollisionData.mMyHP = crashGuy->GetHP();
 		collisionAct.mCollisionData.mTargetHP = crashGuy->GetHP();
 		m_UnitActionQueue.push_back(collisionAct);
-#ifdef _DEBUG
+
 		PrintUnitActionQueue(collisionAct);
-#endif
 
 		// 얻어맞은 유닛은 죽은 후에도 밀려난 다음에 사망
 		if (crashGuy->GetHP() <= 0)
@@ -388,6 +386,7 @@ void Game::HandleSkill(PlayerNumber attacker, SkillData* skillData)
 
 	switch (skillData->skillType)
 	{
+		// 스위치 노가다 ㄴㄴ
 	case USK_FIREBALL:{
 						  // 나중에 이런 스킬 스탯 하드코딩들 고쳐야될듯
 						  if (skillData->position[0].x == -1) return;
@@ -561,9 +560,9 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 
 	m_UnitActionQueue.push_back(action);
 
-#ifdef _DEBUG
+
 	PrintUnitActionQueue(action);
-#endif
+
 
 	// 충돌유닛이 있으면
 	if (nullptr != crashGuy)
@@ -585,9 +584,9 @@ void Game::UnitPush(Unit* unit, int power, HexaDirection direction)
 		collisionAct.mCollisionData.mMyHP = crashGuy->GetHP();
 		collisionAct.mCollisionData.mTargetHP = crashGuy->GetHP();
 		m_UnitActionQueue.push_back(collisionAct);
-#ifdef _DEBUG
+
 		PrintUnitActionQueue(collisionAct);
-#endif
+
 
 		if (crashGuy->GetHP() <= 0)
 			KillThisUnit(crashGuy);
@@ -615,9 +614,9 @@ void Game::KillThisUnit(Unit* unit)
 	action.mUnitId = unit->GetID();
 
 	m_UnitActionQueue.push_back(action);
-#ifdef _DEBUG
+
 	PrintUnitActionQueue(action);
-#endif
+
 }
 
 void Game::StartGame()
@@ -949,6 +948,7 @@ bool Game::IsCorrectAttack(PlayerNumber attacker, AttackData* attackData)
 
 void Game::PrintUnitActionQueue(UnitAction attackData)
 {
+#ifdef _DEBUG
 	printf("Add Unit Action Queue\n");
 	switch (attackData.mActionType)
 	{
@@ -1009,6 +1009,7 @@ UnitDie:
 	printf("Die Unit ID : %d\n", (int)attackData.mUnitId);
 
 	return;
+#endif
 }
 
 int Game::GetPlayerIndexByPlayerNumber(PlayerNumber playerNumber)

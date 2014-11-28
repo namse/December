@@ -18,6 +18,7 @@ public:
 
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     virtual bool			init();
+	void					InitCostLabel();
 	CREATE_FUNC(GameScene);
 
 
@@ -41,12 +42,13 @@ public:
 	/* draw 함수 */
 	void					DrawExpectUnitMove(Unit* unit);
 	void					DrawUnitMove();
-	void					drawMoveSign(HexaPoint point, Color4F signColor);
+	void					DrawMoveSign(HexaPoint point, Color4F signColor);
 	void					HighlightHexagon(ScreenPoint position);
 	void					releaseExpectMoveSign();
 	void					ReleaseMoveSign();
 	void					KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direction, int range);
-	void					drawSkillEffect(Skill skill);
+	void					DrawSkillEffect(Skill skill);
+	void					DrawCursorSign();
 	
 
 	/* 멤버 검색 함수 */
@@ -83,6 +85,7 @@ private:
 
 	ScreenPoint				m_StartPoint;
 	ScreenPoint				m_CursoredPoint;
+	ScreenPoint				m_SelectedUnitPoint;
 	int						m_SelectedUnit;
 
 	HexaDirection			m_Direction;
@@ -96,6 +99,8 @@ private:
 	vector<DrawNode*>		m_ExpectSignNode;
 	vector<HexaPoint>		m_CourseStack;
 	queue<UnitAction>		m_UnitActionQueue;
+
+	DrawNode*				m_CursorSignNode;
 };
 
 #endif

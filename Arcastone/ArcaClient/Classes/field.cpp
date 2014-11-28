@@ -112,7 +112,10 @@ ScreenPoint Field::HexaToScreen(HexaPoint point)
 void Field::SetFieldSprite(FieldBlock fieldBlockData)
 {
 	HexaPoint anchor(fieldBlockData.position);
-	Sprite* fieldBlock = m_FieldSpriteMap.find(anchor)->second;
+	auto iter = m_FieldSpriteMap.find(anchor);
+	if (iter == m_FieldSpriteMap.end()) return;
+
+	Sprite* fieldBlock = iter->second;
 	char imgNameBuf[20];
 	FieldBlockType fieldType = fieldBlockData.type;
 	FieldBlockStatus fieldStatus = fieldBlockData.status;
@@ -143,6 +146,7 @@ void Field::SetFieldSprite(FieldBlock fieldBlockData)
 		break;
 	}
 	
+	// TODO : 디버그할때 가끔 여기서 뻑남
 	fieldBlock->setTexture(imgNameBuf);
 	float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
 	fieldBlock->setScale(scale);
