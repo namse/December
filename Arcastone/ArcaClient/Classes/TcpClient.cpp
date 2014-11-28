@@ -246,7 +246,7 @@ void TcpClient::attackRequest(AttackData attackData)
 	sendData.mAttack = attackData;
 
 	#pragma region DEBUG CODE
-	if (DEBUG_PRINT_PACKET)
+#ifdef _DEBUG
 	{
 		printf("Send Attack Request\n");
 
@@ -298,6 +298,7 @@ void TcpClient::attackRequest(AttackData attackData)
 			}
 		}
 	}
+#endif
 #pragma endregion
 
 	send((const char*)&sendData, sizeof(Packet::AttackRequest));

@@ -295,7 +295,7 @@ void GameScene::UsingSkill(Unit* unit)
 	switch (skill.type)
 	{
 	case USK_FIREBALL:{
-#ifdef DEBUG_PRINT_PACKET
+#ifdef _DEBUG
 						  printf("Using FireBall!!\n\n");
 #endif
 
@@ -313,7 +313,7 @@ void GameScene::UsingSkill(Unit* unit)
 	}break;
 
 	case USK_STAMP:{
-#ifdef DEBUG_PRINT_PACKET
+#ifdef _DEBUG
 					   printf("Using Stamp!!\n\n");
 #endif
 
@@ -797,7 +797,10 @@ void GameScene::ReadActionQueue(Packet::AttackResult attackResult)
 
 void GameScene::OnGameStart(Packet::GameStartResult inPacket)
 {
-	CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("start.mp3");
+	if (USE_SOUND)
+	{
+		CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_GAMESTART);
+	}
 	m_Field.Init(this, inPacket.mFieldList, inPacket.mFieldLength, inPacket.mFieldSizeX, inPacket.mFieldSizeY, inPacket.mReverseMap);
 	ReadUnitData(inPacket.mUnit, inPacket.mUnitLength);
 }
@@ -833,10 +836,13 @@ void GameScene::OnUnitAction(CCNode* sender)
 						  CCFiniteTimeAction* actionMoveDone =
 							  CCCallFuncN::create(this, callfuncN_selector(GameScene::OnUnitAction));
 
-
 						  sprite->runAction(CCSequence::create(actionMove,
 							  actionMoveDone, NULL));
-						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
+
+						  if (USE_SOUND)
+						  {
+							  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_MOVE);
+						  }
 		}break;
 		case UAT_STRAIGHT:{
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
@@ -856,7 +862,11 @@ void GameScene::OnUnitAction(CCNode* sender)
 
 						  sprite->runAction(CCSequence::create(actionMove,
 							  actionMoveDone, NULL));
-						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
+
+						  if (USE_SOUND)
+						  {
+							  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_MOVE);
+						  }
 		}break;
 
 		case UAT_JUMP:{
@@ -874,7 +884,11 @@ void GameScene::OnUnitAction(CCNode* sender)
 							  callfuncN_selector(GameScene::OnUnitAction));
 						  sprite->runAction(CCSequence::create(actionMove,
 							  actionMoveDone, NULL));
-						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
+
+						  if (USE_SOUND)
+						  {
+							  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_MOVE);
+						  }
 		}break;
 
 		case UAT_DASH:{
@@ -898,7 +912,11 @@ void GameScene::OnUnitAction(CCNode* sender)
 							  callfuncN_selector(GameScene::OnUnitAction));
 						  sprite->runAction(CCSequence::create(actionMove,
 							  actionMoveDone, NULL));
-						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
+
+						  if (USE_SOUND)
+						  {
+							  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_MOVE);
+						  }
 		}break;
 
 		case UAT_TELEPORT:{
@@ -912,7 +930,11 @@ void GameScene::OnUnitAction(CCNode* sender)
 							  CCFiniteTimeAction* actionMove =
 								  CCMoveTo::create(0, sMovePoint);
 							  sprite->runAction(actionMove);
-							  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("move.mp3");
+
+							  if (USE_SOUND)
+							  {
+								  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_MOVE);
+							  }
 
 		}break;
 		case UAT_COLLISION:{
@@ -923,14 +945,20 @@ void GameScene::OnUnitAction(CCNode* sender)
 							   runAction(CCCallFuncN::create(this,
 								   callfuncN_selector(GameScene::OnUnitAction)));
 
-							   CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("collision.mp3");
+							   if (USE_SOUND)
+							   {
+								   CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_COLLISION);
+							   }
 		}break;
 		case UAT_DIE: {
 						  unit->GetSprite()->setVisible(false);
 						  unit->SetStatus(UST_DEAD);
 						  unit->setPosition(HexaPoint(100, 100));
 
-						  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect("die.mp3");
+						  if (USE_SOUND)
+						  {
+							  CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_DIE);
+						  }
 		}
 		}
 	}

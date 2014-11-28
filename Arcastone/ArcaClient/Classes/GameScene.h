@@ -20,6 +20,12 @@ public:
     virtual bool			init();
 	CREATE_FUNC(GameScene);
 
+
+
+	void					OnUnitAction(CCNode* sender = NULL);
+
+
+
     // a selector callback
     void					menuCloseCallback(Ref* pSender);
 	void					gameLogic(float dt);
@@ -40,8 +46,6 @@ public:
 	void					releaseExpectMoveSign();
 	void					ReleaseMoveSign();
 	void					KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direction, int range);
-	
-	void					OnUnitAction(CCNode* sender = NULL);
 	void					drawSkillEffect(Skill skill);
 	
 
