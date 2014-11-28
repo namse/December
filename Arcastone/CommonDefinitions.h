@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma pack(push, 1)
-
 #define MAX_CHAT_LEN		256
 
 #define MAX_NAME_LEN		30
@@ -123,6 +121,8 @@ enum UnitSkillRank{
 	USR_RANKTHREE = 3,
 };
 
+#pragma pack(push, 1)
+
 struct Coord{
 	int x, y;
 	Coord()
@@ -213,9 +213,9 @@ struct SkillData{
 
 
 struct FieldBlock{
-	FieldBlockType	m_Type;
-	FieldBlockStatus m_Status;
-	Coord m_Position;
+	FieldBlockType	type;
+	FieldBlockStatus status;
+	Coord position;
 };
 
 

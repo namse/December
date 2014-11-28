@@ -303,11 +303,11 @@ void TcpClient::attackRequest(AttackData attackData)
 	send((const char*)&sendData, sizeof(Packet::AttackRequest));
 }
 
-void TcpClient::skillRequest(SkillData skillData)
+void TcpClient::skillRequest(SkillData* skillData)
 {
 	Packet::SkillRequest sendData;
 
-	sendData.mSkill = skillData;
+	sendData.mSkill = *skillData;
 
 	send((const char*)&sendData, sizeof(Packet::SkillRequest));
 }

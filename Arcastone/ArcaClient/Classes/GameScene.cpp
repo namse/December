@@ -316,7 +316,7 @@ void GameScene::UsingSkill(Unit* unit)
 
 
 	// 스킬패킷 발사!
-	TcpClient::getInstance()->skillRequest(skillData);
+	TcpClient::getInstance()->skillRequest(&skillData);
 }
 
 void GameScene::drawSkillEffect(Skill skill)

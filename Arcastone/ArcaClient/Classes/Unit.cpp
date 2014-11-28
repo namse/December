@@ -1,10 +1,14 @@
 ﻿#include "Unit.h"
+
+/*  PC  */
 #include "Soldier.h"
 #include "Rider.h"
 #include "Knight.h"
 #include "Magician.h"
 #include "Prince.h"
 #include "Princess.h"
+
+/*  NPC  */
 #include "ArcaStone.h"
 #include "Rock.h"
 #include "NPC.h"

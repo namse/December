@@ -19,7 +19,7 @@ void Field::Init(Layer* sceneLayer, FieldBlock fieldBlock[], int length, int map
 
 	for (int i = 0; i < length; i++)
 	{
-		HexaPoint hexaPoint(fieldBlock[i].m_Position);
+		HexaPoint hexaPoint(fieldBlock[i].position);
 		ScreenPoint anchor = HexaToScreen(hexaPoint);
 
 		m_HexaPointList.push_back(hexaPoint);	// m_HexaPointList 에 화면에 그려지는 좌표들을 저장
@@ -101,11 +101,11 @@ ScreenPoint Field::HexaToScreen(HexaPoint point)
 
 void Field::SetFieldSprite(FieldBlock fieldBlockData)
 {
-	HexaPoint anchor(fieldBlockData.m_Position);
+	HexaPoint anchor(fieldBlockData.position);
 	Sprite* fieldBlock = m_FieldSpriteMap.find(anchor)->second;
 	char imgNameBuf[20];
-	FieldBlockType fieldType = fieldBlockData.m_Type;
-	FieldBlockStatus fieldStatus = fieldBlockData.m_Status;
+	FieldBlockType fieldType = fieldBlockData.type;
+	FieldBlockStatus fieldStatus = fieldBlockData.status;
 
 	switch (fieldStatus)
 	{
