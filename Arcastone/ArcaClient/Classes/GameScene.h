@@ -18,7 +18,14 @@ public:
 
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     virtual bool			init();
+	void					InitCostLabel();
 	CREATE_FUNC(GameScene);
+
+
+
+	void					OnUnitAction(CCNode* sender = NULL);
+
+
 
     // a selector callback
     void					menuCloseCallback(Ref* pSender);
@@ -34,30 +41,29 @@ public:
 
 	/* draw 함수 */
 	void					DrawExpectUnitMove(Unit* unit);
-	void					drawUnitMove();
-	void					drawMoveSign(HexaPoint point, Color4F signColor);
+	void					DrawUnitMove();
+	void					DrawMoveSign(HexaPoint point, Color4F signColor);
 	void					HighlightHexagon(ScreenPoint position);
 	void					releaseExpectMoveSign();
-	void					releaseMoveSign();
+	void					ReleaseMoveSign();
 	void					KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direction, int range);
-	
-	void					onUnitAction(CCNode* sender = NULL);
-	void					drawSkillEffect(Skill skill);
+	void					DrawSkillEffect(Skill skill);
+	void					DrawCursorSign();
 	
 
 	/* 멤버 검색 함수 */
-	Unit*					getUnitByID(int unitID);
-	Unit*					getUnitByPos(HexaPoint unitPos);
+	Unit*					GetUnitByID(int unitID);
+	Unit*					GetUnitByPos(HexaPoint unitPos);
 
 
 	/* 네트워크 관련 함수 */
-	void					onGameStart(Packet::GameStartResult inPacket);
+	void					OnGameStart(Packet::GameStartResult inPacket);
 	void					ReadUnitData(UnitData unitData[], int length);
 	void					SetTurn(bool isMyTurn);
 	void					ReadActionQueue(Packet::AttackResult attackResult);
 	void					ReadRestCost(Packet::CostRenewalResult recvData);
 	void					UsingSkill(Unit* unit);
-	void					gameOver(Packet::GameOverResult recvData);
+	void					GameOver(Packet::GameOverResult recvData);
 	void					ChangeFieldType(Packet::ChangeFieldResult recvData);
 
 private:
@@ -79,6 +85,7 @@ private:
 
 	ScreenPoint				m_StartPoint;
 	ScreenPoint				m_CursoredPoint;
+	ScreenPoint				m_SelectedUnitPoint;
 	int						m_SelectedUnit;
 
 	HexaDirection			m_Direction;
@@ -92,6 +99,8 @@ private:
 	vector<DrawNode*>		m_ExpectSignNode;
 	vector<HexaPoint>		m_CourseStack;
 	queue<UnitAction>		m_UnitActionQueue;
+
+	DrawNode*				m_CursorSignNode;
 };
 
 #endif

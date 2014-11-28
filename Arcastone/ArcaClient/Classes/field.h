@@ -13,6 +13,7 @@ public:
 
 	HexaPoint				ScreenToHexa(ScreenPoint point);
 	ScreenPoint				HexaToScreen(HexaPoint point);
+	bool					IsThisHexaInField(HexaPoint point);
 	bool					IsInHexagon(ScreenPoint touch, ScreenPoint anchor);
 
 	void					SetFieldSprite(FieldBlock fieldBlockData);

@@ -22,7 +22,7 @@ void Field::Init(Layer* sceneLayer, FieldBlock fieldBlock[], int length, int map
 	
 	for (int i = 0; i < length; i++)
 	{
-		HexaPoint hexaPoint(fieldBlock[i].m_Position);
+		HexaPoint hexaPoint(fieldBlock[i].position);
 		ScreenPoint anchor = HexaToScreen(hexaPoint);
 
 		m_HexaPointList.push_back(hexaPoint);	// m_HexaPointList 에 화면에 그려지는 좌표들을 저장
@@ -90,12 +90,11 @@ void Field::InitSpriteResource()
 
 HexaPoint Field::ScreenToHexa(ScreenPoint point)
 {
-	// TODO : 헥사그리드 내에 있을 때만 검사하도록 수정
-	// 입력한 점이 주어진 범위를 벗어나면 -1, -1 을 리턴
-	/// 
+	// 헥사그리드 내에 있을 때만 검사하는 코드는 IsThisHexaField 로.
+	// 입력한 점이 일정 범위를 벗어나면 -1, -1 을 리턴.
 	HexaPoint retPoint(-1, -1);
 
-	// -맵크기의 3배 ~ 맵크기의 3배까지 검사한다
+	// 임시로 -맵크기의 3배 ~ 맵크기의 3배까지 검사한다
 	for (int x = -m_MapWidth * 3; x < m_MapWidth * 3; ++x)
 	{
 		for (int y = -m_MapHeight * 3; y < m_MapHeight * 3; ++y)
@@ -110,6 +109,17 @@ HexaPoint Field::ScreenToHexa(ScreenPoint point)
 	}
 
 	return retPoint;
+}
+
+bool Field::IsThisHexaInField(HexaPoint point)
+{
+	for (int i = 0; i < m_HexaPointList.size(); ++i)
+	{
+		if (point.x == m_HexaPointList.at(i).x &&
+			point.y == m_HexaPointList.at(i).y)
+			return true;
+	}
+	return false;
 }
 
 ScreenPoint Field::HexaToScreen(HexaPoint point)
@@ -136,11 +146,14 @@ ScreenPoint Field::HexaToScreen(HexaPoint point)
 
 void Field::SetFieldSprite(FieldBlock fieldBlockData)
 {
-	HexaPoint anchor(fieldBlockData.m_Position);
-	Sprite* fieldBlock = m_FieldSpriteMap.find(anchor)->second;
+	HexaPoint anchor(fieldBlockData.position);
+	auto iter = m_FieldSpriteMap.find(anchor);
+	if (iter == m_FieldSpriteMap.end()) return;
+
+	Sprite* fieldBlock = iter->second;
 	char imgNameBuf[20];
-	FieldBlockType fieldType = fieldBlockData.m_Type;
-	FieldBlockStatus fieldStatus = fieldBlockData.m_Status;
+	FieldBlockType fieldType = fieldBlockData.type;
+	FieldBlockStatus fieldStatus = fieldBlockData.status;
 
 	switch (fieldStatus)
 	{
@@ -185,6 +198,8 @@ void Field::SetFieldSprite(FieldBlock fieldBlockData)
 		break;
 	}
 	
+	// TODO : 디버그할때 가끔 여기서 뻑남
+	fieldBlock->setTexture(imgNameBuf);
 	float scale = HEXAGON_LENGTH * 2 / fieldBlock->getContentSize().width;
 	fieldBlock->setScale(scale);
 	fieldBlock->setAnchorPoint(Vec2(0.5f, 0.65f));

@@ -15,7 +15,12 @@ JsonManager::JsonManager()
 		std::istreambuf_iterator<char>(pJsonData.rdbuf()),
 		std::istreambuf_iterator<char>());
 	pJsonData.close();
-
+	if (jsonDataString.c_str()[0] == (char)0xEF
+		&& jsonDataString.c_str()[1] == (char)0xBB
+		&& jsonDataString.c_str()[2] == (char)0xBF)
+	{
+		jsonDataString.replace(0, 3, ""); // (5)
+	}
 	// 읽은 정보를 Json 객체에 파싱합니다
 	Json::Value root;
 	Json::Reader reader;

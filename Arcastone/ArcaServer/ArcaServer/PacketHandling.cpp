@@ -170,5 +170,4 @@ REGISTER_HANDLER(PKT_CS_SKILL)
 	assert(game != nullptr);
 
 	game->HandleSkill(game->GetAttacker(), &inPacket.mSkill);
-
 }

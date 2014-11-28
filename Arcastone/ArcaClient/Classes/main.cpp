@@ -13,7 +13,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     UNREFERENCED_PARAMETER(hPrevInstance);
     UNREFERENCED_PARAMETER(lpCmdLine);
 
-	if (DEBUG_PRINT_PACKET)
+	if (OPEN_DEBUG_CONSOLE)
 	{
 		AllocConsole();
 		freopen("CONOUT$", "w", stdout);

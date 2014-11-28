@@ -1,7 +1,6 @@
 #pragma once
 #include "CommonDefinitions.h"
 #include "../../CommonDefinitions.h"
-#pragma pack(push, 1)
 
 
 enum PacketTypes
@@ -165,6 +164,5 @@ namespace Packet
 		FieldBlock mFieldBlock;
 	};
 }
-
 
 #pragma pack(pop)

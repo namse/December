@@ -180,7 +180,7 @@ void TcpClient::processPacket()
 			auto director = Director::getInstance();
 			auto scene = director->getRunningScene();
 			auto layer = scene->getChildByName("base_layer");
-			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::onGameStart, dynamic_cast<GameScene*>(layer), recvData));
+			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::OnGameStart, dynamic_cast<GameScene*>(layer), recvData));
 		}
 			break;
 		case PKT_SC_YOUR_TURN:
@@ -211,7 +211,7 @@ void TcpClient::processPacket()
 			Packet::GameOverResult recvData;
 			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
 			auto layer = Director::getInstance()->getRunningScene()->getChildByName("base_layer");
-			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::gameOver, dynamic_cast<GameScene*>(layer), recvData));
+			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::GameOver, dynamic_cast<GameScene*>(layer), recvData));
 		}break;
 		case PKT_SC_CHANGE_FIELD:
 		{
@@ -246,7 +246,7 @@ void TcpClient::attackRequest(AttackData attackData)
 	sendData.mAttack = attackData;
 
 	#pragma region DEBUG CODE
-	if (DEBUG_PRINT_PACKET)
+#ifdef _DEBUG
 	{
 		printf("Send Attack Request\n");
 
@@ -298,16 +298,17 @@ void TcpClient::attackRequest(AttackData attackData)
 			}
 		}
 	}
+#endif
 #pragma endregion
 
 	send((const char*)&sendData, sizeof(Packet::AttackRequest));
 }
 
-void TcpClient::skillRequest(SkillData skillData)
+void TcpClient::skillRequest(SkillData* skillData)
 {
 	Packet::SkillRequest sendData;
 
-	sendData.mSkill = skillData;
+	sendData.mSkill = *skillData;
 
 	send((const char*)&sendData, sizeof(Packet::SkillRequest));
 }

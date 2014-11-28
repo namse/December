@@ -34,7 +34,7 @@ private:
 	void						UnitPush(Unit* unit, int power , HexaDirection direction);
 	void						UnitMove(Unit* unit, AttackData* attackData);
 	void						KillThisUnit(Unit* unit);
-	void						UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy);
+//	void						UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy);
 	void						PrintUnitActionQueue(UnitAction attackData);
 
 	bool						IsCorrectAttack(PlayerNumber attacker, AttackData* attackData);

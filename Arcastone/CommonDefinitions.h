@@ -1,7 +1,5 @@
 #pragma once
 
-#pragma pack(push, 1)
-
 #define MAX_CHAT_LEN		256
 
 #define MAX_NAME_LEN		30
@@ -119,6 +117,7 @@ enum UnitActionType{
 enum UnitSkillType{
 	USK_NONE = 0,
 	USK_FIREBALL = 1,
+	USK_STAMP = 2,
 };
 
 enum UnitSkillRank{
@@ -127,6 +126,8 @@ enum UnitSkillRank{
 	USR_RANKTWO = 2,
 	USR_RANKTHREE = 3,
 };
+
+#pragma pack(push, 1)
 
 struct Coord{
 	int x, y;
@@ -211,6 +212,7 @@ struct SkillData{
 	UnitIdentityNumber	id;
 	UnitSkillType		skillType;
 	UnitSkillRank		skillRank;
+	// TODO : 가변길이로
 	int					range;
 	HexaDirection		direction;
 	Coord				position[MAX_SKILL_RANGE];
@@ -218,10 +220,9 @@ struct SkillData{
 
 
 struct FieldBlock{
-	FieldBlockType	m_Type;
-	FieldBlockStatus m_Status;
-	Coord m_Position;
+	FieldBlockType	type;
+	FieldBlockStatus status;
+	Coord position;
 };
-
 
 #pragma pack(pop)
