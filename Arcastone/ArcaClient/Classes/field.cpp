@@ -183,6 +183,12 @@ void Field::SetFieldSprite(FieldBlock fieldBlockData)
 
 	case FBS_WATER:
 	{
+					  // 임시
+					  strcpy(imgNameBuf, "sprite_none.png");
+					  fieldBlock->setTexture(imgNameBuf);
+					  break;
+
+
 		strcpy(imgNameBuf, "block_water1.png");
 		fieldBlock->setSpriteFrame(m_SpriteFrame->getSpriteFrameByName(imgNameBuf));
 		auto blockAnimation = m_AnimationList.at(FBT_WATER);

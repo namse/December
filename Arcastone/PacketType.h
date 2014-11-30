@@ -101,15 +101,6 @@ namespace Packet
 		AttackData				mAttack;
 	};
 
-	struct SkillRequest : public PacketHeader
-	{
-		SkillRequest(){
-			mSize = sizeof(SkillRequest);
-			mType = PKT_CS_SKILL;
-		}
-		SkillData			mSkill;
-	};
-
 	struct AttackResult : public PacketHeader
 	{
 		AttackResult(){

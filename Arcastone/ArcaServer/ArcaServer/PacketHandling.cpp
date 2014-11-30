@@ -2,7 +2,7 @@
 #include "ClientSession.h"
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"
-#include "PlayerManager.h"
+#include "UserManager.h"
 #include "AutoMatcher.h"
 #include "GameManager.h"
 //@{ Handler Helper
@@ -13,7 +13,7 @@ static HandlerFunc HandlerTable[PKT_MAX];
 
 static void DefaultHandler(ClientSession* session)
 {
-	printf("[DEBUG] Invalid packet handler", session->GetPlayerId());
+	printf("[DEBUG] Invalid packet handler", session->GetUserId());
 	session->Disconnect();
 }
 
@@ -110,7 +110,7 @@ void ClientSession::OnRead(size_t len)
 
 		if (header.mType >= PKT_MAX || header.mType <= PKT_NONE)
 		{
-			printf("[DEBUG] Invalid packet type", GetPlayerId());
+			printf("[DEBUG] Invalid packet type", GetUserId());
 			Disconnect();
 			return;
 		}
@@ -130,13 +130,13 @@ REGISTER_HANDLER(PKT_CS_LOGIN)
 		return;
 	}
 
-	PlayerNumber playerNum = GPlayerManager->CreatePlayer();
-	session->SetPlayerId(playerNum);
+	UserNumber userNum = GUserManager->CreateUser();
+	session->SetUserId(userNum);
 
 	Packet::LoginResult outPacket;
 	session->SendRequest(&outPacket);
 
-	GAutoMatcher->AddWaitPlayer(playerNum);
+	GAutoMatcher->AddWaitUser(userNum);
 }
 
 REGISTER_HANDLER(PKT_CS_ATTACK)
@@ -148,26 +148,12 @@ REGISTER_HANDLER(PKT_CS_ATTACK)
 		return;
 	}
 
-	auto game = GGameManager->GetGameWithPlayerNumber(session->GetPlayerId());
+	UserNumber userNumber = session->GetUserId();
+	auto game = GGameManager->GetGameWithUserNumber(userNumber);
 
 	// TODO : 이러면 해커가 공격하면 바로 서버 터지겠네요
 	assert(game != nullptr);
 	
-	game->HandleAttack(game->GetAttacker(), &inPacket.mAttack);
+	game->HandleAttack(userNumber, &inPacket.mAttack);
 
-}
-
-REGISTER_HANDLER(PKT_CS_SKILL)
-{
-	Packet::SkillRequest inPacket;
-	if (false == session->ParsePacket(inPacket))
-	{
-		printf("[DEBUG] packet parsing error", inPacket.mType);
-		return;
-	}
-
-	auto game = GGameManager->GetGameWithPlayerNumber(session->GetPlayerId());
-	assert(game != nullptr);
-
-	game->HandleSkill(game->GetAttacker(), &inPacket.mSkill);
 }

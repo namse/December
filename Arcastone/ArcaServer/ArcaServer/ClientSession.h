@@ -32,9 +32,9 @@ public:
 	virtual ~ClientSession() {}
 
 public:
-	int	GetPlayerId() const	{ return m_PlayerId; }
+	int	GetUserId() const	{ return m_UserId; }
 	SOCKET GetSocketKey() const { return mSocket;  }
-	void SetPlayerId(PlayerNumber playerId) { m_PlayerId = playerId; }
+	void SetUserId(UserNumber userId) { m_UserId = userId; }
 
 public: 
 	bool	IsConnected() const { return mConnected; }
@@ -73,7 +73,7 @@ private:
 	OverlappedIO	mOverlappedSend ;
 	OverlappedIO	mOverlappedRecv ;
 
-	PlayerNumber	m_PlayerId;
+	UserNumber	m_UserId;
 
 	friend class ClientManager ;
 } ;

@@ -11,7 +11,7 @@ GameManager::~GameManager()
 {
 }
 
-GameNumber GameManager::CreateGame(PlayerNumber player1, PlayerNumber player2)
+GameNumber GameManager::CreateGame(UserNumber user1, UserNumber user2)
 {
 	static GameNumber GameId = 0;
 	GameId++;
@@ -19,23 +19,23 @@ GameNumber GameManager::CreateGame(PlayerNumber player1, PlayerNumber player2)
 	// start new game
 	auto newGame = new Game(GameId);
 	m_GameList.insert(GameList::value_type(GameId, newGame));
-	newGame->InitGame(player1, player2);
+	newGame->InitGame(user1, user2);
 	
 	return GameId;
 }
 
-Game* GameManager::GetGameWithPlayerNumber(PlayerNumber playerNumber) {
+Game* GameManager::GetGameWithUserNumber(UserNumber userNumber) {
 	for (auto gameIt : m_GameList)
-	if (gameIt.second->IsPlayerInThisGame(playerNumber) == true)
+	if (gameIt.second->IsUserInThisGame(userNumber) == true)
 		return gameIt.second;
 	return nullptr;
 }
 
-bool GameManager::CloseGameByPlayerNumber(PlayerNumber playerNumber)
+bool GameManager::CloseGameByUserNumber(UserNumber userNumber)
 {
-	Game* game = GetGameWithPlayerNumber(playerNumber);
+	Game* game = GetGameWithUserNumber(userNumber);
 	if (game == nullptr) return false;
 
-	game->GameOverForSurrender(playerNumber);
+	game->GameOverForSurrender(userNumber);
 	m_GameList.erase(game->GetGameNumber());
 }

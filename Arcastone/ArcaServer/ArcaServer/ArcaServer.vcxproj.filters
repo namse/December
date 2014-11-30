@@ -4,56 +4,62 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{002996bc-5f49-4034-9846-d804baed220a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Packet">
-      <UniqueIdentifier>{3cfbe6f1-5834-4652-a3f4-358ccb895128}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Main">
       <UniqueIdentifier>{25fda20e-051c-4cae-8314-1442428c9b70}</UniqueIdentifier>
     </Filter>
     <Filter Include="GameLogic">
       <UniqueIdentifier>{78c230ec-d9f0-4931-8789-f40d6529f4da}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameLogic\AutoMatcher">
-      <UniqueIdentifier>{98cb4983-a769-4a8f-a7c7-856a590062dc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameLogic\Field">
-      <UniqueIdentifier>{f500a09b-3510-4b5e-94ad-701e470a537f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameLogic\Player">
+    <Filter Include="GameLogic\User">
       <UniqueIdentifier>{4d0ed041-1a65-4af4-8207-7f66272015b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameLogic\Player\PlayerManager">
-      <UniqueIdentifier>{7464d17c-a86a-4435-b079-0d7d1faffd64}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameLogic\Player\Group">
+    <Filter Include="GameLogic\User\Group">
       <UniqueIdentifier>{80d59f95-fe09-4c52-a18c-77db6dd44c35}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameLogic\UnitData">
-      <UniqueIdentifier>{393f8e9a-c4d6-457b-a541-82f9243845f8}</UniqueIdentifier>
+    <Filter Include="Main\AutoMatcher">
+      <UniqueIdentifier>{98cb4983-a769-4a8f-a7c7-856a590062dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameLogic\Unit">
+    <Filter Include="Main\ClientManager">
+      <UniqueIdentifier>{44d5a883-7d24-4dda-bb89-bfb5dbf3afb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameLogic\GameMamanger">
+      <UniqueIdentifier>{1c435fd7-bb27-41e1-a5aa-1760126d0aad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Global">
+      <UniqueIdentifier>{8512e0ea-c0cc-4e16-bf11-feec66e2151d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GamePlayingObject">
+      <UniqueIdentifier>{f71e3fd5-1e14-4496-8193-d02ee2822eb3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GamePlayingObject\Field">
+      <UniqueIdentifier>{f500a09b-3510-4b5e-94ad-701e470a537f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GamePlayingObject\Player">
+      <UniqueIdentifier>{c41caa94-241a-4e6a-b67d-9ea366ad714c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GamePlayingObject\Unit">
       <UniqueIdentifier>{f4dd956d-fb35-47d4-9b96-8979dbb52ba3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameLogic\Unit\NPC">
+    <Filter Include="GamePlayingObject\Unit\Non-PlayerUnit">
       <UniqueIdentifier>{2c1a06b6-0bf0-4d50-b5c6-5e62ca22142c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameLogic\Unit\PC">
+    <Filter Include="GamePlayingObject\Unit\PlayerUnit">
       <UniqueIdentifier>{52c1919c-78d6-4570-8d3b-0b8db93e262e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameLogic\Game">
-      <UniqueIdentifier>{1bbe26df-cff7-41e0-a5e9-8026ba09f0b7}</UniqueIdentifier>
+    <Filter Include="GamePlayingObject\Skill">
+      <UniqueIdentifier>{2f90a71b-e704-4534-bb64-0389375ef384}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameLogic\Game\GameMamanger">
-      <UniqueIdentifier>{1c435fd7-bb27-41e1-a5aa-1760126d0aad}</UniqueIdentifier>
+    <Filter Include="GameLogic\JsonManager">
+      <UniqueIdentifier>{8f7cfc4f-6052-4769-8de6-5ec920bb3fad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameLogic\UserManager">
+      <UniqueIdentifier>{7464d17c-a86a-4435-b079-0d7d1faffd64}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\PacketType.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
     <ClInclude Include="CircularBuffer.h">
       <Filter>Utils</Filter>
     </ClInclude>
@@ -69,13 +75,7 @@
     <ClInclude Include="targetver.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
-      <Filter>Main</Filter>
-    </ClInclude>
-    <ClInclude Include="ClientManager.h">
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="ClientSession.h">
@@ -102,68 +102,92 @@
     <ClInclude Include="ArcaServer.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="enums.h">
-      <Filter>Main</Filter>
-    </ClInclude>
-    <ClInclude Include="AutoMatcher.h">
-      <Filter>GameLogic\AutoMatcher</Filter>
-    </ClInclude>
     <ClInclude Include="Field.h">
-      <Filter>GameLogic\Field</Filter>
-    </ClInclude>
-    <ClInclude Include="Game.h">
-      <Filter>GameLogic\Game</Filter>
+      <Filter>GamePlayingObject\Field</Filter>
     </ClInclude>
     <ClInclude Include="GameManager.h">
-      <Filter>GameLogic\Game\GameMamanger</Filter>
-    </ClInclude>
-    <ClInclude Include="Player.h">
-      <Filter>GameLogic\Player</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerManager.h">
-      <Filter>GameLogic\Player\PlayerManager</Filter>
+      <Filter>GameLogic\GameMamanger</Filter>
     </ClInclude>
     <ClInclude Include="Group.h">
-      <Filter>GameLogic\Player\Group</Filter>
-    </ClInclude>
-    <ClInclude Include="UnitData.h">
-      <Filter>GameLogic\UnitData</Filter>
+      <Filter>GameLogic\User\Group</Filter>
     </ClInclude>
     <ClInclude Include="Unit.h">
-      <Filter>GameLogic\Unit</Filter>
+      <Filter>GamePlayingObject\Unit</Filter>
     </ClInclude>
     <ClInclude Include="ArcaStone.h">
-      <Filter>GameLogic\Unit\NPC</Filter>
+      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
     </ClInclude>
     <ClInclude Include="Knight.h">
-      <Filter>GameLogic\Unit\PC</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClInclude>
     <ClInclude Include="Soldier.h">
-      <Filter>GameLogic\Unit\PC</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClInclude>
     <ClInclude Include="Rider.h">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="JsonManager.h">
-      <Filter>GameLogic\UnitData</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClInclude>
     <ClInclude Include="Rock.h">
-      <Filter>GameLogic\Unit\NPC</Filter>
+      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
     </ClInclude>
     <ClInclude Include="Princess.h">
-      <Filter>GameLogic\Unit\PC</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClInclude>
     <ClInclude Include="Magician.h">
-      <Filter>GameLogic\Unit\PC</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClInclude>
     <ClInclude Include="Prince.h">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\CommonDefinitions.h">
-      <Filter>Utils</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClInclude>
     <ClInclude Include="Tree.h">
-      <Filter>GameLogic\Unit\NPC</Filter>
+      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
+    </ClInclude>
+    <ClInclude Include="User.h">
+      <Filter>GameLogic\User</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\CommonDefinitions.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\PacketType.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="enums.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoMatcher.h">
+      <Filter>Main\AutoMatcher</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientManager.h">
+      <Filter>Main\ClientManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>GamePlayingObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>GamePlayingObject</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Global</Filter>
+    </ClInclude>
+    <ClInclude Include="TurnManager.h">
+      <Filter>GamePlayingObject</Filter>
+    </ClInclude>
+    <ClInclude Include="FireBall.h">
+      <Filter>GamePlayingObject\Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="Skill.h">
+      <Filter>GamePlayingObject\Skill</Filter>
+    </ClInclude>
+    <ClInclude Include="JsonManager.h">
+      <Filter>GameLogic\JsonManager</Filter>
+    </ClInclude>
+    <ClInclude Include="UserManager.h">
+      <Filter>GameLogic\UserManager</Filter>
+    </ClInclude>
+    <ClInclude Include="UnitData.h">
+      <Filter>GameLogic\JsonManager</Filter>
+    </ClInclude>
+    <ClInclude Include="SkillData.h">
+      <Filter>GameLogic\JsonManager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -172,15 +196,6 @@
     </ClCompile>
     <ClCompile Include="Exception.cpp">
       <Filter>Utils</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
-    <ClCompile Include="PacketHandling.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
-    <ClCompile Include="ClientManager.cpp">
-      <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="ClientSession.cpp">
       <Filter>Main</Filter>
@@ -203,56 +218,74 @@
     <ClCompile Include="ArcaServer.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="AutoMatcher.cpp">
-      <Filter>GameLogic\AutoMatcher</Filter>
-    </ClCompile>
     <ClCompile Include="Field.cpp">
-      <Filter>GameLogic\Field</Filter>
-    </ClCompile>
-    <ClCompile Include="Game.cpp">
-      <Filter>GameLogic\Game</Filter>
+      <Filter>GamePlayingObject\Field</Filter>
     </ClCompile>
     <ClCompile Include="GameManager.cpp">
-      <Filter>GameLogic\Game\GameMamanger</Filter>
-    </ClCompile>
-    <ClCompile Include="Player.cpp">
-      <Filter>GameLogic\Player</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerManager.cpp">
-      <Filter>GameLogic\Player\PlayerManager</Filter>
+      <Filter>GameLogic\GameMamanger</Filter>
     </ClCompile>
     <ClCompile Include="Unit.cpp">
-      <Filter>GameLogic\Unit</Filter>
+      <Filter>GamePlayingObject\Unit</Filter>
     </ClCompile>
     <ClCompile Include="ArcaStone.cpp">
-      <Filter>GameLogic\Unit\NPC</Filter>
+      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
     </ClCompile>
     <ClCompile Include="Knight.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClCompile>
     <ClCompile Include="Soldier.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClCompile>
     <ClCompile Include="Rider.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="JsonManager.cpp">
-      <Filter>GameLogic\UnitData</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClCompile>
     <ClCompile Include="Rock.cpp">
-      <Filter>GameLogic\Unit\NPC</Filter>
+      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
     </ClCompile>
     <ClCompile Include="Magician.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClCompile>
     <ClCompile Include="Prince.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClCompile>
     <ClCompile Include="Princess.cpp">
-      <Filter>GameLogic\Unit\PC</Filter>
+      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
     </ClCompile>
     <ClCompile Include="Tree.cpp">
-      <Filter>GameLogic\Unit\NPC</Filter>
+      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
+    </ClCompile>
+    <ClCompile Include="User.cpp">
+      <Filter>GameLogic\User</Filter>
+    </ClCompile>
+    <ClCompile Include="PacketHandling.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="AutoMatcher.cpp">
+      <Filter>Main\AutoMatcher</Filter>
+    </ClCompile>
+    <ClCompile Include="ClientManager.cpp">
+      <Filter>Main\ClientManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>GamePlayingObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>GamePlayingObject</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Global</Filter>
+    </ClCompile>
+    <ClCompile Include="TurnManager.cpp">
+      <Filter>GamePlayingObject</Filter>
+    </ClCompile>
+    <ClCompile Include="FireBall.cpp">
+      <Filter>GamePlayingObject\Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="JsonManager.cpp">
+      <Filter>GameLogic\JsonManager</Filter>
+    </ClCompile>
+    <ClCompile Include="UserManager.cpp">
+      <Filter>GameLogic\UserManager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

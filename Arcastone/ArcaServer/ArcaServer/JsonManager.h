@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "UnitData.h"
+#include "SkillData.h"
 
 class JsonManager
 {

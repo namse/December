@@ -1,0 +1,11 @@
+﻿{
+   "data_list" : [
+      {
+         "skill_type" : "USK_FIREBALL",
+         "skill_damage" : "2",
+         "skill_range" : "2",
+         "skill_cost" : "1",
+      }
+   ],
+   "data_num" : 1
+}

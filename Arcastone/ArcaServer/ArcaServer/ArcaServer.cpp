@@ -10,7 +10,7 @@
 #include "ClientSession.h"
 #include "ClientManager.h"
 #include "DatabaseJobManager.h"
-#include "PlayerManager.h"
+#include "UserManager.h"
 #include "GameManager.h"
 #include "AutoMatcher.h"
 #include "JsonManager.h"
@@ -34,7 +34,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	/// Manager Init
 	GClientManager = new ClientManager ;
 	GDatabaseJobManager = new DatabaseJobManager ;
-	GPlayerManager = new PlayerManager();
+	GUserManager = new UserManager();
 	GGameManager = new GameManager();
 	GAutoMatcher = new AutoMatcher();
 	GJsonManager = new JsonManager();
@@ -59,9 +59,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	serveraddr.sin_family = AF_INET ;
 	serveraddr.sin_port = htons(LISTEN_PORT) ;
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY) ;
-	int ret = bind(listenSocket, (SOCKADDR*)&serveraddr, sizeof(serveraddr)) ;
+
+	int ret = bind(listenSocket, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
+
 	if (ret == SOCKET_ERROR)
-		return -1 ;
+		return -1;
 	
 	/// listen
 	ret = listen(listenSocket, SOMAXCONN) ;
@@ -105,7 +107,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	delete GClientManager ;
 	delete GDatabaseJobManager ;
-	delete GPlayerManager ;
+	delete GUserManager ;
 	delete GGameManager ;
 	delete GAutoMatcher ;
 	delete GJsonManager ;

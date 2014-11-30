@@ -1,7 +1,10 @@
 ﻿#pragma once
+
+#include "Skill.h"
+#include "Player.h"
 #include "Field.h"
 #include "Unit.h"
-
+#include "TurnManager.h"
 
 class Game
 {
@@ -9,64 +12,83 @@ public:
 	Game(GameNumber gameNum);
 	~Game();
 
-	void						InitGame(PlayerNumber player1, PlayerNumber player2);
+	void						InitGame(UserNumber user1, UserNumber user2);
 	void						StartGame();
 
-	std::vector<Unit*>			GetUnitList() { return m_UnitList; }
-	Field*						GetField(){ return &m_GameField; }
-	PlayerNumber				GetAttacker(){ return m_Attacker; }
+	Field*						GetField(){ return &m_Field; }
 	Unit*						GetUnit(UnitIdentityNumber id);
 	Unit*						GetUnitInPosition(Coord position);
-	int							GetPlayerIndexByPlayerNumber(PlayerNumber playerNumber);
-	bool						IsPlayerInThisGame(PlayerNumber playerNumber);
+	bool						IsUserInThisGame(UserNumber userNumber);
 	GameNumber					GetGameNumber(){ return m_GameNum; }
 
-	void						HandleAttack(PlayerNumber attacker, AttackData* attackData);
-	void						HandleSkill(PlayerNumber attacker, SkillData* skillData);
-	void						GameOverForSurrender(PlayerNumber srrender);
+	void						HandleAttack(UserNumber user, AttackData* attackData);
+	void						GameOverForSurrender(UserNumber srrender);
+
+	std::vector<Unit*>*			GetUnitList(){ return &m_AllUnit; }
+	Player*						GetPlayerList(){ return m_Player; }
+
+
+
+	void						UnitFall();
+	void						StartBreakDown();
+
+	void						SetUpNPC(UnitType unitType, Coord unitPos);
+
+	TurnManager*				GetTurnManager(){ return &m_Turnmanager; }
+
+	int*						GetCurrentCost(){ return &m_CurrentCost; }
+
+	void						SetActionQueue(UnitAction* action){ m_UnitActionQueue.push_back(*action); }
+	void						PrintUnitActionQueue(UnitAction attackData);
+
+	void						UnitCounting();
+
+	Player*						AttackerSwap();
+
 
 private:
 	UnitIdentityNumber			GenerateUnitIdentityNumber();
-	void						SetUpNPC(UnitType unitType, Coord unitPos);
-	HexaDirection				GetDirection(Coord point1, Coord point2);
 
-	// For Attack Handling
-	void						UnitPush(Unit* unit, int power , HexaDirection direction);
-	void						UnitMove(Unit* unit, AttackData* attackData);
-	void						KillThisUnit(Unit* unit);
 //	void						UnitApplyDamageWithCollision(Unit* thisGuy, Unit* thatGuy);
-	void						PrintUnitActionQueue(UnitAction attackData);
 
-	bool						IsCorrectAttack(PlayerNumber attacker, AttackData* attackData);
-	void						IsNearArca();
+	bool						IsCorrectAttack(UserNumber user, AttackData* attackData);
+
+	bool						IsInValidPlayerNumber(PlayerNumber playerNumber);
+
 	void						IsGameOver();
-	void						UnitCounting();
-
-	void						StartBreakDown();
-	void						MakeFieldHole(Coord fieldCoord);
-
 	void						GameOver();
 
 
+	Player*						GetPlayerByUserName(UserNumber userNumber);
+
+	Skill*						SetupSkill(UnitSkillType type);
+
+	void						SendActionQueue();
+	void						SendCurrendtCost();
+	void						SendWhosTurn();
+
+	void						NearArcaCheck();
+
+
 private:
+	TurnManager					m_Turnmanager;
+
 	GameNumber					m_GameNum;
-	Field						m_GameField;
-	PlayerNumber				m_Attacker;
+	Field						m_Field;
 
-	bool						m_IsNearArca[2];	// 아르카스톤이 옆에 있는지에 대한 상태변수
-	int							m_CurrentCost;	// 남은 코스트
-	int							m_MaxCost[2];
-	int							m_PlayTurn;	// 경과한 턴
-	int							m_BreakDownTurn;
+	UserNumber					m_User[2];
+	Player						m_Player[PLAYER_COUNT_ALL];
 
-	bool						m_IsFirstTurn;
+	std::vector<Unit*>			m_AllUnit;
+
+	int							m_CurrentCost;		// 현재 턴인 플레이어의 남은 코스트
+
 	bool						m_IsGameOver;
-	int							m_UnitCount[3];	// 플레이어1, 플레이어2, NPC
-	int							m_LivingUnitCount[3]; // 이 변수들은 사용하기 전에 UnitCounting() 해서 초기화해주세요~
+
+	int							m_UnitCount[PLAYER_COUNT_ALL];
+	int							m_LivingUnitCount[PLAYER_COUNT_ALL]; // 이 변수들은 사용하기 전에 UnitCounting() 해서 초기화해주세요~
 	WhosWinner					m_Winner;
 
-	std::vector<Unit*>			m_UnitList;
-	std::vector<PlayerNumber>	m_PlayerList;
 	std::vector<UnitAction>		m_UnitActionQueue;
 
 	UnitIdentityNumber			m_UnitIdentityNumberCounter;

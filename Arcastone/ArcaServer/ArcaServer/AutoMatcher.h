@@ -5,11 +5,11 @@ public:
 	AutoMatcher();
 	~AutoMatcher();
 	
-	void						AddWaitPlayer(PlayerNumber playerId);
-	bool						DeleteWaitPlayer(PlayerNumber plyaerId);
+	void						AddWaitUser(UserNumber userId);
+	bool						DeleteWaitUser(UserNumber plyaerId);
 
 private:
-	std::list <PlayerNumber>	m_WaitPlayerList;
+	std::list <UserNumber>	m_WaitUserList;
 
 };
 

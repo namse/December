@@ -285,7 +285,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		m_Range = 0;
 		m_Direction = HD_NONE;
 
-		TcpClient::getInstance()->attackRequest(attackData);
+		TcpClient::getInstance()->attackRequest(&attackData);
 	}
 
 	m_SelectedUnit = NON_SELECT_UNIT;
@@ -293,7 +293,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 void GameScene::UsingSkill(Unit* unit)
 {
-	SkillData skillData;
+	AttackData skillData;
 	Skill skill = unit->GetSkill();
 
 	skillData.id = unit->GetID();
@@ -334,7 +334,7 @@ void GameScene::UsingSkill(Unit* unit)
 
 
 	// 스킬패킷 발사!
-	TcpClient::getInstance()->skillRequest(&skillData);
+	TcpClient::getInstance()->attackRequest(&skillData);
 }
 
 void GameScene::DrawCursorSign()

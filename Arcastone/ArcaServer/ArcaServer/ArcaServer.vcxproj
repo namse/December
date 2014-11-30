@@ -29,7 +29,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -168,6 +168,7 @@
     <ClInclude Include="ArcaServer.h" />
     <ClInclude Include="enums.h" />
     <ClInclude Include="Exception.h" />
+    <ClInclude Include="FireBall.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameManager.h" />
     <ClInclude Include="Group.h" />
@@ -176,13 +177,17 @@
     <ClInclude Include="Knight.h" />
     <ClInclude Include="Magician.h" />
     <ClInclude Include="ObjectPool.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Prince.h" />
     <ClInclude Include="Princess.h" />
     <ClInclude Include="Rider.h" />
     <ClInclude Include="Rock.h" />
+    <ClInclude Include="Skill.h" />
+    <ClInclude Include="SkillData.h" />
     <ClInclude Include="Soldier.h" />
-    <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerManager.h" />
+    <ClInclude Include="TurnManager.h" />
+    <ClInclude Include="User.h" />
+    <ClInclude Include="UserManager.h" />
     <ClInclude Include="ProducerConsumerQueue.h" />
     <ClInclude Include="RefCountable.h" />
     <ClInclude Include="Scheduler.h" />
@@ -204,6 +209,7 @@
     <ClCompile Include="DatabaseJobManager.cpp" />
     <ClCompile Include="ArcaServer.cpp" />
     <ClCompile Include="Exception.cpp" />
+    <ClCompile Include="FireBall.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameManager.cpp" />
     <ClCompile Include="Field.cpp" />
@@ -211,13 +217,15 @@
     <ClCompile Include="Knight.cpp" />
     <ClCompile Include="Magician.cpp" />
     <ClCompile Include="PacketHandling.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Prince.cpp" />
     <ClCompile Include="Princess.cpp" />
     <ClCompile Include="Rider.cpp" />
     <ClCompile Include="Rock.cpp" />
     <ClCompile Include="Soldier.cpp" />
-    <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerManager.cpp" />
+    <ClCompile Include="TurnManager.cpp" />
+    <ClCompile Include="User.cpp" />
+    <ClCompile Include="UserManager.cpp" />
     <ClCompile Include="Scheduler.cpp" />
     <ClCompile Include="Shop.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -14,15 +14,15 @@ AutoMatcher::~AutoMatcher()
 {
 }
 
-void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
+void AutoMatcher::AddWaitUser(UserNumber userId)
 {
 	// 단순 2인 매칭
-	if (0 < m_WaitPlayerList.size())
+	if (0 < m_WaitUserList.size())
 	{
-		PlayerNumber matchPlayer = m_WaitPlayerList.front();
-		m_WaitPlayerList.erase(m_WaitPlayerList.begin());
+		UserNumber matchUser = m_WaitUserList.front();
+		m_WaitUserList.erase(m_WaitUserList.begin());
 
-		auto gameID = GGameManager->CreateGame(playerId, matchPlayer);
+		auto gameID = GGameManager->CreateGame(userId, matchUser);
 
 		// make and send packet
 		Game* game = GGameManager->GetGame(gameID);
@@ -51,9 +51,9 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 			auto unitList = game->GetUnitList();
 
 			// fill unit data packet
-			for (unsigned int i = 0; i < unitList.size(); ++i)
+			for (unsigned int i = 0; i < unitList->size(); ++i)
 			{
-				Unit* unit = unitList[i];
+				Unit* unit = unitList->at(i);
 
 				auto position = unit->GetPos();
 
@@ -70,51 +70,52 @@ void AutoMatcher::AddWaitPlayer(PlayerNumber playerId)
 					outPacket[j].mUnit[i].id = unit->GetID();
 				}
 
+				
 				auto unitOwner = unit->GetOwner();
-				if (unitOwner == playerId) // player1's id
+				if (unitOwner == game->GetPlayerList()[0].GetPlayerNumber()) // user1's id
 				{
 					outPacket[0].mUnit[i].unitOwner = UO_ME;
 					outPacket[1].mUnit[i].unitOwner = UO_ENEMY;
 				}
-				else if (unitOwner == matchPlayer) // player2's id 
+				else if (unitOwner == game->GetPlayerList()[1].GetPlayerNumber()) // user2's id 
 				{
 					outPacket[0].mUnit[i].unitOwner = UO_ENEMY;
 					outPacket[1].mUnit[i].unitOwner = UO_ME;
 				}
-				else if (unitOwner == PLAYER_NUMBER_NPC)
+				else if (unitOwner == game->GetPlayerList()[2].GetPlayerNumber())
 				{
 					outPacket[0].mUnit[i].unitOwner = UO_NPC;
 					outPacket[1].mUnit[i].unitOwner = UO_NPC;
 				}
 			}
-			outPacket[0].mUnitLength = unitList.size();
-			outPacket[1].mUnitLength = unitList.size();
+			outPacket[0].mUnitLength = unitList->size();
+			outPacket[1].mUnitLength = unitList->size();
 		}
 
-		auto playerSession1 = GClientManager->GetClient(playerId);
-		auto playerSession2 = GClientManager->GetClient(matchPlayer);
+		auto userSession1 = GClientManager->GetClient(userId);
+		auto userSession2 = GClientManager->GetClient(matchUser);
 
-		playerSession1->SendRequest(&outPacket[0]);
-		playerSession2->SendRequest(&outPacket[1]);
+		userSession1->SendRequest(&outPacket[0]);
+		userSession2->SendRequest(&outPacket[1]);
 		
 
 		game->StartGame();
 	}
 	else
 	{
-		m_WaitPlayerList.push_back(playerId);
+		m_WaitUserList.push_back(userId);
 	}
 
 }
 
-bool AutoMatcher::DeleteWaitPlayer(PlayerNumber plyaerId)
+bool AutoMatcher::DeleteWaitUser(UserNumber plyaerId)
 {
-	std::list <PlayerNumber>::iterator it;
-	for (it = m_WaitPlayerList.begin(); it != m_WaitPlayerList.end(); ++it)
+	std::list <UserNumber>::iterator it;
+	for (it = m_WaitUserList.begin(); it != m_WaitUserList.end(); ++it)
 	{
 		if (plyaerId == *it)
 		{
-			m_WaitPlayerList.erase(it);
+			m_WaitUserList.erase(it);
 			return true;
 		}
 	}

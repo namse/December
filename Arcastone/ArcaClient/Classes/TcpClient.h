@@ -24,9 +24,8 @@ public:
 	/// request test 
 	void loginRequest();
 	void fieldRequest();
-	void attackRequest(AttackData attackData);
+	void attackRequest(AttackData* attackData);
 	void gameStartResult();
-	void skillRequest(SkillData* skillData);
 
 	
 private:

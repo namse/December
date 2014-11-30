@@ -21,7 +21,7 @@ public:
 
 	void FlushClientSend();
 
-	ClientSession* GetClient(PlayerNumber playerID);
+	ClientSession* GetClient(UserNumber userID);
 
 private:
 	void CollectGarbageSessions() ;

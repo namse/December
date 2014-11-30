@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Game.h"
-#include "Player.h"
+#include "User.h"
 
 class GameManager
 {
@@ -8,10 +8,10 @@ public:
 	GameManager();
 	~GameManager();
 
-	GameNumber		CreateGame(PlayerNumber player1, PlayerNumber player2);
+	GameNumber		CreateGame(UserNumber user1, UserNumber user2);
 	Game*			GetGame(GameNumber GameID){ return m_GameList.find(GameID)->second;  }
-	Game*			GetGameWithPlayerNumber(PlayerNumber playerNumber);
-	bool			CloseGameByPlayerNumber(PlayerNumber playerNumber);
+	Game*			GetGameWithUserNumber(UserNumber userNumber);
+	bool			CloseGameByUserNumber(UserNumber userNumber);
 
 private:
 	typedef std::map<GameNumber, Game*> GameList;

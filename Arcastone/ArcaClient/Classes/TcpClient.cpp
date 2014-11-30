@@ -239,11 +239,17 @@ void TcpClient::loginRequest()
 	send((const char*)&sendData, sizeof(Packet::LoginRequest));
 }
 
-void TcpClient::attackRequest(AttackData attackData)
+void TcpClient::attackRequest(AttackData* attackData)
 {
 	Packet::AttackRequest sendData;
 
-	sendData.mAttack = attackData;
+	sendData.mAttack = *attackData;
+
+	// TODO : USK_NONE 이 아니면 스킬 리퀘스트 하도록
+	if (attackData->skillType != USK_NONE)
+	{
+		return;
+	}
 
 	#pragma region DEBUG CODE
 #ifdef _DEBUG
@@ -251,7 +257,7 @@ void TcpClient::attackRequest(AttackData attackData)
 		printf("Send Attack Request\n");
 
 		bool printDirection, printRange, printPosition;
-		switch (attackData.attackType)
+		switch (attackData->attackType)
 		{
 		case UMT_STRAIGHT:
 			printf("Attack Type : Straight\n");
@@ -283,18 +289,18 @@ void TcpClient::attackRequest(AttackData attackData)
 		}
 
 		if (printDirection)
-			printf("Attack Direction : %d\n", (int)attackData.direction);
+			printf("Attack Direction : %d\n", (int)attackData->direction);
 		if (printRange)
-			printf("Attack Range : %d\n", attackData.range);
+			printf("Attack Range : %d\n", attackData->range);
 		if (printPosition)
-			printf("Attack Position : %d, %d\n", (int)attackData.position[0].x, (int)attackData.position[0].y);
+			printf("Attack Position : %d, %d\n", (int)attackData->position[0].x, (int)attackData->position[0].y);
 
-		if (attackData.attackType == UMT_DASH)
+		if (attackData->attackType == UMT_DASH)
 		{
-			for (int i = 1; i < attackData.range; ++i)
+			for (int i = 1; i < attackData->range; ++i)
 			{
 				if (printPosition)
-					printf("Attack Position : %d, %d\n", (int)attackData.position[i].x, (int)attackData.position[i].y);
+					printf("Attack Position : %d, %d\n", (int)attackData->position[i].x, (int)attackData->position[i].y);
 			}
 		}
 	}
@@ -302,13 +308,4 @@ void TcpClient::attackRequest(AttackData attackData)
 #pragma endregion
 
 	send((const char*)&sendData, sizeof(Packet::AttackRequest));
-}
-
-void TcpClient::skillRequest(SkillData* skillData)
-{
-	Packet::SkillRequest sendData;
-
-	sendData.mSkill = *skillData;
-
-	send((const char*)&sendData, sizeof(Packet::SkillRequest));
 }

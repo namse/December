@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-// Unit Data For Player's Group. not for ingame.
+// Unit Data For User's Group. not for ingame.
 // so, when game start, just copy this data and make GameObjects.
 struct UnitData
 {

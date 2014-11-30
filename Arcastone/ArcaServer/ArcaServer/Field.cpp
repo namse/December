@@ -1,6 +1,9 @@
 ﻿#include "stdafx.h"
 #include "Field.h"
 
+#include "ClientManager.h"
+#include "ClientSession.h"
+#include "UserManager.h"
 
 Field::Field()
 {
@@ -101,4 +104,29 @@ Coord Field::GetRandomBlock()
 			++i;
 		}
 	}
+}
+
+Unit* Field::MakeFieldHole(Coord* fieldCoord, std::vector<Unit*>* unitList, UserNumber* userNumber)
+{
+	SetFieldStatus(*fieldCoord, FBS_HOLE);
+	FieldBlock changeBlock = GetFieldBlock(*fieldCoord);
+
+	// 패킷 발송
+	Packet::ChangeFieldResult outPacket;
+	outPacket.mFieldBlock = changeBlock;
+
+	for (int i = 0; i < PLAYER_COUNT_ALL; ++i)
+	{
+		auto session = GClientManager->GetClient(userNumber[i]);
+		if (session != nullptr)
+			session->SendRequest(&outPacket);
+	}
+
+	// 낙하 유닛 처리
+	Unit* fallUnit = nullptr;
+	for (auto unit : *unitList)
+	if (unit->GetPos() == *fieldCoord)
+		fallUnit = unit;
+
+	return fallUnit;
 }

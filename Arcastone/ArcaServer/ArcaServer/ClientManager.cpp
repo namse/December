@@ -6,7 +6,7 @@
 #include "ClientManager.h"
 #include "DatabaseJobContext.h"
 #include "DatabaseJobManager.h"
-#include "PlayerManager.h"
+#include "UserManager.h"
 
 ClientManager* GClientManager = nullptr ;
 
@@ -84,12 +84,12 @@ void ClientManager::FlushClientSend()
 		}
 	}
 }
-ClientSession* ClientManager::GetClient(PlayerNumber playerID)
+ClientSession* ClientManager::GetClient(UserNumber userID)
 {
 	for (auto clientIt : mClientList)
 	{
 		auto client = clientIt.second;
-		if (playerID == client->GetPlayerId())
+		if (userID == client->GetUserId())
 		{
 			return client;
 		}

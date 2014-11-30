@@ -52,6 +52,7 @@ enum UnitStatusType{
 	UST_NONE = 0,
 	UST_DEAD = 1,
 	UST_CASTING = 2,
+	UST_UNABLE_ATTACK = 3,
 	// 그 외 상태이상들
 };
 
@@ -98,8 +99,8 @@ enum UnitOwner
 enum WhosWinner
 {
 	WW_NONE = 0,
-	WW_PLAYER1 = 1,
-	WW_PLAYER2 = 2,
+	WW_USER1 = 1,
+	WW_USER2 = 2,
 	WW_DRAW = 3,	// 무승부
 };
 
@@ -201,21 +202,15 @@ struct UnitAction{
 };
 
 struct AttackData{
-	UnitIdentityNumber id;
+	UnitIdentityNumber	id;
 	UnitMoveType		attackType;
+	UnitSkillType		skillType;
+	UnitSkillRank		skillRank;
+
+	/*  가변 길이로  */
 	int					range;
 	HexaDirection		direction;
 	Coord				position[MAX_MOVE_RANGE];
-};
-
-struct SkillData{
-	UnitIdentityNumber	id;
-	UnitSkillType		skillType;
-	UnitSkillRank		skillRank;
-	// TODO : 가변길이로
-	int					range;
-	HexaDirection		direction;
-	Coord				position[MAX_SKILL_RANGE];
 };
 
 

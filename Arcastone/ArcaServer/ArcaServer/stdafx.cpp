@@ -58,3 +58,37 @@ int GetVectorSize(Coord from, Coord to)
 	if (abs(vec.x) > 0) return abs(vec.x);
 	else return abs(vec.y);
 }
+
+HexaDirection GetDirection(Coord point1, Coord point2)
+{
+	Coord vec = point2 - point1;
+
+	if (vec.y < 0 && vec.x == 0)
+	{
+		return HD_NORTH;
+	}
+	else if (vec.x > 0 && vec.y < 0)
+	{
+		if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+		return HD_NORTHEAST;
+	}
+	else if (vec.x < 0 && vec.y == 0)
+	{
+		return HD_NORTHWEST;
+	}
+	else if (vec.y > 0 && vec.x == 0)
+	{
+		return HD_SOUTH;
+	}
+	else if (vec.x > 0 && vec.y == 0)
+	{
+		return HD_SOUTHEAST;
+	}
+	else if (vec.x < 0 && vec.y > 0)
+	{
+		if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+		return HD_SOUTHWEST;
+	}
+
+	return HD_NONE;
+}
