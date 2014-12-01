@@ -37,7 +37,7 @@ public:
 	void					SetIsNearArca(bool is){ m_IsNearArca = is; }
 	bool					GetIsNearArca(){ return m_IsNearArca; }
 
-	void					UnitMove(Game* game, AttackData* attackData);
+	void					UnitMove(Game* game, ActionData* actionData);
 	void					UnitPush(Game* game, int power, HexaDirection direction);
 	void					KillThisUnit(Game* game);
 

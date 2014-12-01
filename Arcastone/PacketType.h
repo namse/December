@@ -12,8 +12,8 @@ enum PacketTypes
 
 	PKT_SC_GAME_START = 3,
 
-	PKT_CS_ATTACK = 4,
-	PKT_SC_ATTACK = 5,
+	PKT_CS_ACTION = 4,
+	PKT_SC_ACTION = 5,
 
 	PKT_SC_YOUR_TURN = 6,
 
@@ -92,20 +92,20 @@ namespace Packet
 		FieldBlock				mFieldList[MAX_FIELD_BLOCK];
 	};
 
-	struct AttackRequest : public PacketHeader
+	struct ActionRequest : public PacketHeader
 	{
-		AttackRequest(){
-			mSize = sizeof(AttackRequest);
-			mType = PKT_CS_ATTACK;
+		ActionRequest(){
+			mSize = sizeof(ActionRequest);
+			mType = PKT_CS_ACTION;
 		}
-		AttackData				mAttack;
+		ActionData				mAction;
 	};
 
 	struct AttackResult : public PacketHeader
 	{
 		AttackResult(){
 			mSize = sizeof(AttackResult);
-			mType = PKT_SC_ATTACK;
+			mType = PKT_SC_ACTION;
 			mQueueLength = 0;
 			memset(mUnitActionQueue, 0, sizeof(mUnitActionQueue));
 		}

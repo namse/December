@@ -185,6 +185,7 @@
     <ClInclude Include="Skill.h" />
     <ClInclude Include="SkillData.h" />
     <ClInclude Include="Soldier.h" />
+    <ClInclude Include="Stamp.h" />
     <ClInclude Include="TurnManager.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserManager.h" />
@@ -223,6 +224,7 @@
     <ClCompile Include="Rider.cpp" />
     <ClCompile Include="Rock.cpp" />
     <ClCompile Include="Soldier.cpp" />
+    <ClCompile Include="Stamp.cpp" />
     <ClCompile Include="TurnManager.cpp" />
     <ClCompile Include="User.cpp" />
     <ClCompile Include="UserManager.cpp" />

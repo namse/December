@@ -201,7 +201,7 @@ struct UnitAction{
 	}mCollisionData;
 };
 
-struct AttackData{
+struct ActionData{
 	UnitIdentityNumber	id;
 	UnitMoveType		attackType;
 	UnitSkillType		skillType;

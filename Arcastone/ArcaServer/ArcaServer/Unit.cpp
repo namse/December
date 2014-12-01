@@ -96,14 +96,14 @@ void Unit::InitUnit(UnitType unitType)
 
 
 
-void Unit::UnitMove(Game* game, AttackData* attackData)
+void Unit::UnitMove(Game* game, ActionData* actionData)
 {
 	UnitMoveType	unitMoveType = m_UnitMoveType;
 	Coord			unitPos = m_Position;
 	int				unitAtk = m_Attack;
 
-	int				range = attackData->range;
-	HexaDirection	direction = attackData->direction;
+	int				range = actionData->range;
+	HexaDirection	direction = actionData->direction;
 	Unit*			crashGuy = nullptr; // 충돌한 유닛을 찾는다
 	Coord			movePos = unitPos;
 	int				moveRange = 0;
@@ -173,9 +173,9 @@ void Unit::UnitMove(Game* game, AttackData* attackData)
 					 // 입력한 range 만큼 '한칸씩' 이동하겠어요~
 					 for (int move = 0; move < range; ++move)
 					 {
-						 HexaDirection direction = GetHexaDirection(movePos, attackData->position[move]);
+						 HexaDirection direction = GetHexaDirection(movePos, actionData->position[move]);
 						 // 아! 물론 이동하려는 위치에 유닛이 있으면
-						 Unit* standUnit = game->GetUnitInPosition(attackData->position[move]);
+						 Unit* standUnit = game->GetUnitInPosition(actionData->position[move]);
 						 if (nullptr != standUnit)
 						 {
 							 crashGuy = standUnit;
@@ -184,7 +184,7 @@ void Unit::UnitMove(Game* game, AttackData* attackData)
 						 // 유닛을 만나지 않으면 계속 질주하세욧!
 						 else
 						 {
-							 SetPosition(attackData->position[move]);
+							 SetPosition(actionData->position[move]);
 
 							 // TODO : mMoveData는 Move용 데이터임. Dash용이 아님.
 							 // 현재는 UnitAction에 Move, Colide, Die 모든 데이터가 다 들어있어서
@@ -201,31 +201,31 @@ void Unit::UnitMove(Game* game, AttackData* attackData)
 							 dashAction.mUnitId = m_ID;
 							 dashAction.mMoveData.mRange = 1;
 							 dashAction.mMoveData.mDirection = direction;
-							 dashAction.mMoveData.mFinalX = attackData->position[move].x;
-							 dashAction.mMoveData.mFinalY = attackData->position[move].y;
+							 dashAction.mMoveData.mFinalX = actionData->position[move].x;
+							 dashAction.mMoveData.mFinalY = actionData->position[move].y;
 
 							 game->SetActionQueue(&dashAction);
 #ifdef _DEBUG
 							 game->PrintUnitActionQueue(dashAction);
 #endif
 						 }
-						 movePos = attackData->position[move];
+						 movePos = actionData->position[move];
 					 }
 
 	}break;
 
 	case UMT_TELEPORT:
 	{
-						 if (game->GetUnitInPosition(attackData->position[0]) != nullptr) return;
+						 if (game->GetUnitInPosition(actionData->position[0]) != nullptr) return;
 
-						 if (game->GetField()->IsInsideOfField(attackData->position[0]) == false) return;
+						 if (game->GetField()->IsInsideOfField(actionData->position[0]) == false) return;
 
 						 actionType = UAT_TELEPORT;
-						 movePos = attackData->position[0];
+						 movePos = actionData->position[0];
 	}break;
 
 	default:
-		assert(false && "HandleAttack In UnitMoveType Wrong");
+		assert(false && "HandleAction In UnitMoveType Wrong");
 	}
 
 

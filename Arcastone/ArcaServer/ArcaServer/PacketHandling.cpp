@@ -139,9 +139,9 @@ REGISTER_HANDLER(PKT_CS_LOGIN)
 	GAutoMatcher->AddWaitUser(userNum);
 }
 
-REGISTER_HANDLER(PKT_CS_ATTACK)
+REGISTER_HANDLER(PKT_CS_ACTION)
 {
-	Packet::AttackRequest inPacket;
+	Packet::ActionRequest inPacket;
 	if (false == session->ParsePacket(inPacket))
 	{
 		printf("[DEBUG] packet parsing error", inPacket.mType);
@@ -154,6 +154,6 @@ REGISTER_HANDLER(PKT_CS_ATTACK)
 	// TODO : 이러면 해커가 공격하면 바로 서버 터지겠네요
 	assert(game != nullptr);
 	
-	game->HandleAttack(userNumber, &inPacket.mAttack);
+	game->HandleAction(userNumber, &inPacket.mAction);
 
 }

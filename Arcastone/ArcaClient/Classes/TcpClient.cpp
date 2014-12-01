@@ -191,7 +191,7 @@ void TcpClient::processPacket()
 			scheduler->performFunctionInCocosThread(CC_CALLBACK_0(GameScene::SetTurn, dynamic_cast<GameScene*>(layer), recvData.mIsReallyMyTurn));
 		}break;
 
-		case PKT_SC_ATTACK:
+		case PKT_SC_ACTION:
 		{
 			Packet::AttackResult recvData;
 			bool ret = m_recvBuffer.Read((char*)&recvData, header.mSize);
@@ -239,73 +239,103 @@ void TcpClient::loginRequest()
 	send((const char*)&sendData, sizeof(Packet::LoginRequest));
 }
 
-void TcpClient::attackRequest(AttackData* attackData)
+void TcpClient::actionRequest(ActionData* actionData)
 {
-	Packet::AttackRequest sendData;
+	Packet::ActionRequest sendData;
 
-	sendData.mAttack = *attackData;
+	sendData.mAction = *actionData;
 
-	// TODO : USK_NONE 이 아니면 스킬 리퀘스트 하도록
-	if (attackData->skillType != USK_NONE)
+	UnitSkillType type = actionData->skillType;
+	// Attack Request
+	if (type == USK_NONE)
 	{
-		return;
+
+
+		send((const char*)&sendData, sizeof(Packet::ActionRequest));
+		goto return_with_print_attack_request;
+	}
+	// Skill Request
+	else
+	{
+
+
+		send((const char*)&sendData, sizeof(Packet::ActionRequest));
+		goto return_with_print_skill_request;
 	}
 
-	#pragma region DEBUG CODE
+
+return_with_print_attack_request:;
+#pragma region PRINT ATTACK REQUEST
+#ifdef _DEBUG
+{
+					  printf("Send Attack Request\n");
+
+					  bool printDirection, printRange, printPosition;
+					  switch (actionData->attackType)
+					  {
+					  case UMT_STRAIGHT:
+						  printf("Attack Type : Straight\n");
+						  printDirection = true;
+						  printRange = true;
+						  printPosition = false;
+						  break;
+
+					  case UMT_JUMP:
+						  printf("Attack Type : Jump\n");
+						  printDirection = true;
+						  printRange = true;
+						  printPosition = false;
+						  break;
+
+					  case UMT_DASH:
+						  printf("Attack Type : Dash\n");
+						  printDirection = false;
+						  printRange = true;
+						  printPosition = true;
+						  break;
+
+					  case UMT_TELEPORT:
+						  printf("Attack Type : Teleport\n");
+						  printDirection = false;
+						  printRange = false;
+						  printPosition = true;
+						  break;
+					  }
+
+					  if (printDirection)
+						  printf("Attack Direction : %d\n", (int)actionData->direction);
+					  if (printRange)
+						  printf("Attack Range : %d\n", actionData->range);
+					  if (printPosition)
+						  printf("Attack Position : %d, %d\n", (int)actionData->position[0].x, (int)actionData->position[0].y);
+
+					  if (actionData->attackType == UMT_DASH)
+					  {
+						  for (int i = 1; i < actionData->range; ++i)
+						  {
+							  if (printPosition)
+								  printf("Attack Position : %d, %d\n", (int)actionData->position[i].x, (int)actionData->position[i].y);
+						  }
+					  }
+}
+#endif
+#pragma endregion
+	return;
+return_with_print_skill_request:;
+#pragma region PRINT SKILL REQUEST
 #ifdef _DEBUG
 	{
-		printf("Send Attack Request\n");
+		printf("Send Skill Request\n");
 
 		bool printDirection, printRange, printPosition;
-		switch (attackData->attackType)
+		switch (actionData->skillType)
 		{
-		case UMT_STRAIGHT:
-			printf("Attack Type : Straight\n");
-			printDirection = true;
-			printRange = true;
-			printPosition = false;
+			// TODO : 스킬 사용 내역 출력하기
+		default:
 			break;
-
-		case UMT_JUMP:
-			printf("Attack Type : Jump\n");
-			printDirection = true;
-			printRange = true;
-			printPosition = false;
-			break;
-
-		case UMT_DASH:
-			printf("Attack Type : Dash\n");
-			printDirection = false;
-			printRange = true;
-			printPosition = true;
-			break;
-
-		case UMT_TELEPORT:
-			printf("Attack Type : Teleport\n");
-			printDirection = false;
-			printRange = false;
-			printPosition = true;
-			break;
-		}
-
-		if (printDirection)
-			printf("Attack Direction : %d\n", (int)attackData->direction);
-		if (printRange)
-			printf("Attack Range : %d\n", attackData->range);
-		if (printPosition)
-			printf("Attack Position : %d, %d\n", (int)attackData->position[0].x, (int)attackData->position[0].y);
-
-		if (attackData->attackType == UMT_DASH)
-		{
-			for (int i = 1; i < attackData->range; ++i)
-			{
-				if (printPosition)
-					printf("Attack Position : %d, %d\n", (int)attackData->position[i].x, (int)attackData->position[i].y);
-			}
 		}
 	}
 #endif
 #pragma endregion
-
-	send((const char*)&sendData, sizeof(Packet::AttackRequest));
+	return;
 }

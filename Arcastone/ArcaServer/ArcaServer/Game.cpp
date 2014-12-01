@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "Game.h"
-#include "FireBall.h"
 
 #include "ClientManager.h"
 #include "ClientSession.h"
 #include "UserManager.h"
 
 #include "../../CommonDefinitions.h"
+
+/*  Skills  */
+#include "FireBall.h"
+#include "Stamp.h"
 
 #define START_POINT_USER1 Coord(3,5)
 #define START_POINT_USER2 Coord(3,1)
@@ -97,41 +100,17 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 //	m_Attacker = m_UserList.at(rand() % m_UserList.size());
 }
 
-void Game::HandleAttack(UserNumber user, AttackData* attackData)
+void Game::HandleAction(UserNumber user, ActionData* actionData)
 {
 	// 정당한 패킷이 아니면 무시
-	if (!IsCorrectAttack(user, attackData))
+	if (!IsCorrectAction(user, actionData))
 		return;
 
-	Player* attacker = GetPlayerByUserName(user);
+	// 유닛 액션 실행!
+	OperatingUnitAction(user, actionData);
 
-	m_UnitActionQueue.clear();
-
-	UnitSkillType type = attackData->skillType;
-	if (type != USK_NONE)
-	{
-		// 유닛 이동
-		Unit* attacker = GetUnit(attackData->id);
-		attacker->UnitMove(this, attackData);
-
-		// 이동 가능 횟수 - 1
-		m_CurrentCost--;
-	}
-	else
-	{
-		// 스킬 사용
-		Skill* skill = SetupSkill(type);
-
-		// 스킬데이터가 조건에 부합하면 false 를 리턴하여 무시해버린다
-		if (!skill->ActSkill(this, attackData))
-			return;
-	}
-
-	// 유닛이 어떻게 어떻게 이동했는지 통째로 알려준다!
+	// 유닛이 어떻게 어떻게 이동했는지 통째로 알려준다
 	SendActionQueue();
-
-	// 게임이 끝나는 상황인지 확인
-	IsGameOver();
 
 	// 아르카스톤에 대한 턴 처리 해주고..
 	NearArcaCheck();
@@ -139,20 +118,47 @@ void Game::HandleAttack(UserNumber user, AttackData* attackData)
 	// 너네 마나 이만큼 남았어~
 	SendCurrendtCost();
 
+	// 게임이 끝나는 상황인지 확인
+	IsGameOver();
+
 	// 남은 턴 횟수가 없다면
 	if (m_CurrentCost <= 0)
 	{
 		m_Turnmanager.TurnFlow();
 		StartBreakDown();
 
-		// 공격자를 바꾸고
-		attacker = AttackerSwap();
-
-		m_CurrentCost = attacker->GetMaxCost();
 		// 플레이어의 마나량을 재밍하는 스킬을 넣고싶다면 이 부분을 수정하면 된다.
+		// 공격자를 바꾸고, 현재 코스트를 공격자의 최대 코스트까지 채운다.
+		m_CurrentCost = AttackerSwap()->GetMaxCost();
 
 		// 공격하라는 신호를 보낸다!
 		SendWhosTurn();
+	}
+}
+
+void Game::OperatingUnitAction(UserNumber user, ActionData* actionData)
+{
+	m_UnitActionQueue.clear();
+
+	Player* attacker = GetPlayerByUserName(user);
+	UnitSkillType type = actionData->skillType;
+	if (type != USK_NONE)
+	{
+		// 유닛 이동
+		Unit* attacker = GetUnit(actionData->id);
+		attacker->UnitMove(this, actionData);
+
+		// 이동 가능 횟수 - 1
+		m_CurrentCost--;
+	}
+	else
+	{
+		// 스킬 사용
+		Skill* skill = InitSkill(type);
+
+		// 스킬데이터가 조건에 부합하면 false 를 리턴하여 무시해버린다
+		if (!skill->ActSkill(this, actionData))
+			return;
 	}
 }
 
@@ -223,18 +229,17 @@ void Game::IsGameOver()
 
 void Game::GameOverForSurrender(UserNumber srrender)
 {
-	if (m_User[0] == srrender)
+	if (m_User[PLAYER_ONE] == srrender)
 	{
 		m_Winner = WW_USER2;
 	}
-	else if (m_User[1] == srrender)
+	else if (m_User[PLAYER_TWO] == srrender)
 	{
 		m_Winner = WW_USER1;
 	}
 	else
 	{
-		// 에러상황
-		m_Winner = WW_DRAW;
+		return;
 	}
 	m_IsGameOver = true;
 	GameOver();
@@ -323,7 +328,7 @@ void Game::SetUpNPC(UnitType unitType, Coord unitPos)
 	UnitCounting();
 }
 
-bool Game::IsCorrectAttack(UserNumber user, AttackData* attackData)
+bool Game::IsCorrectAction(UserNumber user, ActionData* actionData)
 {
 	// 클라야.. 니 턴 아니란다
 	if (user != m_Player[m_Turnmanager.GetWhosTurn()].GetUserNumber())
@@ -338,7 +343,7 @@ bool Game::IsCorrectAttack(UserNumber user, AttackData* attackData)
 	// 잘못된 유닛으로 공격하려고 하면 무시
 	{
 		// 유닛의 Owner 확인
-		Unit* pUnit = GetUnit(attackData->id);
+		Unit* pUnit = GetUnit(actionData->id);
 		if (pUnit->GetOwner() != m_Turnmanager.GetWhosTurn())
 		{
 			return false;
@@ -348,7 +353,7 @@ bool Game::IsCorrectAttack(UserNumber user, AttackData* attackData)
 	}
 
 	// 스킬을 발동하는 경우
-	if (attackData->skillType != USK_NONE)
+	if (actionData->skillType != USK_NONE)
 	{
 		// TODO : 스킬사용에 필요한 조건 확인
 
@@ -359,23 +364,23 @@ bool Game::IsCorrectAttack(UserNumber user, AttackData* attackData)
 	{
 		// TODO : 유닛의 스탯에 따라 공격 범위 확인
 
-		switch (attackData->attackType)
+		switch (actionData->attackType)
 		{
 		case UMT_STRAIGHT:
-			if (attackData->range == 0)
+			if (actionData->range == 0)
 				return false;
 			break;
 		case UMT_JUMP:
-			if (attackData->range == 0)
+			if (actionData->range == 0)
 				return false;
 			break;
 		case UMT_DASH:
-			if (attackData->range == 0)
+			if (actionData->range == 0)
 				return false;
 			break;
 		case UMT_TELEPORT:
 			// 텔포하려는 위치에 유닛이 있는 경우 -> 합!체!
-			if (GetUnitInPosition(attackData->position[0]) != nullptr)
+			if (GetUnitInPosition(actionData->position[0]) != nullptr)
 			{
 				// 하면 안되지!
 				return false;
@@ -384,17 +389,15 @@ bool Game::IsCorrectAttack(UserNumber user, AttackData* attackData)
 		}
 	}
 
-
-
 	// 올바른 공격이군! 통과!
 	return true;
 }
 
-void Game::PrintUnitActionQueue(UnitAction attackData)
+void Game::PrintUnitActionQueue(UnitAction actionData)
 {
 #ifdef _DEBUG
 	printf("Add Unit Action Queue\n");
-	switch (attackData.mActionType)
+	switch (actionData.mActionType)
 	{
 	case UAT_MOVE:
 		printf("MoveType : UAT_MOVE");
@@ -432,25 +435,25 @@ void Game::PrintUnitActionQueue(UnitAction attackData)
 
 UnitMove:
 	printf("Unit ID : %d\n Move Range : %d\n Move Direction : %d\n Move Point : %d, %d\n",
-		(int)attackData.mUnitId,
-		attackData.mMoveData.mRange,
-		(int)attackData.mMoveData.mDirection,
-		(int)attackData.mMoveData.mFinalX,
-		(int)attackData.mMoveData.mFinalY);
+		(int)actionData.mUnitId,
+		actionData.mMoveData.mRange,
+		(int)actionData.mMoveData.mDirection,
+		(int)actionData.mMoveData.mFinalX,
+		(int)actionData.mMoveData.mFinalY);
 	printf("\n");
 
 	return;
 
 UnitCollision:
-	printf("Attacker ID : %d\n", (int)attackData.mUnitId);
-	printf("Target ID : %d\n", (int)attackData.mCollisionData.mTarget);
-	printf("Attacker HP : %d\n", attackData.mCollisionData.mMyHP);
-	printf("Target HP : %d\n", attackData.mCollisionData.mTargetHP);
+	printf("Attacker ID : %d\n", (int)actionData.mUnitId);
+	printf("Target ID : %d\n", (int)actionData.mCollisionData.mTarget);
+	printf("Attacker HP : %d\n", actionData.mCollisionData.mMyHP);
+	printf("Target HP : %d\n", actionData.mCollisionData.mTargetHP);
 
 	return;
 
 UnitDie:
-	printf("Die Unit ID : %d\n", (int)attackData.mUnitId);
+	printf("Die Unit ID : %d\n", (int)actionData.mUnitId);
 
 	return;
 #endif
@@ -521,16 +524,6 @@ void Game::StartBreakDown()
 	return;
 }
 
-bool Game::IsInValidPlayerNumber(PlayerNumber playerNumber)
-{
-	if (playerNumber >= 0 && playerNumber < PLAYER_COUNT_ALL)
-	{
-		return true;
-	}
-
-	return false;
-}
-
 Player* Game::GetPlayerByUserName(UserNumber userNumber)
 {
 	for (int i = 0; i < PLAYER_COUNT; ++i)
@@ -544,7 +537,7 @@ Player* Game::GetPlayerByUserName(UserNumber userNumber)
 	return nullptr;
 }
 
-Skill* Game::SetupSkill(UnitSkillType type)
+Skill* Game::InitSkill(UnitSkillType type)
 {
 	Skill* skill = nullptr;
 
@@ -554,7 +547,7 @@ Skill* Game::SetupSkill(UnitSkillType type)
 		skill = new FireBall();
 		break;
 	case USK_STAMP:
-//		skill = new Stamp(rank);
+		skill = new Stamp();
 		break;
 	}
 
@@ -588,7 +581,6 @@ Player* Game::AttackerSwap()
 
 void Game::SendCurrendtCost()
 {
-	// 너네 마나 이만큼 남았어~
 	Packet::CostRenewalResult outPacket;
 
 	for (int i = 0; i < PLAYER_COUNT; ++i)
@@ -628,4 +620,15 @@ void Game::NearArcaCheck()
 	{
 		m_Player[i].IsNearArca(&m_AllUnit, &m_Turnmanager, &m_CurrentCost);
 	}
+}
+
+UserNumber Game::GetUserNumberByPlayerNumber(PlayerNumber playerNumber)
+{
+	if (playerNumber > PLAYER_COUNT)
+		return -1;
+
+	if (playerNumber < 0)
+		return -1;
+
+	return playerNumber;
 }

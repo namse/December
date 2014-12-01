@@ -232,32 +232,32 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	// 유닛을 드래그 했으므로 공격 패킷 발싸!
 	{
-		AttackData attackData;
+		ActionData actionData;
 
 		switch (unit->GetMoveType())
 		{
 		case UMT_STRAIGHT:{
-							  attackData.attackType = UMT_STRAIGHT;
+							  actionData.attackType = UMT_STRAIGHT;
 							  if (m_Direction == HD_NONE || m_Range <= 0) return;
 		}break;
 
 		case UMT_JUMP:{
-						  attackData.attackType = UMT_JUMP;
+						  actionData.attackType = UMT_JUMP;
 						  if (m_Direction == HD_NONE || m_Range <= 0) return;
 		}break;
 
 		case UMT_DASH:{
-						  attackData.attackType = UMT_DASH;
+						  actionData.attackType = UMT_DASH;
 						  m_Range = m_CourseStack.size();
 						  for (int i = 0; i < m_CourseStack.size(); ++i)
 						  {
 							  // 대쉬는 이동 스택을 입력
-							  attackData.position[i] = m_CourseStack.at(i).HexaToCoord();
+							  actionData.position[i] = m_CourseStack.at(i).HexaToCoord();
 						  }
 		}break;
 
 		case UMT_TELEPORT:{
-							  attackData.attackType = UMT_TELEPORT;
+							  actionData.attackType = UMT_TELEPORT;
 							  // 텔포는 이동 칸 하나 입력
 							  if (m_CourseStack.size() == 1)
 							  {
@@ -265,7 +265,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 								  if (GetUnitByPos(m_CourseStack.at(0)) == nullptr)
 								  {
 
-									  attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
+									  actionData.position[0] = m_CourseStack.at(0).HexaToCoord();
 								  }
 								  else return;
 							  }
@@ -278,14 +278,14 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 		m_CourseStack.clear();
 
-		attackData.id = unit->GetID();
-		attackData.direction = m_Direction;
-		attackData.range = m_Range;
+		actionData.id = unit->GetID();
+		actionData.direction = m_Direction;
+		actionData.range = m_Range;
 
 		m_Range = 0;
 		m_Direction = HD_NONE;
 
-		TcpClient::getInstance()->attackRequest(&attackData);
+		TcpClient::getInstance()->actionRequest(&actionData);
 	}
 
 	m_SelectedUnit = NON_SELECT_UNIT;
@@ -293,7 +293,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 void GameScene::UsingSkill(Unit* unit)
 {
-	AttackData skillData;
+	ActionData skillData;
 	Skill skill = unit->GetSkill();
 
 	skillData.id = unit->GetID();
@@ -334,7 +334,7 @@ void GameScene::UsingSkill(Unit* unit)
 
 
 	// 스킬패킷 발사!
-	TcpClient::getInstance()->attackRequest(&skillData);
+	TcpClient::getInstance()->actionRequest(&skillData);
 }
 
 void GameScene::DrawCursorSign()
@@ -983,10 +983,10 @@ void GameScene::HighlightHexagon(ScreenPoint position)
 	m_ExpectSignNode.push_back(expectSignNode);
 }
 
-void GameScene::PrintUnitAction(UnitAction attackData)
+void GameScene::PrintUnitAction(UnitAction actionData)
 {
 	printf("Read Unit Action Queue\n");
-	switch (attackData.mActionType)
+	switch (actionData.mActionType)
 	{
 	case UAT_MOVE:
 		printf("MoveType : UAT_MOVE");
@@ -1024,25 +1024,25 @@ void GameScene::PrintUnitAction(UnitAction attackData)
 
 UnitMove:
 	printf("Unit ID : %d\n Move Range : %d\n Move Direction : %d\n Move Point : %d, %d\n",
-		(int)attackData.mUnitId,
-		attackData.mMoveData.mRange,
-		(int)attackData.mMoveData.mDirection,
-		(int)attackData.mMoveData.mFinalX,
-		(int)attackData.mMoveData.mFinalY);
+		(int)actionData.mUnitId,
+		actionData.mMoveData.mRange,
+		(int)actionData.mMoveData.mDirection,
+		(int)actionData.mMoveData.mFinalX,
+		(int)actionData.mMoveData.mFinalY);
 	printf("\n");
 
 	return;
 
 UnitCollision:
-	printf("Attacker ID : %d\n", (int)attackData.mUnitId);
-	printf("Target ID : %d\n", (int)attackData.mCollisionData.mTarget);
-	printf("Attacker HP : %d\n", attackData.mCollisionData.mMyHP);
-	printf("Target HP : %d\n\n", attackData.mCollisionData.mTargetHP);
+	printf("Attacker ID : %d\n", (int)actionData.mUnitId);
+	printf("Target ID : %d\n", (int)actionData.mCollisionData.mTarget);
+	printf("Attacker HP : %d\n", actionData.mCollisionData.mMyHP);
+	printf("Target HP : %d\n\n", actionData.mCollisionData.mTargetHP);
 
 	return;
 
 UnitDie:
-	printf("Die Unit ID : %d\n\n", (int)attackData.mUnitId);
+	printf("Die Unit ID : %d\n\n", (int)actionData.mUnitId);
 
 	return;
 }

@@ -3,11 +3,11 @@
 #include "Skill.h"
 
 class Game;
-class FireBall : public Skill
+class Stamp : public Skill
 {
 public:
-	FireBall(){}
-	~FireBall(){}
+	Stamp(){}
+	~Stamp(){}
 
 	bool ActSkill(Game* game, ActionData* skillData);
 };

@@ -189,6 +189,9 @@
     <ClInclude Include="SkillData.h">
       <Filter>GameLogic\JsonManager</Filter>
     </ClInclude>
+    <ClInclude Include="Stamp.h">
+      <Filter>GamePlayingObject\Skill</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CircularBuffer.cpp">
@@ -286,6 +289,9 @@
     </ClCompile>
     <ClCompile Include="UserManager.cpp">
       <Filter>GameLogic\UserManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Stamp.cpp">
+      <Filter>GamePlayingObject\Skill</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

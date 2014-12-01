@@ -34,6 +34,9 @@
     <Filter Include="GameObject\player">
       <UniqueIdentifier>{86a64d5e-c36e-4453-970e-e529bd1ba44d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\SKill">
+      <UniqueIdentifier>{0afd9d54-fe83-4e2e-8021-adf433dc0604}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\CircularBuffer.cpp">
