@@ -14,7 +14,7 @@ Player::~Player()
 }
 
 
-void Player::IsNearArca(std::vector<Unit*>* unitList, TurnManager* turnmanager, int* currentCost)
+void Player::IsNearArca(std::vector<Unit*>* unitList, TurnManager* turnmanager)
 {
 	// 옆에 알카스톤이 있는지 보고, 전에 없었는데 이번에 있으면 이동가능횟수++
 	// 반대면 --
@@ -80,7 +80,7 @@ void Player::IsNearArca(std::vector<Unit*>* unitList, TurnManager* turnmanager, 
 			// 최대 이동가능 횟수를 1 증가시킨다.
 			m_MaxCost++;
 			// 현재 이동가능 횟수도 1 증가시킨다.
-			*currentCost++;
+			m_CurrentCost++;
 		}
 	}
 	else					// 이번 턴에 아르카스톤이 옆에 없고
@@ -88,11 +88,19 @@ void Player::IsNearArca(std::vector<Unit*>* unitList, TurnManager* turnmanager, 
 		if (isNearArcaStoneBefore)	// 전 턴에는 옆에 있었다면
 		{
 			m_MaxCost--;
-			*currentCost++;
+			m_CurrentCost--;
 		}
 		else				// 전 턴에도 옆에 없었다면
 		{
 			// 무시
 		}
 	}
+}
+
+void Player::SetCurrentCost(int cost)
+{
+	if (cost > m_MaxCost)
+		m_CurrentCost = m_MaxCost;
+	else
+		m_CurrentCost = cost;
 }

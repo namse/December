@@ -15,6 +15,8 @@ public:
 	void						InitGame(UserNumber user1, UserNumber user2);
 	void						StartGame();
 
+	Player* GetAttacker();
+
 	/*  in line functions  */
 	GameNumber					GetGameNumber(){ return m_GameNum; }
 	UserNumber					GetUserNumberByPlayerNumber(PlayerNumber playerNumber);
@@ -22,7 +24,6 @@ public:
 	Player*						GetPlayerList(){ return m_Player; }
 	Field*						GetField(){ return &m_Field; }
 	TurnManager*				GetTurnManager(){ return &m_Turnmanager; }
-	int*						GetCurrentCost(){ return &m_CurrentCost; }
 	std::vector<Unit*>*			GetUnitList(){ return &m_AllUnit; }
 
 	/*  for unit management  */
@@ -69,7 +70,6 @@ private:
 	int							m_LivingUnitCount[PLAYER_COUNT_ALL];
 
 	std::vector<UnitAction>		m_UnitActionQueue;
-	int							m_CurrentCost;		// 현재 턴인 플레이어의 남은 코스트
 
 	Field						m_Field;
 	TurnManager					m_Turnmanager;

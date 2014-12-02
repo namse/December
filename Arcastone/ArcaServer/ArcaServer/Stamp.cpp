@@ -20,10 +20,8 @@ bool Stamp::ActSkill(Game* game, ActionData* skillData)
 	HexaDirection direction = GetDirection(caster->GetPos(), target->GetPos());
 	int power = skillData->skillRank + 1;
 	int usingCost = 1;
-	int* currentCost = game->GetCurrentCost();
-
-	// 주소 역참조
-	*currentCost = *currentCost - usingCost;
+	int cost = game->GetPlayerList()[game->GetTurnManager()->GetWhosTurn()].GetCurrentCost();
+	game->GetPlayerList()[game->GetTurnManager()->GetWhosTurn()].SetCurrentCost(cost - usingCost);
 
 	target->UnitPush(game, power, direction);
 

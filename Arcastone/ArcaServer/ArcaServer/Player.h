@@ -25,9 +25,11 @@ public:
 	/*  Cost  */
 	int						GetMaxCost(){ return m_MaxCost; }
 	void					SetMaxCost(int cost){ m_MaxCost = cost; }
+	int						GetCurrentCost(){ return m_CurrentCost; }
+	void					SetCurrentCost(int cost);
 
 
-	void					IsNearArca(std::vector<Unit*>* unitList, TurnManager* turnmanager, int* currentCost);
+	void					IsNearArca(std::vector<Unit*>* unitList, TurnManager* turnmanager);
 	
 private:
 	UserNumber				m_UserNumber;
@@ -36,5 +38,6 @@ private:
 	std::vector<Unit>		m_UnitList;
 
 	int						m_MaxCost;
+	int						m_CurrentCost;
 };
 

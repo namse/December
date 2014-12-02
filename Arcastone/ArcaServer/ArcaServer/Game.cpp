@@ -18,8 +18,6 @@ Game::Game(GameNumber gameNum) : m_GameNum(gameNum)
 {
 	m_UnitIdentityNumberCounter = 0;
 
-	m_CurrentCost = MAX_TURN;
-
 	m_Winner = WW_NONE;
 }
 
@@ -122,14 +120,15 @@ void Game::HandleAction(UserNumber user, ActionData* actionData)
 	IsGameOver();
 
 	// 남은 턴 횟수가 없다면
-	if (m_CurrentCost <= 0)
+	if (GetAttacker()->GetCurrentCost() <= 0)
 	{
 		m_Turnmanager.TurnFlow();
 		StartBreakDown();
 
 		// 플레이어의 마나량을 재밍하는 스킬을 넣고싶다면 이 부분을 수정하면 된다.
-		// 공격자를 바꾸고, 현재 코스트를 공격자의 최대 코스트까지 채운다.
-		m_CurrentCost = AttackerSwap()->GetMaxCost();
+		// 코스트+1 하고 공격자 바꾼다.
+		GetAttacker()->SetCurrentCost(GetAttacker()->GetCurrentCost() + 1);
+		AttackerSwap();
 
 		// 공격하라는 신호를 보낸다!
 		SendWhosTurn();
@@ -140,7 +139,7 @@ void Game::OperatingUnitAction(UserNumber user, ActionData* actionData)
 {
 	m_UnitActionQueue.clear();
 
-	Player* attacker = GetPlayerByUserName(user);
+	Player* attackPlayer = GetPlayerByUserName(user);
 	UnitAttackOrSkill as_type = actionData->type;
 	if (as_type == UAS_ATTACK)
 	{
@@ -149,7 +148,7 @@ void Game::OperatingUnitAction(UserNumber user, ActionData* actionData)
 		attacker->UnitMove(this, actionData);
 
 		// 이동 가능 횟수 - 1
-		m_CurrentCost--;
+		attackPlayer->SetCurrentCost(attackPlayer->GetCurrentCost() - 1);
 	}
 
 	if (as_type == UAS_SKILL)
@@ -581,6 +580,11 @@ Player* Game::AttackerSwap()
 {
 	m_Turnmanager.TurnSwap();
 
+	return GetAttacker();
+}
+
+Player* Game::GetAttacker()
+{
 	return &m_Player[m_Turnmanager.GetWhosTurn()];
 }
 
@@ -592,10 +596,8 @@ void Game::SendCurrendtCost()
 	{
 		outPacket.mMaxCost = m_Player[i].GetMaxCost();
 
-		if (i == m_Turnmanager.GetWhosTurn())
-			outPacket.mCost = m_CurrentCost;
-		else
-			outPacket.mCost = m_Player[i].GetMaxCost();
+		outPacket.mCost = m_Player[i].GetMaxCost();
+		outPacket.mCost = m_Player[i].GetCurrentCost();
 
 		auto session = GClientManager->GetClient(m_User[i]);
 		if (session != nullptr)
@@ -623,7 +625,7 @@ void Game::NearArcaCheck()
 {
 	for (int i = 0; i < PLAYER_COUNT; ++i)
 	{
-		m_Player[i].IsNearArca(&m_AllUnit, &m_Turnmanager, &m_CurrentCost);
+		m_Player[i].IsNearArca(&m_AllUnit, &m_Turnmanager);
 	}
 }
 
