@@ -65,8 +65,6 @@ void AutoMatcher::AddWaitUser(UserNumber userId)
 					outPacket[p].mUnit[incIndex].point.y = unit->GetPos().y;
 					outPacket[p].mUnit[incIndex].id = unit->GetID();
 
-					outPacket[p].mUnitLength = incIndex;
-
 					PlayerNumber owner = unit->GetOwner();
 
 					if (owner == p)
@@ -80,6 +78,11 @@ void AutoMatcher::AddWaitUser(UserNumber userId)
 				}
 			}
 		}
+
+		// TODO 유닛수에 따라 증가하게 할것
+		outPacket[0].mUnitLength = 13;
+		outPacket[1].mUnitLength = 13;
+
 		ClientSession* userSession[2];
 		userSession[PLAYER_ONE] = GClientManager->GetClient(userId);
 		userSession[PLAYER_TWO] = GClientManager->GetClient(matchUser);

@@ -84,14 +84,12 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 	// 장애물 설치
 	if (USE_ROCK)
 	{
-		SetUpNPC(UT_ROCK, Coord(5, 8));
-		SetUpNPC(UT_ROCK, Coord(1, 2));
-		SetUpNPC(UT_TREE, Coord(0, 9));
-		SetUpNPC(UT_TREE, Coord(0, 10));
-		SetUpNPC(UT_TREE, Coord(1, 10));
-		SetUpNPC(UT_TREE, Coord(5, 0));
-		SetUpNPC(UT_TREE, Coord(6, 0));
-		SetUpNPC(UT_TREE, Coord(6, 1));
+		//SetUpNPC(UT_ROCK, Coord(5, 8));
+		//SetUpNPC(UT_ROCK, Coord(1, 2));
+		//SetUpNPC(UT_TREE, Coord(0, 9));
+		//SetUpNPC(UT_TREE, Coord(0, 10));
+		//SetUpNPC(UT_TREE, Coord(1, 10));
+		//SetUpNPC(UT_TREE, Coord(5, 0));
 	}
 
 	// 너네 마나 이만큼 남았어~

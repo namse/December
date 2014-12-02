@@ -119,17 +119,20 @@ Unit* Field::MakeFieldHole(Game* game, Coord position)
 	Unit* fallUnit = nullptr;
 	for (int i = 0; i < PLAYER_COUNT_ALL; ++i)
 	{
-		auto session = GClientManager->GetClient(game->GetUserNumberByPlayerNumber((PlayerNumber)i));
-		if (session != nullptr)
-			session->SendRequest(&outPacket);
+		if (i < PLAYER_COUNT)
+		{
+			auto session = GClientManager->GetClient(game->GetUserNumberByPlayerNumber((PlayerNumber)i));
+			if (session != nullptr)
+				session->SendRequest(&outPacket);
+		}
 
 		// 낙하 유닛 처리
 		std::vector<Unit>* unitList = game->GetPlayerList()[i].GetUnitList();
-		for (int i = 0; i < unitList->size(); ++i)
+		for (int unitIdx = 0; unitIdx < unitList->size(); ++unitIdx)
 		{
-			if (unitList->at(i).GetPos() == position)
+			if (unitList->at(unitIdx).GetPos() == position)
 			{
-				fallUnit = &unitList->at(i);
+				fallUnit = &unitList->at(unitIdx);
 			}
 		}
 	}

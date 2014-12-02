@@ -74,7 +74,7 @@ void GameScene::InitEventLabel()
 {
 	m_EventLabel = LabelTTF::create("", "Hevetica", 40);
 
-	m_EventLabel->setPosition(Point(80, DISPLAY_SIZEY - 80));
+	m_EventLabel->setPosition(Point(MAP_XSTART, DISPLAY_SIZEY - 80));
 
 	m_EventLabel->setColor(Color3B(128, 32, 32));
 
@@ -1164,7 +1164,7 @@ void GameScene::ChangeFieldType(Packet::ChangeFieldResult recvData)
 void GameScene::SetEvent()
 {
 	m_EventLabel->setString("");
-	if (breakCount >= 8)
+	if (breakCount >= 18)
 	{
 		// 종말이 다가온다~
 		m_EventLabel->setString("Draw to a close!");
