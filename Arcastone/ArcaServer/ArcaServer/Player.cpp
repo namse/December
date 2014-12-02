@@ -6,6 +6,7 @@
 Player::Player()
 {
 	m_MaxCost = MAX_TURN;
+	m_CurrentCost = MAX_TURN;
 }
 
 

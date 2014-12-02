@@ -112,6 +112,7 @@ void Game::HandleAction(UserNumber user, ActionData* actionData)
 
 	// 아르카스톤에 대한 턴 처리 해주고..
 	NearArcaCheck();
+	StartBreakDown();
 
 	// 너네 마나 이만큼 남았어~
 	SendCurrendtCost();
@@ -123,7 +124,6 @@ void Game::HandleAction(UserNumber user, ActionData* actionData)
 	if (GetAttacker()->GetCurrentCost() <= 0)
 	{
 		m_Turnmanager.TurnFlow();
-		StartBreakDown();
 
 		// 플레이어의 마나량을 재밍하는 스킬을 넣고싶다면 이 부분을 수정하면 된다.
 		// 코스트+1 하고 공격자 바꾼다.
@@ -638,4 +638,9 @@ UserNumber Game::GetUserNumberByPlayerNumber(PlayerNumber playerNumber)
 		return -1;
 
 	return playerNumber;
+}
+
+void Game::TossTurn()
+{
+	AttackerSwap();
 }

@@ -25,6 +25,8 @@ enum PacketTypes
 
 	PKT_SC_CHANGE_FIELD = 10,
 
+	PKT_CS_TOSS_TURN = 11,
+
 	PKT_MAX	= 1024,
 } ;
 
@@ -99,6 +101,14 @@ namespace Packet
 			mType = PKT_CS_ACTION;
 		}
 		ActionData				mAction;
+	};
+
+	struct TossTurnRequest : public PacketHeader
+	{
+		TossTurnRequest(){
+			mSize = sizeof(TossTurnRequest);
+			mType = PKT_CS_TOSS_TURN;
+		}
 	};
 
 	struct AttackResult : public PacketHeader
