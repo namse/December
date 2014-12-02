@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "Field.h"
+#include "Game.h"
 
 #include "ClientManager.h"
 #include "ClientSession.h"
@@ -106,27 +107,32 @@ Coord Field::GetRandomBlock()
 	}
 }
 
-Unit* Field::MakeFieldHole(Coord* fieldCoord, std::vector<Unit*>* unitList, UserNumber* userNumber)
+Unit* Field::MakeFieldHole(Game* game, Coord position)
 {
-	SetFieldStatus(*fieldCoord, FBS_HOLE);
-	FieldBlock changeBlock = GetFieldBlock(*fieldCoord);
+	SetFieldStatus(position, FBS_HOLE);
+	FieldBlock changeBlock = GetFieldBlock(position);
 
 	// 패킷 발송
 	Packet::ChangeFieldResult outPacket;
 	outPacket.mFieldBlock = changeBlock;
 
+	Unit* fallUnit = nullptr;
 	for (int i = 0; i < PLAYER_COUNT_ALL; ++i)
 	{
-		auto session = GClientManager->GetClient(userNumber[i]);
+		auto session = GClientManager->GetClient(game->GetUserNumberByPlayerNumber((PlayerNumber)i));
 		if (session != nullptr)
 			session->SendRequest(&outPacket);
-	}
 
-	// 낙하 유닛 처리
-	Unit* fallUnit = nullptr;
-	for (auto unit : *unitList)
-	if (unit->GetPos() == *fieldCoord)
-		fallUnit = unit;
+		// 낙하 유닛 처리
+		std::vector<Unit>* unitList = game->GetPlayerList()[i].GetUnitList();
+		for (int i = 0; i < unitList->size(); ++i)
+		{
+			if (unitList->at(i).GetPos() == position)
+			{
+				fallUnit = &unitList->at(i);
+			}
+		}
+	}
 
 	return fallUnit;
 }

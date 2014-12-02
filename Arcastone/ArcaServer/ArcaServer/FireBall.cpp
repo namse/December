@@ -3,10 +3,10 @@
 #include "Game.h"
 
 
-bool FireBall::ActSkill(Game* game, ActionData* skillData)
+void FireBall::ActSkill(Game* game, ActionData* skillData)
 {
 	if (skillData->position[0].x == -1)
-		return false;
+		return;
 
 	// JsonManager 에서 스킬 데이터 받아오는 방식으로 구현할 것
 
@@ -20,10 +20,9 @@ bool FireBall::ActSkill(Game* game, ActionData* skillData)
 	HexaDirection direction = GetDirection(caster->GetPos(), target->GetPos());
 	int power = skillData->skillRank + 1;
 	int usingCost = 1;
-	int cost = game->GetPlayerList()[game->GetTurnManager()->GetWhosTurn()].GetCurrentCost();
-	game->GetPlayerList()[game->GetTurnManager()->GetWhosTurn()].SetCurrentCost(cost - usingCost);
 
-	target->UnitPush(game, power, direction);
+	int beforeCost = game->GetPlayerList()[caster->GetOwner()].GetCurrentCost();
+	game->GetPlayerList()[caster->GetOwner()].SetCurrentCost(beforeCost - usingCost);
 
-	return true;
+	caster->UnitPush(game, target, power, direction);
 }

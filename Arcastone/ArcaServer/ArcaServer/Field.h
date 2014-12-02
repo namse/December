@@ -2,6 +2,7 @@
 
 #include "Unit.h"
 
+class Game;
 class Field
 {
 public:
@@ -23,7 +24,7 @@ public:
 	int							GetFieldSizeX(){ return m_FieldSizeX; }
 	int							GetFieldSizeY(){ return m_FieldSizeY; }
 
-	Unit*						MakeFieldHole(Coord* fieldCoord, std::vector<Unit*>* unitList, UserNumber* userNumber);
+	Unit*						MakeFieldHole(Game* game, Coord position);
 
 private:
 	int							m_FieldSizeX;

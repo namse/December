@@ -60,7 +60,7 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 			assert(unit != nullptr);
 
 			Coord center;
-			if (i == 0)
+			if (i == PLAYER_ONE)
 			{
 				center = Coord(0, 0) + originPosition; // locate unit by group data
 			}
@@ -74,7 +74,6 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 			unit->SetId(GenerateUnitIdentityNumber());
 
 			m_Player[i].SetUnit(unit);
-			m_AllUnit.push_back(unit);
 		};
 	}
 
@@ -110,14 +109,13 @@ void Game::HandleAction(UserNumber user, ActionData* actionData)
 	// 유닛이 어떻게 어떻게 이동했는지 통째로 알려준다
 	SendActionQueue();
 
-	// 아르카스톤에 대한 턴 처리 해주고..
-	NearArcaCheck();
-	StartBreakDown();
+	// 이벤트 발생!
+	OperationEvent();
 
 	// 게임이 끝나는 상황인지 확인
 	IsGameOver();
 
-	// 남은 턴 횟수가 없다면 강제로 턴넘김
+	// 남은 턴 횟수가 없다면 턴넘김
 	if (GetAttacker()->GetCurrentCost() <= 0)
 		TurnEnd();
 
@@ -129,27 +127,25 @@ void Game::OperatingUnitAction(UserNumber user, ActionData* actionData)
 {
 	m_UnitActionQueue.clear();
 
-	Player* attackPlayer = GetPlayerByUserName(user);
-	UnitAttackOrSkill as_type = actionData->type;
-	if (as_type == UAS_ATTACK)
+	switch (actionData->type)
 	{
-		// 유닛 이동
-		Unit* attacker = GetUnit(actionData->id);
-		attacker->UnitMove(this, actionData);
+	case UAS_ATTACK:{
+						Unit* attacker = GetUnit(actionData->id);
+						if (attacker == nullptr) return;
+						attacker->UnitMove(this, actionData);
 
-		// 이동 가능 횟수 - 1
-		attackPlayer->SetCurrentCost(attackPlayer->GetCurrentCost() - 1);
-	}
+						GetAttacker()->SetCurrentCost(GetAttacker()->GetCurrentCost() - 1);
+	}return;
 
-	if (as_type == UAS_SKILL)
-	{
-		UnitSkillType type = actionData->skillType;
-		// 스킬 사용
-		Skill* skill = InitSkill(type);
+	case UAS_SKILL:{
+					   Skill* skill = InitSkill(actionData->skillType);
 
-		// 스킬데이터가 조건에 부합하면 false 를 리턴하여 무시해버린다
-		if (!skill->ActSkill(this, actionData))
-			return;
+					   // 스킬데이터가 조건에 부합하면 false 를 리턴하여 무시해버린다
+					   skill->ActSkill(this, actionData);
+	}return;
+
+	case UAS_NONE:
+		return;
 	}
 }
 
@@ -287,20 +283,18 @@ void Game::UnitCounting()
 		m_LivingUnitCount[i] = 0;
 	}
 
-	for (Unit* unit : m_AllUnit)
+	for (auto player : m_Player)
 	{
-		PlayerNumber playerNumber = unit->GetOwner();
+		std::vector<Unit>* unitList = player.GetUnitList();
+		for (int i = 0; i < unitList->size(); ++i)
+		{
+			PlayerNumber playerNumber = player.GetPlayerNumber();
+			m_UnitCount[playerNumber]++;
 
-		// 살아있는 유닛
-		if (unit->GetUnitStatus() != UST_DEAD)
-		{
-			m_UnitCount[playerNumber]++;
-			m_LivingUnitCount[playerNumber]++;
-		}
-		// 죽은 유닛
-		else
-		{
-			m_UnitCount[playerNumber]++;
+			if (unitList->at(i).GetUnitStatus() != UST_DEAD)
+			{
+				m_LivingUnitCount[playerNumber]++;
+			}
 		}
 	}
 }
@@ -313,7 +307,7 @@ void Game::SetUpNPC(UnitType unitType, Coord unitPos)
 	npc->SetOwner((PlayerNumber)PLAYER_NUMBER_NPC);
 	npc->SetId(GenerateUnitIdentityNumber());
 	npc->SetPosition(unitPos); // Center of Map
-	m_AllUnit.push_back(npc);
+	m_Player[PLAYER_NUMBER_NPC].SetUnit(npc);
 
 	// 유닛 수 초기화
 	UnitCounting();
@@ -321,9 +315,6 @@ void Game::SetUpNPC(UnitType unitType, Coord unitPos)
 
 bool Game::IsCorrectAction(UserNumber user, ActionData* actionData)
 {
-	if (actionData->type == UAS_SKILL && !USE_SKILL)
-		return false;
-
 	// 클라야.. 니 턴 아니란다
 	if (user != m_Player[m_Turnmanager.GetWhosTurn()].GetUserNumber())
 		return false;
@@ -336,25 +327,20 @@ bool Game::IsCorrectAction(UserNumber user, ActionData* actionData)
 
 	// 잘못된 유닛으로 공격하려고 하면 무시
 	{
-		// 유닛의 Owner 확인
-		Unit* pUnit = GetUnit(actionData->id);
-		if (pUnit->GetOwner() != m_Turnmanager.GetWhosTurn())
-		{
-			return false;
-		}
-
 		// 유닛이 공격불가상태인지 확인
 	}
 
 	// 스킬을 발동하는 경우
-	if (actionData->skillType != USK_NONE)
+	if (actionData->type == UAS_SKILL)
 	{
 		// TODO : 스킬사용에 필요한 조건 확인
 
+		if (!USE_SKILL)
+			return false;
 
 	}
 	// 공격하는 경우
-	else
+	if (actionData->type == UAS_ATTACK)
 	{
 		// TODO : 유닛의 스탯에 따라 공격 범위 확인
 
@@ -454,28 +440,46 @@ UnitDie:
 }
 
 
-Unit* Game::GetUnit(UnitIdentityNumber id) {
-	for (auto unit : m_AllUnit)
-		if (unit->GetID() == id)
-			return unit;
+Unit* Game::GetUnit(UnitIdentityNumber id)
+{
+	for (int i = 0; i < PLAYER_COUNT_ALL; ++i)
+	{
+		if (m_Player[i].GetUnit(id) != nullptr)
+			return m_Player[i].GetUnit(id);
+	}
 	return nullptr;
 }
 
-bool Game::IsUserInThisGame(UserNumber userNumber) {
+bool Game::IsUserInThisGame(UserNumber userNumber)
+{
 	for (auto userNumber_ : m_User)
 		if (userNumber == userNumber_)
 			return true;
 	return false;
 }
 
-Unit* Game::GetUnitInPosition(Coord position){
-	for (auto unit : m_AllUnit)
-		if (unit->GetPos() == position)
-			return unit;
-	return nullptr;
+Unit* Game::GetUnitInPosition(Coord position)
+{
+	Unit* retUnit = nullptr;
+
+	for (int i = 0; i < PLAYER_COUNT_ALL; ++i)
+	{
+		std::vector<Unit>* unitList = m_Player[i].GetUnitList();
+		for (int j = 0; j < unitList->size(); ++j)
+		{
+			if (unitList->at(j).GetPos() == position)
+			{
+				retUnit = &unitList->at(j);
+				goto BREAK;
+			}
+		}
+	}
+BREAK:;
+	return retUnit;
 }
 
-UnitIdentityNumber Game::GenerateUnitIdentityNumber() {
+UnitIdentityNumber Game::GenerateUnitIdentityNumber()
+{
 	return m_UnitIdentityNumberCounter++;
 }
 
@@ -490,13 +494,13 @@ void Game::StartBreakDown()
 	{
 		Coord fallBlockCoord = m_Field.GetRandomBlock();
 
-		Unit* fallUnit = m_Field.MakeFieldHole(&fallBlockCoord, &m_AllUnit, m_User);
+		Unit* fallUnit = m_Field.MakeFieldHole(this, fallBlockCoord);
 
 		if (fallUnit != nullptr)
 		{
 			m_UnitActionQueue.clear();
 
-			fallUnit->KillThisUnit(this);
+			fallUnit->UnitKill(this);
 
 			Packet::AttackResult outPacketUnitDie;
 			outPacketUnitDie.mQueueLength = m_UnitActionQueue.size();
@@ -570,11 +574,6 @@ Player* Game::AttackerSwap()
 {
 	m_Turnmanager.TurnSwap();
 
-	return GetAttacker();
-}
-
-Player* Game::GetAttacker()
-{
 	return &m_Player[m_Turnmanager.GetWhosTurn()];
 }
 
@@ -585,7 +584,6 @@ void Game::SendCurrendtCost()
 	for (int i = 0; i < PLAYER_COUNT; ++i)
 	{
 		outPacket.mMaxCost = m_Player[i].GetMaxCost();
-
 		outPacket.mCost = m_Player[i].GetCurrentCost();
 
 		auto session = GClientManager->GetClient(m_User[i]);
@@ -610,11 +608,11 @@ void Game::SendWhosTurn()
 	}
 }
 
-void Game::NearArcaCheck()
+void Game::NearUnitCheck(UnitType type)
 {
 	for (int i = 0; i < PLAYER_COUNT; ++i)
 	{
-		m_Player[i].IsNearArca(&m_AllUnit, &m_Turnmanager);
+		m_Player[i].IsNearUnit(this, type);
 	}
 }
 
@@ -627,6 +625,15 @@ UserNumber Game::GetUserNumberByPlayerNumber(PlayerNumber playerNumber)
 		return -1;
 
 	return playerNumber;
+}
+
+void Game::OperationEvent()
+{
+	// 아르카스톤에 대한 턴 처리
+	NearUnitCheck(UT_ARCASTONE);
+
+	// 땅이 무너진다아~
+	StartBreakDown();
 }
 
 void Game::TossTurn()
@@ -647,7 +654,7 @@ void Game::TurnEnd()
 
 	// 공격하라는 신호를 보낸다!
 	SendWhosTurn();
-
+	
 	// 너네 마나 이만큼 남았어~
 	SendCurrendtCost();
 }

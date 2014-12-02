@@ -27,77 +27,67 @@ void AutoMatcher::AddWaitUser(UserNumber userId)
 		// make and send packet
 		Game* game = GGameManager->GetGame(gameID);
 
-		Packet::GameStartResult outPacket[2];
+		Packet::GameStartResult outPacket[PLAYER_COUNT];
 
 		{
 			// get field data
 			Field* pField = game->GetField();
 			int blockCount = pField->GetFieldBlockListSize();
 
-			pField->GetFieldBlockList(outPacket[0].mFieldList);
-			pField->GetFieldBlockList(outPacket[1].mFieldList);
-			outPacket[0].mFieldLength = blockCount;
-			outPacket[1].mFieldLength = blockCount;
-			outPacket[0].mFieldSizeX = pField->GetFieldSizeX();
-			outPacket[0].mFieldSizeY = pField->GetFieldSizeY();
-			outPacket[1].mFieldSizeX = pField->GetFieldSizeX();
-			outPacket[1].mFieldSizeY = pField->GetFieldSizeY();
+			for (int i = 0; i < PLAYER_COUNT; ++i)
+			{
+				pField->GetFieldBlockList(outPacket[i].mFieldList);
+				outPacket[i].mFieldLength = blockCount;
+				outPacket[i].mFieldSizeY = pField->GetFieldSizeY();
+				outPacket[i].mFieldSizeX = pField->GetFieldSizeX();
+			}
 			outPacket[0].mReverseMap = true;
 			outPacket[1].mReverseMap = false;
 		}
 
+		for (int p = 0; p < PLAYER_COUNT; ++p)
 		{
-			// get unit data
-			auto unitList = game->GetUnitList();
-
-			// fill unit data packet
-			for (unsigned int i = 0; i < unitList->size(); ++i)
+			int incIndex = 0;
+			for (int player_idx = 0; player_idx < PLAYER_COUNT_ALL; ++player_idx)
 			{
-				Unit* unit = unitList->at(i);
+				std::vector<Unit>* unitList = game->GetPlayerList()[player_idx].GetUnitList();
+				int listSize = unitList->size();
+				for (int i = 0; i < listSize; ++i)
+				{
+					Unit* unit = &unitList->at(i);
+					outPacket[p].mUnit[incIndex].unitType = unit->GetUnitType();
+					outPacket[p].mUnit[incIndex].unitMoveType = unit->GetUnitMoveType();
+					outPacket[p].mUnit[incIndex].hp = unit->GetHP();
+					outPacket[p].mUnit[incIndex].weight = unit->GetWeight();
+					outPacket[p].mUnit[incIndex].attack = unit->GetAttack();
+					outPacket[p].mUnit[incIndex].moveRange = unit->GetMoveRange();
+					outPacket[p].mUnit[incIndex].point.x = unit->GetPos().x;
+					outPacket[p].mUnit[incIndex].point.y = unit->GetPos().y;
+					outPacket[p].mUnit[incIndex].id = unit->GetID();
 
-				auto position = unit->GetPos();
+					outPacket[p].mUnitLength = incIndex;
 
-				for (int j = 0; j < 2; ++j)
-				{
-					outPacket[j].mUnit[i].unitType = unit->GetUnitType();
-					outPacket[j].mUnit[i].unitMoveType = unit->GetUnitMoveType();
-					outPacket[j].mUnit[i].hp = unit->GetHP();
-					outPacket[j].mUnit[i].weight = unit->GetWeight();
-					outPacket[j].mUnit[i].attack = unit->GetAttack();
-					outPacket[j].mUnit[i].moveRange = unit->GetMoveRange();
-					outPacket[j].mUnit[i].point.x = position.x;
-					outPacket[j].mUnit[i].point.y = position.y;
-					outPacket[j].mUnit[i].id = unit->GetID();
-				}
+					PlayerNumber owner = unit->GetOwner();
 
-				
-				auto unitOwner = unit->GetOwner();
-				if (unitOwner == game->GetPlayerList()[0].GetPlayerNumber()) // user1's id
-				{
-					outPacket[0].mUnit[i].unitOwner = UO_ME;
-					outPacket[1].mUnit[i].unitOwner = UO_ENEMY;
-				}
-				else if (unitOwner == game->GetPlayerList()[1].GetPlayerNumber()) // user2's id 
-				{
-					outPacket[0].mUnit[i].unitOwner = UO_ENEMY;
-					outPacket[1].mUnit[i].unitOwner = UO_ME;
-				}
-				else if (unitOwner == game->GetPlayerList()[2].GetPlayerNumber())
-				{
-					outPacket[0].mUnit[i].unitOwner = UO_NPC;
-					outPacket[1].mUnit[i].unitOwner = UO_NPC;
+					if (owner == p)
+						outPacket[p].mUnit[incIndex].unitOwner = UO_ME;
+					else if (owner < PLAYER_COUNT)
+						outPacket[p].mUnit[incIndex].unitOwner = UO_ENEMY;
+					else
+						outPacket[p].mUnit[incIndex].unitOwner = UO_NPC;
+
+					incIndex++;
 				}
 			}
-			outPacket[0].mUnitLength = unitList->size();
-			outPacket[1].mUnitLength = unitList->size();
 		}
+		ClientSession* userSession[2];
+		userSession[PLAYER_ONE] = GClientManager->GetClient(userId);
+		userSession[PLAYER_TWO] = GClientManager->GetClient(matchUser);
 
-		auto userSession1 = GClientManager->GetClient(userId);
-		auto userSession2 = GClientManager->GetClient(matchUser);
-
-		userSession1->SendRequest(&outPacket[0]);
-		userSession2->SendRequest(&outPacket[1]);
-		
+		for (int i = 0; i < PLAYER_COUNT; ++i)
+		{
+			userSession[i]->SendRequest(&outPacket[i]);
+		}
 
 		game->StartGame();
 	}

@@ -56,6 +56,12 @@ enum UnitStatusType{
 	// 그 외 상태이상들
 };
 
+enum UnitAttackOrSkill{
+	UAS_NONE = 0,
+	UAS_ATTACK = 1,
+	UAS_SKILL = 2,
+};
+
 enum HexaDirection{
 	HD_NONE = 0,
 
@@ -121,12 +127,6 @@ enum UnitSkillType{
 	USK_STAMP = 2,
 };
 
-enum UnitAttackOrSkill{
-	UAS_NONE = 0,
-	UAS_ATTACK = 1,
-	UAS_SKILL = 2,
-};
-
 enum UnitSkillRank{
 	USR_NONE = 0,
 	USR_RANKONE = 1,
@@ -187,16 +187,13 @@ struct Coord{
 };
 
 struct UnitAction{
-	UnitIdentityNumber mUnitId;
-	UnitActionType mActionType;
-
 	// FOR MOVE
 	struct MoveData
 	{
 		int mRange;
 		HexaDirection mDirection;
 		int mFinalX, mFinalY;
-	}mMoveData;
+	};
 
 	// FOR COLLIDE
 	struct CollisionData
@@ -204,11 +201,17 @@ struct UnitAction{
 		UnitIdentityNumber mTarget;
 		int mMyHP;
 		int mTargetHP;
-	}mCollisionData;
+	};
+
+	UnitIdentityNumber mUnitId;
+	UnitActionType mActionType;
+	MoveData mMoveData;
+	CollisionData mCollisionData;
 };
 
 struct ActionData{
 	UnitAttackOrSkill	type;
+
 	UnitIdentityNumber	id;
 	UnitMoveType		attackType;
 	UnitSkillType		skillType;

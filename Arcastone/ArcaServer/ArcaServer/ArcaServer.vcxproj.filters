@@ -16,9 +16,6 @@
     <Filter Include="GameLogic\User\Group">
       <UniqueIdentifier>{80d59f95-fe09-4c52-a18c-77db6dd44c35}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Main\AutoMatcher">
-      <UniqueIdentifier>{98cb4983-a769-4a8f-a7c7-856a590062dc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Main\ClientManager">
       <UniqueIdentifier>{44d5a883-7d24-4dda-bb89-bfb5dbf3afb3}</UniqueIdentifier>
     </Filter>
@@ -54,6 +51,9 @@
     </Filter>
     <Filter Include="GameLogic\UserManager">
       <UniqueIdentifier>{7464d17c-a86a-4435-b079-0d7d1faffd64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameLogic\AutoMatcher">
+      <UniqueIdentifier>{98cb4983-a769-4a8f-a7c7-856a590062dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -154,7 +154,7 @@
       <Filter>Global</Filter>
     </ClInclude>
     <ClInclude Include="AutoMatcher.h">
-      <Filter>Main\AutoMatcher</Filter>
+      <Filter>GameLogic\AutoMatcher</Filter>
     </ClInclude>
     <ClInclude Include="ClientManager.h">
       <Filter>Main\ClientManager</Filter>
@@ -264,7 +264,7 @@
       <Filter>Global</Filter>
     </ClCompile>
     <ClCompile Include="AutoMatcher.cpp">
-      <Filter>Main\AutoMatcher</Filter>
+      <Filter>GameLogic\AutoMatcher</Filter>
     </ClCompile>
     <ClCompile Include="ClientManager.cpp">
       <Filter>Main\ClientManager</Filter>

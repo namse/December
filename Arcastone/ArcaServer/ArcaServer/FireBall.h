@@ -9,5 +9,5 @@ public:
 	FireBall(){}
 	~FireBall(){}
 
-	bool ActSkill(Game* game, ActionData* skillData);
+	void ActSkill(Game* game, ActionData* skillData);
 };

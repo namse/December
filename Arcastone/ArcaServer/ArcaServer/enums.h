@@ -3,7 +3,7 @@
 
 /* In Game Value  */
 #define USER_UNIT_MAX					10
-#define USE_ARCA						false
+#define USE_ARCA						true
 #define USE_ROCK						true
 #define USE_SKILL						false
 

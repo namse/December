@@ -6,7 +6,7 @@ class Game;
 class Skill
 {
 public:
-	virtual bool ActSkill(Game* game, ActionData* actionData) = 0;
+	virtual void ActSkill(Game* game, ActionData* actionData) = 0;
 
 	UnitSkillType type;
 	UnitSkillRank rank;

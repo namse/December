@@ -34,3 +34,4 @@ Coord GetUnitVector(HexaDirection direction);
 HexaDirection GetHexaDirection(Coord from, Coord to);
 int GetVectorSize(Coord from, Coord to);
 HexaDirection GetDirection(Coord point1, Coord point2);
+Coord GetPositionByRange(Coord position, HexaDirection direction, int range);

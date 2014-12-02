@@ -15,18 +15,15 @@ public:
 	void						InitGame(UserNumber user1, UserNumber user2);
 	void						StartGame();
 
-	Player* GetAttacker();
-	void TossTurn();
-	void TurnEnd();
 
 	/*  in line functions  */
 	GameNumber					GetGameNumber(){ return m_GameNum; }
 	UserNumber					GetUserNumberByPlayerNumber(PlayerNumber playerNumber);
 	Player*						GetPlayerByUserName(UserNumber userNumber);
 	Player*						GetPlayerList(){ return m_Player; }
+	Player*						GetAttacker(){ return &m_Player[m_Turnmanager.GetWhosTurn()]; }
 	Field*						GetField(){ return &m_Field; }
 	TurnManager*				GetTurnManager(){ return &m_Turnmanager; }
-	std::vector<Unit*>*			GetUnitList(){ return &m_AllUnit; }
 
 	/*  for unit management  */
 	Unit*						GetUnit(UnitIdentityNumber id);
@@ -44,11 +41,14 @@ public:
 	void						OperatingUnitAction(UserNumber user, ActionData* actionData);
 
 	/*  In Game Event  */
+	void						OperationEvent();
 	void						StartBreakDown();
-	void						NearArcaCheck();
+	void						NearUnitCheck(UnitType type);
 	Player*						AttackerSwap();
 	void						SetUpNPC(UnitType unitType, Coord unitPos);
 
+	void						TossTurn();
+	void						TurnEnd();
 	void						IsGameOver();
 	void						GameOver();
 	void						GameOverForSurrender(UserNumber srrender);
@@ -67,7 +67,6 @@ private:
 	WhosWinner					m_Winner;
 
 	UnitIdentityNumber			m_UnitIdentityNumberCounter;
-	std::vector<Unit*>			m_AllUnit;
 	int							m_UnitCount[PLAYER_COUNT_ALL];
 	int							m_LivingUnitCount[PLAYER_COUNT_ALL];
 

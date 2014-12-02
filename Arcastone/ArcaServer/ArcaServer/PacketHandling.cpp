@@ -162,11 +162,11 @@ REGISTER_HANDLER(PKT_CS_TOSS_TURN)
 {
 	Packet::TossTurnRequest inPacket;
 	if (false == session->ParsePacket(inPacket))
-	{
+		{
 		printf("[DEBUG] packet parsing error", inPacket.mType);
 		return;
-	}
-
+		}
+	
 	UserNumber userNumber = session->GetUserId();
 	auto game = GGameManager->GetGameWithUserNumber(userNumber);
 	game->TossTurn();

@@ -9,5 +9,5 @@ public:
 	Stamp(){}
 	~Stamp(){}
 
-	bool ActSkill(Game* game, ActionData* skillData);
+	void ActSkill(Game* game, ActionData* skillData);
 };

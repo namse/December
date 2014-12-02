@@ -3,6 +3,7 @@
 #include "Unit.h"
 #include "TurnManager.h"
 
+class Game;
 class Player
 {
 public:
@@ -18,7 +19,7 @@ public:
 
 	/*  Unit  */
 	std::vector<Unit>*		GetUnitList(){ return &m_UnitList; }
-	Unit*					GetUnit(int idx){ if (idx >= 0 && idx < m_UnitList.size()) return &m_UnitList.at(idx); }
+	Unit*					GetUnit(int id);
 	void					SetUnit(Unit* unit){ if (unit != nullptr)m_UnitList.push_back(*unit); }
 
 
@@ -29,7 +30,7 @@ public:
 	void					SetCurrentCost(int cost);
 
 
-	void					IsNearArca(std::vector<Unit*>* unitList, TurnManager* turnmanager);
+	void					IsNearUnit(Game* game, UnitType type);
 	
 private:
 	UserNumber				m_UserNumber;

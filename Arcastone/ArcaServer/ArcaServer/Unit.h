@@ -37,9 +37,20 @@ public:
 	void					SetIsNearArca(bool is){ m_IsNearArca = is; }
 	bool					GetIsNearArca(){ return m_IsNearArca; }
 
+	/*  Action Queue  */
+	void					SetCollisionAction(Game* game, Unit* crashUnit);
+	void					SetMoveAction(Game* game, UnitActionType type, HexaDirection direction, int range, Coord position);
+
+	/*  Unit Action  */
 	void					UnitMove(Game* game, ActionData* actionData);
-	void					UnitPush(Game* game, int power, HexaDirection direction);
-	void					KillThisUnit(Game* game);
+	void					UnitMoveStraight(Game* game, ActionData* actionData);
+	void					UnitMoveJump(Game* game, ActionData* actionData);
+	void					UnitMoveDash(Game* game, ActionData* actionData);
+	void					UnitMoveTeleport(Game* game, ActionData* actionData);
+
+	void					UnitPush(Game* game, Unit* target, int power, HexaDirection direction);
+	void					UnitKill(Game* game);
+	void					KillCheck(Game* game);
 
 protected:
 	PlayerNumber			m_Owner;

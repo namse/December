@@ -38,6 +38,16 @@ Coord GetUnitVector(HexaDirection direction)
 	}
 }
 
+Coord GetPositionByRange(Coord position, HexaDirection direction, int range)
+{
+	Coord retPos = position;
+
+	retPos.x += GetUnitVector(direction).x * range;
+	retPos.y += GetUnitVector(direction).y * range;
+
+	return retPos;
+}
+
 HexaDirection GetHexaDirection(Coord from, Coord to)
 {
 	Coord vec = to - from;

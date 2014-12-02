@@ -167,8 +167,7 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 
 	Unit* unit = GetUnitByID(m_SelectedUnit);
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이거나 적의 유닛이면 패스
-	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr || unit->GetOwner() != UO_ME)
-		return;
+	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr || unit->GetOwner() != UO_ME) return;
 
 	// 어딜 터치했는지 찾아서
 	HexaPoint touchIndex;
@@ -199,6 +198,8 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		ReleaseMoveSign();
 	}
 
+	if (!m_IsMyTurn) return;
+
 	Unit* unit = GetUnitByID(m_SelectedUnit);
 	if (unit->GetOwner() != UO_ME)
 	{
@@ -206,10 +207,9 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		TcpClient::getInstance()->TurnTossRequest();
 	}
 
-	if (!m_IsMyTurn) return;
-
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
+
 
 	// 스킬 장전! 목표설정 상태!
 	if (m_IsCastSkill)
@@ -241,32 +241,32 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	// 유닛을 드래그 했으므로 공격 패킷 발싸!
 	{
-		ActionData actionData;
+		ActionData attackData;
 
 		switch (unit->GetMoveType())
 		{
 		case UMT_STRAIGHT:{
-							  actionData.attackType = UMT_STRAIGHT;
+							  attackData.attackType = UMT_STRAIGHT;
 							  if (m_Direction == HD_NONE || m_Range <= 0) return;
 		}break;
 
 		case UMT_JUMP:{
-						  actionData.attackType = UMT_JUMP;
+						  attackData.attackType = UMT_JUMP;
 						  if (m_Direction == HD_NONE || m_Range <= 0) return;
 		}break;
 
 		case UMT_DASH:{
-						  actionData.attackType = UMT_DASH;
+						  attackData.attackType = UMT_DASH;
 						  m_Range = m_CourseStack.size();
 						  for (int i = 0; i < m_CourseStack.size(); ++i)
 						  {
 							  // 대쉬는 이동 스택을 입력
-							  actionData.position[i] = m_CourseStack.at(i).HexaToCoord();
+							  attackData.position[i] = m_CourseStack.at(i).HexaToCoord();
 						  }
 		}break;
 
 		case UMT_TELEPORT:{
-							  actionData.attackType = UMT_TELEPORT;
+							  attackData.attackType = UMT_TELEPORT;
 							  // 텔포는 이동 칸 하나 입력
 							  if (m_CourseStack.size() == 1)
 							  {
@@ -274,7 +274,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 								  if (GetUnitByPos(m_CourseStack.at(0)) == nullptr)
 								  {
 
-									  actionData.position[0] = m_CourseStack.at(0).HexaToCoord();
+									  attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
 								  }
 								  else return;
 							  }
@@ -287,15 +287,15 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 		m_CourseStack.clear();
 
-		actionData.id = unit->GetID();
-		actionData.direction = m_Direction;
-		actionData.range = m_Range;
-		actionData.type = UAS_ATTACK;
+		attackData.id = unit->GetID();
+		attackData.direction = m_Direction;
+		attackData.range = m_Range;
 
 		m_Range = 0;
 		m_Direction = HD_NONE;
 
-		TcpClient::getInstance()->actionRequest(&actionData);
+		attackData.type = UAS_ATTACK;
+		TcpClient::getInstance()->actionRequest(&attackData);
 	}
 
 	m_SelectedUnit = NON_SELECT_UNIT;
@@ -309,7 +309,6 @@ void GameScene::UsingSkill(Unit* unit)
 	skillData.id = unit->GetID();
 	skillData.skillType = skill.type;
 	skillData.skillRank = skill.rank;
-	skillData.type = UAS_SKILL;
 
 	switch (skill.type)
 	{
@@ -345,6 +344,7 @@ void GameScene::UsingSkill(Unit* unit)
 
 
 	// 스킬패킷 발사!
+	skillData.type = UAS_SKILL;
 	TcpClient::getInstance()->actionRequest(&skillData);
 }
 
@@ -912,8 +912,6 @@ void GameScene::OnUnitAction(CCNode* sender)
 		}break;
 
 		case UAT_DASH:{
-						  // 적용할 액션의 이동타입이 대쉬면?
-						  // 다른 타입의 액션이 들어올때까지 반복
 						  HexaPoint hMovePoint(action.mMoveData.mFinalX, action.mMoveData.mFinalY);
 						  ScreenPoint sMovePoint = m_Field.HexaToScreen(hMovePoint);
 
@@ -949,7 +947,12 @@ void GameScene::OnUnitAction(CCNode* sender)
 							  auto sprite = unit->GetSprite();
 							  CCFiniteTimeAction* actionMove =
 								  CCMoveTo::create(0, sMovePoint);
-							  sprite->runAction(actionMove);
+
+							  CCFiniteTimeAction* actionMoveDone =
+								  CCCallFuncN::create(this,
+								  callfuncN_selector(GameScene::OnUnitAction));
+							  sprite->runAction(CCSequence::create(actionMove,
+								  actionMoveDone, NULL));
 
 							  if (USE_SOUND)
 							  {
@@ -962,8 +965,11 @@ void GameScene::OnUnitAction(CCNode* sender)
 							   GetUnitByID(action.mUnitId)->SetHP(action.mCollisionData.mMyHP);
 							   GetUnitByID(action.mCollisionData.mTarget)->SetHP(action.mCollisionData.mTargetHP);
 
-							   runAction(CCCallFuncN::create(this,
-								   callfuncN_selector(GameScene::OnUnitAction)));
+							   CCFiniteTimeAction* actionMoveDone =
+								   CCCallFuncN::create(this,
+								   callfuncN_selector(GameScene::OnUnitAction));
+							   runAction(CCSequence::create(
+								   actionMoveDone, NULL));
 
 							   if (USE_SOUND)
 							   {
@@ -974,6 +980,12 @@ void GameScene::OnUnitAction(CCNode* sender)
 						  unit->GetSprite()->setVisible(false);
 						  unit->SetStatus(UST_DEAD);
 						  unit->setPosition(HexaPoint(100, 100));
+
+						  CCFiniteTimeAction* actionMoveDone =
+							  CCCallFuncN::create(this,
+							  callfuncN_selector(GameScene::OnUnitAction));
+						  runAction(CCSequence::create(
+							  actionMoveDone, NULL));
 
 						  if (USE_SOUND)
 						  {
