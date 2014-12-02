@@ -26,6 +26,7 @@ public:
 	void fieldRequest();
 	void actionRequest(ActionData* actionData);
 	void gameStartResult();
+	void TurnTossRequest();
 
 	
 private:

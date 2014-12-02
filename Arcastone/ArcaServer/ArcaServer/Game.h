@@ -17,6 +17,7 @@ public:
 
 	Player* GetAttacker();
 	void TossTurn();
+	void TurnEnd();
 
 	/*  in line functions  */
 	GameNumber					GetGameNumber(){ return m_GameNum; }

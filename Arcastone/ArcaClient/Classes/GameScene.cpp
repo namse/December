@@ -131,15 +131,20 @@ bool GameScene::onTouchBegan(Touch* touch, Event* event)
 	{
 		Unit* unit = m_UnitList.at(i);
 
-		// 자신의 유닛인지 확인한다
-		if (unit->GetOwner() != UO_ME) continue;
-
 		// 유닛의 좌표인덱스를 화면상 위치로 변환하여
 		ScreenPoint screenPoint = m_Field.HexaToScreen(unit->GetPosition());
 
 		// 어떤 유닛을 클릭했는지 판정한다.
 		if (m_Field.IsInHexagon(m_StartPoint, screenPoint))
 		{
+			// 자신의 유닛인지 확인한다
+			if (unit->GetOwner() != UO_ME)
+			{
+				// 임시로 남의유닛 클릭하면 턴넘어가게
+				m_SelectedUnit = unit->GetID();
+				return true;
+			}
+
 			// 그 유닛을 선택했다는 것을 지정하기 위해 id 를 멤버변수에 저장한다.
 			m_SelectedUnit = unit->GetID();
 			m_SelectedUnitPoint = GetUnitByID(m_SelectedUnit)->GetPosition();
@@ -161,8 +166,9 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	if (m_IsCastSkill) return;
 
 	Unit* unit = GetUnitByID(m_SelectedUnit);
-	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
-	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
+	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이거나 적의 유닛이면 패스
+	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr || unit->GetOwner() != UO_ME)
+		return;
 
 	// 어딜 터치했는지 찾아서
 	HexaPoint touchIndex;
@@ -193,14 +199,17 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		ReleaseMoveSign();
 	}
 
-	if (!m_IsMyTurn) return;
-
 	Unit* unit = GetUnitByID(m_SelectedUnit);
+	if (unit->GetOwner() != UO_ME)
+	{
+		// 남의유닛 클릭했으니 턴토스
+		TcpClient::getInstance()->TurnTossRequest();
+	}
+
+	if (!m_IsMyTurn) return;
 
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
-
-
 
 	// 스킬 장전! 목표설정 상태!
 	if (m_IsCastSkill)

@@ -120,19 +120,9 @@ void Game::HandleAction(UserNumber user, ActionData* actionData)
 	// 게임이 끝나는 상황인지 확인
 	IsGameOver();
 
-	// 남은 턴 횟수가 없다면
+	// 남은 턴 횟수가 없다면 강제로 턴넘김
 	if (GetAttacker()->GetCurrentCost() <= 0)
-	{
-		m_Turnmanager.TurnFlow();
-
-		// 플레이어의 마나량을 재밍하는 스킬을 넣고싶다면 이 부분을 수정하면 된다.
-		// 코스트+1 하고 공격자 바꾼다.
-		GetAttacker()->SetCurrentCost(GetAttacker()->GetCurrentCost() + 1);
-		AttackerSwap();
-
-		// 공격하라는 신호를 보낸다!
-		SendWhosTurn();
-	}
+		TurnEnd();
 }
 
 void Game::OperatingUnitAction(UserNumber user, ActionData* actionData)
@@ -596,7 +586,6 @@ void Game::SendCurrendtCost()
 	{
 		outPacket.mMaxCost = m_Player[i].GetMaxCost();
 
-		outPacket.mCost = m_Player[i].GetMaxCost();
 		outPacket.mCost = m_Player[i].GetCurrentCost();
 
 		auto session = GClientManager->GetClient(m_User[i]);
@@ -642,5 +631,21 @@ UserNumber Game::GetUserNumberByPlayerNumber(PlayerNumber playerNumber)
 
 void Game::TossTurn()
 {
+	TurnEnd();
+}
+
+void Game::TurnEnd()
+{
+	m_Turnmanager.TurnFlow();
+
+	// 플레이어의 마나량을 재밍하는 스킬을 넣고싶다면 이 부분을 수정하면 된다.
+	// 코스트+1 하고 공격자 바꾼다.
+	GetAttacker()->SetCurrentCost(GetAttacker()->GetCurrentCost() + 1);
 	AttackerSwap();
+
+	// 너네 마나 이만큼 남았어~
+	SendCurrendtCost();
+
+	// 공격하라는 신호를 보낸다!
+	SendWhosTurn();
 }

@@ -239,6 +239,13 @@ void TcpClient::loginRequest()
 	send((const char*)&sendData, sizeof(Packet::LoginRequest));
 }
 
+void TcpClient::TurnTossRequest()
+{
+	Packet::TossTurnRequest sendData;
+
+	send((const char*)&sendData, sizeof(Packet::TossTurnRequest));
+}
+
 void TcpClient::actionRequest(ActionData* actionData)
 {
 	Packet::ActionRequest sendData;
