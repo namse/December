@@ -12,6 +12,7 @@
 #define DRAW_KNOCKBACK				false
 #define DRAW_HEXA_NUMBER			true
 #define DRAW_HEXA_POSITION			false
+#define USE_SKILL					false
 
 /* In Game Value  */
 #define MAX_HAVE_COST				5

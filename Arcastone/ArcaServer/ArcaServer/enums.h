@@ -8,9 +8,9 @@
 #define USE_SKILL						false
 
 #define RANDOM_ATTACKER					false
-#define MAX_TURN						2		// 기본적인 플레이어의 최대 턴 수
+#define MAX_TURN						3		// 기본적인 플레이어의 최대 턴 수
 #define BREAK_DOWN_TURN					10
-#define BREAK_BLOCK						2
+#define BREAK_BLOCK						1
 #define USE_DRAW						true
 
 #define MAP_FIELD_WIDTH					7

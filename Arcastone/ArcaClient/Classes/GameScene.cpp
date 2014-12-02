@@ -51,7 +51,7 @@ void GameScene::InitCostLabel()
 	{
 		m_CostLabel[i] = LabelTTF::create("", "Hevetica", 20);
 
-		m_CostLabel[i]->setPosition(Point(120 + i * 28, DISPLAY_SIZEY - 64));
+		m_CostLabel[i]->setPosition(Point(120 + i * 28, DISPLAY_SIZEY - 32));
 
 		m_CostLabel[i]->setColor(Color3B(100, 100, 100));
 
@@ -60,9 +60,9 @@ void GameScene::InitCostLabel()
 
 	m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 20);
 
-	m_TurnLabel->setPosition(Point(55, DISPLAY_SIZEY - 64));
+	m_TurnLabel->setPosition(Point(55, DISPLAY_SIZEY - 32));
 
-	m_TurnLabel->setColor(Color3B(100, 100, 100));
+	m_TurnLabel->setColor(Color3B(128, 32, 32));
 
 	this->addChild(m_TurnLabel, 0 + ZORDER_UI);
 }
@@ -205,17 +205,17 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 	{
 		// 남의유닛 클릭했으니 턴토스
 		TcpClient::getInstance()->TurnTossRequest();
+		m_SelectedUnit = NON_SELECT_UNIT;
 	}
 
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
 	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
 
-
 	// 스킬 장전! 목표설정 상태!
-	if (m_IsCastSkill)
+	if (m_IsCastSkill && USE_SKILL)
 	{
 		UsingSkill(unit);
-
+		
 		m_IsCastSkill = false;
 
 		return;
@@ -1081,12 +1081,16 @@ void GameScene::ReadRestCost(Packet::CostRenewalResult recvData)
 
 	for (int i = 0; i < recvData.mCost; ++i)
 	{
-		m_CostLabel[i]->setString("O");
+		m_CostLabel[i]->setString("@");
+
+		m_CostLabel[i]->setColor(Color3B(32, 32, 128));
 	}
 
 	for (int i = recvData.mCost; i < recvData.mMaxCost; ++i)
 	{
-		m_CostLabel[i]->setString("X");
+		m_CostLabel[i]->setString("O");
+
+		m_CostLabel[i]->setColor(Color3B(64, 64, 64));
 	}
 
 	m_MaxCosst = recvData.mMaxCost;
@@ -1096,7 +1100,6 @@ void GameScene::SetTurn(bool isMyTurn)
 {
 	m_IsMyTurn = isMyTurn;
 
-
 	if (isMyTurn)
 	{
 		if (USE_SOUND)
@@ -1104,13 +1107,15 @@ void GameScene::SetTurn(bool isMyTurn)
 			CocosDenshion::SimpleAudioEngine::sharedEngine()->playEffect(ARCA_SOUND_MYTURN);
 		}
 		m_TurnLabel->setString("Your Turn");
-		for (int i = 0; i < m_MaxCosst; ++i)
-		{
-			m_CostLabel[i]->setString("O");
-		}
+
+		m_TurnLabel->setColor(Color3B(32, 128, 32));
 	}
 	else
+	{
 		m_TurnLabel->setString("Enemy Turn");
+
+		m_TurnLabel->setColor(Color3B(128, 32, 32));
+	}
 }
 
 void GameScene::GameOver(Packet::GameOverResult recvData)

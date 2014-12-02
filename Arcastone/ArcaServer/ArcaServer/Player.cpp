@@ -8,7 +8,7 @@ Player::Player()
 {
 	m_MaxCost = MAX_TURN;
 
-	m_CurrentCost = MAX_TURN;
+	m_CurrentCost = 1;
 }
 
 
@@ -33,16 +33,18 @@ void Player::IsNearUnit(Game* game, UnitType type)
 	bool isNearUnitBefore = false;
 	ArcaStone* arcaStone = nullptr;
 
+	Unit unit;
+
 	// 아르카스톤 찾고
 	for (int i = 0; i < PLAYER_COUNT_ALL; ++i)
 	{
 		std::vector<Unit>* unitList = game->GetPlayerList()[i].GetUnitList();
-		for (auto unit : *unitList)
+		for (int i = 0; i < unitList->size(); ++i)
 		{
+			unit = unitList->at(i);
 			if (unit.GetUnitType() == type)
 			{
-				// TODO : 각각의 유닛들에 대해 적용 가능하도록 수정
-				arcaStone = dynamic_cast<ArcaStone*>(&unit);
+				arcaStone = static_cast<ArcaStone*>(&unit);
 				break;
 			}
 		}
@@ -54,27 +56,25 @@ void Player::IsNearUnit(Game* game, UnitType type)
 
 
 	// 전 턴에 내 유닛이 아르카 스톤 옆에 있었습니까?
-	for (auto unit : m_UnitList)
+	for (int i = 0; i < m_UnitList.size(); ++i)
 	{
-		if (unit.GetIsNearArca())
-		{
+		if (m_UnitList.at(i).GetIsNearArca())
 			isNearUnitBefore = true;
-		}
 	}
 
 	// 지금 내 유닛이 아르카 스톤 옆에 있습니까?
-	for (auto unit : m_UnitList)
+	for (int i = 0; i < m_UnitList.size(); ++i)
 	{
-		Coord positionGap = arcaStone->GetPos() - unit.GetPos();
-		for (int i = 1; i <= 6; i++) // Itor for HexaDirection
+		Coord positionGap(arcaStone->GetPos().x - m_UnitList.at(i).GetPos().x, arcaStone->GetPos().y - m_UnitList.at(i).GetPos().y);
+		for (int d = 1; d <= 6; ++d)
 		{
-			if (positionGap == GetUnitVector((HexaDirection)i))
+			if (positionGap == GetUnitVector((HexaDirection)d))
 			{
 				isNearUnitNow = true;
-				unit.SetIsNearArca(true);
+				m_UnitList.at(i).SetIsNearArca(true);
 				break;
 			}
-			unit.SetIsNearArca(false);
+			m_UnitList.at(i).SetIsNearArca(false);
 		}
 	}
 
@@ -93,7 +93,7 @@ void Player::IsNearUnit(Game* game, UnitType type)
 	{
 		m_MaxCost--;
 		if (game->GetTurnManager()->GetWhosTurn() == m_PlayerNumber)
-			m_CurrentCost--;
+			m_CurrentCost = (m_CurrentCost > 0) ? m_CurrentCost - 1 : 0;
 	}
 }
 

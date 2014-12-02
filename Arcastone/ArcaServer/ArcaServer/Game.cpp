@@ -489,7 +489,6 @@ void Game::StartBreakDown()
 	if (m_Turnmanager.GetBreakDownTurn() > m_Turnmanager.GetFlowTurn()) return;
 
 	// TODO : 어디부터 몇 개의 블록이 추락할지 기획 상의 후 코딩
-	// 임시로 순서대로 블록 두개씩 사라지게
 	for (int i = 0; i < BREAK_BLOCK; ++i)
 	{
 		Coord fallBlockCoord = m_Field.GetRandomBlock();
