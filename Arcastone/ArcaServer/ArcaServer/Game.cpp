@@ -23,6 +23,7 @@ Game::Game(GameNumber gameNum) : m_GameNum(gameNum)
 
 Game::~Game()
 {
+
 }
 
 void Game::InitGame(UserNumber user1, UserNumber user2)
@@ -93,6 +94,9 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 		SetUpNPC(UT_TREE, Coord(6, 1));
 	}
 
+	// 너네 마나 이만큼 남았어~
+	SendCurrendtCost();
+
 	// play turn and first attacker setting
 //	m_Attacker = m_UserList.at(rand() % m_UserList.size());
 }
@@ -116,7 +120,7 @@ void Game::HandleAction(UserNumber user, ActionData* actionData)
 	IsGameOver();
 
 	// 남은 턴 횟수가 없다면 턴넘김
-	if (GetAttacker()->GetCurrentCost() <= 0)
+	if (*(GetAttacker()->GetCurrentCost()) <= 0)
 		TurnEnd();
 
 	// 너네 마나 이만큼 남았어~
@@ -132,9 +136,9 @@ void Game::OperatingUnitAction(UserNumber user, ActionData* actionData)
 	case UAS_ATTACK:{
 						Unit* attacker = GetUnit(actionData->id);
 						if (attacker == nullptr) return;
-						attacker->UnitMove(this, actionData);
+						int attackCost = attacker->UnitMove(this, actionData);
 
-						GetAttacker()->SetCurrentCost(GetAttacker()->GetCurrentCost() - 1);
+						*(GetAttacker()->GetCurrentCost()) -= attackCost;
 	}return;
 
 	case UAS_SKILL:{
@@ -583,7 +587,7 @@ void Game::SendCurrendtCost()
 	for (int i = 0; i < PLAYER_COUNT; ++i)
 	{
 		outPacket.mMaxCost = m_Player[i].GetMaxCost();
-		outPacket.mCost = m_Player[i].GetCurrentCost();
+		outPacket.mCost = *(m_Player[i].GetCurrentCost());
 
 		auto session = GClientManager->GetClient(m_User[i]);
 		if (session != nullptr)
@@ -637,7 +641,8 @@ void Game::OperationEvent()
 
 void Game::TossTurn()
 {
-	GetAttacker()->SetCurrentCost(GetAttacker()->GetCurrentCost() + 1);
+	// 턴 넘긴자에게 코스트1 준다.
+	*(GetAttacker()->GetCurrentCost()) += 1;
 	TurnEnd();
 }
 
@@ -649,7 +654,7 @@ void Game::TurnEnd()
 	AttackerSwap();
 
 	// 공격자에게 코스트1 준다.
-	GetAttacker()->SetCurrentCost(GetAttacker()->GetCurrentCost() + 1);
+	*(GetAttacker()->GetCurrentCost()) += 1;
 
 	// 공격하라는 신호를 보낸다!
 	SendWhosTurn();

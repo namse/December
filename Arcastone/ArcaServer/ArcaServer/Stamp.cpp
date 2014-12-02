@@ -21,8 +21,7 @@ void Stamp::ActSkill(Game* game, ActionData* skillData)
 	int power = skillData->skillRank + 1;
 	int usingCost = 1;
 
-	int beforeCost = game->GetPlayerList()[caster->GetOwner()].GetCurrentCost();
-	game->GetPlayerList()[caster->GetOwner()].SetCurrentCost(beforeCost - usingCost);
+	*(game->GetPlayerList()[caster->GetOwner()].GetCurrentCost()) -= usingCost;
 
 	caster->UnitPush(game, target, power, direction);
 

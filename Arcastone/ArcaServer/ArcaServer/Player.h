@@ -26,8 +26,7 @@ public:
 	/*  Cost  */
 	int						GetMaxCost(){ return m_MaxCost; }
 	void					SetMaxCost(int cost){ m_MaxCost = cost; }
-	int						GetCurrentCost(){ return m_CurrentCost; }
-	void					SetCurrentCost(int cost);
+	int*					GetCurrentCost(){ return &m_CurrentCost; }
 
 
 	void					IsNearUnit(Game* game, UnitType type);

@@ -6,6 +6,7 @@
 #define USE_ARCA						true
 #define USE_ROCK						true
 #define USE_SKILL						false
+#define USE_ARCA_HIT_COST				false
 
 #define RANDOM_ATTACKER					false
 #define MAX_TURN						3		// 기본적인 플레이어의 최대 턴 수

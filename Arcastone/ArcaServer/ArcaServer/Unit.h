@@ -42,7 +42,7 @@ public:
 	void					SetMoveAction(Game* game, UnitActionType type, HexaDirection direction, int range, Coord position);
 
 	/*  Unit Action  */
-	void					UnitMove(Game* game, ActionData* actionData);
+	int						UnitMove(Game* game, ActionData* actionData);
 	void					UnitMoveStraight(Game* game, ActionData* actionData);
 	void					UnitMoveJump(Game* game, ActionData* actionData);
 	void					UnitMoveDash(Game* game, ActionData* actionData);

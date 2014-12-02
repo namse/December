@@ -32,12 +32,15 @@ bool GameScene::init()
 	// 마우스 이벤트를 사용하기 위해 초기화
 	touchEventInit();
 
-	// 코스트 라벨 생성
+	//라벨 생성
 	InitCostLabel();
+	InitEventLabel();
 
 	m_IsCursorMoved = false;
 	m_IsCastSkill = false;
 	m_MaxCosst = 2;
+
+	breakCount = 0;
 
 	// 게임 시작!!
 	this->schedule(schedule_selector(GameScene::gameLogic), 0.0f);
@@ -49,22 +52,33 @@ void GameScene::InitCostLabel()
 {
 	for (int i = 0; i < MAX_HAVE_COST; ++i)
 	{
-		m_CostLabel[i] = LabelTTF::create("", "Hevetica", 20);
+		m_CostLabel[i] = LabelTTF::create("", "Hevetica", 24);
 
-		m_CostLabel[i]->setPosition(Point(120 + i * 28, DISPLAY_SIZEY - 32));
+		m_CostLabel[i]->setPosition(Point(160 + i * 28, DISPLAY_SIZEY - 32));
 
 		m_CostLabel[i]->setColor(Color3B(100, 100, 100));
 
 		this->addChild(m_CostLabel[i], 0 + ZORDER_UI);
 	}
 
-	m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 20);
+	m_TurnLabel = LabelTTF::create("Enemy Turn", "Hevetica", 24);
 
-	m_TurnLabel->setPosition(Point(55, DISPLAY_SIZEY - 32));
+	m_TurnLabel->setPosition(Point(64, DISPLAY_SIZEY - 32));
 
 	m_TurnLabel->setColor(Color3B(128, 32, 32));
 
 	this->addChild(m_TurnLabel, 0 + ZORDER_UI);
+}
+
+void GameScene::InitEventLabel()
+{
+	m_EventLabel = LabelTTF::create("", "Hevetica", 40);
+
+	m_EventLabel->setPosition(Point(80, DISPLAY_SIZEY - 80));
+
+	m_EventLabel->setColor(Color3B(128, 32, 32));
+
+	this->addChild(m_EventLabel, 0 + ZORDER_UI);
 }
 
 void GameScene::gameLogic(float dt)
@@ -1098,7 +1112,10 @@ void GameScene::ReadRestCost(Packet::CostRenewalResult recvData)
 
 void GameScene::SetTurn(bool isMyTurn)
 {
+	breakCount++;
 	m_IsMyTurn = isMyTurn;
+
+	SetEvent();
 
 	if (isMyTurn)
 	{
@@ -1142,4 +1159,14 @@ void GameScene::ChangeFieldType(Packet::ChangeFieldResult recvData)
 {
 	FieldBlock changeField = recvData.mFieldBlock;
 	m_Field.SetFieldSprite(changeField);
+}
+
+void GameScene::SetEvent()
+{
+	m_EventLabel->setString("");
+	if (breakCount >= 8)
+	{
+		// 종말이 다가온다~
+		m_EventLabel->setString("Draw to a close!");
+	}
 }

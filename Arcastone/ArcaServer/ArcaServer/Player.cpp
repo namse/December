@@ -106,10 +106,3 @@ Unit* Player::GetUnit(int id)
 	}
 	return nullptr;
 }
-
-void Player::SetCurrentCost(int cost)
-{
-	if (cost > m_MaxCost)
-		cost = m_MaxCost;
-	m_CurrentCost = cost;
-}

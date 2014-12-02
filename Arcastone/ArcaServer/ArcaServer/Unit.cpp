@@ -95,33 +95,37 @@ void Unit::InitUnit(UnitType unitType)
 }
 
 
-void Unit::UnitMove(Game* game, ActionData* actionData)
+int Unit::UnitMove(Game* game, ActionData* actionData)
 {
+	int attackCost = 0;
+
 	switch (m_UnitMoveType)
 	{
 	case UMT_STRAIGHT:
 	{
 						 UnitMoveStraight(game, actionData);
-						 UnitActionType actionType = UAT_COLLISION;
+						 attackCost = 1;
 	}break;
 	case UMT_JUMP:
 	{
 					 UnitMoveJump(game, actionData);
-					 UnitActionType actionType = UAT_JUMP;
+					 attackCost = 1;
 	}break;
 	case UMT_DASH:
 	{
 					 UnitMoveDash(game, actionData);
-					 UnitActionType actionType = UAT_DASH;
+					 attackCost = 2;
 	}break;
 	case UMT_TELEPORT:
 	{
 						 UnitMoveTeleport(game, actionData);
-						 UnitActionType actionType = UAT_TELEPORT;
+						 attackCost = 1;
 	}break;
 	default:
 		assert(false && "HandleAction In UnitMoveType Wrong");
 	}
+
+	return attackCost;
 }
 
 
@@ -167,6 +171,8 @@ void Unit::UnitKill(Game* game)
 	action.mActionType = UAT_DIE;
 	action.mUnitId = m_ID;
 
+	m_Position = Coord(100, 100);
+
 	game->SetActionQueue(&action);
 #ifdef _DEBUG
 	game->PrintUnitActionQueue(action);
@@ -199,8 +205,10 @@ void Unit::SetCollisionAction(Game* game, Unit* crashUnit)
 		crashUnit->SetHP(crashUnit->GetHP() - m_Attack);
 		m_HP -= crashUnit->GetAttack();
 
-		KillCheck(game);
-		crashUnit->KillCheck(game);
+		if (crashUnit->GetUnitType() == UT_ARCASTONE && USE_ARCA_HIT_COST)
+		{
+			*(game->GetPlayerList()[m_Owner].GetCurrentCost()) += 1;
+		}
 	}
 
 	UnitAction action;
@@ -208,13 +216,16 @@ void Unit::SetCollisionAction(Game* game, Unit* crashUnit)
 	action.mActionType = UAT_COLLISION;
 	action.mUnitId = m_ID;
 	action.mCollisionData.mTarget = crashUnit->GetID();
-	action.mCollisionData.mMyHP = crashUnit->GetHP();
+	action.mCollisionData.mMyHP = m_HP;
 	action.mCollisionData.mTargetHP = crashUnit->GetHP();
 
 	game->SetActionQueue(&action);
 #ifdef _DEBUG
 	game->PrintUnitActionQueue(action);
 #endif
+
+	KillCheck(game);
+	crashUnit->KillCheck(game);
 }
 
 void Unit::SetMoveAction(Game* game, UnitActionType type, HexaDirection direction, int range, Coord position)

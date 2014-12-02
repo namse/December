@@ -10,7 +10,7 @@
 /*  Debug  */
 #define OPEN_DEBUG_CONSOLE			false
 #define DRAW_KNOCKBACK				false
-#define DRAW_HEXA_NUMBER			true
+#define DRAW_HEXA_NUMBER			false
 #define DRAW_HEXA_POSITION			false
 #define USE_SKILL					false
 

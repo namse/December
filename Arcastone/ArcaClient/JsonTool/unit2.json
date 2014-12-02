@@ -21,11 +21,11 @@
 {
 "unit_type" : "1",
 "unit_name" : "병사",
-"unit_attack" : "2",
+"unit_attack" : "3",
 "unit_hp" : "20",
 "unit_weight" : "0",
 "unit_move_type" : "1",
-"unit_move_range" : "2"
+"unit_move_range" : "3"
 },
 {
 "unit_type" : "8",
@@ -52,7 +52,7 @@
 "unit_hp" : "30",
 "unit_weight" : "1",
 "unit_move_type" : "2",
-"unit_move_range" : "5"
+"unit_move_range" : "4"
 },
 {
 "unit_type" : "7",

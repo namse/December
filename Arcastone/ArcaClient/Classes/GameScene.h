@@ -19,6 +19,8 @@ public:
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     virtual bool			init();
 	void					InitCostLabel();
+	void					InitEventLabel();
+	void					SetEvent();
 	CREATE_FUNC(GameScene);
 
 
@@ -82,6 +84,7 @@ private:
 
 	LabelTTF*				m_TurnLabel;
 	LabelTTF*				m_CostLabel[MAX_HAVE_COST];
+	LabelTTF*				m_EventLabel;
 
 	ScreenPoint				m_StartPoint;
 	ScreenPoint				m_CursoredPoint;
@@ -101,6 +104,10 @@ private:
 	queue<UnitAction>		m_UnitActionQueue;
 
 	DrawNode*				m_CursorSignNode;
+
+
+	// 임시
+	int breakCount;
 };
 
 #endif
