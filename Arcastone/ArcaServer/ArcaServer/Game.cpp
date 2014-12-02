@@ -333,7 +333,7 @@ void Game::SetUpNPC(UnitType unitType, Coord unitPos)
 bool Game::IsCorrectAction(UserNumber user, ActionData* actionData)
 {
 	if (actionData->type == UAS_SKILL && !USE_SKILL)
-		return;
+		return false;
 
 	// 클라야.. 니 턴 아니란다
 	if (user != m_Player[m_Turnmanager.GetWhosTurn()].GetUserNumber())

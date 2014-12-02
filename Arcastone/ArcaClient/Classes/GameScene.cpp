@@ -281,6 +281,7 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		actionData.id = unit->GetID();
 		actionData.direction = m_Direction;
 		actionData.range = m_Range;
+		actionData.type = UAS_ATTACK;
 
 		m_Range = 0;
 		m_Direction = HD_NONE;
@@ -299,6 +300,7 @@ void GameScene::UsingSkill(Unit* unit)
 	skillData.id = unit->GetID();
 	skillData.skillType = skill.type;
 	skillData.skillRank = skill.rank;
+	skillData.type = UAS_SKILL;
 
 	switch (skill.type)
 	{
