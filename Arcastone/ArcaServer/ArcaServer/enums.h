@@ -3,8 +3,9 @@
 
 /* In Game Value  */
 #define USER_UNIT_MAX					10
-#define USE_ARCA						true
+#define USE_ARCA						false
 #define USE_ROCK						true
+#define USE_SKILL						false
 
 #define RANDOM_ATTACKER					false
 #define MAX_TURN						2		// 기본적인 플레이어의 최대 턴 수

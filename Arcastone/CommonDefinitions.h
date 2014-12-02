@@ -121,6 +121,12 @@ enum UnitSkillType{
 	USK_STAMP = 2,
 };
 
+enum UnitAttackOrSkill{
+	UAS_NONE = 0,
+	UAS_ATTACK = 1,
+	UAS_SKILL = 2,
+};
+
 enum UnitSkillRank{
 	USR_NONE = 0,
 	USR_RANKONE = 1,
@@ -202,6 +208,7 @@ struct UnitAction{
 };
 
 struct ActionData{
+	UnitAttackOrSkill	type;
 	UnitIdentityNumber	id;
 	UnitMoveType		attackType;
 	UnitSkillType		skillType;

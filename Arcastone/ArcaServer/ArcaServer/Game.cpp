@@ -141,8 +141,8 @@ void Game::OperatingUnitAction(UserNumber user, ActionData* actionData)
 	m_UnitActionQueue.clear();
 
 	Player* attacker = GetPlayerByUserName(user);
-	UnitSkillType type = actionData->skillType;
-	if (type != USK_NONE)
+	UnitAttackOrSkill as_type = actionData->type;
+	if (as_type == UAS_ATTACK)
 	{
 		// 유닛 이동
 		Unit* attacker = GetUnit(actionData->id);
@@ -151,8 +151,10 @@ void Game::OperatingUnitAction(UserNumber user, ActionData* actionData)
 		// 이동 가능 횟수 - 1
 		m_CurrentCost--;
 	}
-	else
+
+	if (as_type == UAS_SKILL)
 	{
+		UnitSkillType type = actionData->skillType;
 		// 스킬 사용
 		Skill* skill = InitSkill(type);
 
@@ -330,6 +332,9 @@ void Game::SetUpNPC(UnitType unitType, Coord unitPos)
 
 bool Game::IsCorrectAction(UserNumber user, ActionData* actionData)
 {
+	if (actionData->type == UAS_SKILL && !USE_SKILL)
+		return;
+
 	// 클라야.. 니 턴 아니란다
 	if (user != m_Player[m_Turnmanager.GetWhosTurn()].GetUserNumber())
 		return false;
