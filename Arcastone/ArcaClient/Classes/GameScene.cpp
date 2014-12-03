@@ -1088,6 +1088,10 @@ void GameScene::ReadRestCost(Packet::CostRenewalResult recvData)
 {
 	printf("Rest Cost : %d\nMax Cost : %d\n\n", recvData.mCost, recvData.mMaxCost);
 
+	int maxCost = (recvData.mMaxCost > MAX_HAVE_COST) ? MAX_HAVE_COST : recvData.mMaxCost;
+	int restCost = (recvData.mCost > maxCost) ? maxCost : recvData.mCost;
+	int minCost = (recvData.mCost < 0) ? 0 : recvData.mCost;
+
 	for (int i = 0; i < MAX_HAVE_COST; ++i)
 	{
 		m_CostLabel[i]->setString(" ");
@@ -1100,14 +1104,14 @@ void GameScene::ReadRestCost(Packet::CostRenewalResult recvData)
 		m_CostLabel[i]->setColor(Color3B(32, 32, 128));
 	}
 
-	for (int i = recvData.mCost; i < recvData.mMaxCost; ++i)
+	for (int i = recvData.mCost; i < maxCost; ++i)
 	{
 		m_CostLabel[i]->setString("O");
 
 		m_CostLabel[i]->setColor(Color3B(64, 64, 64));
 	}
 
-	m_MaxCosst = recvData.mMaxCost;
+	m_MaxCosst = maxCost;
 }
 
 void GameScene::SetTurn(bool isMyTurn)
@@ -1164,7 +1168,7 @@ void GameScene::ChangeFieldType(Packet::ChangeFieldResult recvData)
 void GameScene::SetEvent()
 {
 	m_EventLabel->setString("");
-	if (breakCount >= 18)
+	if (breakCount >= 10)
 	{
 		// 종말이 다가온다~
 		m_EventLabel->setString("Draw to a close!");

@@ -116,16 +116,16 @@ Unit* Field::MakeFieldHole(Game* game, Coord position)
 	Packet::ChangeFieldResult outPacket;
 	outPacket.mFieldBlock = changeBlock;
 
+	for (int i = 0; i < PLAYER_COUNT; ++i)
+	{
+		auto session = GClientManager->GetClient(game->GetUserNumberByPlayerNumber((PlayerNumber)i));
+		if (session != nullptr)
+			session->SendRequest(&outPacket);
+	}
+
 	Unit* fallUnit = nullptr;
 	for (int i = 0; i < PLAYER_COUNT_ALL; ++i)
 	{
-		if (i < PLAYER_COUNT)
-		{
-			auto session = GClientManager->GetClient(game->GetUserNumberByPlayerNumber((PlayerNumber)i));
-			if (session != nullptr)
-				session->SendRequest(&outPacket);
-		}
-
 		// 낙하 유닛 처리
 		std::vector<Unit>* unitList = game->GetPlayerList()[i].GetUnitList();
 		for (int unitIdx = 0; unitIdx < unitList->size(); ++unitIdx)
