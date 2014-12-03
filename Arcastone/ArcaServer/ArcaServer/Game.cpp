@@ -625,7 +625,7 @@ UserNumber Game::GetUserNumberByPlayerNumber(PlayerNumber playerNumber)
 	if (playerNumber < 0)
 		return -1;
 
-	return playerNumber;
+	return m_User[playerNumber];
 }
 
 void Game::OperationEvent()
