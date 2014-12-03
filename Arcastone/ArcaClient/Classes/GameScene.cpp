@@ -1097,14 +1097,14 @@ void GameScene::ReadRestCost(Packet::CostRenewalResult recvData)
 		m_CostLabel[i]->setString(" ");
 	}
 
-	for (int i = 0; i < recvData.mCost; ++i)
+	for (int i = 0; i < restCost; ++i)
 	{
 		m_CostLabel[i]->setString("@");
 
 		m_CostLabel[i]->setColor(Color3B(32, 32, 128));
 	}
 
-	for (int i = recvData.mCost; i < maxCost; ++i)
+	for (int i = restCost; i < maxCost; ++i)
 	{
 		m_CostLabel[i]->setString("O");
 
