@@ -23,7 +23,7 @@ void ArcaStone::initSprite()
 	unitSprite->setAnchorPoint(Vec2(0.5f, 0.3f));
 
 	ora->setScale(0.5);
-	ora->setAnchorPoint(Vec2(0.48f, 0.3f));
+	ora->setAnchorPoint(Vec2(0.48f, 0.45f));
 	ora->setOpacity(64);
 
 	m_Sprite->addChild(ora);
