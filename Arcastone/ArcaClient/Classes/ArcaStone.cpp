@@ -22,7 +22,7 @@ void ArcaStone::initSprite()
 	unitSprite->setScale(HEXAGON_LENGTH*1.3 / unitSprite->getContentSize().width);
 	unitSprite->setAnchorPoint(Vec2(0.5f, 0.3f));
 
-	ora->setScale(0.5);
+	ora->setScale(0.7);
 	ora->setAnchorPoint(Vec2(0.48f, 0.45f));
 	ora->setOpacity(64);
 
