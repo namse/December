@@ -101,6 +101,9 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 
 void Game::HandleAction(UserNumber user, ActionData* actionData)
 {
+	// 게임이 끝나는 상황인지 확인
+	IsGameOver();
+
 	// 정당한 패킷이 아니면 무시
 	if (!IsCorrectAction(user, actionData))
 		return;
@@ -114,15 +117,15 @@ void Game::HandleAction(UserNumber user, ActionData* actionData)
 	// 이벤트 발생!
 	OperationEvent();
 
-	// 게임이 끝나는 상황인지 확인
-	IsGameOver();
-
 	// 남은 턴 횟수가 없다면 턴넘김
 	if (*(GetAttacker()->GetCurrentCost()) <= 0)
 		TurnEnd();
 
 	// 너네 마나 이만큼 남았어~
 	SendCurrendtCost();
+
+	// 게임이 끝나는 상황인지 확인
+	IsGameOver();
 }
 
 void Game::OperatingUnitAction(UserNumber user, ActionData* actionData)

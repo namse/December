@@ -214,104 +214,22 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 
 	if (!m_IsMyTurn) return;
 
-	Unit* unit = GetUnitByID(m_SelectedUnit);
-	if (unit->GetOwner() != UO_ME)
-	{
-		// 남의유닛 클릭했으니 턴토스
-		TcpClient::getInstance()->TurnTossRequest();
-		m_SelectedUnit = NON_SELECT_UNIT;
-	}
+	// 남의 유닛 클릭했으면 턴넘김
+	if (TurnToss()) return;
 
-	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
-	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr) return;
+	// 비적합한 유닛 클릭했으면 무시
+	if (IsCurrentUnit()) return;
 
-	// 스킬 장전! 목표설정 상태!
-	if (m_IsCastSkill && USE_SKILL)
-	{
-		UsingSkill(unit);
-		
-		m_IsCastSkill = false;
+	// 스킬 장전상태면 스킬 시전!
+	if (IsCastSkill()) return;
 
-		return;
-	}
+	// 유닛클릭하여 스킬범위표시
+	if (IsReadyToCasting()) return;
 
-	// 커서 안움직이고 유닛만 눌렀다 뗐는데요? && 스킬 준비 상태도 아니에요
-	if (m_IsCursorMoved == false && m_IsCastSkill == false)
-	{
-		// 그럼 스킬을 쓰려는 거구나!
-		m_IsCastSkill = true;
-		
-		// 스킬 쓸 수 있는 범위 그려줄게~
-		DrawSkillEffect(GetUnitByID(m_SelectedUnit)->GetSkill());
+	// 공격!
+	UsingAttack();
 
-		// 아니 근데 너 스킬 못쓰잖아?
-		if (m_CourseStack.empty())
-		{
-			m_IsCastSkill = false;
-		}
-
-		return;
-	}
-
-	// 유닛을 드래그 했으므로 공격 패킷 발싸!
-	{
-		ActionData attackData;
-
-		switch (unit->GetMoveType())
-		{
-		case UMT_STRAIGHT:{
-							  attackData.attackType = UMT_STRAIGHT;
-							  if (m_Direction == HD_NONE || m_Range <= 0) return;
-		}break;
-
-		case UMT_JUMP:{
-						  attackData.attackType = UMT_JUMP;
-						  if (m_Direction == HD_NONE || m_Range <= 0) return;
-		}break;
-
-		case UMT_DASH:{
-						  attackData.attackType = UMT_DASH;
-						  m_Range = m_CourseStack.size();
-						  for (int i = 0; i < m_CourseStack.size(); ++i)
-						  {
-							  // 대쉬는 이동 스택을 입력
-							  attackData.position[i] = m_CourseStack.at(i).HexaToCoord();
-						  }
-		}break;
-
-		case UMT_TELEPORT:{
-							  attackData.attackType = UMT_TELEPORT;
-							  // 텔포는 이동 칸 하나 입력
-							  if (m_CourseStack.size() == 1)
-							  {
-								  // 유닛이 없는 칸만 이동가능
-								  if (GetUnitByPos(m_CourseStack.at(0)) == nullptr)
-								  {
-
-									  attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
-								  }
-								  else return;
-							  }
-							  else return;
-		}break;
-
-		default:
-			assert(false && "DrawUnitMove -> not defined New attackType !");
-		}
-
-		m_CourseStack.clear();
-
-		attackData.id = unit->GetID();
-		attackData.direction = m_Direction;
-		attackData.range = m_Range;
-
-		m_Range = 0;
-		m_Direction = HD_NONE;
-
-		attackData.type = UAS_ATTACK;
-		TcpClient::getInstance()->actionRequest(&attackData);
-	}
-
+	// 선택 유닛 초기화
 	m_SelectedUnit = NON_SELECT_UNIT;
 }
 
@@ -359,7 +277,7 @@ void GameScene::UsingSkill(Unit* unit)
 
 	// 스킬패킷 발사!
 	skillData.type = UAS_SKILL;
-	TcpClient::getInstance()->actionRequest(&skillData);
+	TcpClient::getInstance()->actionRequest(&skillData, 0);
 }
 
 void GameScene::DrawCursorSign()
@@ -1173,4 +1091,137 @@ void GameScene::SetEvent()
 		// 종말이 다가온다~
 		m_EventLabel->setString("Draw to a close!");
 	}
+}
+
+bool GameScene::TurnToss()
+{
+	Unit* unit = GetUnitByID(m_SelectedUnit);
+
+	if (unit->GetOwner() != UO_ME)
+	{
+		TcpClient::getInstance()->TurnTossRequest();
+		m_SelectedUnit = NON_SELECT_UNIT;
+		return true;
+	}
+
+	return false;
+}
+
+bool GameScene::IsCurrentUnit()
+{
+	Unit* unit = GetUnitByID(m_SelectedUnit);
+	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
+	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr)
+		return true;
+
+	return false;
+}
+
+bool GameScene::IsCastSkill()
+{
+	Unit* unit = GetUnitByID(m_SelectedUnit);
+	if (m_IsCastSkill && USE_SKILL)
+	{
+		UsingSkill(unit);
+
+		m_IsCastSkill = false;
+
+		return true;
+	}
+
+	return false;
+}
+
+bool GameScene::IsReadyToCasting()
+{
+	if (m_IsCursorMoved == false && m_IsCastSkill == false)
+	{
+		// 그럼 스킬을 쓰려는 거구나!
+		m_IsCastSkill = true;
+
+		// 스킬 쓸 수 있는 범위 그려줄게~
+		DrawSkillEffect(GetUnitByID(m_SelectedUnit)->GetSkill());
+
+		// 아니 근데 너 스킬 못쓰잖아?
+		if (m_CourseStack.empty())
+		{
+			m_IsCastSkill = false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+void GameScene::UsingAttack()
+{
+	Unit* unit = GetUnitByID(m_SelectedUnit);
+	if (unit == nullptr) return;
+
+	ActionData attackData;
+
+	int packetSize = 0;
+
+	switch (unit->GetMoveType())
+	{
+	case UMT_STRAIGHT:{
+		attackData.attackType = UMT_STRAIGHT;
+		if (m_Direction == HD_NONE || m_Range <= 0) return;
+		packetSize += sizeof(m_Direction) + sizeof(m_Range);
+	}break;
+
+	case UMT_JUMP:{
+		attackData.attackType = UMT_JUMP;
+		if (m_Direction == HD_NONE || m_Range <= 0) return;
+		packetSize += sizeof(m_Direction)+sizeof(m_Range);
+	}break;
+
+	case UMT_DASH:{
+		attackData.attackType = UMT_DASH;
+		m_Range = m_CourseStack.size();
+		for (int i = 0; i < m_CourseStack.size(); ++i)
+		{
+			// 대쉬는 이동 스택을 입력
+			attackData.position[i] = m_CourseStack.at(i).HexaToCoord();
+			packetSize += sizeof(attackData.position[i]);
+		}
+	}break;
+
+	case UMT_TELEPORT:{
+		attackData.attackType = UMT_TELEPORT;
+		// 텔포는 이동 칸 하나 입력
+		if (m_CourseStack.size() == 1)
+		{
+			// 유닛이 없는 칸만 이동가능
+			if (GetUnitByPos(m_CourseStack.at(0)) == nullptr)
+			{
+
+				attackData.position[0] = m_CourseStack.at(0).HexaToCoord();
+			}
+			else return;
+		}
+		else return;
+
+		packetSize += sizeof(attackData.position[0]);
+	}break;
+
+	default:
+		assert(false && "DrawUnitMove -> not defined New attackType !");
+	}
+
+	m_CourseStack.clear();
+
+	attackData.id = unit->GetID();
+	attackData.direction = m_Direction;
+	attackData.range = m_Range;
+
+	m_Range = 0;
+	m_Direction = HD_NONE;
+
+	attackData.type = UAS_ATTACK;
+
+	packetSize += sizeof(attackData.attackType) + sizeof(attackData.id) + sizeof(attackData.type);
+
+	TcpClient::getInstance()->actionRequest(&attackData, packetSize);
 }

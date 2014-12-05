@@ -246,29 +246,62 @@ void TcpClient::TurnTossRequest()
 	send((const char*)&sendData, sizeof(Packet::TossTurnRequest));
 }
 
-void TcpClient::actionRequest(ActionData* actionData)
+void TcpClient::actionRequest(ActionData* actionData, int size)
 {
 	Packet::ActionRequest sendData;
 
 	sendData.mAction = *actionData;
 
-	UnitSkillType type = actionData->skillType;
+	UnitAttackOrSkill type = actionData->type;
 	// Attack Request
-	if (type == USK_NONE)
+	if (type == UAS_ATTACK)
 	{
+		/*
+		char* send;
 
+		send = (char*)malloc(size);
+
+		int sendWritePoint = 0;
+
+		send[0] = type;
+		*/
+
+		switch (actionData->attackType)
+		{
+		case UMT_STRAIGHT:
+		case UMT_JUMP:
+		{
+
+		}break;
+
+		case UMT_DASH:
+		{
+
+		}break;
+
+		case UMT_TELEPORT:
+		{
+
+		}break;
+
+		default:
+		{
+				   assert(false && "TcpClient_actionRequest->UnownType error");
+		}break;
+		}
 
 		send((const char*)&sendData, sizeof(Packet::ActionRequest));
 		goto return_with_print_attack_request;
 	}
 	// Skill Request
-	else
+	if (type == UAS_SKILL)
 	{
 
 
 		send((const char*)&sendData, sizeof(Packet::ActionRequest));
 		goto return_with_print_skill_request;
 	}
+	return;
 
 
 return_with_print_attack_request:;

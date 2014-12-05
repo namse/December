@@ -214,6 +214,7 @@ struct ActionData{
 
 	UnitIdentityNumber	id;
 	UnitMoveType		attackType;
+
 	UnitSkillType		skillType;
 	UnitSkillRank		skillRank;
 

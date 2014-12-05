@@ -24,9 +24,11 @@ public:
 	CREATE_FUNC(GameScene);
 
 
-
+	/*  Action  */
 	void					OnUnitAction(CCNode* sender = NULL);
-
+	void					PrintUnitAction(UnitAction unitAction);
+	bool					TurnToss();
+	void					UsingAttack();
 
 
     // a selector callback
@@ -69,8 +71,10 @@ public:
 	void					ChangeFieldType(Packet::ChangeFieldResult recvData);
 
 private:
-
-	void					PrintUnitAction(UnitAction unitAction);
+	/*  Is  */
+	bool					IsCurrentUnit();
+	bool					IsCastSkill();
+	bool					IsReadyToCasting();
 
 private:
 	Game					m_Game;

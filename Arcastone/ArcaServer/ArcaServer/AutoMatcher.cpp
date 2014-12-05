@@ -45,9 +45,10 @@ void AutoMatcher::AddWaitUser(UserNumber userId)
 			outPacket[1].mReverseMap = false;
 		}
 
+		int incIndex = 0;
 		for (int p = 0; p < PLAYER_COUNT; ++p)
 		{
-			int incIndex = 0;
+			incIndex = 0;
 			for (int player_idx = 0; player_idx < PLAYER_COUNT_ALL; ++player_idx)
 			{
 				std::vector<Unit>* unitList = game->GetPlayerList()[player_idx].GetUnitList();
@@ -80,8 +81,8 @@ void AutoMatcher::AddWaitUser(UserNumber userId)
 		}
 
 		// TODO 유닛수에 따라 증가하게 할것
-		outPacket[0].mUnitLength = 13;
-		outPacket[1].mUnitLength = 13;
+		outPacket[0].mUnitLength = incIndex;
+		outPacket[1].mUnitLength = incIndex;
 
 		ClientSession* userSession[2];
 		userSession[PLAYER_ONE] = GClientManager->GetClient(userId);

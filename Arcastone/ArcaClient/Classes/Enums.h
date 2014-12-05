@@ -6,6 +6,7 @@
 #define LOGIN_IPADDR				"127.0.0.1"
 
 #define NON_SELECT_UNIT INT_MAX
+#define PACKET_MAX_SIZE				1024
 
 /*  Debug  */
 #define OPEN_DEBUG_CONSOLE			false
