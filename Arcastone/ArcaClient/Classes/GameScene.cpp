@@ -1281,5 +1281,7 @@ bool GameScene::IsCursorMoveIndex(Touch* touch)
 	if (touchIndex == cursoredPoint)
 		return false;
 
+	m_IsCursorMoved = true;
+
 	return true;
 }
