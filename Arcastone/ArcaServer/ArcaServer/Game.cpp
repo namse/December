@@ -57,7 +57,7 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 			UnitType unitType = it->second;
 			Coord originPosition = it->first;
 
-			Unit* unit = Unit::CreateUnit(unitType);
+			Unit* unit = new Unit(unitType);
 			assert(unit != nullptr);
 
 			Coord center;
@@ -114,8 +114,8 @@ void Game::HandleAction(UserNumber user, ActionData* actionData)
 	// 유닛이 어떻게 어떻게 이동했는지 통째로 알려준다
 	SendActionQueue();
 
-	// 이벤트 발생!
-	OperationEvent();
+	// 변화된 상황에 대해 이벤트 호출
+	AfterActionEvent();
 
 	// 남은 턴 횟수가 없다면 턴넘김
 	if (*(GetAttacker()->GetCurrentCost()) <= 0)
@@ -307,7 +307,7 @@ void Game::UnitCounting()
 void Game::SetUpNPC(UnitType unitType, Coord unitPos)
 {
 	// create arcastone(npc)
-	Unit* npc = Unit::CreateUnit(unitType);
+	Unit* npc = new Unit(unitType);
 
 	npc->SetOwner((PlayerNumber)PLAYER_NUMBER_NPC);
 	npc->SetId(GenerateUnitIdentityNumber());
@@ -631,13 +631,10 @@ UserNumber Game::GetUserNumberByPlayerNumber(PlayerNumber playerNumber)
 	return m_User[playerNumber];
 }
 
-void Game::OperationEvent()
+void Game::AfterActionEvent()
 {
 	// 아르카스톤에 대한 턴 처리
 	NearUnitCheck(UT_ARCASTONE);
-
-	// 땅이 무너진다아~
-	StartBreakDown();
 }
 
 void Game::TossTurn()
@@ -662,4 +659,13 @@ void Game::TurnEnd()
 	
 	// 너네 마나 이만큼 남았어~
 	SendCurrendtCost();
+
+	// 턴이 끝날 때 일어나는 이벤트들 호출
+	TurnEndEvent();
+}
+
+void Game::TurnEndEvent()
+{
+	// 땅이 무너진다아~
+	StartBreakDown();
 }

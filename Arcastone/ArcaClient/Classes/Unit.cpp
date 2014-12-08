@@ -108,16 +108,20 @@ void Unit::initSprite()
 	// 체력/공격력 프레임 표시
 	auto frameHP = Sprite::create("frame_hp.png");
 	auto frameAtk = Sprite::create("frame_atk.png");
+	auto shadow = Sprite::create("shadow.png");
 
 	float scale = (HEXAGON_LENGTH * 3 / 4) / frameHP->getContentSize().width;
 	float position = HEXAGON_LENGTH * 3 / 4;
 
 	frameHP->setScale(scale);
 	frameAtk->setScale(scale);
+	shadow->setScale(HEXAGON_LENGTH / shadow->getContentSize().width * 1.25);
 	
 	frameHP->setPosition(position, 0);
 	frameAtk->setPosition(-position, 0);
+	shadow->setPosition(0, -position*0.5);
 
+	m_Sprite->addChild(shadow, 0, "shadow");
 	m_Sprite->addChild(frameHP, 10, "frame_hp");
 	m_Sprite->addChild(frameAtk, 10, "frame_atk");
 

@@ -179,27 +179,16 @@ void GameScene::onTouchMoved(Touch* touch, Event* event)
 	// 스킬 범위 선택중이라면 일단 리턴~
 	if (m_IsCastSkill) return;
 
-	Unit* unit = GetUnitByID(m_SelectedUnit);
-	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이거나 적의 유닛이면 패스
-	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr || unit->GetOwner() != UO_ME) return;
+	// 비적합한 유닛 클릭했으면 무시
+	if (IsCurrentUnit()) return;
 
-	// 어딜 터치했는지 찾아서
-	HexaPoint touchIndex;
-	touchIndex = m_Field.ScreenToHexa((ScreenPoint)touch->getLocation());
+	// 당김선을 그림
+	DrawCursorSign(touch);
+
+	// 인덱스 단위로 커서가 이동했는지 확인
+	IsCursorMoveIndex(touch);
 	
-	HexaPoint cursoredPoint;
-	cursoredPoint = m_Field.ScreenToHexa(m_CursoredPoint);
-
-	m_CursoredPoint = ScreenPoint(touch->getLocation());
-
-//	DrawCursorSign();
-
-	// 터치한 위치가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 그냥 return;
-	if (touchIndex == cursoredPoint) return;
-
-	// 커서 움직임요
-	m_IsCursorMoved = true;
-
+	// 유닛이 이동하게되는 범위를 그려줌
 	DrawUnitMove();
 }
 
@@ -210,6 +199,9 @@ void GameScene::onTouchEnded(Touch* touch, Event* event)
 		releaseExpectMoveSign();
 		// 그려진 이동 경로 지움
 		ReleaseMoveSign();
+		// 당김선을 지움
+		this->removeChild(m_CursorSignNode1);
+		this->removeChild(m_CursorSignNode2);
 	}
 
 	if (!m_IsMyTurn) return;
@@ -280,18 +272,66 @@ void GameScene::UsingSkill(Unit* unit)
 	TcpClient::getInstance()->actionRequest(&skillData, 0);
 }
 
-void GameScene::DrawCursorSign()
+void GameScene::DrawCursorSign(Touch* touch)
 {
-	this->removeChild(m_CursorSignNode);
+	switch (GetUnitByID(m_SelectedUnit)->GetMoveType())
+	{
+	case UMT_STRAIGHT:
+	case UMT_JUMP:{
+		DrawCursorPull(touch);
+	}break;
+	default:
+		return;
+	}
+}
 
-	m_CursorSignNode = DrawNode::create();
+void GameScene::DrawCursorPull(Touch* _touch)
+{
+	this->removeChild(m_CursorSignNode1);
+	this->removeChild(m_CursorSignNode2);
 
-	ScreenPoint drawToPoint(m_SelectedUnitPoint.x * 2 - m_CursoredPoint.x, m_SelectedUnitPoint.y * 2 - m_CursoredPoint.y);
+	ScreenPoint touch = _touch->getLocation();
+	ScreenPoint unitPoint = m_Field.HexaToScreen(m_SelectedUnitPoint);
 
-	m_CursorSignNode->drawSegment(m_SelectedUnitPoint, m_CursoredPoint, 5, Color4F(1.0f, 0.0f, 0.0f, 0.4f));
-	this->addChild(m_CursorSignNode, 10000);
+	m_CursorSignNode1 = DrawNode::create();
+	m_CursorSignNode2 = DrawNode::create();
 
-	return;
+	ScreenPoint drawToPoint(unitPoint - touch);
+
+	float drawDirection = CC_RADIANS_TO_DEGREES(drawToPoint.getAngle());
+
+	float plusAngle = CC_DEGREES_TO_RADIANS(drawDirection + 90);
+	float minusAngle = CC_DEGREES_TO_RADIANS(drawDirection - 90);
+
+	float plusSin = sin(plusAngle) * HEXAGON_LENGTH / 2;
+	float plusCos = cos(plusAngle) * HEXAGON_LENGTH / 2;
+
+	float minusSin = sin(minusAngle) * HEXAGON_LENGTH / 2;
+	float minusCos = cos(minusAngle) * HEXAGON_LENGTH / 2;
+
+	ScreenPoint drawPlusStart(unitPoint.x + plusCos, unitPoint.y + plusSin);
+	ScreenPoint drawMinusStart(unitPoint.x + minusCos, unitPoint.y + minusSin);
+
+	if (drawPlusStart.x < touch.x && drawPlusStart.y < touch.y)
+	{
+		m_CursorSignNode1->drawSegment(drawPlusStart, touch, 5, Color4F(1.0f, 0.0f, 0.0f, 0.4f));
+	}
+	else
+	{
+		m_CursorSignNode1->drawSegment(touch, drawPlusStart, 5, Color4F(1.0f, 0.0f, 0.0f, 0.4f));
+	}
+
+	if (drawMinusStart.x < touch.x && drawMinusStart.y < touch.y)
+	{
+		m_CursorSignNode2->drawSegment(drawMinusStart, touch, 5, Color4F(1.0f, 0.0f, 0.0f, 0.4f));
+	}
+	else
+	{
+		m_CursorSignNode2->drawSegment(touch, drawMinusStart, 5, Color4F(1.0f, 0.0f, 0.0f, 0.4f));
+	}
+
+	this->addChild(m_CursorSignNode1, 10000);
+	this->addChild(m_CursorSignNode2, 10000);
 }
 
 void GameScene::DrawSkillEffect(Skill skill)
@@ -1111,7 +1151,7 @@ bool GameScene::IsCurrentUnit()
 {
 	Unit* unit = GetUnitByID(m_SelectedUnit);
 	// 적합한 유닛을 선택하지 않았거나, 유닛이 nullptr 이면 패스
-	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr)
+	if (m_SelectedUnit == NON_SELECT_UNIT || unit == nullptr || unit->GetOwner() != UO_ME)
 		return true;
 
 	return false;
@@ -1224,4 +1264,22 @@ void GameScene::UsingAttack()
 	packetSize += sizeof(attackData.attackType) + sizeof(attackData.id) + sizeof(attackData.type);
 
 	TcpClient::getInstance()->actionRequest(&attackData, packetSize);
+}
+
+bool GameScene::IsCursorMoveIndex(Touch* touch)
+{
+	// 어딜 터치했는지 찾아서
+	HexaPoint touchIndex;
+	touchIndex = m_Field.ScreenToHexa((ScreenPoint)touch->getLocation());
+
+	HexaPoint cursoredPoint;
+	cursoredPoint = m_Field.ScreenToHexa(m_CursoredPoint);
+
+	m_CursoredPoint = ScreenPoint(touch->getLocation());
+
+	// 터치한 위치가 (인덱스단위로) 이동했는지 확인하고 이동안했으면 false;
+	if (touchIndex == cursoredPoint)
+		return false;
+
+	return true;
 }

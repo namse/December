@@ -15,7 +15,7 @@
 #include "Rock.h"
 #include "Tree.h"
 
-Unit::Unit()
+Unit::Unit(UnitType type)
 {
 	m_UnitType = UT_NONE;
 	m_UnitMoveType = UMT_NONE;
@@ -23,6 +23,8 @@ Unit::Unit()
 	m_UnitStatus = UST_NONE;
 
 	m_IsNearArca = false;
+
+	InitUnit(type);
 }
 
 Unit::~Unit()
@@ -30,60 +32,11 @@ Unit::~Unit()
 }
 
 
-Unit* Unit::CreateUnit(UnitType unitType)
-{
-	Unit* newUnit;
-
-	switch (unitType)
-	{
-	case UT_SOLDIER:
-	{
-		newUnit = new Soldier();
-	}break;
-	case UT_MAGICIAN:
-	{
-		newUnit = new Magician();
-	}break;
-	case UT_KNIGHT:
-	{
-		newUnit = new Knight();
-	}break;
-	case UT_PRINCE:
-	{
-		newUnit = new Prince();
-	}break;
-	case UT_PRINCESS:
-	{
-		newUnit = new Princess();
-	}break;
-	case UT_ARCASTONE:
-	{
-		newUnit = new ArcaStone();
-	}break;
-	case UT_RIDER:
-	{
-		newUnit = new Rider();
-	}break;
-	case UT_ROCK:
-	{
-		newUnit = new Rock();
-	}break;
-	case UT_TREE:
-	{
-		newUnit = new Tree();
-	}break;
-	default:
-		assert(false && "Unit::create - Non defined new unitType");
-	}
-
-	if(newUnit != nullptr) newUnit->InitUnit(unitType);
-
-	return newUnit;
-}
-
-
 void Unit::InitUnit(UnitType unitType)
 {
+	if (unitType == UT_NONE)
+		return;
+
 	UnitData unitData = GJsonManager->GetUnitData(unitType);
 	
 	m_UnitType = unitType;

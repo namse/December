@@ -6,10 +6,8 @@ class Game;
 class Unit
 {
 public:
-	Unit();
+	Unit(UnitType type);
 	virtual ~Unit();
-
-	static Unit*			CreateUnit(UnitType unitType);
 
 	void					InitUnit(UnitType unitType);
 

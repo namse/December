@@ -33,18 +33,17 @@ void Player::IsNearUnit(Game* game, UnitType type)
 	bool isNearUnitBefore = false;
 	ArcaStone* arcaStone = nullptr;
 
-	Unit unit;
-
+	Unit* unit = new Unit(UT_NONE);
 	// 아르카스톤 찾고
 	for (int i = 0; i < PLAYER_COUNT_ALL; ++i)
 	{
 		std::vector<Unit>* unitList = game->GetPlayerList()[i].GetUnitList();
 		for (int i = 0; i < unitList->size(); ++i)
 		{
-			unit = unitList->at(i);
-			if (unit.GetUnitType() == type)
+			unit = &unitList->at(i);
+			if (unit->GetUnitType() == type)
 			{
-				arcaStone = static_cast<ArcaStone*>(&unit);
+				arcaStone = static_cast<ArcaStone*>(unit);
 				break;
 			}
 		}

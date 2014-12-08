@@ -37,12 +37,6 @@
     <Filter Include="GamePlayingObject\Unit">
       <UniqueIdentifier>{f4dd956d-fb35-47d4-9b96-8979dbb52ba3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GamePlayingObject\Unit\Non-PlayerUnit">
-      <UniqueIdentifier>{2c1a06b6-0bf0-4d50-b5c6-5e62ca22142c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GamePlayingObject\Unit\PlayerUnit">
-      <UniqueIdentifier>{52c1919c-78d6-4570-8d3b-0b8db93e262e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GamePlayingObject\Skill">
       <UniqueIdentifier>{2f90a71b-e704-4534-bb64-0389375ef384}</UniqueIdentifier>
     </Filter>
@@ -113,33 +107,6 @@
     </ClInclude>
     <ClInclude Include="Unit.h">
       <Filter>GamePlayingObject\Unit</Filter>
-    </ClInclude>
-    <ClInclude Include="ArcaStone.h">
-      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
-    </ClInclude>
-    <ClInclude Include="Knight.h">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClInclude>
-    <ClInclude Include="Soldier.h">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClInclude>
-    <ClInclude Include="Rider.h">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClInclude>
-    <ClInclude Include="Rock.h">
-      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
-    </ClInclude>
-    <ClInclude Include="Princess.h">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClInclude>
-    <ClInclude Include="Magician.h">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClInclude>
-    <ClInclude Include="Prince.h">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClInclude>
-    <ClInclude Include="Tree.h">
-      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
     </ClInclude>
     <ClInclude Include="User.h">
       <Filter>GameLogic\User</Filter>
@@ -229,33 +196,6 @@
     </ClCompile>
     <ClCompile Include="Unit.cpp">
       <Filter>GamePlayingObject\Unit</Filter>
-    </ClCompile>
-    <ClCompile Include="ArcaStone.cpp">
-      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
-    </ClCompile>
-    <ClCompile Include="Knight.cpp">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClCompile>
-    <ClCompile Include="Soldier.cpp">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClCompile>
-    <ClCompile Include="Rider.cpp">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClCompile>
-    <ClCompile Include="Rock.cpp">
-      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
-    </ClCompile>
-    <ClCompile Include="Magician.cpp">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClCompile>
-    <ClCompile Include="Prince.cpp">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClCompile>
-    <ClCompile Include="Princess.cpp">
-      <Filter>GamePlayingObject\Unit\PlayerUnit</Filter>
-    </ClCompile>
-    <ClCompile Include="Tree.cpp">
-      <Filter>GamePlayingObject\Unit\Non-PlayerUnit</Filter>
     </ClCompile>
     <ClCompile Include="User.cpp">
       <Filter>GameLogic\User</Filter>

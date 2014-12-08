@@ -35,6 +35,9 @@ enum UnitType{
 	UT_RIDER = 8,
 	UT_ROCK = 9,
 	UT_TREE = 10,
+	UT_BOMB = 11,
+	UT_PEBBLE = 12,
+	UT_POTION = 13,
 
 	UT_MAX = 1024,
 };
@@ -92,6 +95,7 @@ enum FieldBlockStatus
 	FBS_NORMAL = 1,
 	FBS_HOLE = 2,
 	FBS_WATER = 3,
+	FBS_WARN = 4,
 };
 
 enum UnitOwner

@@ -38,6 +38,7 @@ public:
 	/* touch 함수 */
 	EventListenerTouchOneByOne*	_touchListener;
 	void					touchEventInit();
+	bool					IsCursorMoveIndex(Touch* touch);
 	virtual bool			onTouchBegan(Touch* touch, Event* event);
 	virtual void			onTouchMoved(Touch* touch, Event* event);
 	virtual void			onTouchCancelled(Touch* touch, Event* unused_event){}
@@ -52,7 +53,8 @@ public:
 	void					ReleaseMoveSign();
 	void					KnockBackDraw(Unit* attacker, Unit* target, HexaDirection direction, int range);
 	void					DrawSkillEffect(Skill skill);
-	void					DrawCursorSign();
+	void					DrawCursorSign(Touch* touch);
+	void					DrawCursorPull(Touch* touch);
 	
 
 	/* 멤버 검색 함수 */
@@ -92,7 +94,7 @@ private:
 
 	ScreenPoint				m_StartPoint;
 	ScreenPoint				m_CursoredPoint;
-	ScreenPoint				m_SelectedUnitPoint;
+	HexaPoint				m_SelectedUnitPoint;
 	int						m_SelectedUnit;
 
 	HexaDirection			m_Direction;
@@ -107,7 +109,8 @@ private:
 	vector<HexaPoint>		m_CourseStack;
 	queue<UnitAction>		m_UnitActionQueue;
 
-	DrawNode*				m_CursorSignNode;
+	DrawNode*				m_CursorSignNode1;
+	DrawNode*				m_CursorSignNode2;
 
 
 	// 임시

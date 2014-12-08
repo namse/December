@@ -41,7 +41,8 @@ public:
 	void						OperatingUnitAction(UserNumber user, ActionData* actionData);
 
 	/*  In Game Event  */
-	void						OperationEvent();
+	void						AfterActionEvent();
+	void						TurnEndEvent();
 	void						StartBreakDown();
 	void						NearUnitCheck(UnitType type);
 	Player*						AttackerSwap();
