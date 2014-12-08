@@ -2,19 +2,6 @@
 #include "JsonManager.h"
 #include "Game.h"
 
-/*  PC  */
-#include "Soldier.h"
-#include "Magician.h"
-#include "Knight.h"
-#include "Prince.h"
-#include "Princess.h"
-#include "Rider.h"
-
-/*  NPC  */
-#include "ArcaStone.h"
-#include "Rock.h"
-#include "Tree.h"
-
 Unit::Unit(UnitType type)
 {
 	m_UnitType = UT_NONE;
