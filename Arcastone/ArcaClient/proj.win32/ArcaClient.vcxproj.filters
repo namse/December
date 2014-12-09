@@ -16,12 +16,6 @@
     <Filter Include="GameObject\Unit">
       <UniqueIdentifier>{0d9f5f6e-98a6-42e5-bc7c-d5b36bd226b7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="GameObject\Unit\PC">
-      <UniqueIdentifier>{e3e0d86b-8a57-48c9-a17a-735a8b4b6e76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="GameObject\Unit\NPC">
-      <UniqueIdentifier>{52c5edae-4ff5-4d83-8de1-e1fddf168002}</UniqueIdentifier>
-    </Filter>
     <Filter Include="GameObject\field">
       <UniqueIdentifier>{97a5df55-b53a-4310-8013-75a9bb1e95ad}</UniqueIdentifier>
     </Filter>
@@ -51,9 +45,6 @@
     <ClCompile Include="..\Classes\Unit.cpp">
       <Filter>GameObject\Unit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Classes\NPC.cpp">
-      <Filter>GameObject\Unit\NPC</Filter>
-    </ClCompile>
     <ClCompile Include="..\Classes\AppDelegate.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -68,33 +59,6 @@
     </ClCompile>
     <ClCompile Include="..\Classes\Player.cpp">
       <Filter>GameObject\player</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Knight.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Rider.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Soldier.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Magician.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Prince.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Princess.cpp">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\ArcaStone.cpp">
-      <Filter>GameObject\Unit\NPC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Rock.cpp">
-      <Filter>GameObject\Unit\NPC</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Classes\Tree.cpp">
-      <Filter>GameObject\Unit\NPC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -116,9 +80,6 @@
     <ClInclude Include="..\Classes\Unit.h">
       <Filter>GameObject\Unit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\NPC.h">
-      <Filter>GameObject\Unit\NPC</Filter>
-    </ClInclude>
     <ClInclude Include="..\Classes\AppDelegate.h">
       <Filter>Core</Filter>
     </ClInclude>
@@ -137,35 +98,8 @@
     <ClInclude Include="..\..\PacketType.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="..\Classes\Soldier.h">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Knight.h">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Rider.h">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Magician.h">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Prince.h">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Princess.h">
-      <Filter>GameObject\Unit\PC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\ArcaStone.h">
-      <Filter>GameObject\Unit\NPC</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Rock.h">
-      <Filter>GameObject\Unit\NPC</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\CommonDefinitions.h">
       <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Classes\Tree.h">
-      <Filter>GameObject\Unit\NPC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -174,14 +108,111 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Resources\Me.png">
+    <Image Include="..\Resources\npc_arcastone.png">
       <Filter>resource</Filter>
     </Image>
-    <Image Include="..\Resources\Projectile.png">
+    <Image Include="..\Resources\npc_bomb.png.png">
       <Filter>resource</Filter>
     </Image>
-    <Image Include="..\Resources\Enomy.png">
+    <Image Include="..\Resources\npc_pebble.png.png">
       <Filter>resource</Filter>
     </Image>
+    <Image Include="..\Resources\npc_potion.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\npc_rock.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\npc_tree.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\shadow.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\sprite_none.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\unit_magician.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\arca_ora.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\block_cover_water.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\block_grass.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\block_grass1.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\block_grass2.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\block_grass3.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\block_grass4.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\block_grass5.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\block_grass6.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\block_water.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\character.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\character2.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\enemyunit.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\frame_atk.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\frame_hp.png">
+      <Filter>resource</Filter>
+    </Image>
+    <Image Include="..\Resources\myunit.png">
+      <Filter>resource</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\Resources\start.mp3">
+      <Filter>resource</Filter>
+    </Media>
+    <Media Include="..\Resources\bgm.mp3">
+      <Filter>resource</Filter>
+    </Media>
+    <Media Include="..\Resources\collision.mp3">
+      <Filter>resource</Filter>
+    </Media>
+    <Media Include="..\Resources\die.mp3">
+      <Filter>resource</Filter>
+    </Media>
+    <Media Include="..\Resources\move.mp3">
+      <Filter>resource</Filter>
+    </Media>
+    <Media Include="..\Resources\myturn.mp3">
+      <Filter>resource</Filter>
+    </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\block_cover_water.plist">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\Resources\block_grass.plist">
+      <Filter>resource</Filter>
+    </None>
+    <None Include="..\Resources\block_water.plist">
+      <Filter>resource</Filter>
+    </None>
   </ItemGroup>
 </Project>

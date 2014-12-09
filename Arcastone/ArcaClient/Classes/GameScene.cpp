@@ -748,7 +748,7 @@ void GameScene::ReadUnitData(UnitData unitData[], int length)
 
 	for (int i = 0; i < length; ++i)
 	{
-		Unit* unit = Unit::create(unitData[i]);
+		Unit* unit = new Unit(unitData[i]);
 
 		m_UnitList.push_back(unit);
 

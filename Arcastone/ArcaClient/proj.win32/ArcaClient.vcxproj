@@ -63,6 +63,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LibraryPath>$(MSBuildProgramFiles32)\Microsoft SDKs\Windows\v7.1A\lib;$(LibraryPath)</LibraryPath>
@@ -98,6 +99,9 @@
       <Command>if not exist "$(OutDir)" mkdir "$(OutDir)"
 xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</Command>
     </PreLinkEvent>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>C:\Users\thtjdhdj\Desktop\December\December\Arcastone\ArcaClient\Resources;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -135,48 +139,28 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
-    <ClCompile Include="..\Classes\ArcaStone.cpp" />
     <ClCompile Include="..\Classes\CircularBuffer.cpp" />
     <ClCompile Include="..\Classes\Game.cpp" />
     <ClCompile Include="..\Classes\GameScene.cpp" />
-    <ClCompile Include="..\Classes\Knight.cpp" />
-    <ClCompile Include="..\Classes\Magician.cpp" />
     <ClCompile Include="..\Classes\main.cpp" />
     <ClCompile Include="..\Classes\field.cpp" />
-    <ClCompile Include="..\Classes\NPC.cpp" />
     <ClCompile Include="..\Classes\Player.cpp" />
-    <ClCompile Include="..\Classes\Prince.cpp" />
-    <ClCompile Include="..\Classes\Princess.cpp" />
-    <ClCompile Include="..\Classes\Rider.cpp" />
-    <ClCompile Include="..\Classes\Rock.cpp" />
-    <ClCompile Include="..\Classes\Soldier.cpp" />
     <ClCompile Include="..\Classes\TcpClient.cpp" />
-    <ClCompile Include="..\Classes\Tree.cpp" />
     <ClCompile Include="..\Classes\Unit.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\CommonDefinitions.h" />
     <ClInclude Include="..\..\PacketType.h" />
     <ClInclude Include="..\Classes\AppDelegate.h" />
-    <ClInclude Include="..\Classes\ArcaStone.h" />
     <ClInclude Include="..\Classes\CircularBuffer.h" />
     <ClInclude Include="..\Classes\Enums.h" />
     <ClInclude Include="..\Classes\Game.h" />
     <ClInclude Include="..\Classes\Header.h" />
     <ClInclude Include="..\Classes\GameScene.h" />
-    <ClInclude Include="..\Classes\Knight.h" />
-    <ClInclude Include="..\Classes\Magician.h" />
     <ClInclude Include="..\Classes\main.h" />
     <ClInclude Include="..\Classes\field.h" />
-    <ClInclude Include="..\Classes\NPC.h" />
     <ClInclude Include="..\Classes\Player.h" />
-    <ClInclude Include="..\Classes\Prince.h" />
-    <ClInclude Include="..\Classes\Princess.h" />
-    <ClInclude Include="..\Classes\Rider.h" />
-    <ClInclude Include="..\Classes\Rock.h" />
-    <ClInclude Include="..\Classes\Soldier.h" />
     <ClInclude Include="..\Classes\TcpClient.h" />
-    <ClInclude Include="..\Classes\Tree.h" />
     <ClInclude Include="..\Classes\Unit.h" />
   </ItemGroup>
   <ItemGroup>
@@ -195,9 +179,44 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
     <ResourceCompile Include="game.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\Resources\Enomy.png" />
-    <Image Include="..\Resources\Me.png" />
-    <Image Include="..\Resources\Projectile.png" />
+    <Image Include="..\Resources\arca_ora.png" />
+    <Image Include="..\Resources\block_cover_water.png" />
+    <Image Include="..\Resources\block_grass.png" />
+    <Image Include="..\Resources\block_grass1.png" />
+    <Image Include="..\Resources\block_grass2.png" />
+    <Image Include="..\Resources\block_grass3.png" />
+    <Image Include="..\Resources\block_grass4.png" />
+    <Image Include="..\Resources\block_grass5.png" />
+    <Image Include="..\Resources\block_grass6.png" />
+    <Image Include="..\Resources\block_water.png" />
+    <Image Include="..\Resources\character.png" />
+    <Image Include="..\Resources\character2.png" />
+    <Image Include="..\Resources\enemyunit.png" />
+    <Image Include="..\Resources\frame_atk.png" />
+    <Image Include="..\Resources\frame_hp.png" />
+    <Image Include="..\Resources\myunit.png" />
+    <Image Include="..\Resources\npc_arcastone.png" />
+    <Image Include="..\Resources\npc_bomb.png.png" />
+    <Image Include="..\Resources\npc_pebble.png.png" />
+    <Image Include="..\Resources\npc_potion.png" />
+    <Image Include="..\Resources\npc_rock.png" />
+    <Image Include="..\Resources\npc_tree.png" />
+    <Image Include="..\Resources\shadow.png" />
+    <Image Include="..\Resources\sprite_none.png" />
+    <Image Include="..\Resources\unit_magician.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="..\Resources\bgm.mp3" />
+    <Media Include="..\Resources\collision.mp3" />
+    <Media Include="..\Resources\die.mp3" />
+    <Media Include="..\Resources\move.mp3" />
+    <Media Include="..\Resources\myturn.mp3" />
+    <Media Include="..\Resources\start.mp3" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Resources\block_cover_water.plist" />
+    <None Include="..\Resources\block_grass.plist" />
+    <None Include="..\Resources\block_water.plist" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

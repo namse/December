@@ -2,9 +2,13 @@
 #include "../../PacketType.h"
 
 /* In Game Value  */
+#define USE_ARCA						false
+#define USE_ROCK						false
+#define USE_BOMB						true
+#define USE_POTION						true
+#define USE_PEBBLE						true
+
 #define USER_UNIT_MAX					10
-#define USE_ARCA						true
-#define USE_ROCK						true
 #define USE_SKILL						false
 #define USE_ARCA_HIT_COST				false
 
@@ -28,6 +32,7 @@
 #define PLAYER_NUMBER_NPC				2
 
 #define UNNOWN_ERROR					true
+
 
 typedef int UserNumber;
 typedef int GameNumber;

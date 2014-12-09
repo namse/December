@@ -5,10 +5,9 @@
 class Unit
 {
 public:
-	Unit();
+	Unit(UnitData data);
 	virtual ~Unit();
 
-	static Unit*				create(UnitData unitData);
 	virtual void				init(UnitData unitData);
 	virtual void				initSprite();
 

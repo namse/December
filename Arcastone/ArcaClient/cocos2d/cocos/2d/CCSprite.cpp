@@ -170,7 +170,9 @@ bool Sprite::initWithFile(const std::string& filename)
 {
     CCASSERT(filename.size()>0, "Invalid filename for sprite");
 
-    Texture2D *texture = Director::getInstance()->getTextureCache()->addImage(filename);
+	TextureCache* cache = Director::getInstance()->getTextureCache();
+
+    Texture2D *texture = cache->addImage(filename);
     if (texture)
     {
         Rect rect = Rect::ZERO;

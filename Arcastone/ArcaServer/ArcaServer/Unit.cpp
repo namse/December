@@ -54,7 +54,7 @@ int Unit::UnitMove(Game* game, ActionData* actionData)
 	case UMT_DASH:
 	{
 					 UnitMoveDash(game, actionData);
-					 attackCost = 2;
+					 attackCost = 1;
 	}break;
 	case UMT_TELEPORT:
 	{

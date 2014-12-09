@@ -78,8 +78,14 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 		};
 	}
 
-	// 아르카스톤 설치
+	// NPC 설치
 	if (USE_ARCA) SetUpNPC(UT_ARCASTONE, Coord(3, 5));
+	if (USE_PEBBLE) SetUpNPC(UT_PEBBLE, Coord(3, 5));
+
+	if (USE_BOMB) SetUpNPC(UT_BOMB, Coord(4, 4));
+
+	if (USE_POTION) SetUpNPC(UT_POTION, Coord(2, 6));
+
 
 	// 장애물 설치
 	if (USE_ROCK)

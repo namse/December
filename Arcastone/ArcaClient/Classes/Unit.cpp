@@ -1,75 +1,13 @@
 ﻿#include "Unit.h"
 
-/*  PC  */
-#include "Soldier.h"
-#include "Rider.h"
-#include "Knight.h"
-#include "Magician.h"
-#include "Prince.h"
-#include "Princess.h"
-
-/*  NPC  */
-#include "ArcaStone.h"
-#include "Rock.h"
-#include "NPC.h"
-#include "Tree.h"
-
-Unit::Unit()
+Unit::Unit(UnitData data)
 {
+
+	init(data);
 }
 
 Unit::~Unit()
 {
-}
-
-Unit* Unit::create(UnitData unitData)
-{
-	Unit* newUnit = nullptr;
-	switch (unitData.unitType)
-	{
-		case UT_SOLDIER:
-		{
-							newUnit = new Soldier();
-		}break;
-		case UT_RIDER:
-		{
-						   newUnit = new Rider();
-		}break;
-		case UT_KNIGHT:
-		{
-						   newUnit = new Knight();
-		}break;
-		case UT_PRINCE:
-		{
-							newUnit = new Prince();
-		}break;
-		case UT_PRINCESS:
-		{
-							newUnit = new Princess();
-		}break;
-		case UT_ROCK:
-		{
-							newUnit = new Rock();
-		}break;
-		case UT_MAGICIAN:
-		{
-						   newUnit = new Magician();
-		}break;
-		case UT_ARCASTONE:
-		{
-							 newUnit = new ArcaStone();
-		}break;
-		case UT_TREE:
-		{
-							newUnit = new Tree();
-		}break;
-		default:
-			assert(false && "Unit::create - Non defined new unitType");
-	}
-
-	if (newUnit != nullptr) newUnit->init(unitData);
-
-	return newUnit;
 }
 
 void Unit::init(UnitData unitData)
@@ -106,8 +44,8 @@ void Unit::initSprite()
 	m_Sprite = Sprite::create();
 
 	// 체력/공격력 프레임 표시
-	auto frameHP = Sprite::create("frame_hp.png");
-	auto frameAtk = Sprite::create("frame_atk.png");
+	auto frameHP = Sprite::create(FRAME_HP);
+	auto frameAtk = Sprite::create(FRAME_ATK);
 	auto shadow = Sprite::create("shadow.png");
 
 	float scale = (HEXAGON_LENGTH * 3 / 4) / frameHP->getContentSize().width;
@@ -160,6 +98,52 @@ void Unit::initSprite()
 		ownerMark->setPositionY(ownerMark->getContentSize().height*scale*1.5);
 		m_Sprite->addChild(ownerMark, 30 + ZORDER_STAT, "ownerMark");
 	}
+
+	Sprite* unitSprite;
+	switch (m_UnitType)
+	{
+	case UT_SOLDIER:{
+		unitSprite = Sprite::create(SPRITE_SOLDIER);
+	}break;
+	case UT_KNIGHT:{
+		unitSprite = Sprite::create(SPRITE_KNIGHT);
+	}break;
+	case UT_MAGICIAN:{
+		unitSprite = Sprite::create(SPRITE_MAGICION); 
+	}break;
+	case UT_RIDER:{
+		unitSprite = Sprite::create(SPRITE_PRINCE);
+	}break;
+	case UT_PRINCESS:{
+		unitSprite = Sprite::create(SPRITE_PRINCESS);
+	}break;
+	case UT_ARCASTONE:{
+		unitSprite = Sprite::create(SPRITE_ARCASTONE);
+	}break;
+	case UT_BOMB:{
+		unitSprite = Sprite::create(SPRITE_BOMB);
+	}break;
+	case UT_TREE:{
+		unitSprite = Sprite::create(SPRITE_TREE);
+	}break;
+	case UT_ROCK:{
+		unitSprite = Sprite::create(SPRITE_ROCK);
+	}break;
+	case UT_PEBBLE:{
+		unitSprite = Sprite::create(SPRITE_PEBBLE);
+	}break;
+	case UT_POTION:{
+		unitSprite = Sprite::create(SPRITE_POTION);
+	}break;
+	default:
+		assert(false && "non-handle new unitType in initSprite");
+		break;
+	}
+
+	unitSprite->setScale(HEXAGON_LENGTH*1.5 / unitSprite->getContentSize().width);
+	unitSprite->setAnchorPoint(Vec2(0.5f, 0.3f));
+	
+	m_Sprite->addChild(unitSprite);
 }
 
 void Unit::SetHP(int hp)

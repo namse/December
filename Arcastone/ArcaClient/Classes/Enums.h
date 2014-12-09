@@ -56,6 +56,26 @@
 #define ZORDER_STAT					400
 #define ZORDER_UI					500
 
+/*  UI Sprites  */
+#define FRAME_HP					"frame_hp.png"
+#define FRAME_ATK					"frame_atk.png"
+
+/*  PC Sprites  */
+#define SPRITE_SOLDIER				"character.png"
+#define SPRITE_RIDER				"character.png"
+#define SPRITE_PRINCE				"character.png"
+#define SPRITE_PRINCESS				"character.png"
+#define SPRITE_MAGICION				"unit_magician.png"
+#define SPRITE_KNIGHT				"character.png"
+
+/*  NPC Sprites  */
+#define SPRITE_ROCK					"npc_rock.png"
+#define SPRITE_TREE					"npc_tree.png"
+#define SPRITE_ARCASTONE			"npc_arcastone.png"
+#define SPRITE_BOMB					"npc_bomb.png"
+#define SPRITE_PEBBLE				"npc_pebble.png"
+#define SPRITE_POTION				"npc_potion.png"
+
 // enum
 enum PlayerWho
 {
