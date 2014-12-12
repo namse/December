@@ -3,6 +3,7 @@
 
 Field::Field()
 {
+	///# 멤버 변수 기본 초기화는 항상 해놓을 것. (나중에 init에서 한다고 하더라도....)
 	
 }
 
@@ -64,7 +65,7 @@ void Field::InitSpriteResource()
 	m_SpriteFrame->addSpriteFramesWithFile("block_grass.plist");
 	m_SpriteFrame->addSpriteFramesWithFile("block_cover_water.plist");
 
-	char blockType[30];
+	char blockType[30]; ///< = { 0, }; 처럼 로컬 변수도 초기화 하는 습관을..
 	char spriteName[30];
 
 	auto waterAnimate = Animation::create();
@@ -116,7 +117,7 @@ bool Field::IsThisHexaInField(HexaPoint point)
 	for (int i = 0; i < m_HexaPointList.size(); ++i)
 	{
 		if (point.x == m_HexaPointList.at(i).x &&
-			point.y == m_HexaPointList.at(i).y)
+			point.y == m_HexaPointList.at(i).y)  ///< 어허..  float == float 비교 하면 큰일난다.. int와 다르다.. (부동 소수점이라서....)
 			return true;
 	}
 	return false;
@@ -126,7 +127,7 @@ ScreenPoint Field::HexaToScreen(HexaPoint point)
 {
 	ScreenPoint retPoint;
 
-	int xMidPoint = point.x - (m_MapWidth - 1)*0.5;
+	int xMidPoint = point.x - (m_MapWidth - 1)*0.5; ///< 암암리에 int 에서 float로 형변환 한 다음에 int로 변환 되는것 의도한 것이라면 static_cast써주삼.
 	int yMidPoint = point.y - (m_MapHeight - 1)*0.5;
 
 	// MAP_START 를 중앙에 위치하도록 그려주기 위한 수식들

@@ -620,6 +620,7 @@ void GameScene::DrawUnitMove()
 						  if (!m_Field.IsThisHexaInField(cursoredHexa)) return;
 
 						  // 제자리로도 못가
+						  ///# 구조체끼리 "=="로 동등 비교하는것이 무슨 뜻인지 알지? 이 경우는 Vec2::operator== 를 사용하게 됨.
 						  if (cursoredHexa == unitPos)
 						  {
 							  ReleaseMoveSign();
@@ -628,7 +629,7 @@ void GameScene::DrawUnitMove()
 						  }
 
 						  // 선택한 공격자 유닛의 위치로 커서 이동한 경우 무시
-						  if (cursoredHexa == unitPos) return;
+						  if (cursoredHexa == unitPos) return;  ///< 헐?? 이거 의미 없는 조건문 아닌가? 바로 위의 if문 보삼.. 완전히 같은데?
 
 						  // 이동범위 벗어나면 OUT!
 						  if (!unitPos.isAround(cursoredHexa, unitRange)) return;

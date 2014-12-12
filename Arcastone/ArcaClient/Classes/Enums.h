@@ -84,8 +84,12 @@ enum PlayerWho
 };
 
 // typedef 
-typedef Packet::GameStartResult::UnitData UnitData;
+typedef Packet::GameStartResult::UnitData UnitData; ///< UnitData를 공유해 쓰려면, 내부 struct가 아니라 외부로 뺄 것. 
+///# 그리고 패킷에서 쓰는 구조체를 게임 중에 계속 사용하는 경우는 비효율적임. 왜냐하면 전송용은 1바이트 패킹이 효율적이지만, 
+/// 메모리에서 사용하는 경우는 word단위로 alignment되는게 더 효율적이기 때문.
 
+
+/// 아래 구조체들을 왜 enums.h에 넣어 놓는거지? 이 파일에는 인클루드 디펜던시 없는 상수 리터럴만 모아놓는 파일 아닌가?
 // struct
 struct Hexagon
 {
@@ -209,7 +213,7 @@ struct HexaPoint : public cocos2d::Vec2
 		}
 		else if (vec.x > 0 && vec.y < 0)
 		{
-			if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+			if (abs(vec.x) != abs(vec.y)) return HD_NONE;  ///< 헐?? float 끼리는 == 비교 하면 안된다. 왜 그런지 공부해보삼.. 0.999999 == 1.00000인 경우는?
 			return HD_NORTHEAST;
 		}
 		else if (vec.x < 0 && vec.y == 0)

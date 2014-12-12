@@ -48,7 +48,7 @@ void Unit::initSprite()
 	auto frameAtk = Sprite::create(FRAME_ATK);
 	auto shadow = Sprite::create("shadow.png");
 
-	float scale = (HEXAGON_LENGTH * 3 / 4) / frameHP->getContentSize().width;
+	float scale = (HEXAGON_LENGTH * 3 / 4) / frameHP->getContentSize().width; ///< 이것도 데이터 손실을 막으려면 앞에 (HEXAGON_LENGTH * 3 / 4) 부분을 double이나 float로 변환을 한 다음에 계산
 	float position = HEXAGON_LENGTH * 3 / 4;
 
 	frameHP->setScale(scale);

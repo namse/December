@@ -13,5 +13,5 @@ Game::~Game()
 {
 	delete m_Field;
 	delete m_Player[0];
-	delete m_Player[1];
+	delete m_Player[1]; ///< delete [] m_Player; 이런식으로..
 }
