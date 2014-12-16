@@ -25,7 +25,7 @@
 #define RESOLUTION_SIZEX			1536
 #define RESOLUTION_SIZEY			2048
 #define DISPLAY_SIZEX				640
-#define DISPLAY_SIZEY				760
+#define DISPLAY_SIZEY				740
 #define MAP_XSTART					DISPLAY_SIZEX/2
 #define MAP_YSTART					DISPLAY_SIZEY/2
 #define RADIANS_60					CC_DEGREES_TO_RADIANS(60)
@@ -203,30 +203,30 @@ struct HexaPoint : public cocos2d::Vec2
 		vec.x = point.x - x;
 		vec.y = point.y - y;
 
-		if (vec.y < 0 && vec.x == 0)
+		if (vec.y < 0 && (int)vec.x == 0)
 		{
 			return HD_NORTH;
 		}
 		else if (vec.x > 0 && vec.y < 0)
 		{
-			if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+			if ((int)abs(vec.x) != (int)abs(vec.y)) return HD_NONE;
 			return HD_NORTHEAST;
 		}
-		else if (vec.x < 0 && vec.y == 0)
+		else if (vec.x < 0 && (int)vec.y == 0)
 		{
 			return HD_NORTHWEST;
 		}
-		else if (vec.y > 0 && vec.x == 0)
+		else if (vec.y > 0 && (int)vec.x == 0)
 		{
 			return HD_SOUTH;
 		}
-		else if (vec.x > 0 && vec.y == 0)
+		else if (vec.x > 0 && (int)vec.y == 0)
 		{
 			return HD_SOUTHEAST;
 		}
 		else if (vec.x < 0 && vec.y > 0)
 		{
-			if (abs(vec.x) != abs(vec.y)) return HD_NONE;
+			if ((int)abs(vec.x) != (int)abs(vec.y)) return HD_NONE;
 			return HD_SOUTHWEST;
 		}
 
@@ -237,7 +237,7 @@ struct HexaPoint : public cocos2d::Vec2
 	{
 		if (x == 0) return abs(y);
 		if (y == 0) return abs(x);
-		if (abs(x) == abs(y)) return abs(x);
+		if ((int)abs(x) == (int)abs(y)) return abs(x);
 	}
 
 	bool isAround(HexaPoint point, int range)
@@ -246,7 +246,7 @@ struct HexaPoint : public cocos2d::Vec2
 		vec.x = point.x - x;
 		vec.y = point.y - y;
 
-		if (abs(vec.x) > range || abs(vec.y) > range || abs(vec.x + vec.y) > range)
+		if ((int)abs(vec.x) > range || (int)abs(vec.y) > range || (int)abs(vec.x + vec.y) > range)
 		{
 			return false;
 		}

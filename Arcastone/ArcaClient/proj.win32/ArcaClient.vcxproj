@@ -178,46 +178,6 @@ xcopy /Y /Q "$(EngineRoot)external\websockets\prebuilt\win32\*.*" "$(OutDir)"</C
   <ItemGroup>
     <ResourceCompile Include="game.rc" />
   </ItemGroup>
-  <ItemGroup>
-    <Image Include="..\Resources\arca_ora.png" />
-    <Image Include="..\Resources\block_cover_water.png" />
-    <Image Include="..\Resources\block_grass.png" />
-    <Image Include="..\Resources\block_grass1.png" />
-    <Image Include="..\Resources\block_grass2.png" />
-    <Image Include="..\Resources\block_grass3.png" />
-    <Image Include="..\Resources\block_grass4.png" />
-    <Image Include="..\Resources\block_grass5.png" />
-    <Image Include="..\Resources\block_grass6.png" />
-    <Image Include="..\Resources\block_water.png" />
-    <Image Include="..\Resources\character.png" />
-    <Image Include="..\Resources\character2.png" />
-    <Image Include="..\Resources\enemyunit.png" />
-    <Image Include="..\Resources\frame_atk.png" />
-    <Image Include="..\Resources\frame_hp.png" />
-    <Image Include="..\Resources\myunit.png" />
-    <Image Include="..\Resources\npc_arcastone.png" />
-    <Image Include="..\Resources\npc_bomb.png.png" />
-    <Image Include="..\Resources\npc_pebble.png.png" />
-    <Image Include="..\Resources\npc_potion.png" />
-    <Image Include="..\Resources\npc_rock.png" />
-    <Image Include="..\Resources\npc_tree.png" />
-    <Image Include="..\Resources\shadow.png" />
-    <Image Include="..\Resources\sprite_none.png" />
-    <Image Include="..\Resources\unit_magician.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="..\Resources\bgm.mp3" />
-    <Media Include="..\Resources\collision.mp3" />
-    <Media Include="..\Resources\die.mp3" />
-    <Media Include="..\Resources\move.mp3" />
-    <Media Include="..\Resources\myturn.mp3" />
-    <Media Include="..\Resources\start.mp3" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\Resources\block_cover_water.plist" />
-    <None Include="..\Resources\block_grass.plist" />
-    <None Include="..\Resources\block_water.plist" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

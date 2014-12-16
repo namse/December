@@ -11,8 +11,8 @@
 #include "FireBall.h"
 #include "Stamp.h"
 
-#define START_POINT_USER1 Coord(3,5)
-#define START_POINT_USER2 Coord(3,1)
+#define START_POINT_USER1 Coord(MAP_FIELD_WIDTH/2,MAP_FIELD_HEIGHT - 2)
+#define START_POINT_USER2 Coord(MAP_FIELD_WIDTH/2,1)
 
 Game::Game(GameNumber gameNum) : m_GameNum(gameNum)
 {
@@ -63,11 +63,11 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 			Coord center;
 			if (i == PLAYER_ONE)
 			{
-				center = Coord(0, 0) + originPosition; // locate unit by group data
+				center = Coord(MAP_CENTER_WIDTH - 3, 0) + originPosition; // locate unit by group data
 			}
 			else
 			{
-				center = Coord(6, 10) - originPosition; // 대칭으로
+				center = Coord(MAP_FIELD_WIDTH - 1 - MAP_CENTER_WIDTH + 3, MAP_FIELD_HEIGHT - 1) - originPosition; // 대칭으로
 			}
 
 			unit->SetPosition(center);
@@ -79,24 +79,7 @@ void Game::InitGame(UserNumber user1, UserNumber user2)
 	}
 
 	// NPC 설치
-	if (USE_ARCA) SetUpNPC(UT_ARCASTONE, Coord(3, 5));
-	if (USE_PEBBLE) SetUpNPC(UT_PEBBLE, Coord(3, 5));
-
-	if (USE_BOMB) SetUpNPC(UT_BOMB, Coord(4, 4));
-
-	if (USE_POTION) SetUpNPC(UT_POTION, Coord(2, 6));
-
-
-	// 장애물 설치
-	if (USE_ROCK)
-	{
-		//SetUpNPC(UT_ROCK, Coord(5, 8));
-		//SetUpNPC(UT_ROCK, Coord(1, 2));
-		//SetUpNPC(UT_TREE, Coord(0, 9));
-		//SetUpNPC(UT_TREE, Coord(0, 10));
-		//SetUpNPC(UT_TREE, Coord(1, 10));
-		//SetUpNPC(UT_TREE, Coord(5, 0));
-	}
+	if (USE_ARCA) SetUpNPC(UT_ARCASTONE, Coord(MAP_CENTER_WIDTH, MAP_CENTER_HEIGHT));
 
 	// 너네 마나 이만큼 남았어~
 	SendCurrendtCost();
@@ -674,4 +657,67 @@ void Game::TurnEndEvent()
 {
 	// 땅이 무너진다아~
 	StartBreakDown();
+
+	// 5 턴 마다
+	if (m_Turnmanager.GetFlowTurn() % 5 == 0)
+	{
+		RandomSetUpItem();
+	}
+}
+
+void Game::RandomSetUpItem()
+{
+	srand(time(NULL));
+
+	FieldBlock fieldBlock[MAP_FIELD_WIDTH*MAP_FIELD_HEIGHT];
+	m_Field.GetFieldBlockList(fieldBlock);
+
+	Coord target = { -1 , -1 };
+
+	int count = 0;
+	int maxTry = 100;
+
+	while (count == maxTry)
+	{
+		count++;
+		int randNum = rand() % m_Field.GetFieldBlockListSize();
+		int i = 0;
+		for (auto field : fieldBlock)
+		{
+			if (i == randNum)
+			{
+				if (field.status == FBS_HOLE)
+					break;
+
+				if (GetUnitInPosition(field.position) != nullptr)
+					break;
+
+				target = field.position;
+
+				goto BREAK;
+			}
+			++i;
+		}
+	}
+
+BREAK:;
+
+	if (target.x == -1)
+		return;
+
+	int npc = rand() % 2;
+
+	switch (npc)
+	{
+	case 0:
+		SetUpNPC(UT_PEBBLE, target);
+		break;
+	case 1:
+		SetUpNPC(UT_POTION, target);
+		break;
+	default:
+		break;
+	}
+
+
 }

@@ -47,6 +47,7 @@ public:
 	void						NearUnitCheck(UnitType type);
 	Player*						AttackerSwap();
 	void						SetUpNPC(UnitType unitType, Coord unitPos);
+	void						RandomSetUpItem();
 
 	void						TossTurn();
 	void						TurnEnd();

@@ -627,9 +627,6 @@ void GameScene::DrawUnitMove()
 							  return;
 						  }
 
-						  // 선택한 공격자 유닛의 위치로 커서 이동한 경우 무시
-						  if (cursoredHexa == unitPos) return;
-
 						  // 이동범위 벗어나면 OUT!
 						  if (!unitPos.isAround(cursoredHexa, unitRange)) return;
 

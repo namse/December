@@ -2,9 +2,9 @@
 #include "../../PacketType.h"
 
 /* In Game Value  */
-#define USE_ARCA						false
+#define USE_ARCA						true
 #define USE_ROCK						false
-#define USE_BOMB						true
+#define USE_BOMB						false
 #define USE_POTION						true
 #define USE_PEBBLE						true
 
@@ -15,11 +15,11 @@
 #define RANDOM_ATTACKER					false
 #define MAX_TURN						3		// 기본적인 플레이어의 최대 턴 수
 #define BREAK_DOWN_TURN					10
-#define BREAK_BLOCK						1
+#define BREAK_BLOCK						2
 #define USE_DRAW						true
 
-#define MAP_FIELD_WIDTH					7
-#define MAP_FIELD_HEIGHT				11
+#define MAP_SHAPE_HEXAGON				false
+#define MAP_SHAPE_RECT					true
 
 /*  Out Game Value  */
 #define COLLET_GARBAGESESSIONS_TICK		1000	// 가비지콜렉팅하는 주기

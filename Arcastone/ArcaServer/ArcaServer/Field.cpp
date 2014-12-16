@@ -20,23 +20,31 @@ Field::~Field()
 void Field::InitField(int fieldWidth, int fieldHeight)
 {
 	// TODO : 맵의 형태 불러와서 그거대로 FieldBlock 찍어내기
-	// 일단은 육각형 형태로 잘라냄..
 	
 	for (int x = 0; x < MAP_FIELD_WIDTH; ++x)
 	{
 		for (int y = 0; y < MAP_FIELD_HEIGHT; ++y)
 		{
-			if (x + y >= MAP_FIELD_WIDTH / 2 &&
-				x + y <= MAP_FIELD_WIDTH / 2 + MAP_FIELD_HEIGHT - 1)
+			// 육각형으로 자름
+			if (MAP_SHAPE_HEXAGON &&
+				x + y < MAP_FIELD_WIDTH / 2 ||
+				x + y > MAP_FIELD_WIDTH / 2 + MAP_FIELD_HEIGHT - 1)
 			{
-				FieldBlock newFieldBlock;
-				Coord Pos(x, y);
-				newFieldBlock.position = Pos;
-				newFieldBlock.status = FBS_NORMAL;
-				newFieldBlock.type = FBT_NORMAL;
-
-				m_FieldBlockList.insert(FieldBlockList::value_type(Pos, newFieldBlock));
+				continue;
 			}
+			if (MAP_SHAPE_RECT &&
+				(MAP_FIELD_WIDTH - x - 1) / 2 > y ||
+				(MAP_FIELD_HEIGHT - 1) - x / 2 < y)
+			{
+				continue;
+			}
+			FieldBlock newFieldBlock;
+			Coord Pos(x, y);
+			newFieldBlock.position = Pos;
+			newFieldBlock.status = FBS_NORMAL;
+			newFieldBlock.type = FBT_NORMAL;
+
+			m_FieldBlockList.insert(FieldBlockList::value_type(Pos, newFieldBlock));
 		}
 	}
 	/*

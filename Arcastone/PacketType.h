@@ -27,6 +27,8 @@ enum PacketTypes
 
 	PKT_CS_TOSS_TURN = 11,
 
+	PKT_SC_WARN = 12,
+
 	PKT_MAX	= 1024,
 } ;
 
@@ -163,6 +165,15 @@ namespace Packet
 			mType = PKT_SC_CHANGE_FIELD;
 		}
 		FieldBlock mFieldBlock;
+	};
+
+	struct FieldBlockWarning : public PacketHeader
+	{
+		FieldBlockWarning(){
+			mSize = sizeof(FieldBlockWarning);
+			mType = PKT_SC_WARN;
+		}
+		Coord pos;
 	};
 }
 

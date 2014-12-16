@@ -126,19 +126,20 @@ ScreenPoint Field::HexaToScreen(HexaPoint point)
 {
 	ScreenPoint retPoint;
 
-	int xMidPoint = point.x - (m_MapWidth - 1)*0.5;
-	int yMidPoint = point.y - (m_MapHeight - 1)*0.5;
+	float width = MAP_FIELD_WIDTH * HEXAGON_LENGTH * 1.5;
+	float height = MAP_FIELD_HEIGHT * HEXAGON_LENGTH * sin(RADIANS_60);
+	float var = 1.5;
 
 	// MAP_START 를 중앙에 위치하도록 그려주기 위한 수식들
 	if (m_ReverseMap)
 	{
-		retPoint.x = MAP_XSTART - HEXAGON_LENGTH * 1.5 * (xMidPoint);
-		retPoint.y = MAP_YSTART + HEXAGON_LENGTH * 2 * sin(RADIANS_60) * (yMidPoint + xMidPoint * 0.5);
+		retPoint.x = MAP_XSTART + width / 2 - (point.x + 0.5) * HEXAGON_LENGTH * 1.5;
+		retPoint.y = MAP_YSTART - ((height + width) / 2 + width / 2) + (HEXAGON_LENGTH * (point.y + var) * 2 * sin(RADIANS_60) + HEXAGON_LENGTH * (point.x + var) * sin(RADIANS_60));
 	}
 	else
 	{
-		retPoint.x = MAP_XSTART + HEXAGON_LENGTH * 1.5 * (xMidPoint);
-		retPoint.y = MAP_YSTART - HEXAGON_LENGTH * 2 * sin(RADIANS_60) * (yMidPoint + xMidPoint * 0.5);
+		retPoint.x = MAP_XSTART - width / 2 + (point.x + 0.5) * HEXAGON_LENGTH * 1.5;
+		retPoint.y = MAP_YSTART + ((height + width) / 2 + width / 2) - (HEXAGON_LENGTH * (point.y + var) * 2 * sin(RADIANS_60) + HEXAGON_LENGTH * (point.x + var) * sin(RADIANS_60));
 	}
 
 	return retPoint;

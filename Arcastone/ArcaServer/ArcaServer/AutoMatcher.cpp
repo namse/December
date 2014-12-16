@@ -78,11 +78,8 @@ void AutoMatcher::AddWaitUser(UserNumber userId)
 					incIndex++;
 				}
 			}
+			outPacket[p].mUnitLength = incIndex;
 		}
-
-		// TODO 유닛수에 따라 증가하게 할것
-		outPacket[0].mUnitLength = incIndex;
-		outPacket[1].mUnitLength = incIndex;
 
 		ClientSession* userSession[2];
 		userSession[PLAYER_ONE] = GClientManager->GetClient(userId);

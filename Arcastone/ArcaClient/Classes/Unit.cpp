@@ -48,13 +48,18 @@ void Unit::initSprite()
 	auto frameAtk = Sprite::create(FRAME_ATK);
 	auto shadow = Sprite::create("shadow.png");
 
-	float scale = (HEXAGON_LENGTH * 3 / 4) / frameHP->getContentSize().width;
-	float position = HEXAGON_LENGTH * 3 / 4;
+	int frameHpWidth = frameHP->getContentSize().width;
+	float modifiedHexaLength = HEXAGON_LENGTH * 3 / 4;
+
+	float scale = modifiedHexaLength / frameHpWidth;
+	float position = modifiedHexaLength;
 
 	frameHP->setScale(scale);
 	frameAtk->setScale(scale);
-	shadow->setScale(HEXAGON_LENGTH / shadow->getContentSize().width * 1.25);
-	
+
+	modifiedHexaLength = HEXAGON_LENGTH * 4 / 5;
+	shadow->setScale(modifiedHexaLength / frameHpWidth);
+
 	frameHP->setPosition(position, 0);
 	frameAtk->setPosition(-position, 0);
 	shadow->setPosition(0, -position*0.5);
@@ -95,7 +100,9 @@ void Unit::initSprite()
 		}
 		float scale = (HEXAGON_LENGTH) / ownerMark->getContentSize().width;
 		ownerMark->setScale(scale);
+
 		ownerMark->setPositionY(ownerMark->getContentSize().height*scale*1.5);
+
 		m_Sprite->addChild(ownerMark, 30 + ZORDER_STAT, "ownerMark");
 	}
 
@@ -140,7 +147,11 @@ void Unit::initSprite()
 		break;
 	}
 
-	unitSprite->setScale(HEXAGON_LENGTH*1.5 / unitSprite->getContentSize().width);
+	float unitSpriteWidth = unitSprite->getContentSize().width;
+	modifiedHexaLength = HEXAGON_LENGTH * 3 / 2;
+
+	unitSprite->setScale(modifiedHexaLength / unitSpriteWidth);
+
 	unitSprite->setAnchorPoint(Vec2(0.5f, 0.3f));
 	
 	m_Sprite->addChild(unitSprite);
