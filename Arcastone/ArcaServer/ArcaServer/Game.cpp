@@ -677,7 +677,7 @@ void Game::RandomSetUpItem()
 	int count = 0;
 	int maxTry = 100;
 
-	while (count == maxTry)
+	while (count < maxTry)
 	{
 		count++;
 		int randNum = rand() % m_Field.GetFieldBlockListSize();

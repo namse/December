@@ -48,6 +48,7 @@ void Unit::initSprite()
 	auto frameAtk = Sprite::create(FRAME_ATK);
 	auto shadow = Sprite::create("shadow.png");
 
+
 	int frameHpWidth = frameHP->getContentSize().width;
 	float modifiedHexaLength = HEXAGON_LENGTH * 3 / 4;
 

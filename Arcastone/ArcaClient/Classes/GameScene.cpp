@@ -620,6 +620,7 @@ void GameScene::DrawUnitMove()
 						  if (!m_Field.IsThisHexaInField(cursoredHexa)) return;
 
 						  // 제자리로도 못가
+						  ///# 구조체끼리 "=="로 동등 비교하는것이 무슨 뜻인지 알지? 이 경우는 Vec2::operator== 를 사용하게 됨.
 						  if (cursoredHexa == unitPos)
 						  {
 							  ReleaseMoveSign();
