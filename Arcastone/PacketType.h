@@ -29,6 +29,8 @@ enum PacketTypes
 
 	PKT_SC_WARN = 12,
 
+	PKT_SC_SETUNIT = 13,
+
 	PKT_MAX	= 1024,
 } ;
 

@@ -33,13 +33,13 @@
 #define HEXAGON_LENGTH				38
 
 /*  Sound  */
-#define USE_SOUND					false
+#define USE_SOUND					true
 #define ARCA_SOUND_GAMESTART		"start.mp3"
 #define ARCA_SOUND_MOVE				"move.mp3"
-#define ARCA_SOUND_DIE				"die.mp3"
-#define ARCA_SOUND_COLLISION		"collision.mp3"
+#define ARCA_SOUND_DIE				"die.wav"
+#define ARCA_SOUND_COLLISION		"collision.wav"
 #define ARCA_SOUND_BGM				"bgm.mp3"
-#define ARCA_SOUND_MYTURN			"myturn.mp3"
+#define ARCA_SOUND_MYTURN			"myturn.wav"
 
 /*  Colors  */
 #define COLOR_OF_GRID				ccc4f(0.0f, 0.0f, 0.0f, 0.2f)
@@ -215,8 +215,6 @@ struct HexaPoint : public cocos2d::Vec2
 		{
 			if ((int)abs(vec.x) != (int)abs(vec.y)) return HD_NONE;
 
-			if (abs(vec.x) != abs(vec.y)) return HD_NONE;  ///< 헐?? float 끼리는 == 비교 하면 안된다. 왜 그런지 공부해보삼.. 0.999999 == 1.00000인 경우는?
-
 			return HD_NORTHEAST;
 		}
 		else if (vec.x < 0 && (int)vec.y == 0)
@@ -242,8 +240,8 @@ struct HexaPoint : public cocos2d::Vec2
 
 	int GetRange()
 	{
-		if (x == 0) return abs(y);
-		if (y == 0) return abs(x);
+		if ((int)x == 0) return abs(y);
+		if ((int)y == 0) return abs(x);
 		if ((int)abs(x) == (int)abs(y)) return abs(x);
 	}
 

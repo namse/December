@@ -710,14 +710,58 @@ BREAK:;
 	switch (npc)
 	{
 	case 0:
-		SetUpNPC(UT_PEBBLE, target);
+		SetUpNPCWithClient(UT_PEBBLE, target);
 		break;
 	case 1:
-		SetUpNPC(UT_POTION, target);
+		SetUpNPCWithClient(UT_POTION, target);
 		break;
 	default:
 		break;
 	}
+}
 
+void Game::SetUpNPCWithClient(UnitType unitType, Coord unitPos)
+{
+	/*
+	// create npc
+	Unit* npc = new Unit(unitType);
 
+	npc->SetOwner((PlayerNumber)PLAYER_NUMBER_NPC);
+	npc->SetId(GenerateUnitIdentityNumber());
+	npc->SetPosition(unitPos); // Center of Map
+	m_Player[PLAYER_NUMBER_NPC].SetUnit(npc);
+
+	// 유닛 수 초기화
+	UnitCounting();
+
+	Packet::GameStartResult outPacket[PLAYER_COUNT];
+	ClientSession* userSession[2];
+
+	for (int p = 0; p < PLAYER_COUNT; ++p)
+	{
+		outPacket[p].mUnit[0].unitType = npc->GetUnitType();
+		outPacket[p].mUnit[0].unitMoveType = npc->GetUnitMoveType();
+		outPacket[p].mUnit[0].hp = npc->GetHP();
+		outPacket[p].mUnit[0].weight = npc->GetWeight();
+		outPacket[p].mUnit[0].attack = npc->GetAttack();
+		outPacket[p].mUnit[0].moveRange = npc->GetMoveRange();
+		outPacket[p].mUnit[0].point.x = npc->GetPos().x;
+		outPacket[p].mUnit[0].point.y = npc->GetPos().y;
+		outPacket[p].mUnit[0].id = npc->GetID();
+
+		PlayerNumber owner = npc->GetOwner();
+
+		if (owner == p)
+			outPacket[p].mUnit[0].unitOwner = UO_ME;
+		else if (owner < PLAYER_COUNT)
+			outPacket[p].mUnit[0].unitOwner = UO_ENEMY;
+		else
+			outPacket[p].mUnit[0].unitOwner = UO_NPC;
+
+		outPacket[p].mUnitLength = 1;
+
+		userSession[p] = GClientManager->GetClient(m_Player[p].GetUserNumber());
+		userSession[p]->SendRequest(&outPacket[p]);
+	}
+	*/
 }
